@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
-  { id: "brou", name: "Transferencia Bancaria BROU / Itaú" },
+  { id: "brou", name: "Transferencia Bancaria BROU" },
   { id: "oca_blue", name: "Depósito OCA Blue" },
   { id: "prex", name: "Prex / Mi Dinero" },
   { id: "abitab", name: "Giro ABITAB / RED PAGOS" },
