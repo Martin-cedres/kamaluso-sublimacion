@@ -51,3 +51,5 @@
 53: - Limpiada la caché de compilación en `.next` y reiniciado el servidor de desarrollo Next.js limpiamente en el puerto 3000 (http://localhost:3000) para restaurar la carga de estilos CSS y assets.
 54: - Reemplazado "Mirtrans" por "Correo Uruguayo" en la lista de envíos diarios de `/sobre-nosotros`.
 55: - Redactado e implementado texto de marketing B2B de alto impacto en `/sobre-nosotros` destacando la condición de fabricantes directos, insumos de 350g, nitidez de impresión y propuesta de valor para sublimadores.
+56: - Inicializado repositorio Git, creado el repositorio remoto en GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion) y sincronizada la rama main lista para despliegue directo a producción en Vercel.
+57: - Añadida la hidratación dinámica de `localStorage` (`kamaluso_custom_products`) en `ProductGrid.tsx` para reflejar instantáneamente en el entorno local las ediciones de productos o imágenes realizadas desde el panel de administración.

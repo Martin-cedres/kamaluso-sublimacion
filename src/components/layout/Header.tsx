@@ -52,9 +52,6 @@ export function Header() {
           <Link href="/contacto/" className="hover:text-brand-600 transition-colors">
             Contacto
           </Link>
-          <Link href="/admin" className="hover:text-brand-600 transition-colors text-xs bg-slate-100 hover:bg-pink-50 hover:text-pink-600 px-2.5 py-1 rounded-lg border border-slate-200/80 font-bold flex items-center gap-1">
-            <span>Admin</span>
-          </Link>
         </nav>
 
 

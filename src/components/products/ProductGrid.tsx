@@ -11,10 +11,25 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ initialProducts }: ProductGridProps) {
+  const [productsList, setProductsList] = useState<Product[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState("todos");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredProducts = initialProducts.filter((product) => {
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("kamaluso_custom_products");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProductsList(parsed);
+        }
+      }
+    } catch (e) {
+      console.error("Error al cargar productos de localStorage", e);
+    }
+  }, []);
+
+  const filteredProducts = productsList.filter((product) => {
     const matchesCategory =
       selectedCategory === "todos" || product.category === selectedCategory;
     const matchesSearch =

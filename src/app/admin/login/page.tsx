@@ -123,36 +123,6 @@ export default function AdminLoginPage() {
             </svg>
             <span>Iniciar Sesión con Google</span>
           </button>
-
-          {!isSupabaseConfigured && (
-            <div className="pt-4 border-t border-slate-100">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">
-                Modo Pruebas Autorizadas (Lista Blanca)
-              </label>
-              <select
-                value={selectedEmail}
-                onChange={(e) => setSelectedEmail(e.target.value)}
-                className="w-full text-xs py-2 px-3 border border-slate-300 rounded-lg font-medium text-slate-700 bg-slate-50 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-              >
-                {ALLOWED_ADMIN_EMAILS.map((email) => (
-                  <option key={email} value={email}>
-                    {email}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-600 text-xs space-y-1">
-          <div className="font-bold flex items-center gap-1 text-slate-800">
-            <Lock className="w-3.5 h-3.5 text-pink-600" /> Correos Administradores Habilitados:
-          </div>
-          <ul className="list-disc pl-4 space-y-0.5 text-[11px] font-mono">
-            <li>martinfernandocedres@gmail.com</li>
-            <li>katherineliliansilvalong@gmail.com</li>
-            <li>kamalusosanjose@gmail.com</li>
-          </ul>
         </div>
       </div>
     </div>
