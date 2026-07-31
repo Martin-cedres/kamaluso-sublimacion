@@ -32,8 +32,24 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
 
         let finalUrl = "";
 
-        // 2. Si Supabase está configurado, subir al bucket de almacenamiento
-        if (isSupabaseConfigured && supabase) {
+        // 2. Intentar subir a Vercel Blob Storage (100% gratuito e integrado en Vercel)
+        try {
+          const res = await fetch(`/api/upload?filename=${encodeURIComponent(webpFile.name)}`, {
+            method: "POST",
+            body: webpFile,
+          });
+          if (res.ok) {
+            const blobData = await res.json();
+            if (blobData.url) {
+              finalUrl = blobData.url;
+            }
+          }
+        } catch (e) {
+          console.warn("Vercel Blob upload fallback to Supabase / DataURL", e);
+        }
+
+        // 3. Si Supabase está configurado y Vercel Blob no respondió, subir al bucket de Supabase
+        if (!finalUrl && isSupabaseConfigured && supabase) {
           const filePath = `products/${Date.now()}-${webpFile.name}`;
           const { error: uploadError } = await supabase.storage
             .from("product-images")
@@ -48,7 +64,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
           }
         }
 
-        // Fallback a Data URL optimizado para vista local si Supabase no está conectado
+        // 4. Fallback a Data URL optimizado si no hay almacenamiento configurado
         if (!finalUrl) {
           finalUrl = await fileToDataUrl(webpFile);
         }

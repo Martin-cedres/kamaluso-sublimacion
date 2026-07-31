@@ -53,3 +53,4 @@
 55: - Redactado e implementado texto de marketing B2B de alto impacto en `/sobre-nosotros` destacando la condición de fabricantes directos, insumos de 350g, nitidez de impresión y propuesta de valor para sublimadores.
 56: - Inicializado repositorio Git, creado el repositorio remoto en GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion) y sincronizada la rama main lista para despliegue directo a producción en Vercel.
 57: - Añadida la hidratación dinámica de `localStorage` (`kamaluso_custom_products`) en `ProductGrid.tsx` para reflejar instantáneamente en el entorno local las ediciones de productos o imágenes realizadas desde el panel de administración.
+58: - Eliminado el botón visible "Admin" de la barra de navegación pública (`Header.tsx`) y ocultada completamente la lista de correos autorizados en la pantalla de inicio de sesión de administradores (`/admin/login`). Cambios subidos a GitHub en el commit `ee49642`.
