@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
 import { ProductCard } from "./ProductCard";
-import { CATEGORIES } from "@/lib/products";
+import { CATEGORIES, getAllProducts } from "@/lib/products";
 import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag, Search, X } from "lucide-react";
 
 interface ProductGridProps {
@@ -25,15 +25,12 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   React.useEffect(() => {
     async function loadCloudProducts() {
       try {
-        const res = await fetch("/api/products", { cache: "no-store" });
-        if (res.ok) {
-          const cloudData = await res.json();
-          if (Array.isArray(cloudData) && cloudData.length > 0) {
-            setProductsList(cloudData);
-          }
+        const data = await getAllProducts();
+        if (Array.isArray(data) && data.length > 0) {
+          setProductsList(data);
         }
       } catch (e) {
-        console.error("Error al obtener productos desde la nube", e);
+        console.error("Error al obtener productos", e);
       }
     }
     loadCloudProducts();

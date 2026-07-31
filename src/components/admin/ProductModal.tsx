@@ -70,7 +70,9 @@ export default function ProductModal({
   // Autogenerar slug y SEO completo según el nombre y la categoría del producto
   const handleNameChange = (val: string) => {
     setName(val);
-    setSlug(createCleanSlug(val));
+    if (!productToEdit || !slug) {
+      setSlug(createCleanSlug(val));
+    }
   };
 
   const handleAutoGenerateSEO = () => {

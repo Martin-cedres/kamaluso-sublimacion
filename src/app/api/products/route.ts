@@ -25,25 +25,29 @@ export async function GET() {
     }
   } catch (error) {
     console.warn("Vercel Blob token omitido en local. Obteniendo catálogo en vivo de Producción...");
-    try {
-      const prodRes = await fetch(`https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
-      if (!prodRes.ok) {
-        // Fallback a dominio alternativo si aplica
-        const altRes = await fetch(`https://kamaluso.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
-        if (altRes.ok) {
-          const altData = await altRes.json();
-          if (Array.isArray(altData) && altData.length > 0) {
-            return NextResponse.json(altData);
+    const liveUrls = [
+      `https://kamaluso-three.vercel.app/api/products?t=${Date.now()}`,
+      `https://www.kamaluso.com/api/products?t=${Date.now()}`,
+      `https://kamaluso.com/api/products?t=${Date.now()}`,
+      `https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`,
+    ];
+
+    for (const liveUrl of liveUrls) {
+      try {
+        const prodRes = await fetch(liveUrl, { cache: "no-store" });
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          if (Array.isArray(prodData) && prodData.length > 0) {
+            return NextResponse.json(prodData, {
+              headers: {
+                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+              },
+            });
           }
         }
-      } else {
-        const prodData = await prodRes.json();
-        if (Array.isArray(prodData) && prodData.length > 0) {
-          return NextResponse.json(prodData);
-        }
+      } catch (err) {
+        // Continuar al siguiente URL
       }
-    } catch (fallbackErr) {
-      console.warn("Error al sincronizar productos desde producción:", fallbackErr);
     }
   }
 
@@ -91,14 +95,19 @@ export async function POST(request: Request) {
       updatedProducts = currentProducts;
     }
 
-    // Guardar lista unificada en Vercel Blob Storage
-    const blob = await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(updatedProducts, null, 2), {
-      access: "public",
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
+    let blobUrl = "";
+    try {
+      const blob = await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(updatedProducts, null, 2), {
+        access: "public",
+        addRandomSuffix: false,
+        contentType: "application/json",
+      });
+      blobUrl = blob.url;
+    } catch (blobErr: any) {
+      console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
+    }
 
-    return NextResponse.json({ success: true, url: blob.url, products: updatedProducts });
+    return NextResponse.json({ success: true, url: blobUrl, products: updatedProducts });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -6,6 +7,19 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const ADMIN_EMAIL = "kamalusosanjose@gmail.com";
+
+const getTransporter = () => {
+  if (process.env.EMAIL_SERVER_USER && process.env.EMAIL_SERVER_PASSWORD) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
+      },
+    });
+  }
+  return null;
+};
 
 // Generar instrucciones bancarias exactas extraídas de la base comercial Kamaluso
 const getPaymentInstructionsHTML = (methodId: string) => {
@@ -88,11 +102,13 @@ export async function POST(request: NextRequest) {
   try {
     const { cart, totalPrice, finalTotal, paymentMethodId, paymentMethodName, shippingMethodName, customer } = await request.json();
 
-    if (!resend) {
-      console.warn("RESEND_API_KEY no configurado en entorno. Notificación por email omitida temporalmente.");
+    const transporter = getTransporter();
+
+    if (!transporter && !resend) {
+      console.warn("Ni SMTP (Nodemailer) ni RESEND_API_KEY están configurados. Notificación por correo omitida.");
       return NextResponse.json({
         success: true,
-        message: "Email skipped: RESEND_API_KEY not configured",
+        message: "Email skipped: No mailer provider configured",
       });
     }
 
@@ -214,25 +230,49 @@ export async function POST(request: NextRequest) {
       </div>
     `;
 
-    // Enviar correo al COMPRADOR
-    if (customer?.email) {
-      await resend.emails.send({
-        from: "Kamaluso Sublimación <onboarding@resend.dev>",
-        to: [customer.email],
-        replyTo: ADMIN_EMAIL,
-        subject: `¡Gracias por tu compra en Kamaluso Sublimación! 🛍️`,
-        html: customerEmailHtml,
-      }).catch((e) => console.error("Error al enviar mail al comprador:", e));
+    const fromAddress = process.env.EMAIL_FROM || `Kamaluso Sublimación <${ADMIN_EMAIL}>`;
+
+    // 1. Enviar correo al COMPRADOR (solo si proporcionó correo)
+    if (customer?.email && customer.email.trim()) {
+      const recipient = customer.email.trim();
+      if (transporter) {
+        await transporter.sendMail({
+          from: fromAddress,
+          to: recipient,
+          replyTo: ADMIN_EMAIL,
+          subject: `¡Gracias por tu compra en Kamaluso Sublimación! 🛍️`,
+          html: customerEmailHtml,
+        }).catch((e) => console.error("Error enviando mail al comprador (Nodemailer):", e));
+      } else if (resend) {
+        await resend.emails.send({
+          from: "Kamaluso Sublimación <onboarding@resend.dev>",
+          to: [recipient],
+          replyTo: ADMIN_EMAIL,
+          subject: `¡Gracias por tu compra en Kamaluso Sublimación! 🛍️`,
+          html: customerEmailHtml,
+        }).catch((e) => console.error("Error enviando mail al comprador (Resend):", e));
+      }
     }
 
-    // Enviar correo a la TIENDA
-    const adminRes = await resend.emails.send({
-      from: "Kamaluso Web <onboarding@resend.dev>",
-      to: [ADMIN_EMAIL],
-      replyTo: customer?.email ? customer.email : undefined,
-      subject: `🛍️ Nuevo Pedido Web: ${customer?.name || "Cliente"} ($${(finalTotal || totalPrice || 0).toLocaleString("es-UY")} UYU)`,
-      html: adminEmailHtml,
-    }).catch((e) => console.error("Error al enviar mail al admin:", e));
+    // 2. Enviar correo a la TIENDA (kamalusosanjose@gmail.com)
+    let adminRes = null;
+    if (transporter) {
+      adminRes = await transporter.sendMail({
+        from: fromAddress,
+        to: ADMIN_EMAIL,
+        replyTo: customer?.email && customer.email.trim() ? customer.email.trim() : undefined,
+        subject: `🛍️ Nuevo Pedido Web: ${customer?.name || "Cliente"} ($${(finalTotal || totalPrice || 0).toLocaleString("es-UY")} UYU)`,
+        html: adminEmailHtml,
+      }).catch((e) => console.error("Error enviando mail al admin (Nodemailer):", e));
+    } else if (resend) {
+      adminRes = await resend.emails.send({
+        from: "Kamaluso Web <onboarding@resend.dev>",
+        to: [ADMIN_EMAIL],
+        replyTo: customer?.email && customer.email.trim() ? customer.email.trim() : undefined,
+        subject: `🛍️ Nuevo Pedido Web: ${customer?.name || "Cliente"} ($${(finalTotal || totalPrice || 0).toLocaleString("es-UY")} UYU)`,
+        html: adminEmailHtml,
+      }).catch((e) => console.error("Error enviando mail al admin (Resend):", e));
+    }
 
     return NextResponse.json({ success: true, adminRes });
   } catch (error) {

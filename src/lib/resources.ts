@@ -12,48 +12,40 @@ export interface ResourceItem {
 
 export const INITIAL_RECURSOS: ResourceItem[] = [
   {
-    id: "guia-sublimacion",
-    title: "Guía Completa de Sublimación en Prensa Plana",
-    description: "Instructivo paso a paso con tiempos, temperaturas (170ºC / 120s) y presión ideal para evitar ondulaciones.",
+    id: "capibara-pdf",
+    title: "DESCARGAR CAPIBARA.pdf",
+    description: "Plantilla y diseño descargable Capibara en formato PDF.",
     format: "PDF",
-    fileSize: "1.2 MB",
-    downloadUrl: "https://www.kamaluso.com/guia-sublimacion-kamaluso.pdf",
+    fileSize: "Descargar PDF",
+    downloadUrl: "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000457-89be989beb/CAPIBARA.pdf?ph=904ccf23c3",
   },
   {
-    id: "plantilla-a5",
-    title: "Plantilla para Tapas Agendas y Libretas A5 (15x21 cm)",
-    description: "Plantilla con márgenes de sangrado exactos para diseñar tus tapas de agendas y libretas A5.",
-    format: "PDF / PNG",
-    fileSize: "850 KB",
-    downloadUrl: "https://www.kamaluso.com/plantilla-tapas-a5-15x21.pdf",
+    id: "brillos-pdf",
+    title: "DESCARGAR BRILLOS.pdf",
+    description: "Plantilla y diseño descargable Brillos en formato PDF.",
+    format: "PDF",
+    fileSize: "Descargar PDF",
+    downloadUrl: "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000456-d51c4d51c6/BRILLOS.pdf?ph=904ccf23c3",
   },
   {
-    id: "plantilla-mini-blocks",
-    title: "Plantilla para Mini Blocks (10x15 cm)",
-    description: "Medidas exactas y guía de corte para tapas de mini blocks anotadores lisos o renglonados.",
-    format: "PDF / PNG",
-    fileSize: "520 KB",
-    downloadUrl: "https://www.kamaluso.com/plantilla-block-10x15.pdf",
+    id: "colores-pdf",
+    title: "DESCARGAR COLORES.pdf",
+    description: "Plantilla y diseño descargable Colores en formato PDF.",
+    format: "PDF",
+    fileSize: "Descargar PDF",
+    downloadUrl: "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000458-6825768258/COLORES.pdf?ph=904ccf23c3",
   },
   {
-    id: "plantilla-cuadernos",
-    title: "Plantilla para Cuadernos (17x22 cm)",
-    description: "Formato de diseño con guías de alineación para tapas sublimables de cuadernos 17x22 cm.",
-    format: "PDF / PNG",
-    fileSize: "910 KB",
-    downloadUrl: "https://www.kamaluso.com/plantilla-cuaderno-17x22.pdf",
-  },
-  {
-    id: "plantilla-cuadernolas",
-    title: "Plantilla para Cuadernolas A4 (21x30 cm)",
-    description: "Plantilla de gran formato para estampado de tapas A4 con área imprimible completa.",
-    format: "PDF / PNG",
-    fileSize: "1.1 MB",
-    downloadUrl: "https://www.kamaluso.com/plantilla-cuadernola-21x30.pdf",
+    id: "recetas-pdf",
+    title: "DESCARGAR RECETAS.pdf",
+    description: "Plantilla y diseño descargable Recetas en formato PDF.",
+    format: "PDF",
+    fileSize: "Descargar PDF",
+    downloadUrl: "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000459-186f4186f5/RECETAS.pdf?ph=904ccf23c3",
   },
 ];
 
-const LOCAL_STORAGE_KEY = "kamaluso_resources";
+const LOCAL_STORAGE_KEY = "kamaluso_resources_v2";
 
 export async function getAllResources(): Promise<ResourceItem[]> {
   if (supabase) {

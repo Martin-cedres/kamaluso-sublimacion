@@ -24,7 +24,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     hasPromoKit: true,
     inStock: true,
     images: [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000243-e7ef8e7efb/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM%20%281%29.webp?ph=904ccf23c3",
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000244-b58b3b58b6/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM.webp?ph=904ccf23c3",
     ],
   },
@@ -187,6 +187,7 @@ export const INITIAL_PRODUCTS: Product[] = [
 ];
 
 const LOCAL_PRODUCTS_KEY = "kamaluso_custom_products";
+const DELETED_PRODUCTS_KEY = "kamaluso_deleted_product_ids";
 
 function getLocalStoredProducts(): Product[] | null {
   if (typeof window === "undefined") return null;
@@ -204,12 +205,61 @@ function saveLocalStoredProducts(products: Product[]): void {
   localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(products));
 }
 
+function getDeletedProductIds(): string[] {
+  if (typeof window === "undefined") return [];
+  const stored = localStorage.getItem(DELETED_PRODUCTS_KEY);
+  if (!stored) return [];
+  try {
+    return JSON.parse(stored) as string[];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveDeletedProductId(id: string): void {
+  if (typeof window === "undefined") return;
+  const list = getDeletedProductIds();
+  if (!list.includes(id)) {
+    list.push(id);
+    localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(list));
+  }
+}
+
+function removeDeletedProductId(id: string): void {
+  if (typeof window === "undefined") return;
+  const list = getDeletedProductIds().filter((dId) => dId !== id);
+  localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(list));
+}
+
+function mergeWithLocal(remoteProducts: Product[], localProducts: Product[] | null): Product[] {
+  const deletedIds = getDeletedProductIds();
+  const productMap = new Map<string, Product>();
+
+  remoteProducts.forEach((p) => {
+    if (!deletedIds.includes(p.id)) {
+      productMap.set(p.id, p);
+    }
+  });
+
+  if (localProducts && localProducts.length > 0) {
+    localProducts.forEach((lp) => {
+      if (!deletedIds.includes(lp.id)) {
+        productMap.set(lp.id, lp);
+      }
+    });
+  }
+
+  return Array.from(productMap.values());
+}
+
 export async function getAllProducts(): Promise<Product[]> {
+  const localStored = getLocalStoredProducts();
+
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
       if (!error && data && data.length > 0) {
-        return data as Product[];
+        return mergeWithLocal(data as Product[], localStored);
       }
     } catch (e) {
       console.warn("Supabase fetch failed, fallbacking", e);
@@ -219,19 +269,38 @@ export async function getAllProducts(): Promise<Product[]> {
   // Si se ejecuta en el navegador o servidor, consultar la API de Nube de Vercel Blob
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-    const url = typeof window !== "undefined" ? `/api/products?t=${Date.now()}` : `${baseUrl}/api/products`;
+    const url = typeof window !== "undefined" ? `/api/products?t=${Date.now()}` : (baseUrl ? `${baseUrl}/api/products?t=${Date.now()}` : `https://kamaluso-three.vercel.app/api/products?t=${Date.now()}`);
     const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
     if (res.ok) {
       const cloudProducts = await res.json();
       if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
-        return cloudProducts;
+        return mergeWithLocal(cloudProducts, localStored);
       }
     }
   } catch (e) {
     console.warn("Error al obtener productos de la nube de Vercel", e);
   }
 
-  return INITIAL_PRODUCTS;
+  // Fallback secundario directo a URLs de producción si estamos en localhost
+  const liveUrls = [
+    `https://kamaluso-three.vercel.app/api/products?t=${Date.now()}`,
+    `https://www.kamaluso.com/api/products?t=${Date.now()}`,
+    `https://kamaluso.com/api/products?t=${Date.now()}`,
+    `https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`,
+  ];
+  for (const liveUrl of liveUrls) {
+    try {
+      const liveRes = await fetch(liveUrl, { cache: "no-store" });
+      if (liveRes.ok) {
+        const liveData = await liveRes.json();
+        if (Array.isArray(liveData) && liveData.length > 0) {
+          return mergeWithLocal(liveData, localStored);
+        }
+      }
+    } catch (err) {}
+  }
+
+  return mergeWithLocal(INITIAL_PRODUCTS, localStored);
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
@@ -265,25 +334,43 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
     images: product.images && product.images.length > 0 ? product.images : ["/agenda_fondo_kamaluso.jpg"],
   };
 
+  // Revertir eliminación si existía previamente
+  removeDeletedProductId(id);
+
+  // 1. Guardar de forma inmediata e incondicional en localStorage
+  let localProducts = getLocalStoredProducts() || [];
+  const idx = localProducts.findIndex((p) => p.id === fullProduct.id);
+  if (idx >= 0) {
+    localProducts[idx] = fullProduct;
+  } else {
+    localProducts = [fullProduct, ...localProducts];
+  }
+  saveLocalStoredProducts(localProducts);
+
+  // 2. Guardar en Supabase si está activo
   if (isSupabaseConfigured && supabase) {
-    await supabase.from("products").upsert({
-      id: fullProduct.id,
-      name: fullProduct.name,
-      slug: fullProduct.slug,
-      description: fullProduct.description,
-      price: fullProduct.price,
-      comparative_price: fullProduct.comparativePrice,
-      currency: fullProduct.currency,
-      category: fullProduct.category,
-      badge: fullProduct.badge,
-      has_promo_kit: fullProduct.hasPromoKit,
-      in_stock: fullProduct.inStock,
-      images: fullProduct.images,
-      updated_at: new Date().toISOString(),
-    });
+    try {
+      await supabase.from("products").upsert({
+        id: fullProduct.id,
+        name: fullProduct.name,
+        slug: fullProduct.slug,
+        description: fullProduct.description,
+        price: fullProduct.price,
+        comparative_price: fullProduct.comparativePrice,
+        currency: fullProduct.currency,
+        category: fullProduct.category,
+        badge: fullProduct.badge,
+        has_promo_kit: fullProduct.hasPromoKit,
+        in_stock: fullProduct.inStock,
+        images: fullProduct.images,
+        updated_at: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error("Error al guardar en Supabase", err);
+    }
   }
 
-  // Guardar en la Nube de Vercel Blob vía API Route
+  // 3. Guardar en la Nube de Vercel Blob vía API Route
   try {
     await fetch("/api/products", {
       method: "POST",
@@ -298,8 +385,16 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
 }
 
 export async function deleteProduct(id: string): Promise<boolean> {
+  saveDeletedProductId(id);
+
+  let localProducts = getLocalStoredProducts() || [];
+  localProducts = localProducts.filter((p) => p.id !== id);
+  saveLocalStoredProducts(localProducts);
+
   if (isSupabaseConfigured && supabase) {
-    await supabase.from("products").delete().eq("id", id);
+    try {
+      await supabase.from("products").delete().eq("id", id);
+    } catch (e) {}
   }
 
   try {

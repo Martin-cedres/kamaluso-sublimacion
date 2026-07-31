@@ -15,10 +15,10 @@ import {
   Loader2,
   MapPin,
   User,
-  Phone,
   Mail,
   CheckCircle2,
 } from "lucide-react";
+import { saveOrder } from "@/lib/orders";
 
 const PAYMENT_METHODS = [
   { id: "brou", name: "Transferencia Bancaria BROU" },
@@ -86,9 +86,11 @@ export function CartDrawer() {
       setValidationError("Por favor ingresa tu Teléfono o WhatsApp de contacto.");
       return false;
     }
-    if (!customerEmail.trim() || !customerEmail.includes("@") || !customerEmail.includes(".")) {
-      setValidationError("Por favor ingresa un Correo Electrónico válido (obligatorio).");
-      return false;
+    if (customerEmail.trim()) {
+      if (!customerEmail.includes("@") || !customerEmail.includes(".")) {
+        setValidationError("Por favor ingresa un Correo Electrónico válido o déjalo en blanco.");
+        return false;
+      }
     }
     if (!customerCity.trim()) {
       setValidationError("Por favor ingresa tu Ciudad / Localidad.");
@@ -110,6 +112,29 @@ export function CartDrawer() {
 
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
     const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+
+    // 0. Registrar venta en el sistema (Historial de Pedidos Admin)
+    try {
+      await saveOrder({
+        customer: {
+          name: customerName.trim(),
+          phone: customerPhone.trim(),
+          email: customerEmail.trim(),
+          department: customerDepartment,
+          city: customerCity.trim(),
+          address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+        },
+        items: cart,
+        totalPrice,
+        finalTotal,
+        paymentMethodId: paymentMethod,
+        paymentMethodName: selectedPay || paymentMethod,
+        shippingMethodName: selectedShip || shippingMethod,
+        status: "pendiente",
+      });
+    } catch (orderErr) {
+      console.error("Error al guardar pedido en historial:", orderErr);
+    }
 
     // 1. Disparar notificación por Correo a kamalusosanjose@gmail.com
     try {
@@ -143,7 +168,7 @@ export function CartDrawer() {
     message += `👤 *DATOS DEL COMPRADOR:*\n`;
     message += `• *Nombre/Empresa:* ${customerName.trim()}\n`;
     message += `• *Teléfono:* ${customerPhone.trim()}\n`;
-    message += `• *Email:* ${customerEmail.trim()}\n`;
+    message += `• *Email:* ${customerEmail.trim() || "No especificado"}\n`;
     message += `• *Ubicación:* ${customerCity.trim()}, ${customerDepartment}\n`;
     message += `• *Dirección/Destino:* ${
       shippingMethod === "pickup" ? "Retira en Local (San José)" : customerAddress.trim()
@@ -188,6 +213,29 @@ export function CartDrawer() {
 
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
     const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+
+    // Registrar pedido en el historial de ventas
+    try {
+      await saveOrder({
+        customer: {
+          name: customerName.trim(),
+          phone: customerPhone.trim(),
+          email: customerEmail.trim(),
+          department: customerDepartment,
+          city: customerCity.trim(),
+          address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+        },
+        items: cart,
+        totalPrice,
+        finalTotal,
+        paymentMethodId: paymentMethod,
+        paymentMethodName: selectedPay || paymentMethod,
+        shippingMethodName: selectedShip || shippingMethod,
+        status: "pendiente",
+      });
+    } catch (orderErr) {
+      console.error("Error al registrar pedido en Mercado Pago:", orderErr);
+    }
 
     // Disparar email informativo también en Mercado Pago
     try {
@@ -469,12 +517,11 @@ export function CartDrawer() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                          Correo Electrónico *
+                          Correo Electrónico (Opcional)
                         </label>
                         <input
                           type="email"
-                          required
-                          placeholder="correo@ejemplo.com"
+                          placeholder="correo@ejemplo.com (opcional)"
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
                           className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
