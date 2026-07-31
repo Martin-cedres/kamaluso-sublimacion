@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Upload, X, Check, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, Check, Image as ImageIcon, Loader2, Star } from "lucide-react";
 import { convertToWebP, fileToDataUrl } from "@/lib/image-optimizer";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
@@ -15,6 +15,16 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
   const [isProcessing, setIsProcessing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  const setAsMainImage = (index: number) => {
+    if (index === 0) return;
+    const updated = [...images];
+    const [selected] = updated.splice(index, 1);
+    updated.unshift(selected);
+    onChange(updated);
+    setStatusMessage("¡Foto seleccionada como Principal de Portada!");
+    setTimeout(() => setStatusMessage(null), 3000);
+  };
 
   const handleFiles = async (files: FileList | File[]) => {
     setIsProcessing(true);
@@ -97,7 +107,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
   return (
     <div className="space-y-4">
       <label className="block text-sm font-semibold text-slate-700">
-        Imágenes del Producto (Optimización WebP Automática)
+        Imágenes del Producto (WebP Optimizado + CDN)
       </label>
 
       {/* Zona de Drop & Upload */}
@@ -137,7 +147,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
                 Arrastra fotos aquí o <span className="text-pink-600 underline">haz clic para examinar</span>
               </p>
               <p className="text-xs text-slate-500">
-                Las fotos en JPG/PNG serán convertidas instantáneamente a **.WebP** optimizado
+                Las fotos en JPG/PNG serán convertidas a WebP y alojadas en Vercel CDN
               </p>
             </div>
           )}
@@ -151,38 +161,68 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
         </div>
       )}
 
-      {/* Grid de imágenes subidas */}
+      {/* Grid de imágenes subidas con selector de Foto Principal */}
       {images.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-2">
-          {images.map((url, idx) => (
-            <div
-              key={idx}
-              className="relative group rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-square"
-            >
-              <Image
-                src={url}
-                alt={`Imagen ${idx + 1}`}
-                fill
-                className="object-cover"
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => removeImage(idx)}
-                  className="p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition"
-                  title="Eliminar foto"
+        <div className="space-y-2 pt-2">
+          <p className="text-xs font-semibold text-slate-500">
+            Haz clic en el icono <Star className="w-3.5 h-3.5 inline text-amber-500 fill-amber-500" /> de cualquier foto para definirla como la <strong className="text-slate-800">Foto Principal de Portada</strong>:
+          </p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+            {images.map((url, idx) => {
+              const isMain = idx === 0;
+              return (
+                <div
+                  key={idx}
+                  className={`relative group rounded-xl overflow-hidden bg-slate-100 aspect-square transition-all ${
+                    isMain
+                      ? "ring-4 ring-amber-400 border-2 border-amber-500 shadow-md"
+                      : "border border-slate-200"
+                  }`}
                 >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              {idx === 0 && (
-                <span className="absolute bottom-1 left-1 bg-pink-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow">
-                  Portada
-                </span>
-              )}
-            </div>
-          ))}
+                  <Image
+                    src={url}
+                    alt={`Imagen ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+
+                  {/* Acciones al pasar el cursor */}
+                  <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
+                    {!isMain && (
+                      <button
+                        type="button"
+                        onClick={() => setAsMainImage(idx)}
+                        className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow transition-all hover:scale-110"
+                        title="Establecer como Foto Principal"
+                      >
+                        <Star className="w-4 h-4 fill-white" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(idx)}
+                      className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-full shadow transition-all hover:scale-110"
+                      title="Eliminar foto"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Insignia de Foto Principal */}
+                  {isMain ? (
+                    <span className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-white" /> Principal
+                    </span>
+                  ) : (
+                    <span className="absolute bottom-1 right-1 bg-slate-800/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                      #{idx + 1}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
