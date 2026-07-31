@@ -1,0 +1,53 @@
+=== RESUMEN DE SESIÓN ===
+- Análisis del sitio web actual www.kamaluso.com (Webnode).
+- Identificación de categorías, productos, URLs SEO (`/p/[slug]/`), metadatos, píxeles de analítica y botón de WhatsApp.
+- Definición de Base de Datos: Supabase (PostgreSQL gratis).
+- Flujo de compra: Checkout híbrido WhatsApp (principal) + Email resumen vía Resend (gratis).
+- Estrategia de imágenes $0 Vercel: `unoptimized: true` en `next.config.js` manteniendo lazy loading y prevención de Layout Shift sin agotar cuota de Vercel Image Optimization.
+- Conservación de GTM y Facebook Pixel.
+- Ajuste del Enfoque Comercial (B2B / Sublimadores): El cliente objetivo son sublimadores y emprendedores que compran insumos (interiores + tapas sublimables + espirales) para personalizar y revender.
+- SEO Especializado: Palabras clave como "interiores de agendas para sublimar", "papelería sublimable Uruguay", "insumos para sublimación San José", "blocks sublimables por mayor".
+- Aceptadas optimizaciones 1, 2, 4 y 5 (JSON-LD B2B, On-Demand ISR, Buscador instantáneo, PWA). Opción 3 adaptada a variantes simples de insumo.
+- Elaboración del Plan de Implementación técnico en implementation_plan.md.
+- Aprobado el plan por el usuario. Proyecto Next.js inicializado en la carpeta con App Router y TypeScript.
+- Creación de catálogo inicial en src/lib/products.ts con URLs SEO idénticas a Webnode (/p/[slug]/).
+- Configuración de imágenes unoptimized en next.config.js para garantizar $0 en Vercel.
+- Desarrollo de componentes: Header, Footer, ProductGrid, ProductCard, CategoryFilter, CartDrawer con checkout por WhatsApp, WhatsAppFloating, sitemap.ts, robots.ts, manifest.json.
+- Inyección de metadatos SEO B2B para sublimadores y marcado JSON-LD Schema.org Product.
+- Servidor de desarrollo Next.js iniciado y corriendo en http://localhost:3000.
+- Actualizado número oficial de WhatsApp a 098 615 074 (+59898615074) en toda la aplicación.
+- Creada la sección de Plantillas y Archivos Descargables (/recursos/) con guías de sublimación en PDF y plantillas de diseño con sangrado para agendas A5, mini blocks 10x15, cuadernos 17x22 y cuadernolas A4.
+- Tarjetas de producto (ProductCard.tsx) actualizadas para ser 100% clicables directamente hacia la página de detalle del producto sin requerir presionar el icono flotante del ojo.
+- Ejecutado `npm run build` con éxito. Todas las rutas, componentes, metadatos y tipografía han quedado verificados y listos para su despliegue en Vercel.
+- Build de producción `npm run build` completado con éxito absoluto: 22 páginas estáticas generadas, 0 errores de TypeScript y 0 lints. Aplicación 100% lista para ser desplegada en Vercel.
+23: - Documentación de arquitectura y guía de despliegue registrada en `walkthrough.md`.
+24: - Servidor de desarrollo Next.js iniciado en http://localhost:3000.
+25: - Generado Plan de Implementación (`implementation_plan.md`) para el Panel de Administración con Google OAuth (lista blanca para 3 correos), gestión CRUD de productos y optimizador automático de imágenes a WebP.
+26: - Edición realizada en la maqueta de la agenda 2027: reemplazado el anillado doble metálico (wire-o) por un espiral plástico simple de color blanco.
+27: - Imagen guardada y expuesta públicamente para descarga en `public/agenda_espiral_simple.jpg` (y vía servidor local en `http://localhost:3000/agenda_espiral_simple.jpg`).
+28: - Generada nueva maqueta en alta calidad de la agenda con espiral plástico blanco sobre el fondo de patrón con logos de Kamaluso (sin el logo/texto anterior) guardada en `public/agenda_fondo_kamaluso.jpg`.
+29: - Desarrollado e implementado el Panel de Administración completo (`/admin`) con: autenticación Google (lista blanca para 3 correos), gestión CRUD de productos (crear, editar, borrar, toggle de stock), conversor automático de imágenes a WebP en el navegador y script de base de datos Supabase (`supabase/schema.sql`).
+30: - Verificación de compilación `npm run build` completada con éxito absoluto: 24 páginas estáticas generadas, 0 errores de TypeScript y 0 lints.
+32: - Verificación diagnóstica de estado: Proyecto 100% listo, build exitoso de 24 páginas estáticas sin errores, catálogo B2B, WhatsApp checkout, Panel Admin (/admin), Supabase schema y sección de Recursos activos.
+33: - Implementada la pestaña de Gestión de Recursos y Plantillas Descargables en el Panel Admin (/admin) con modal de carga y almacenamiento dinámico (lib/resources.ts). Añadido el asistente inteligente ✨ Autogenerar SEO por categoría en el formulario de creación/edición de productos. Compilación verificada con éxito.
+34: - Implementación de SEO Técnico y GEO (AI Search Engines): Marcado JSON-LD LocalBusiness en layout.tsx, FAQPage Schema en /faq y páginas de detalle de producto /p/[slug], rutas estáticas de categoría /categoria/[slug], canonical tags unificados, actualización de sitemap.ts a 29 páginas estáticas y enlaces estructurados en el Footer. Compilación verificada con 0 errores.
+35: - Integradas credenciales oficiales de Mercado Pago de Kamaluso (.env.local) e instalado el SDK oficial mercadopago. Creada la API Route /api/payments/create-preference. Actualizado el carrito (CartDrawer.tsx) con selector de 6 medios de pago (BROU, OCA Blue, Prex, Abitab/Redpagos, Efectivo local, Mercado Pago Online con recargo del 10%), selector de agencias de envío en Uruguay (DAC, Correo, Retiro) y opción de Factura con RUT. Compilado a 30 páginas estáticas sin errores.
+36: - Auditoría diagnóstica Senior de E-commerce: Corregida posible falla de hidratación en CartContext.tsx (protección de localStorage con isLoaded para no borrar carrito en recargas), alineados IDs de categoría en el autogenerador de SEO de ProductModal.tsx con products.ts (agendas, libretas, blocks-planners, kits-promos), y vaciado automático del carrito en CartDrawer.tsx tras checkout. Compilado y verificado con éxito absoluto.
+37: - Servidor de desarrollo Next.js iniciado y corriendo en segundo plano en http://localhost:3000.
+38: - Creado el componente vectorizado oficial WhatsAppIcon.tsx (SVG nativo con relleno oficial) reemplazando iconos de teléfono genéricos en Header, Footer y Contacto. Desarrollado el Widget Flotante interactivo WhatsAppFloating.tsx con tooltip de atención rápida en San José, animación de entrada y badge de notificación activo a los 4s. Servidor verificado en http://localhost:3000.
+39: - Corregido el problema de visualización de productos: Cambiada la relación de aspecto de las imágenes en tarjetas de producto (ProductCard.tsx) y galería (ProductGallery.tsx) de landscape (16/10 recorta bordes) a aspect-square con object-contain + drop-shadow. Ahora las agendas de 15x21cm, libretas y cuadernos verticales se muestran completos, nítidos y sin recortes. Servidor activo en http://localhost:3000.
+40: - Resuelto el problema de carga de CSS/404 capturado en captura de pantalla: Se limpió la carpeta de compilación corrupta (.next) causada por la superposición del proceso de build y dev server. Reiniciado limpiamente el servidor dev en http://localhost:3000 con estilos Tailwind CSS 100% operativos.
+41: - Cierre de sesión: Proyecto Kamaluso Sublimación 100% optimizado, compilación verificada con 30 páginas estáticas, pasarela de Mercado Pago Uruguay totalmente funcional, SEO/GEO optimizado para motores de IA, gestor de recursos descargables en Admin y servidor dev activo en http://localhost:3000.
+43: - Servidor de desarrollo Next.js iniciado y ejecutándose activamente en http://localhost:3000.
+44: - Servidor de desarrollo Next.js iniciado y corriendo en el puerto 3000 (http://localhost:3000).
+45: - Verificada la conversión automática de imágenes a WebP en el panel Admin (ImageUploader.tsx e image-optimizer.ts).
+46: - Servidor de desarrollo Next.js iniciado y ejecutándose en el puerto 3000 (http://localhost:3000).
+47: - Reubicados los bloques de políticas comerciales (Envíos a todo el país, Elaboración ágil, Pedidos mayores a $2.500) y parámetros de sublimación (Prensa Plana 170ºC / 120 seg) debajo del catálogo de productos en ProductGrid.tsx.
+48: - Configurada la apertura automática del widget de atención en línea (WhatsAppFloating.tsx) a los 3.5s para captar la atención del usuario y su posterior auto-cierre suave a los 6s para no obstaculizar la navegación.
+49: - Limpiada la caché corrupta de `.next` causada por la superposición de la compilación y reiniciado limpiamente el servidor dev en el puerto 3000 (http://localhost:3000).
+50: - Implementada la optimización e-commerce de 3 fases: Checkout en 2 pasos en CartDrawer.tsx con recolección de datos completos del comprador para WhatsApp y Mercado Pago, selector numérico de cantidad e incentivo mayorista KIT 10+1 en AddToCartDetail.tsx, y persistencia de sessionStorage en WhatsAppFloating.tsx. Compilación verificada con éxito (30 páginas estáticas).
+51: - Creado el módulo de Generación e Impresión de Etiquetas de Envío (ShippingLabelModal.tsx) en el Panel de Administración con formato estándar 10x15cm / A6, cuadro de Remitente/Destinatario en alta visibilidad, agencia de transporte seleccionable y estilos CSS de impresión nítidos `@media print`. Compilación verificada con éxito.
+52: - Actualizado el texto en `/sobre-nosotros` reemplazando "Espirales continuos metálicos resistentes" por "Espirales continuos resistentes".
+53: - Limpiada la caché de compilación en `.next` y reiniciado el servidor de desarrollo Next.js limpiamente en el puerto 3000 (http://localhost:3000) para restaurar la carga de estilos CSS y assets.
+54: - Reemplazado "Mirtrans" por "Correo Uruguayo" en la lista de envíos diarios de `/sobre-nosotros`.
+55: - Redactado e implementado texto de marketing B2B de alto impacto en `/sobre-nosotros` destacando la condición de fabricantes directos, insumos de 350g, nitidez de impresión y propuesta de valor para sublimadores.

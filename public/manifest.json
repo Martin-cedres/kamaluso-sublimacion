@@ -1,0 +1,21 @@
+{
+  "name": "Kamaluso Papelería Sublimable",
+  "short_name": "Kamaluso",
+  "description": "Interiores para agendas, libretas, blocks y cuadernos sublimables en Uruguay.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#be123c",
+  "icons": [
+    {
+      "src": "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000001-5a6775a67a/kamaluso%20agendas%20personalizadas.png?ph=904ccf23c3",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000001-5a6775a67a/kamaluso%20agendas%20personalizadas.png?ph=904ccf23c3",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
