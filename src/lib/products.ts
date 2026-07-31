@@ -21,6 +21,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     currency: "UYU",
     category: "agendas",
     badge: "NUEVO 2027",
+    hasPromoKit: true,
     inStock: true,
     images: [
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000243-e7ef8e7efb/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM%20%281%29.webp?ph=904ccf23c3",
@@ -218,8 +219,8 @@ export async function getAllProducts(): Promise<Product[]> {
   // Si se ejecuta en el navegador o servidor, consultar la API de Nube de Vercel Blob
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-    const url = typeof window !== "undefined" ? "/api/products" : `${baseUrl}/api/products`;
-    const res = await fetch(url, { cache: "no-store" });
+    const url = typeof window !== "undefined" ? `/api/products?t=${Date.now()}` : `${baseUrl}/api/products`;
+    const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
     if (res.ok) {
       const cloudProducts = await res.json();
       if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
@@ -259,6 +260,7 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
     currency: "UYU",
     category: product.category || "agendas",
     badge: product.badge,
+    hasPromoKit: product.hasPromoKit !== undefined ? product.hasPromoKit : false,
     inStock: product.inStock !== undefined ? product.inStock : true,
     images: product.images && product.images.length > 0 ? product.images : ["/agenda_fondo_kamaluso.jpg"],
   };
@@ -274,6 +276,7 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
       currency: fullProduct.currency,
       category: fullProduct.category,
       badge: fullProduct.badge,
+      has_promo_kit: fullProduct.hasPromoKit,
       in_stock: fullProduct.inStock,
       images: fullProduct.images,
       updated_at: new Date().toISOString(),

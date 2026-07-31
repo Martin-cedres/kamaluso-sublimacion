@@ -17,7 +17,7 @@ export function AddToCartDetail({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const isAgenda = product.category === "agendas";
+  const showPromoKit = Boolean(product.hasPromoKit) && product.slug !== "kit-10-1-de-regalo";
 
   return (
     <div className="space-y-4 pt-2">
@@ -81,7 +81,7 @@ export function AddToCartDetail({ product }: { product: Product }) {
       </button>
 
       {/* Banner de Incentivo Mayorista B2B (Cross-selling) */}
-      {isAgenda && (
+      {showPromoKit && (
         <div className="bg-gradient-to-r from-pink-50 via-purple-50 to-pink-50 p-4 rounded-2xl border border-pink-200/80 flex items-start gap-3 shadow-sm">
           <div className="p-2 bg-pink-600 text-white rounded-xl flex-shrink-0 mt-0.5">
             <Gift className="w-5 h-5" />

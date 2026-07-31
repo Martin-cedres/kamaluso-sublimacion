@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { INITIAL_PRODUCTS } from "@/lib/products";
 import { Product } from "@/types";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const BLOB_PRODUCTS_FILENAME = "data/products.json";
 
 export async function GET() {
@@ -13,14 +16,22 @@ export async function GET() {
       const res = await fetch(blobs[0].url, { cache: "no-store" });
       if (res.ok) {
         const products = await res.json();
-        return NextResponse.json(products);
+        return NextResponse.json(products, {
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          },
+        });
       }
     }
   } catch (error) {
     console.warn("Vercel Blob products GET error, fallbacking to initial", error);
   }
 
-  return NextResponse.json(INITIAL_PRODUCTS);
+  return NextResponse.json(INITIAL_PRODUCTS, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    },
+  });
 }
 
 export async function POST(request: Request) {

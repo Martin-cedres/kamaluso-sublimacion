@@ -63,9 +63,8 @@ export function CartDrawer() {
   // Opciones comerciales
   const [paymentMethod, setPaymentMethod] = useState("brou");
   const [shippingMethod, setShippingMethod] = useState("dac_domicilio");
-  const [needInvoice, setNeedInvoice] = useState(false);
-  const [rut, setRut] = useState("");
   const [isLoadingMp, setIsLoadingMp] = useState(false);
+  const [isSendingOrder, setIsSendingOrder] = useState(false);
   const [validationError, setValidationError] = useState("");
 
   if (!isCartOpen) return null;
@@ -85,6 +84,10 @@ export function CartDrawer() {
       setValidationError("Por favor ingresa tu Teléfono o WhatsApp de contacto.");
       return false;
     }
+    if (!customerEmail.trim() || !customerEmail.includes("@") || !customerEmail.includes(".")) {
+      setValidationError("Por favor ingresa un Correo Electrónico válido (obligatorio).");
+      return false;
+    }
     if (!customerCity.trim()) {
       setValidationError("Por favor ingresa tu Ciudad / Localidad.");
       return false;
@@ -97,18 +100,47 @@ export function CartDrawer() {
     return true;
   };
 
-  // Construir mensaje estructurado y enviar por WhatsApp
-  const handleWhatsAppSubmit = () => {
+  // Construir mensaje estructurado, enviar Email a kamalusosanjose@gmail.com y abrir WhatsApp
+  const handleWhatsAppAndEmailSubmit = async () => {
     if (!validateCustomerData()) return;
 
+    setIsSendingOrder(true);
+
+    const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
+    const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+
+    // 1. Disparar notificación por Correo a kamalusosanjose@gmail.com
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cart,
+          totalPrice,
+          finalTotal,
+          paymentMethodName: selectedPay,
+          shippingMethodName: selectedShip,
+          customer: {
+            name: customerName.trim(),
+            phone: customerPhone.trim(),
+            email: customerEmail.trim(),
+            department: customerDepartment,
+            city: customerCity.trim(),
+            address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+          },
+        }),
+      });
+    } catch (err) {
+      console.error("Error al enviar email de confirmación:", err);
+    }
+
+    // 2. Construir mensaje estructurado para WhatsApp
     let message = `*NUEVO PEDIDO MAYORISTA - KAMALUSO SUBLIMACIÓN*\n\n`;
 
     message += `👤 *DATOS DEL COMPRADOR:*\n`;
     message += `• *Nombre/Empresa:* ${customerName.trim()}\n`;
     message += `• *Teléfono:* ${customerPhone.trim()}\n`;
-    if (customerEmail.trim()) {
-      message += `• *Email:* ${customerEmail.trim()}\n`;
-    }
+    message += `• *Email:* ${customerEmail.trim()}\n`;
     message += `• *Ubicación:* ${customerCity.trim()}, ${customerDepartment}\n`;
     message += `• *Dirección/Destino:* ${
       shippingMethod === "pickup" ? "Retira en Local (San José)" : customerAddress.trim()
@@ -130,20 +162,15 @@ export function CartDrawer() {
       message += `💵 *TOTAL A PAGAR:* $${finalTotal.toLocaleString("es-UY")} UYU\n`;
     }
 
-    const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
-    const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
-
     message += `\n💳 *MÉTODO DE PAGO:* ${selectedPay}\n`;
     message += `🚚 *FORMA DE ENVÍO:* ${selectedShip}\n`;
-
-    if (needInvoice && rut) {
-      message += `📝 *FACTURA CON RUT:* ${rut.trim()}\n`;
-    }
 
     message += `\n_Quedo a la espera del envío de datos bancarios para realizar el pago. ¡Gracias!_`;
 
     const url = `https://wa.me/59898615074?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
+
+    setIsSendingOrder(false);
     clearCart();
     setIsCartOpen(false);
     setStep(1);
@@ -156,6 +183,34 @@ export function CartDrawer() {
 
     setIsLoadingMp(true);
 
+    const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
+    const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+
+    // Disparar email informativo también en Mercado Pago
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cart,
+          totalPrice,
+          finalTotal,
+          paymentMethodName: selectedPay,
+          shippingMethodName: selectedShip,
+          customer: {
+            name: customerName.trim(),
+            phone: customerPhone.trim(),
+            email: customerEmail.trim(),
+            department: customerDepartment,
+            city: customerCity.trim(),
+            address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+          },
+        }),
+      });
+    } catch (err) {
+      console.error("Error al enviar email antes de Mercado Pago:", err);
+    }
+
     try {
       const response = await fetch("/api/payments/create-preference", {
         method: "POST",
@@ -166,7 +221,7 @@ export function CartDrawer() {
           shippingMethod,
           customer: {
             name: customerName.trim(),
-            email: customerEmail.trim() || "cliente@kamaluso.com",
+            email: customerEmail.trim(),
             phone: customerPhone.trim(),
             address: `${customerAddress.trim()}, ${customerCity.trim()}, ${customerDepartment}`,
           },
@@ -397,10 +452,11 @@ export function CartDrawer() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                          Email (Opcional)
+                          Correo Electrónico *
                         </label>
                         <input
                           type="email"
+                          required
                           placeholder="correo@ejemplo.com"
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
@@ -529,28 +585,6 @@ export function CartDrawer() {
                       ))}
                     </select>
                   </div>
-
-                  {/* Factura con RUT */}
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
-                      <input
-                        type="checkbox"
-                        checked={needInvoice}
-                        onChange={(e) => setNeedInvoice(e.target.checked)}
-                        className="rounded text-pink-600 focus:ring-pink-500"
-                      />
-                      <span>¿Necesitas Factura con RUT?</span>
-                    </label>
-                    {needInvoice && (
-                      <input
-                        type="text"
-                        placeholder="Ingresa tu RUT y Razón Social"
-                        value={rut}
-                        onChange={(e) => setRut(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white text-slate-900"
-                      />
-                    )}
-                  </div>
                 </div>
               </div>
             )}
@@ -609,13 +643,21 @@ export function CartDrawer() {
                     </button>
                   )}
 
-                  {/* Botón Principal WhatsApp */}
+                  {/* Botón Principal WhatsApp y Correo */}
                   <button
-                    onClick={handleWhatsAppSubmit}
-                    className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider"
+                    onClick={handleWhatsAppAndEmailSubmit}
+                    disabled={isSendingOrder}
+                    className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
                   >
-                    <Send className="w-4 h-4" />
-                    <span>Enviar Pedido Completo por WhatsApp</span>
+                    {isSendingOrder ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <Mail className="w-4 h-4" />
+                      </>
+                    )}
+                    <span>Enviar Pedido por WhatsApp y Correo</span>
                   </button>
 
                   <button

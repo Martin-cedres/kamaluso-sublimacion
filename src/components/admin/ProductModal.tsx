@@ -26,6 +26,7 @@ export default function ProductModal({
   const [comparativePrice, setComparativePrice] = useState<number | "">("");
   const [badge, setBadge] = useState("");
   const [inStock, setInStock] = useState(true);
+  const [hasPromoKit, setHasPromoKit] = useState(false);
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -39,6 +40,7 @@ export default function ProductModal({
       setComparativePrice(productToEdit.comparativePrice || "");
       setBadge(productToEdit.badge || "");
       setInStock(productToEdit.inStock);
+      setHasPromoKit(Boolean(productToEdit.hasPromoKit));
       setDescription(productToEdit.description || "");
       setImages(productToEdit.images || []);
     } else {
@@ -49,6 +51,7 @@ export default function ProductModal({
       setComparativePrice("");
       setBadge("");
       setInStock(true);
+      setHasPromoKit(false);
       setDescription(
         "Incluye hojas interiores impresas, tapa y contratapa sublimables de 350gr y espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Envíos a todo Uruguay desde San José."
       );
@@ -56,19 +59,18 @@ export default function ProductModal({
     }
   }, [productToEdit, isOpen]);
 
+  const createCleanSlug = (str: string) =>
+    str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
   // Autogenerar slug y SEO completo según el nombre y la categoría del producto
   const handleNameChange = (val: string) => {
     setName(val);
-    if (!productToEdit) {
-      const generatedSlug = val
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
-      setSlug(generatedSlug);
-    }
+    setSlug(createCleanSlug(val));
   };
 
   const handleAutoGenerateSEO = () => {
@@ -85,13 +87,7 @@ export default function ProductModal({
     setCategory(detectedCat);
 
     // Generar Slug SEO
-    const generatedSlug = name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
+    const generatedSlug = createCleanSlug(name);
     setSlug(generatedSlug);
 
     // Generar Badge sugerido
@@ -117,16 +113,19 @@ export default function ProductModal({
     if (!name || price === "") return;
 
     setIsSaving(true);
+    const finalSlug = createCleanSlug(slug || name);
+
     try {
       await saveProduct({
         id: productToEdit?.id,
-        name,
-        slug: slug || name.toLowerCase().replace(/\s+/g, "-"),
+        name: name.trim(),
+        slug: finalSlug,
         category,
         price: Number(price),
         comparativePrice: comparativePrice ? Number(comparativePrice) : undefined,
         badge: badge || undefined,
         inStock,
+        hasPromoKit,
         description,
         images: images.length > 0 ? images : ["/agenda_fondo_kamaluso.jpg"],
       });
@@ -261,7 +260,7 @@ export default function ProductModal({
               />
             </div>
 
-            <div className="flex items-center pt-6">
+            <div className="flex flex-col justify-center space-y-2 pt-2">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -272,6 +271,20 @@ export default function ProductModal({
                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                 <span className="ml-3 text-sm font-semibold text-slate-700">
                   {inStock ? "Disponible en Stock" : "Sin Stock (Agotado)"}
+                </span>
+              </label>
+
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hasPromoKit}
+                  onChange={(e) => setHasPromoKit(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+                <span className="ml-3 text-xs font-bold text-pink-700 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Activar Banner Promo 10 + 1 de Regalo
                 </span>
               </label>
             </div>
