@@ -16,17 +16,20 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   React.useEffect(() => {
-    try {
-      const stored = localStorage.getItem("kamaluso_custom_products");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setProductsList(parsed);
+    async function loadCloudProducts() {
+      try {
+        const res = await fetch("/api/products", { cache: "no-store" });
+        if (res.ok) {
+          const cloudData = await res.json();
+          if (Array.isArray(cloudData) && cloudData.length > 0) {
+            setProductsList(cloudData);
+          }
         }
+      } catch (e) {
+        console.error("Error al obtener productos desde la nube", e);
       }
-    } catch (e) {
-      console.error("Error al cargar productos de localStorage", e);
     }
+    loadCloudProducts();
   }, []);
 
   const filteredProducts = productsList.filter((product) => {

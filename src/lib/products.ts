@@ -211,12 +211,26 @@ export async function getAllProducts(): Promise<Product[]> {
         return data as Product[];
       }
     } catch (e) {
-      console.warn("Supabase fetch failed, fallbacking to local/initial data", e);
+      console.warn("Supabase fetch failed, fallbacking", e);
     }
   }
 
-  const local = getLocalStoredProducts();
-  return local || INITIAL_PRODUCTS;
+  // Si se ejecuta en el navegador o servidor, consultar la API de Nube de Vercel Blob
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+    const url = typeof window !== "undefined" ? "/api/products" : `${baseUrl}/api/products`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (res.ok) {
+      const cloudProducts = await res.json();
+      if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+        return cloudProducts;
+      }
+    }
+  } catch (e) {
+    console.warn("Error al obtener productos de la nube de Vercel", e);
+  }
+
+  return INITIAL_PRODUCTS;
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
@@ -233,10 +247,7 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 // Operaciones CRUD para el Panel de Administración
 
 export async function saveProduct(product: Partial<Product>): Promise<Product> {
-  const existingProducts = await getAllProducts();
-  
   const id = product.id || String(Date.now());
-  const now = new Date().toISOString();
   
   const fullProduct: Product = {
     id,
@@ -253,7 +264,7 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
   };
 
   if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from("products").upsert({
+    await supabase.from("products").upsert({
       id: fullProduct.id,
       name: fullProduct.name,
       slug: fullProduct.slug,
@@ -265,23 +276,20 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
       badge: fullProduct.badge,
       in_stock: fullProduct.inStock,
       images: fullProduct.images,
-      updated_at: now,
+      updated_at: new Date().toISOString(),
     });
-    if (error) {
-      console.error("Error al guardar en Supabase", error);
-    }
   }
 
-  // Guardar en localStorage para respaldo/modo desarrollo
-  const index = existingProducts.findIndex((p) => p.id === id);
-  let updatedList: Product[];
-  if (index >= 0) {
-    updatedList = [...existingProducts];
-    updatedList[index] = fullProduct;
-  } else {
-    updatedList = [fullProduct, ...existingProducts];
+  // Guardar en la Nube de Vercel Blob vía API Route
+  try {
+    await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fullProduct),
+    });
+  } catch (e) {
+    console.error("Error al guardar producto en Vercel Blob Cloud", e);
   }
-  saveLocalStoredProducts(updatedList);
 
   return fullProduct;
 }
@@ -291,8 +299,13 @@ export async function deleteProduct(id: string): Promise<boolean> {
     await supabase.from("products").delete().eq("id", id);
   }
 
-  const existingProducts = await getAllProducts();
-  const updatedList = existingProducts.filter((p) => p.id !== id);
-  saveLocalStoredProducts(updatedList);
+  try {
+    await fetch(`/api/products?id=${id}`, {
+      method: "DELETE",
+    });
+  } catch (e) {
+    console.error("Error al eliminar producto en Vercel Blob Cloud", e);
+  }
+
   return true;
 }
