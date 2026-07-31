@@ -24,7 +24,27 @@ export async function GET() {
       }
     }
   } catch (error) {
-    console.warn("Vercel Blob products GET error, fallbacking to initial", error);
+    console.warn("Vercel Blob token omitido en local. Obteniendo catálogo en vivo de Producción...");
+    try {
+      const prodRes = await fetch(`https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
+      if (!prodRes.ok) {
+        // Fallback a dominio alternativo si aplica
+        const altRes = await fetch(`https://kamaluso.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
+        if (altRes.ok) {
+          const altData = await altRes.json();
+          if (Array.isArray(altData) && altData.length > 0) {
+            return NextResponse.json(altData);
+          }
+        }
+      } else {
+        const prodData = await prodRes.json();
+        if (Array.isArray(prodData) && prodData.length > 0) {
+          return NextResponse.json(prodData);
+        }
+      }
+    } catch (fallbackErr) {
+      console.warn("Error al sincronizar productos desde producción:", fallbackErr);
+    }
   }
 
   return NextResponse.json(INITIAL_PRODUCTS, {
@@ -52,7 +72,15 @@ export async function POST(request: Request) {
             currentProducts = await res.json();
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        // En local intentar traer de producción para no pisar
+        try {
+          const prodRes = await fetch(`https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
+          if (prodRes.ok) {
+            currentProducts = await prodRes.json();
+          }
+        } catch (err) {}
+      }
 
       const idx = currentProducts.findIndex((p) => p.id === body.id);
       if (idx >= 0) {

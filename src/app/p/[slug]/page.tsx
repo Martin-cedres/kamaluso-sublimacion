@@ -120,7 +120,7 @@ export default async function ProductDetailPage({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-3">
       {/* Scripts JSON-LD */}
       <script
         type="application/ld+json"
@@ -132,12 +132,12 @@ export default async function ProductDetailPage({
       />
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-        <Link href="/" className="hover:text-brand-600">
+      <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 py-1">
+        <Link href="/" className="hover:text-brand-600 transition-colors">
           Inicio
         </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <Link href="/#productos" className="hover:text-brand-600 uppercase">
+        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+        <Link href="/#catalogo" className="hover:text-brand-600 uppercase transition-colors">
           {product.category.replace("-", " ")}
         </Link>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
@@ -147,13 +147,15 @@ export default async function ProductDetailPage({
       </nav>
 
       {/* Product Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start bg-white p-6 sm:p-10 rounded-3xl border border-slate-100 shadow-sm">
-        {/* Left: Image gallery */}
-        <ProductGallery
-          images={product.images}
-          productName={product.name}
-          badge={product.badge}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-start bg-white p-6 sm:p-10 rounded-3xl border border-slate-100 shadow-sm">
+        {/* Left: Image gallery (Sticky en desktop) */}
+        <div className="lg:sticky lg:top-24 self-start">
+          <ProductGallery
+            images={product.images}
+            productName={product.name}
+            badge={product.badge}
+          />
+        </div>
 
 
         {/* Right: Info and Purchase */}

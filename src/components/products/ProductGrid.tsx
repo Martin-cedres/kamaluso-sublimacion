@@ -1,19 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
 import { ProductCard } from "./ProductCard";
 import { CATEGORIES } from "@/lib/products";
-import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag } from "lucide-react";
+import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag, Search, X } from "lucide-react";
 
 interface ProductGridProps {
   initialProducts: Product[];
 }
 
 export function ProductGrid({ initialProducts }: ProductGridProps) {
+  const searchParams = useSearchParams();
+  const urlQuery = searchParams.get("q") || "";
   const [productsList, setProductsList] = useState<Product[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState("todos");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(urlQuery);
+
+  useEffect(() => {
+    setSearchTerm(urlQuery);
+  }, [urlQuery]);
 
   React.useEffect(() => {
     async function loadCloudProducts() {
@@ -53,40 +60,16 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
           </span>
 
           <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
-            Interiores para papelería <span className="text-brand-600">sublimable</span>
+            Interiores de papelería <span className="text-brand-600">sublimable</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal">
-            Interiores de agendas, libretas, blocks y cuadernos listos con tapas sublimables de 350gr y espirales para sublimar y personalizar en Uruguay.
+            Sets completos con hojas impresas, tapas sublimables de 350g y espirales. Listos para sublimar, personalizar y encuadernar en Uruguay.
           </p>
 
-          {/* Buscador de Productos - Inmediatamente después del Título y Subtítulo */}
-          <div className="pt-2 max-w-2xl mx-auto space-y-4">
-            <div className="relative shadow-md rounded-2xl">
-              <input
-                type="text"
-                placeholder="Buscar agendas, libretas, blocks, planners..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-5 py-4 pl-12 rounded-2xl border border-brand-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-base text-slate-800 placeholder-slate-400 font-medium transition-all"
-              />
-              <svg
-                className="w-6 h-6 absolute left-4 top-4 text-brand-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-
-            {/* Filtros de Categoría */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+          {/* Filtros de Categoría */}
+          <div className="pt-2 max-w-2xl mx-auto">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               {CATEGORIES.map((cat) => {
                 const isActive = selectedCategory === cat.slug;
                 return (
@@ -109,7 +92,29 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
       </section>
 
       {/* Grid de Productos */}
-      <section id="productos" className="py-8 px-4 max-w-7xl mx-auto">
+      <section id="catalogo" className="py-8 px-4 max-w-7xl mx-auto space-y-6">
+        {searchTerm && (
+          <div className="flex items-center justify-between bg-brand-50/90 border border-brand-200/80 p-3.5 px-5 rounded-2xl max-w-3xl mx-auto shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-brand-900">
+              <Search className="w-4 h-4 text-brand-600 flex-shrink-0" />
+              <span>
+                Mostrando resultados para <span className="underline font-black text-brand-700">"{searchTerm}"</span> ({filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"})
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setSearchTerm("");
+                const params = new URLSearchParams(window.location.search);
+                params.delete("q");
+                window.history.replaceState(null, "", "/");
+              }}
+              className="text-xs font-bold text-brand-700 hover:text-brand-900 bg-white px-3 py-1 rounded-xl border border-brand-200 hover:bg-brand-100 transition-all flex items-center gap-1 shadow-xs"
+            >
+              <span>Limpiar</span>
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
         {filteredProducts.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
             <p className="text-slate-500 font-medium">

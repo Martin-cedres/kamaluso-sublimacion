@@ -131,7 +131,7 @@ export function ProductGallery({
           />
         </div>
 
-        {/* Flechas de Navegación Lateral (Desktop & Tablet) */}
+        {/* Flechas de Navegación Lateral (Solo Desktop en Hover, Ocultas en Móvil) */}
         {safeImages.length > 1 && (
           <>
             <button
@@ -139,7 +139,7 @@ export function ProductGallery({
                 e.stopPropagation();
                 handlePrev();
               }}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-800 hover:text-brand-600 shadow-lg backdrop-blur-sm transition-all sm:opacity-0 group-hover:opacity-100 active:scale-95 border border-slate-100"
+              className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-800 hover:text-brand-600 shadow-lg backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 active:scale-95 border border-slate-100 items-center justify-center"
               title="Foto anterior"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -149,7 +149,7 @@ export function ProductGallery({
                 e.stopPropagation();
                 handleNext();
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-800 hover:text-brand-600 shadow-lg backdrop-blur-sm transition-all sm:opacity-0 group-hover:opacity-100 active:scale-95 border border-slate-100"
+              className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-800 hover:text-brand-600 shadow-lg backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 active:scale-95 border border-slate-100 items-center justify-center"
               title="Siguiente foto"
             >
               <ChevronRight className="w-5 h-5" />

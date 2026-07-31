@@ -12,7 +12,7 @@ export function AddToCartDetail({ product }: { product: Product }) {
   const { addToCart } = useCart();
 
   const handleAdd = () => {
-    addToCart(product, quantity);
+    addToCart(product, quantity, true);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -74,7 +74,7 @@ export function AddToCartDetail({ product }: { product: Product }) {
           <>
             <ShoppingBag className="w-5 h-5" />
             <span>
-              Agregar al Pedido B2B (${(product.price * quantity).toLocaleString("es-UY")} UYU)
+              Agregar al Carrito • ${(product.price * quantity).toLocaleString("es-UY")} UYU
             </span>
           </>
         )}
