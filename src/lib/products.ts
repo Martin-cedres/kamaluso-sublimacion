@@ -12,7 +12,7 @@ export const CATEGORIES: Category[] = [
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "200001488",
-    name: "Agenda Semanal 2026/27",
+    name: "Agenda Semanal 2027",
     slug: "agenda-sublimable-semanal",
     description:
       "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos.",
@@ -30,7 +30,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: "200000800",
-    name: "Agenda 2 días a la vista 2026/27",
+    name: "Agenda 2 días a la vista 2027",
     slug: "agenda-2-dias-a-la-vista",
     description:
       "Agenda 2 días por hoja sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación dos días por página, Agenda telefónica, Hojas para notas. 280 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
@@ -38,15 +38,16 @@ export const INITIAL_PRODUCTS: Product[] = [
     comparativePrice: 260,
     currency: "UYU",
     category: "agendas",
+    badge: "NUEVO 2027",
     inStock: true,
     images: [
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000282-391a4391a7/700/Agenda%20sublimable%20dos%20dias%20por%20hoja%202022%20%20kamaluso%201.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000283-bc117bc11a/700/agenda%20sublimable%202022%20tapa.webp?ph=904ccf23c3",
     ],
   },
   {
     id: "200000801",
-    name: "Agenda 1 día a la vista 2026/27",
+    name: "Agenda 1 día a la vista 2027",
     slug: "agenda-1-dia-a-la-vista",
     description:
       "Agenda 1 día por página sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación un día por página, Agenda telefónica, Hojas para notas. 420 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
@@ -54,15 +55,16 @@ export const INITIAL_PRODUCTS: Product[] = [
     comparativePrice: 350,
     currency: "UYU",
     category: "agendas",
+    badge: "NUEVO 2027",
     inStock: true,
     images: [
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000284-b73e8b73eb/700/agenda%20sublimable%202022%201%20dia%20por%20p%C3%A1gina%20kamaluso.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000285-1d8571d85b/700/agenda%20sublimable%202022%20tapa%201%20dia%20por%20p%C3%A1gina.webp?ph=904ccf23c3",
     ],
   },
   {
     id: "200000949",
-    name: "KIT 10 + 1 de Regalo",
+    name: "KIT 10 agendas semanales + 1 de Regalo",
     slug: "kit-10-1-de-regalo",
     description:
       "El KIT incluye 10 agendas semanales en cualquiera de sus presentaciones a elección (común, vertical, floral, surtidas) + 1 de regalo. Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
@@ -73,9 +75,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     badge: "PROMO MAYORISTA",
     inStock: true,
     images: [
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000451-7c2877c288/700/kit-7.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000243-e7ef8e7efb/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM%20%281%29.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000244-b58b3b58b6/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM.webp?ph=904ccf23c3",
     ],
   },
   {
