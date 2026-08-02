@@ -15,9 +15,20 @@ export const INITIAL_PRODUCTS: Product[] = [];
 
 const LOCAL_PRODUCTS_KEY = "kamaluso_custom_products";
 const DELETED_PRODUCTS_KEY = "kamaluso_deleted_product_ids";
+const CATALOG_VERSION_KEY = "kamaluso_catalog_version";
 
 function getLocalStoredProducts(): Product[] | null {
   if (typeof window === "undefined") return null;
+
+  // Limpiar memoria local del navegador si la versión del catálogo cambió a borrón cero (Versión 3+)
+  const savedVersion = localStorage.getItem(CATALOG_VERSION_KEY);
+  if (!savedVersion || Number(savedVersion) < CURRENT_CATALOG_VERSION) {
+    localStorage.removeItem(LOCAL_PRODUCTS_KEY);
+    localStorage.removeItem(DELETED_PRODUCTS_KEY);
+    localStorage.setItem(CATALOG_VERSION_KEY, String(CURRENT_CATALOG_VERSION));
+    return null;
+  }
+
   const stored = localStorage.getItem(LOCAL_PRODUCTS_KEY);
   if (!stored) return null;
   try {
@@ -99,36 +110,22 @@ export async function getAllProducts(): Promise<Product[]> {
 
   // Si se ejecuta en el navegador o servidor, consultar la API de Nube de Vercel Blob
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-    const url = typeof window !== "undefined" ? `/api/products?t=${Date.now()}` : (baseUrl ? `${baseUrl}/api/products?t=${Date.now()}` : `https://kamaluso-three.vercel.app/api/products?t=${Date.now()}`);
+    const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL || "";
+    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+    const baseUrl = host ? `${protocol}://${host.replace(/^https?:\/\//, "")}` : "";
+    const url = typeof window !== "undefined"
+      ? `/api/products?t=${Date.now()}`
+      : (baseUrl ? `${baseUrl}/api/products?t=${Date.now()}` : "http://localhost:3000/api/products");
+
     const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
     if (res.ok) {
       const cloudProducts = await res.json();
-      if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+      if (Array.isArray(cloudProducts)) {
         return mergeWithLocal(cloudProducts, localStored);
       }
     }
   } catch (e) {
     console.warn("Error al obtener productos de la nube de Vercel", e);
-  }
-
-  // Fallback secundario directo a URLs de producción si estamos en localhost
-  const liveUrls = [
-    `https://kamaluso-three.vercel.app/api/products?t=${Date.now()}`,
-    `https://www.kamaluso.com/api/products?t=${Date.now()}`,
-    `https://kamaluso.com/api/products?t=${Date.now()}`,
-    `https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`,
-  ];
-  for (const liveUrl of liveUrls) {
-    try {
-      const liveRes = await fetch(liveUrl, { cache: "no-store" });
-      if (liveRes.ok) {
-        const liveData = await liveRes.json();
-        if (Array.isArray(liveData) && liveData.length > 0) {
-          return mergeWithLocal(liveData, localStored);
-        }
-      }
-    } catch (err) {}
   }
 
   return mergeWithLocal(INITIAL_PRODUCTS, localStored);
@@ -183,7 +180,7 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
     badge: product.badge,
     hasPromoKit: product.hasPromoKit !== undefined ? product.hasPromoKit : false,
     inStock: product.inStock !== undefined ? product.inStock : true,
-    images: product.images && product.images.length > 0 ? product.images : ["/agenda_fondo_kamaluso.jpg"],
+    images: product.images && product.images.length > 0 ? product.images : [],
   };
 
   // Revertir eliminación si existía previamente

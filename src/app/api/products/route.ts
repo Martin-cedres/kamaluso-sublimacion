@@ -13,8 +13,16 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const shouldReset = searchParams.get("reset") === "true";
+    const { blobs } = await list({ prefix: "data/products.json" });
 
     if (shouldReset) {
+      if (blobs.length > 0) {
+        for (const b of blobs) {
+          try {
+            await del(b.url);
+          } catch (delErr) {}
+        }
+      }
       try {
         await put(BLOB_PRODUCTS_FILENAME, JSON.stringify([], null, 2), {
           access: "public",
@@ -29,9 +37,10 @@ export async function GET(request: Request) {
       });
     }
 
-    const { blobs } = await list({ prefix: "data/products.json" });
     if (blobs.length > 0) {
-      const res = await fetch(blobs[0].url, { cache: "no-store" });
+      // Tomar siempre el blob MÁS RECIENTE (el último del arreglo)
+      const latestBlob = blobs[blobs.length - 1];
+      const res = await fetch(latestBlob.url, { cache: "no-store" });
       if (res.ok) {
         const products = await res.json();
         if (Array.isArray(products)) {
@@ -66,19 +75,13 @@ export async function POST(request: Request) {
       try {
         const { blobs } = await list({ prefix: "data/products.json" });
         if (blobs.length > 0) {
-          const res = await fetch(blobs[0].url, { cache: "no-store" });
+          const latestBlob = blobs[blobs.length - 1];
+          const res = await fetch(latestBlob.url, { cache: "no-store" });
           if (res.ok) {
             currentProducts = await res.json();
           }
         }
-      } catch (e) {
-        try {
-          const prodRes = await fetch(`https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
-          if (prodRes.ok) {
-            currentProducts = await prodRes.json();
-          }
-        } catch (err) {}
-      }
+      } catch (e) {}
 
       const idx = currentProducts.findIndex((p) => p.id === body.id);
       if (idx >= 0) {
@@ -131,7 +134,8 @@ export async function DELETE(request: Request) {
     try {
       const { blobs } = await list({ prefix: "data/products.json" });
       if (blobs.length > 0) {
-        const res = await fetch(blobs[0].url, { cache: "no-store" });
+        const latestBlob = blobs[blobs.length - 1];
+        const res = await fetch(latestBlob.url, { cache: "no-store" });
         if (res.ok) {
           currentProducts = await res.json();
         }
