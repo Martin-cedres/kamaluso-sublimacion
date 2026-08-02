@@ -87,15 +87,23 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <a
-                href="https://www.papeleriapersonalizada.uy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white text-slate-300 transition-colors flex items-center gap-1 text-[11px] pt-1"
-              >
-                <span>www.papeleriapersonalizada.uy</span>
-                <ExternalLink className="w-3 h-3 text-slate-500" />
-              </a>
+              <div className="pt-3 border-t border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-500 block uppercase font-bold tracking-wider">
+                  ¿Buscas regalos ya personalizados?
+                </span>
+                <a
+                  href="https://www.papeleriapersonalizada.uy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-400 hover:text-pink-300 font-bold transition-colors flex items-center gap-1 text-xs"
+                >
+                  <span>www.papeleriapersonalizada.uy</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-pink-400" />
+                </a>
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  Tienda minorista de productos terminados para consumidor final.
+                </p>
+              </div>
             </li>
           </ul>
         </div>
@@ -127,7 +135,7 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <p>© {new Date().getFullYear()} Kamaluso Sublimación (papeleriapersonalizada.uy). San José de Mayo, Uruguay.</p>
+        <p>© {new Date().getFullYear()} Kamaluso Sublimación (www.kamaluso.com). San José de Mayo, Uruguay.</p>
         <p className="flex items-center gap-1">
           Hecho con <Heart className="w-3.5 h-3.5 text-brand-500 fill-brand-500" /> para sublimadores de Uruguay.
         </p>

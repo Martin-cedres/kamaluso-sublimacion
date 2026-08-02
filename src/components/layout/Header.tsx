@@ -201,7 +201,32 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+    <>
+      {/* Top Announcement Bar - Aclaración B2B e Insumos + Publicidad B2C */}
+      <div className="bg-slate-900 text-white text-[11px] py-1.5 px-4 font-semibold border-b border-slate-800">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
+          <div className="flex items-center gap-2 justify-center sm:justify-start">
+            <span className="bg-pink-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+              B2B Sublimación
+            </span>
+            <span className="text-slate-300">
+              Venta de insumos e interiores sublimables para revendedores en Uruguay.
+            </span>
+          </div>
+          <a
+            href="https://www.papeleriapersonalizada.uy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-pink-300 hover:text-white transition-colors flex items-center gap-1 font-bold text-[11px] justify-center sm:justify-end"
+            title="Ir a nuestra tienda minorista de regalos ya personalizados"
+          >
+            <span>🎁 ¿Buscas productos ya personalizados? Visita www.papeleriapersonalizada.uy</span>
+            <ExternalLink className="w-3 h-3 text-pink-400" />
+          </a>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 sm:py-0 sm:h-20 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
         <div className="w-full sm:w-auto flex items-center justify-between gap-4">
           {/* Logo Brand con Icono Oficial */}
@@ -314,5 +339,6 @@ export function Header() {
         </div>
       )}
     </header>
+  </>
   );
 }

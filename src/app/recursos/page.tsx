@@ -31,22 +31,21 @@ export default async function RecursosPage() {
       {/* Grid Dinámico de Descargables */}
       <RecursosListClient initialRecursos={initialRecursos} />
 
-      {/* Nota sobre papeleriapersonalizada.uy */}
-      <div className="p-6 bg-gradient-to-r from-brand-50 via-white to-purple-50 rounded-3xl border border-brand-100 text-center space-y-3">
+      {/* Nota sobre papeleriapersonalizada.uy (Rama Minorista B2C) */}
+      <div className="p-6 bg-gradient-to-r from-pink-50 via-white to-purple-50 rounded-3xl border border-pink-100 text-center space-y-3 shadow-sm">
         <h4 className="font-extrabold text-slate-900 text-base">
-          ¿Buscas artículos personalizados para consumidor final?
+          ¿Buscas agendas o regalos ya armados y personalizados?
         </h4>
-        <p className="text-xs text-slate-600 max-w-xl mx-auto">
-          Visita nuestro portal hermano{" "}
+        <p className="text-xs text-slate-600 max-w-xl mx-auto leading-relaxed">
+          En <strong>www.kamaluso.com</strong> nos especializamos en la venta de insumos y materiales sublimables para que vos los personalices. Si buscas comprar un regalo o agenda ya terminada para uso personal o empresarial, visita nuestra web minorista:{" "}
           <a
             href="https://www.papeleriapersonalizada.uy"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold text-brand-600 hover:underline"
+            className="font-bold text-pink-600 hover:underline inline-flex items-center gap-1"
           >
-            www.papeleriapersonalizada.uy
-          </a>{" "}
-          para asesoramiento en agendas y regalos terminados en San José de Mayo.
+            www.papeleriapersonalizada.uy →
+          </a>
         </p>
       </div>
     </div>
