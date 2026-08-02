@@ -1,6 +1,8 @@
 import { Product, Category } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
+export const CURRENT_CATALOG_VERSION = 3;
+
 export const CATEGORIES: Category[] = [
   { id: "todos", name: "Todos los sublimables", slug: "todos" },
   { id: "agendas", name: "Agendas Sublimables", slug: "agendas" },
@@ -21,6 +23,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     currency: "UYU",
     category: "agendas",
     badge: "NUEVO 2027",
+    catalogVersion: CURRENT_CATALOG_VERSION,
     hasPromoKit: true,
     inStock: true,
     images: [

@@ -1,7 +1,7 @@
 import { put, list, del } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { INITIAL_PRODUCTS } from "@/lib/products";
+import { INITIAL_PRODUCTS, CURRENT_CATALOG_VERSION } from "@/lib/products";
 import { Product } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,30 @@ export async function GET() {
       if (res.ok) {
         const products = await res.json();
         if (Array.isArray(products) && products.length > 0) {
+          // Verificar si el JSON remoto en Vercel Blob está desactualizado (sin versión o v < v3)
+          const isOutdated = products.some(
+            (p: any) => !p.catalogVersion || p.catalogVersion < CURRENT_CATALOG_VERSION
+          );
+
+          if (isOutdated) {
+            console.log("Catálogo en Vercel Blob desactualizado. Sincronizando fuente de verdad v3...");
+            try {
+              await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(INITIAL_PRODUCTS, null, 2), {
+                access: "public",
+                addRandomSuffix: false,
+                contentType: "application/json",
+              });
+            } catch (blobErr) {
+              console.error("Error al actualizar Vercel Blob:", blobErr);
+            }
+
+            return NextResponse.json(INITIAL_PRODUCTS, {
+              headers: {
+                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+              },
+            });
+          }
+
           return NextResponse.json(products, {
             headers: {
               "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",

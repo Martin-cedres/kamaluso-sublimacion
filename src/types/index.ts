@@ -10,6 +10,7 @@ export interface Product {
   images: string[];
   inStock: boolean;
   badge?: string;
+  catalogVersion?: number;
   hasPromoKit?: boolean;
   variants?: {
     name: string;
