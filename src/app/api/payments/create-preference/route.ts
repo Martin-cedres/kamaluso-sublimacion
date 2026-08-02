@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       items: preferenceItems,
       payer: {
         name: customer?.name || "Cliente Kamaluso",
-        email: customer?.email || "cliente@kamaluso.com",
+        email: (customer?.email && customer.email.trim()) ? customer.email.trim() : "cliente@kamaluso.com",
         phone: {
           number: customer?.phone || "",
         },

@@ -53,6 +53,7 @@ export function CartDrawer() {
   } = useCart();
 
   const [step, setStep] = useState<1 | 2>(1);
+  const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
 
   // Datos del Cliente
   const [customerName, setCustomerName] = useState("");
@@ -76,28 +77,40 @@ export function CartDrawer() {
   const mpSurcharge = isMp ? parseFloat((totalPrice * 0.1).toFixed(2)) : 0;
   const finalTotal = totalPrice + mpSurcharge;
 
+  const scrollToValidationError = () => {
+    setTimeout(() => {
+      const drawerBody = document.getElementById("cart-drawer-body");
+      if (drawerBody) drawerBody.scrollTop = 0;
+    }, 50);
+  };
+
   // Validar datos antes de procesar el pedido
   const validateCustomerData = () => {
     if (!customerName.trim()) {
       setValidationError("Por favor ingresa tu Nombre Completo o Empresa.");
+      scrollToValidationError();
       return false;
     }
     if (!customerPhone.trim()) {
       setValidationError("Por favor ingresa tu Teléfono o WhatsApp de contacto.");
+      scrollToValidationError();
       return false;
     }
     if (customerEmail.trim()) {
       if (!customerEmail.includes("@") || !customerEmail.includes(".")) {
         setValidationError("Por favor ingresa un Correo Electrónico válido o déjalo en blanco.");
+        scrollToValidationError();
         return false;
       }
     }
     if (!customerCity.trim()) {
       setValidationError("Por favor ingresa tu Ciudad / Localidad.");
+      scrollToValidationError();
       return false;
     }
     if (!customerAddress.trim() && shippingMethod !== "pickup") {
       setValidationError("Por favor ingresa tu Dirección o Agencia de envío.");
+      scrollToValidationError();
       return false;
     }
     setValidationError("");
@@ -113,9 +126,10 @@ export function CartDrawer() {
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
     const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
 
-    // 0. Registrar venta en el sistema (Historial de Pedidos Admin)
+    // 0. Registrar/actualizar venta en el sistema evitando duplicados en reintentos
     try {
-      await saveOrder({
+      const saved = await saveOrder({
+        id: activeOrderId || undefined,
         customer: {
           name: customerName.trim(),
           phone: customerPhone.trim(),
@@ -132,6 +146,7 @@ export function CartDrawer() {
         shippingMethodName: selectedShip || shippingMethod,
         status: "pendiente",
       });
+      if (saved && saved.id) setActiveOrderId(saved.id);
     } catch (orderErr) {
       console.error("Error al guardar pedido en historial:", orderErr);
     }
@@ -184,8 +199,9 @@ export function CartDrawer() {
     message += `\n💰 *SUBTOTAL PRODUCTOS:* $${totalPrice.toLocaleString("es-UY")} UYU\n`;
 
     if (isMp) {
-      message += `💳 *RECARGO MERCADO PAGO (10%):* $${mpSurcharge.toLocaleString("es-UY")} UYU\n`;
-      message += `💵 *TOTAL FINAL:* $${finalTotal.toLocaleString("es-UY")} UYU\n`;
+      message += `💳 *RECARGO MERCADO PAGO TARJETA (10%):* $${mpSurcharge.toLocaleString("es-UY")} UYU\n`;
+      message += `💵 *TOTAL CON TARJETA:* $${finalTotal.toLocaleString("es-UY")} UYU\n`;
+      message += `💡 _(Nota: Si abonas por Transferencia BROU / Prex / Abitab, el total a pagar es $${totalPrice.toLocaleString("es-UY")} UYU sin el 10% de recargo)._\n`;
     } else {
       message += `💵 *TOTAL A PAGAR:* $${finalTotal.toLocaleString("es-UY")} UYU\n`;
     }
@@ -200,6 +216,7 @@ export function CartDrawer() {
 
     setIsSendingOrder(false);
     clearCart();
+    setActiveOrderId(null);
     setIsCartOpen(false);
     setStep(1);
   };
@@ -214,9 +231,10 @@ export function CartDrawer() {
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
     const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
 
-    // Registrar pedido en el historial de ventas
+    // Registrar pedido en el historial de ventas evitando duplicados
     try {
-      await saveOrder({
+      const saved = await saveOrder({
+        id: activeOrderId || undefined,
         customer: {
           name: customerName.trim(),
           phone: customerPhone.trim(),
@@ -233,6 +251,7 @@ export function CartDrawer() {
         shippingMethodName: selectedShip || shippingMethod,
         status: "pendiente",
       });
+      if (saved && saved.id) setActiveOrderId(saved.id);
     } catch (orderErr) {
       console.error("Error al registrar pedido en Mercado Pago:", orderErr);
     }
@@ -287,6 +306,7 @@ export function CartDrawer() {
 
       if (data.init_point) {
         clearCart();
+        setActiveOrderId(null);
         window.location.href = data.init_point;
       }
     } catch (err: any) {
@@ -362,8 +382,8 @@ export function CartDrawer() {
             </div>
           )}
 
-          {/* Body Content */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {/* Body Content con ID para scroll de validaciones */}
+          <div id="cart-drawer-body" className="flex-1 overflow-y-auto p-5 space-y-4">
             {cart.length === 0 ? (
               <div className="text-center py-16 space-y-4">
                 <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto animate-bounce" />
@@ -405,7 +425,7 @@ export function CartDrawer() {
                     >
                       <div className="relative w-16 h-16 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
                         <Image
-                          src={item.product.images[0]}
+                          src={item.product.images && item.product.images.length > 0 && item.product.images[0] ? item.product.images[0] : "/agenda_fondo_kamaluso.jpg"}
                           alt={item.product.name}
                           fill
                           className="object-contain p-1"

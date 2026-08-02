@@ -47,7 +47,7 @@ export async function generateMetadata({
       type: "article",
       images: [
         {
-          url: product.images[0],
+          url: (product.images && product.images.length > 0 && product.images[0]) || "/agenda_fondo_kamaluso.jpg",
           alt: product.name,
         },
       ],

@@ -152,9 +152,12 @@ export default function AdminDashboardPage() {
 
   // Filtrado de productos
   const filteredProducts = products.filter((p) => {
+    if (!p || !p.name) return false;
+    const nameStr = p.name || "";
+    const descStr = p.description || "";
     const matchesSearch =
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase());
+      nameStr.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      descStr.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory =
       selectedCategory === "todos" || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -162,22 +165,26 @@ export default function AdminDashboardPage() {
 
   // Filtrado de recursos
   const filteredResources = resources.filter((r) => {
+    if (!r || !r.title) return false;
+    const titleStr = r.title || "";
+    const descStr = r.description || "";
     return (
-      r.title.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
-      r.description.toLowerCase().includes(resourceSearchQuery.toLowerCase())
+      titleStr.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+      descStr.toLowerCase().includes(resourceSearchQuery.toLowerCase())
     );
   });
 
   // Filtrado de pedidos
   const filteredOrders = orders.filter((o) => {
+    if (!o || !o.customer) return false;
     const matchesStatus = orderStatusFilter === "todos" || o.status === orderStatusFilter;
     const q = orderSearchQuery.toLowerCase();
     const matchesQuery =
-      o.id.toLowerCase().includes(q) ||
-      o.customer.name.toLowerCase().includes(q) ||
-      o.customer.phone.toLowerCase().includes(q) ||
+      (o.id && o.id.toLowerCase().includes(q)) ||
+      (o.customer.name && o.customer.name.toLowerCase().includes(q)) ||
+      (o.customer.phone && o.customer.phone.toLowerCase().includes(q)) ||
       (o.customer.email && o.customer.email.toLowerCase().includes(q)) ||
-      o.customer.city.toLowerCase().includes(q);
+      (o.customer.city && o.customer.city.toLowerCase().includes(q));
     return matchesStatus && matchesQuery;
   });
 

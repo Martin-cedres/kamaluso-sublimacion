@@ -194,7 +194,9 @@ function getLocalStoredProducts(): Product[] | null {
   const stored = localStorage.getItem(LOCAL_PRODUCTS_KEY);
   if (!stored) return null;
   try {
-    return JSON.parse(stored) as Product[];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.filter((p): p is Product => Boolean(p && typeof p === "object" && p.id && p.name));
   } catch (e) {
     return null;
   }
@@ -235,15 +237,17 @@ function mergeWithLocal(remoteProducts: Product[], localProducts: Product[] | nu
   const deletedIds = getDeletedProductIds();
   const productMap = new Map<string, Product>();
 
-  remoteProducts.forEach((p) => {
-    if (!deletedIds.includes(p.id)) {
-      productMap.set(p.id, p);
-    }
-  });
+  if (Array.isArray(remoteProducts)) {
+    remoteProducts.forEach((p) => {
+      if (p && p.id && !deletedIds.includes(p.id)) {
+        productMap.set(p.id, p);
+      }
+    });
+  }
 
   if (localProducts && localProducts.length > 0) {
     localProducts.forEach((lp) => {
-      if (!deletedIds.includes(lp.id)) {
+      if (lp && lp.id && !deletedIds.includes(lp.id)) {
         productMap.set(lp.id, lp);
       }
     });
@@ -314,18 +318,31 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
   return products.filter((p) => p.category === categorySlug);
 }
 
+export async function generateUniqueSlug(baseSlug: string, currentId?: string): Promise<string> {
+  const products = await getAllProducts();
+  let slug = baseSlug;
+  let counter = 1;
+  while (products.some((p) => p.slug === slug && p.id !== currentId)) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  return slug;
+}
+
 // Operaciones CRUD para el Panel de Administración
 
 export async function saveProduct(product: Partial<Product>): Promise<Product> {
   const id = product.id || String(Date.now());
+  const initialSlug = product.slug || id;
+  const uniqueSlug = await generateUniqueSlug(initialSlug, id);
   
   const fullProduct: Product = {
     id,
     name: product.name || "Nuevo Producto",
-    slug: product.slug || id,
+    slug: uniqueSlug,
     description: product.description || "",
-    price: product.price || 0,
-    comparativePrice: product.comparativePrice,
+    price: product.price !== undefined && product.price !== null ? Number(product.price) : 0,
+    comparativePrice: product.comparativePrice ? Number(product.comparativePrice) : undefined,
     currency: "UYU",
     category: product.category || "agendas",
     badge: product.badge,

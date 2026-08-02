@@ -153,7 +153,7 @@ function HeaderSearchInput() {
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative w-10 h-10 bg-slate-50 rounded-lg overflow-hidden border border-slate-100 flex-shrink-0">
                         <Image
-                          src={prod.images[0]}
+                          src={prod.images && prod.images.length > 0 && prod.images[0] ? prod.images[0] : "/agenda_fondo_kamaluso.jpg"}
                           alt={prod.name}
                           fill
                           className="object-contain p-0.5"

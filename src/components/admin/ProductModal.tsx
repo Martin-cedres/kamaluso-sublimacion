@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Product } from "@/types";
 import { CATEGORIES, saveProduct } from "@/lib/products";
 import ImageUploader from "@/components/admin/ImageUploader";
-import { X, Save, Sparkles, Loader2 } from "lucide-react";
+import { X, Save, Sparkles, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -30,8 +30,12 @@ export default function ProductModal({
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
     if (productToEdit) {
       setName(productToEdit.name);
       setSlug(productToEdit.slug);
@@ -67,7 +71,6 @@ export default function ProductModal({
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
-  // Autogenerar slug y SEO completo según el nombre y la categoría del producto
   const handleNameChange = (val: string) => {
     setName(val);
     if (!productToEdit || !slug) {
@@ -75,44 +78,55 @@ export default function ProductModal({
     }
   };
 
+  // Autogenerar SEO "invisible": Solo detecta Categoría, ajusta Slug y sugiere Badge. NO TOCA el Título ni la Descripción.
   const handleAutoGenerateSEO = () => {
-    if (!name) return;
+    if (!name) {
+      setErrorMessage("Escribe primero el nombre del producto para generar el SEO.");
+      return;
+    }
 
-    // Detectar categoría automática coincidiendo con CATEGORIES de products.ts
+    setErrorMessage(null);
     const lowerName = name.toLowerCase();
+
+    // 1. Detectar categoría sin cambiar el título ni la descripción
     let detectedCat = category;
     if (lowerName.includes("agenda")) detectedCat = "agendas";
     else if (lowerName.includes("cuaderno") || lowerName.includes("cuadernola") || lowerName.includes("libreta")) detectedCat = "libretas";
     else if (lowerName.includes("block") || lowerName.includes("anotador") || lowerName.includes("planner")) detectedCat = "blocks-planners";
     else if (lowerName.includes("kit") || lowerName.includes("pack") || lowerName.includes("combo") || lowerName.includes("promo")) detectedCat = "kits-promos";
-    
+
     setCategory(detectedCat);
 
-    // Generar Slug SEO
+    // 2. Generar Slug amigable para motores de búsqueda (SEO invisible)
     const generatedSlug = createCleanSlug(name);
     setSlug(generatedSlug);
 
-    // Generar Badge sugerido
+    // 3. Generar Badge / Etiqueta sugerida
     if (!badge) {
       if (lowerName.includes("2027")) setBadge("TEMPORADA 2027");
       else if (lowerName.includes("kit") || lowerName.includes("combo")) setBadge("PROMO MAYORISTA");
       else setBadge("INSUMO TOP B2B");
     }
 
-    // Generar descripción optimizada para SEO B2B Sublimación Uruguay
-    setDescription(
-      `Insumo para sublimación y armado de papelería en Uruguay: ${name}. ` +
-      `Incluye interiores de alta calidad impresos, tapas sublimables listas para estampación y accesorios para encuadernación. ` +
-      `Parámetros recomendados de sublimado: 170ºC a 180ºC durante 120 segundos en prensa plana con presión media/alta. ` +
-      `Ideal para sublimadores, imprentas y emprendedores. Envíos rápidos a todo Uruguay desde San José de Mayo.`
-    );
+    setSuccessMessage("✨ Categoría, Slug URL y Badge configurados para SEO. Tu título y descripción quedaron intactos.");
+    setTimeout(() => setSuccessMessage(null), 4000);
   };
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || price === "") return;
+    setErrorMessage(null);
+
+    if (!name.trim()) {
+      setErrorMessage("Por favor ingresa un nombre para el producto.");
+      return;
+    }
+
+    if (price === "" || isNaN(Number(price))) {
+      setErrorMessage("Por favor ingresa un precio válido (número mayor o igual a 0).");
+      return;
+    }
 
     setIsSaving(true);
     const finalSlug = createCleanSlug(slug || name);
@@ -125,16 +139,18 @@ export default function ProductModal({
         category,
         price: Number(price),
         comparativePrice: comparativePrice ? Number(comparativePrice) : undefined,
-        badge: badge || undefined,
+        badge: badge.trim() || undefined,
         inStock,
         hasPromoKit,
-        description,
+        description: description.trim(),
         images: images.length > 0 ? images : ["/agenda_fondo_kamaluso.jpg"],
       });
+
       onSaved();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error guardando producto", err);
+      setErrorMessage("Ocurrió un error al guardar el producto. Inténtalo de nuevo.");
     } finally {
       setIsSaving(false);
     }
@@ -157,6 +173,21 @@ export default function ProductModal({
           </button>
         </div>
 
+        {/* Mensajes de Alerta/Error */}
+        {errorMessage && (
+          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mx-6 mt-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-semibold flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <span>{successMessage}</span>
+          </div>
+        )}
+
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1 text-slate-800">
           <ImageUploader images={images} onChange={setImages} />
@@ -172,9 +203,9 @@ export default function ProductModal({
                     type="button"
                     onClick={handleAutoGenerateSEO}
                     className="text-[10px] text-pink-600 font-bold hover:underline flex items-center gap-0.5"
-                    title="Autogenerar categoría, slug y descripción SEO automáticamente"
+                    title="Configurar Categoría, Slug y Badge SEO sin modificar tu título ni descripción"
                   >
-                    <Sparkles className="w-3 h-3 text-pink-500" /> Autogenerar SEO
+                    <Sparkles className="w-3 h-3 text-pink-500" /> Autogenerar SEO (Invisible)
                   </button>
                 )}
               </div>
@@ -316,7 +347,7 @@ export default function ProductModal({
             <button
               type="submit"
               disabled={isSaving}
-              className="px-5 py-2 text-sm font-semibold text-white bg-pink-600 hover:bg-pink-700 rounded-lg shadow flex items-center gap-2 transition disabled:opacity-50"
+              className="px-5 py-2 text-sm font-semibold text-white bg-pink-600 hover:bg-pink-700 rounded-lg shadow flex items-center gap-2 transition disabled:opacity-50 cursor-pointer"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Guardar Producto
@@ -327,3 +358,4 @@ export default function ProductModal({
     </div>
   );
 }
+

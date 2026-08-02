@@ -56,7 +56,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="relative w-full h-full">
           <Image
-            src={product.images[0]}
+            src={product.images && product.images.length > 0 && product.images[0] ? product.images[0] : "/agenda_fondo_kamaluso.jpg"}
             alt={product.name}
             fill
             className="object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-500"

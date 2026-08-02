@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Upload, X, Check, Image as ImageIcon, Loader2, Star } from "lucide-react";
+import { Upload, X, Check, Loader2, Star, GripVertical } from "lucide-react";
 import { convertToWebP, fileToDataUrl } from "@/lib/image-optimizer";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
@@ -15,6 +15,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
   const [isProcessing, setIsProcessing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
 
   const setAsMainImage = (index: number) => {
     if (index === 0) return;
@@ -37,12 +38,9 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
       if (!file.type.startsWith("image/")) continue;
 
       try {
-        // 1. Optimizar y convertir a WebP en el navegador
         const webpFile = await convertToWebP(file, 1200, 1200, 0.85);
-
         let finalUrl = "";
 
-        // 2. Intentar subir a Vercel Blob Storage (100% gratuito e integrado en Vercel)
         try {
           const res = await fetch(`/api/upload?filename=${encodeURIComponent(webpFile.name)}`, {
             method: "POST",
@@ -58,7 +56,6 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
           console.warn("Vercel Blob upload fallback to Supabase / DataURL", e);
         }
 
-        // 3. Si Supabase está configurado y Vercel Blob no respondió, subir al bucket de Supabase
         if (!finalUrl && isSupabaseConfigured && supabase) {
           const filePath = `products/${Date.now()}-${webpFile.name}`;
           const { error: uploadError } = await supabase.storage
@@ -74,7 +71,6 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
           }
         }
 
-        // 4. Fallback a Data URL optimizado si no hay almacenamiento configurado
         if (!finalUrl) {
           finalUrl = await fileToDataUrl(webpFile);
         }
@@ -91,12 +87,35 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
     setTimeout(() => setStatusMessage(null), 3000);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDropFiles = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files);
     }
+  };
+
+  const handleDragStartItem = (e: React.DragEvent, idx: number) => {
+    setDraggedIdx(idx);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOverItem = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDropItem = (e: React.DragEvent, targetIdx: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedIdx === null || draggedIdx === targetIdx) return;
+    const updated = [...images];
+    const [removed] = updated.splice(draggedIdx, 1);
+    updated.splice(targetIdx, 0, removed);
+    onChange(updated);
+    setDraggedIdx(null);
+    setStatusMessage("¡Orden de fotos actualizado!");
+    setTimeout(() => setStatusMessage(null), 3000);
   };
 
   const removeImage = (index: number) => {
@@ -107,7 +126,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
   return (
     <div className="space-y-4">
       <label className="block text-sm font-semibold text-slate-700">
-        Imágenes del Producto (WebP Optimizado + CDN)
+        Imágenes del Producto (Arrastra para reordenar)
       </label>
 
       {/* Zona de Drop & Upload */}
@@ -117,7 +136,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
           setDragOver(true);
         }}
         onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
+        onDrop={handleDropFiles}
         className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${
           dragOver
             ? "border-pink-500 bg-pink-50/50"
@@ -161,11 +180,12 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
         </div>
       )}
 
-      {/* Grid de imágenes subidas con selector de Foto Principal */}
+      {/* Grid de imágenes subidas reordenables por Drag and Drop */}
       {images.length > 0 && (
         <div className="space-y-2 pt-2">
-          <p className="text-xs font-semibold text-slate-500">
-            Haz clic en el icono <Star className="w-3.5 h-3.5 inline text-amber-500 fill-amber-500" /> de cualquier foto para definirla como la <strong className="text-slate-800">Foto Principal de Portada</strong>:
+          <p className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+            <GripVertical className="w-4 h-4 text-slate-400" />
+            Arrastra las fotos para cambiar su posición. La posición <strong className="text-amber-600">#1</strong> es la portada:
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
             {images.map((url, idx) => {
@@ -173,7 +193,13 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
               return (
                 <div
                   key={idx}
-                  className={`relative group rounded-xl overflow-hidden bg-slate-100 aspect-square transition-all ${
+                  draggable
+                  onDragStart={(e) => handleDragStartItem(e, idx)}
+                  onDragOver={handleDragOverItem}
+                  onDrop={(e) => handleDropItem(e, idx)}
+                  className={`relative group rounded-xl overflow-hidden bg-slate-100 aspect-square transition-all cursor-grab active:cursor-grabbing ${
+                    draggedIdx === idx ? "opacity-40 scale-95 border-2 border-dashed border-pink-500" : ""
+                  } ${
                     isMain
                       ? "ring-4 ring-amber-400 border-2 border-amber-500 shadow-md"
                       : "border border-slate-200"
@@ -183,9 +209,14 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
                     src={url}
                     alt={`Imagen ${idx + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-cover pointer-events-none"
                     unoptimized
                   />
+
+                  {/* Icono de arrastre */}
+                  <div className="absolute top-1 right-1 bg-slate-900/60 text-white p-1 rounded backdrop-blur-xs opacity-60 group-hover:opacity-100 transition-opacity">
+                    <GripVertical className="w-3.5 h-3.5" />
+                  </div>
 
                   {/* Acciones al pasar el cursor */}
                   <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
@@ -209,13 +240,13 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
                     </button>
                   </div>
 
-                  {/* Insignia de Foto Principal */}
+                  {/* Insignia de Foto Principal / Posición */}
                   {isMain ? (
                     <span className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
                       <Star className="w-3 h-3 fill-white" /> Principal
                     </span>
                   ) : (
-                    <span className="absolute bottom-1 right-1 bg-slate-800/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute bottom-1 left-1 bg-slate-800/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                       #{idx + 1}
                     </span>
                   )}
@@ -228,3 +259,4 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
     </div>
   );
 }
+

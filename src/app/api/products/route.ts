@@ -1,5 +1,6 @@
-import { put, list } from "@vercel/blob";
+import { put, list, del } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { INITIAL_PRODUCTS } from "@/lib/products";
 import { Product } from "@/types";
 
@@ -12,7 +13,6 @@ export async function GET() {
   try {
     const { blobs } = await list({ prefix: "data/products.json" });
     if (blobs.length > 0) {
-      // Intentar obtener el JSON guardado en Vercel Blob
       const res = await fetch(blobs[0].url, { cache: "no-store" });
       if (res.ok) {
         const products = await res.json();
@@ -45,9 +45,7 @@ export async function GET() {
             });
           }
         }
-      } catch (err) {
-        // Continuar al siguiente URL
-      }
+      } catch (err) {}
     }
   }
 
@@ -66,7 +64,6 @@ export async function POST(request: Request) {
     if (Array.isArray(body)) {
       updatedProducts = body;
     } else if (body && body.id) {
-      // Leer lista actual de Vercel Blob o inicial
       let currentProducts: Product[] = INITIAL_PRODUCTS;
       try {
         const { blobs } = await list({ prefix: "data/products.json" });
@@ -77,7 +74,6 @@ export async function POST(request: Request) {
           }
         }
       } catch (e) {
-        // En local intentar traer de producción para no pisar
         try {
           const prodRes = await fetch(`https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`, { cache: "no-store" });
           if (prodRes.ok) {
@@ -107,6 +103,20 @@ export async function POST(request: Request) {
       console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
     }
 
+    // Invalidador instantáneo de Caché Next.js (ISR)
+    try {
+      revalidatePath("/");
+      revalidatePath("/admin");
+      if (body && body.slug) {
+        revalidatePath(`/p/${body.slug}`);
+      }
+      if (body && body.category) {
+        revalidatePath(`/categoria/${body.category}`);
+      }
+    } catch (revalErr) {
+      console.warn("Error en revalidatePath", revalErr);
+    }
+
     return NextResponse.json({ success: true, url: blobUrl, products: updatedProducts });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -130,16 +140,45 @@ export async function DELETE(request: Request) {
       }
     } catch (e) {}
 
+    const productToDelete = currentProducts.find((p) => p.id === id);
+
+    // Borrado de imágenes huérfanas en Vercel Blob
+    if (productToDelete && productToDelete.images && productToDelete.images.length > 0) {
+      for (const imgUrl of productToDelete.images) {
+        if (imgUrl.includes("public.blob.vercel-storage.com") || imgUrl.includes("vercel-storage.com")) {
+          try {
+            await del(imgUrl);
+          } catch (delErr) {
+            console.warn("Error eliminando imagen de Blob Storage", delErr);
+          }
+        }
+      }
+    }
+
     const filtered = currentProducts.filter((p) => p.id !== id);
 
-    await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(filtered, null, 2), {
-      access: "public",
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
+    try {
+      await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(filtered, null, 2), {
+        access: "public",
+        addRandomSuffix: false,
+        contentType: "application/json",
+      });
+    } catch (blobErr: any) {
+      console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
+    }
+
+    // Invalidador instantáneo de Caché Next.js (ISR)
+    try {
+      revalidatePath("/");
+      revalidatePath("/admin");
+      if (productToDelete?.slug) {
+        revalidatePath(`/p/${productToDelete.slug}`);
+      }
+    } catch (revalErr) {}
 
     return NextResponse.json({ success: true, products: filtered });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
