@@ -56,10 +56,8 @@ export default function ProductModal({
       setBadge("");
       setInStock(true);
       setHasPromoKit(false);
-      setDescription(
-        "Incluye hojas interiores impresas, tapa y contratapa sublimables de 350gr y espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Envíos a todo Uruguay desde San José."
-      );
-      setImages(["/agenda_fondo_kamaluso.jpg"]);
+      setDescription("");
+      setImages([]);
     }
   }, [productToEdit, isOpen]);
 
@@ -143,7 +141,7 @@ export default function ProductModal({
         inStock,
         hasPromoKit,
         description: description.trim(),
-        images: images.length > 0 ? images : ["/agenda_fondo_kamaluso.jpg"],
+        images: images,
       });
 
       onSaved();
