@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { ShoppingCart, Menu, X, Search, ArrowRight } from "lucide-react";
+import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { Product } from "@/types";
 
