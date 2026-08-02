@@ -112,7 +112,23 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </button>
           </div>
         )}
-        {filteredProducts.length === 0 ? (
+        {productsList.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8 shadow-sm space-y-4 max-w-xl mx-auto my-6">
+            <div className="w-16 h-16 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center mx-auto text-3xl font-bold border border-pink-100">
+              📦
+            </div>
+            <h3 className="text-xl font-extrabold text-slate-900">Catálogo listo para publicar productos</h3>
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+              La tienda se encuentra limpia y lista para recibir tus productos oficiales. Puedes cargar tus primeros artículos con sus fotos y precios desde el Panel de Administración.
+            </p>
+            <a
+              href="/admin"
+              className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-md shadow-pink-600/20"
+            >
+              <span>Cargar Productos en Panel Admin →</span>
+            </a>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
             <p className="text-slate-500 font-medium">
               No encontramos insumos que coincidan con tu búsqueda.

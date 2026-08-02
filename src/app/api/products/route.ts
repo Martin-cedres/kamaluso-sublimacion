@@ -9,38 +9,32 @@ export const revalidate = 0;
 
 const BLOB_PRODUCTS_FILENAME = "data/products.json";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const shouldReset = searchParams.get("reset") === "true";
+
+    if (shouldReset) {
+      try {
+        await put(BLOB_PRODUCTS_FILENAME, JSON.stringify([], null, 2), {
+          access: "public",
+          addRandomSuffix: false,
+          contentType: "application/json",
+        });
+      } catch (e) {}
+      return NextResponse.json([], {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
+      });
+    }
+
     const { blobs } = await list({ prefix: "data/products.json" });
     if (blobs.length > 0) {
       const res = await fetch(blobs[0].url, { cache: "no-store" });
       if (res.ok) {
         const products = await res.json();
-        if (Array.isArray(products) && products.length > 0) {
-          // Verificar si el JSON remoto en Vercel Blob está desactualizado (sin versión o v < v3)
-          const isOutdated = products.some(
-            (p: any) => !p.catalogVersion || p.catalogVersion < CURRENT_CATALOG_VERSION
-          );
-
-          if (isOutdated) {
-            console.log("Catálogo en Vercel Blob desactualizado. Sincronizando fuente de verdad v3...");
-            try {
-              await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(INITIAL_PRODUCTS, null, 2), {
-                access: "public",
-                addRandomSuffix: false,
-                contentType: "application/json",
-              });
-            } catch (blobErr) {
-              console.error("Error al actualizar Vercel Blob:", blobErr);
-            }
-
-            return NextResponse.json(INITIAL_PRODUCTS, {
-              headers: {
-                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-              },
-            });
-          }
-
+        if (Array.isArray(products)) {
           return NextResponse.json(products, {
             headers: {
               "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
@@ -50,32 +44,10 @@ export async function GET() {
       }
     }
   } catch (error) {
-    console.warn("Vercel Blob token omitido en local. Obteniendo catálogo en vivo de Producción...");
-    const liveUrls = [
-      `https://kamaluso-three.vercel.app/api/products?t=${Date.now()}`,
-      `https://www.kamaluso.com/api/products?t=${Date.now()}`,
-      `https://kamaluso.com/api/products?t=${Date.now()}`,
-      `https://kamaluso-sublimacion.vercel.app/api/products?t=${Date.now()}`,
-    ];
-
-    for (const liveUrl of liveUrls) {
-      try {
-        const prodRes = await fetch(liveUrl, { cache: "no-store" });
-        if (prodRes.ok) {
-          const prodData = await prodRes.json();
-          if (Array.isArray(prodData) && prodData.length > 0) {
-            return NextResponse.json(prodData, {
-              headers: {
-                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-              },
-            });
-          }
-        }
-      } catch (err) {}
-    }
+    console.warn("Error leyendo Vercel Blob en GET /api/products:", error);
   }
 
-  return NextResponse.json(INITIAL_PRODUCTS, {
+  return NextResponse.json([], {
     headers: {
       "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
     },
