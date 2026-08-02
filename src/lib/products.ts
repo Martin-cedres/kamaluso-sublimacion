@@ -41,8 +41,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     badge: "NUEVO 2027",
     inStock: true,
     images: [
-      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000282-391a4391a7/700/Agenda%20sublimable%20dos%20dias%20por%20hoja%202022%20%20kamaluso%201.webp?ph=904ccf23c3",
+      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000283-bc117bc11a/700/agenda%20sublimable%202022%20tapa.webp?ph=904ccf23c3",
     ],
   },
   {
@@ -58,8 +58,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     badge: "NUEVO 2027",
     inStock: true,
     images: [
-      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000284-b73e8b73eb/700/agenda%20sublimable%202022%201%20dia%20por%20p%C3%A1gina%20kamaluso.webp?ph=904ccf23c3",
+      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000285-1d8571d85b/700/agenda%20sublimable%202022%20tapa%201%20dia%20por%20p%C3%A1gina.webp?ph=904ccf23c3",
     ],
   },
   {
@@ -75,8 +75,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     badge: "PROMO MAYORISTA",
     inStock: true,
     images: [
-      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000451-7c2877c288/700/kit-7.webp?ph=904ccf23c3",
+      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000243-e7ef8e7efb/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM%20%281%29.webp?ph=904ccf23c3",
     ],
   },
   {

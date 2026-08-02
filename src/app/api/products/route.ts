@@ -17,24 +17,7 @@ export async function GET() {
       if (res.ok) {
         const products = await res.json();
         if (Array.isArray(products) && products.length > 0) {
-          // Sincronizar automáticamente imágenes antiguas de CDN webnode con las portadas oficiales /agenda_fondo_kamaluso.jpg
-          const synced = products.map((p: Product) => {
-            const init = INITIAL_PRODUCTS.find((ip) => ip.id === p.id);
-            if (init) {
-              const currentImg = p.images && p.images[0] ? p.images[0] : "";
-              if (!currentImg || currentImg.includes("clvaw-cdnwnd.com")) {
-                return {
-                  ...p,
-                  name: init.name,
-                  badge: init.badge || p.badge,
-                  images: init.images,
-                };
-              }
-            }
-            return p;
-          });
-
-          return NextResponse.json(synced, {
+          return NextResponse.json(products, {
             headers: {
               "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
             },
