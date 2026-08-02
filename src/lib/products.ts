@@ -13,7 +13,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "200001488",
     name: "Agenda Semanal 2026/27",
-    slug: "agenda-semanal-2027",
+    slug: "agenda-sublimable-semanal",
     description:
       "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos.",
     price: 170,
@@ -31,7 +31,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "200000800",
     name: "Agenda 2 días a la vista 2026/27",
-    slug: "agenda-2-dias-a-la-vista-2024",
+    slug: "agenda-2-dias-a-la-vista",
     description:
       "Agenda 2 días por hoja sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación dos días por página, Agenda telefónica, Hojas para notas. 280 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
     price: 240,
@@ -47,7 +47,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "200000801",
     name: "Agenda 1 día a la vista 2026/27",
-    slug: "agenda-1-dia-a-la-vista-2024",
+    slug: "agenda-1-dia-a-la-vista",
     description:
       "Agenda 1 día por página sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación un día por página, Agenda telefónica, Hojas para notas. 420 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
     price: 310,
@@ -309,7 +309,15 @@ export async function getAllProducts(): Promise<Product[]> {
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
   const products = await getAllProducts();
-  return products.find((p) => p.slug === slug);
+  const direct = products.find((p) => p.slug === slug);
+  if (direct) return direct;
+
+  // Fallback inteligente para variantes de slug sin año o variaciones (ej: agenda-semanal-2027, agenda-sublimable-semanal, agenda-semanal)
+  const normTarget = slug.toLowerCase().replace(/-202[0-9]/g, "").replace(/[^a-z0-9]/g, "");
+  return products.find((p) => {
+    const normP = p.slug.toLowerCase().replace(/-202[0-9]/g, "").replace(/[^a-z0-9]/g, "");
+    return normP === normTarget || normP.includes(normTarget) || normTarget.includes(normP);
+  });
 }
 
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
