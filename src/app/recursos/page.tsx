@@ -8,7 +8,7 @@ export const metadata = {
     "Descarga plantillas en PDF/PNG y guías de sublimación para tus tapas de agendas, libretas y blocks. Recursos 100% gratuitos para sublimadores de Uruguay.",
 };
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 export default async function RecursosPage() {
   const initialRecursos = await getAllResources();

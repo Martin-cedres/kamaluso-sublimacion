@@ -8,6 +8,9 @@ import { AddToCartDetail } from "./AddToCartDetail";
 import { ProductGallery } from "./ProductGallery";
 
 
+export const dynamicParams = true; // Permite renderizar y cachear estáticamente productos creados post-build
+export const revalidate = 86400; // ISR cada 24 horas (auto-revalidado on-demand con revalidateTag('products'))
+
 export async function generateStaticParams() {
   const products = await getAllProducts();
   return products.map((product) => ({

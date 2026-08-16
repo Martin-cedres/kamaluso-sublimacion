@@ -113,11 +113,15 @@ export async function getAllProducts(): Promise<Product[]> {
     const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL || "";
     const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
     const baseUrl = host ? `${protocol}://${host.replace(/^https?:\/\//, "")}` : "";
-    const url = typeof window !== "undefined"
-      ? `/api/products?t=${Date.now()}`
-      : (baseUrl ? `${baseUrl}/api/products?t=${Date.now()}` : "http://localhost:3000/api/products");
+    const isClient = typeof window !== "undefined";
+    const url = isClient
+      ? `/api/products`
+      : (baseUrl ? `${baseUrl}/api/products` : "http://localhost:3000/api/products");
 
-    const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
+    const res = await fetch(url, {
+      next: { tags: ["products"], revalidate: 86400 },
+      ...(isClient ? { cache: "no-store" } : {}),
+    });
     if (res.ok) {
       const cloudProducts = await res.json();
       if (Array.isArray(cloudProducts)) {

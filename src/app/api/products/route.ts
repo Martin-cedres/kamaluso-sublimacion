@@ -1,6 +1,6 @@
 import { put, list, del } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { INITIAL_PRODUCTS, CURRENT_CATALOG_VERSION } from "@/lib/products";
 import { Product } from "@/types";
 
@@ -104,8 +104,9 @@ export async function POST(request: Request) {
       console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
     }
 
-    // Invalidador instantáneo de Caché Next.js (ISR)
+    // Invalidador instantáneo de Caché Next.js (ISR por Tags y Paths)
     try {
+      revalidateTag("products");
       revalidatePath("/");
       revalidatePath("/admin");
       if (body && body.slug) {
@@ -115,7 +116,7 @@ export async function POST(request: Request) {
         revalidatePath(`/categoria/${body.category}`);
       }
     } catch (revalErr) {
-      console.warn("Error en revalidatePath", revalErr);
+      console.warn("Error en revalidateTag / revalidatePath", revalErr);
     }
 
     return NextResponse.json({ success: true, url: blobUrl, products: updatedProducts });
@@ -169,8 +170,9 @@ export async function DELETE(request: Request) {
       console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
     }
 
-    // Invalidador instantáneo de Caché Next.js (ISR)
+    // Invalidador instantáneo de Caché Next.js (ISR por Tags y Paths)
     try {
+      revalidateTag("products");
       revalidatePath("/");
       revalidatePath("/admin");
       if (productToDelete?.slug) {
