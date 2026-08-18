@@ -97,6 +97,27 @@ function mergeWithLocal(remoteProducts: Product[], localProducts: Product[] | nu
 export async function getAllProducts(): Promise<Product[]> {
   const localStored = getLocalStoredProducts();
 
+  // 1. En el SERVIDOR (Vercel Serverless / Node.js): Consultar directamente Vercel Blob sin round-trips HTTP
+  if (typeof window === "undefined") {
+    try {
+      const { list } = await import("@vercel/blob");
+      const { blobs } = await list({ prefix: "data/products.json" });
+      if (blobs.length > 0) {
+        const latestBlob = blobs[blobs.length - 1];
+        const res = await fetch(`${latestBlob.url}?t=${Date.now()}`, { cache: "no-store" });
+        if (res.ok) {
+          const cloudProducts = await res.json();
+          if (Array.isArray(cloudProducts)) {
+            return cloudProducts;
+          }
+        }
+      }
+    } catch (blobErr) {
+      console.warn("Servidor: no se pudo leer directamente de Vercel Blob, probando fallbacks:", blobErr);
+    }
+  }
+
+  // 2. Supabase si está activo
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
@@ -108,32 +129,26 @@ export async function getAllProducts(): Promise<Product[]> {
     }
   }
 
-  // Si se ejecuta en el navegador o servidor, consultar la API de Nube de Vercel Blob
-  try {
-    const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL || "";
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-    const baseUrl = host ? `${protocol}://${host.replace(/^https?:\/\//, "")}` : "";
-    const isClient = typeof window !== "undefined";
-    const url = isClient
-      ? `/api/products`
-      : (baseUrl ? `${baseUrl}/api/products` : "http://localhost:3000/api/products");
-
-    const res = await fetch(url, {
-      next: { tags: ["products"], revalidate: 86400 },
-      ...(isClient ? { cache: "no-store" } : {}),
-    });
-    if (res.ok) {
-      const cloudProducts = await res.json();
-      if (Array.isArray(cloudProducts)) {
-        return mergeWithLocal(cloudProducts, localStored);
+  // 3. En el NAVEGADOR (Cliente): Consultar la API Route /api/products en vivo sin caché
+  if (typeof window !== "undefined") {
+    try {
+      const res = await fetch(`/api/products?t=${Date.now()}`, {
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const cloudProducts = await res.json();
+        if (Array.isArray(cloudProducts)) {
+          return mergeWithLocal(cloudProducts, localStored);
+        }
       }
+    } catch (e) {
+      console.warn("Cliente: Error al obtener productos de /api/products", e);
     }
-  } catch (e) {
-    console.warn("Error al obtener productos de la nube de Vercel", e);
   }
 
   return mergeWithLocal(INITIAL_PRODUCTS, localStored);
 }
+
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
   const products = await getAllProducts();

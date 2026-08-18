@@ -5,8 +5,9 @@ import { getAllProducts, CATEGORIES } from "@/lib/products";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ChevronRight, Layers, Sparkles } from "lucide-react";
 
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
-export const revalidate = 86400; // ISR cada 24 horas
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   return CATEGORIES.filter((c) => c.id !== "todos").map((cat) => ({
