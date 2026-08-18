@@ -225,11 +225,20 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
 
   // 3. Guardar en la Nube de Vercel Blob vía API Route
   try {
-    await fetch("/api/products", {
+    const res = await fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fullProduct),
     });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.products && Array.isArray(data.products)) {
+        saveLocalStoredProducts(data.products);
+      }
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      console.warn("Aviso al persistir en nube:", errData);
+    }
   } catch (e) {
     console.error("Error al guardar producto en Vercel Blob Cloud", e);
   }

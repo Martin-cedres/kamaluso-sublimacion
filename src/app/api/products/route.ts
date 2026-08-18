@@ -27,6 +27,7 @@ export async function GET(request: Request) {
         await put(BLOB_PRODUCTS_FILENAME, JSON.stringify([], null, 2), {
           access: "public",
           addRandomSuffix: false,
+          allowOverwrite: true,
           contentType: "application/json",
         });
       } catch (e) {}
@@ -97,11 +98,15 @@ export async function POST(request: Request) {
       const blob = await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(updatedProducts, null, 2), {
         access: "public",
         addRandomSuffix: false,
+        allowOverwrite: true,
         contentType: "application/json",
       });
       blobUrl = blob.url;
     } catch (blobErr: any) {
-      console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
+      console.error("Error al guardar en Vercel Blob:", blobErr);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`Error en Vercel Blob Storage: ${blobErr.message}`);
+      }
     }
 
     // Invalidador instantáneo de Caché Next.js (ISR por Tags y Paths)
@@ -164,10 +169,14 @@ export async function DELETE(request: Request) {
       await put(BLOB_PRODUCTS_FILENAME, JSON.stringify(filtered, null, 2), {
         access: "public",
         addRandomSuffix: false,
+        allowOverwrite: true,
         contentType: "application/json",
       });
     } catch (blobErr: any) {
-      console.warn("Vercel Blob put omitido en entorno local:", blobErr.message);
+      console.error("Error al borrar en Vercel Blob:", blobErr);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`Error en Vercel Blob Storage: ${blobErr.message}`);
+      }
     }
 
     // Invalidador instantáneo de Caché Next.js (ISR por Tags y Paths)
@@ -185,4 +194,5 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 

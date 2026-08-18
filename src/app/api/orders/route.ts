@@ -65,6 +65,7 @@ export async function POST(request: Request) {
       const blob = await put(BLOB_ORDERS_FILENAME, JSON.stringify(updatedOrders, null, 2), {
         access: "public",
         addRandomSuffix: false,
+        allowOverwrite: true,
         contentType: "application/json",
       });
       blobUrl = blob.url;
@@ -101,6 +102,7 @@ export async function DELETE(request: Request) {
       await put(BLOB_ORDERS_FILENAME, JSON.stringify(filtered, null, 2), {
         access: "public",
         addRandomSuffix: false,
+        allowOverwrite: true,
         contentType: "application/json",
       });
     } catch (e) {}
