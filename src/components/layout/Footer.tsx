@@ -3,6 +3,8 @@ import Link from "next/link";
 import { MapPin, Mail, Heart, ExternalLink, Download, HelpCircle } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
+import { CATEGORIES } from "@/lib/products";
+
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-400 py-16 border-t border-slate-800 mt-20">
@@ -27,31 +29,13 @@ export function Footer() {
         <div className="space-y-4">
           <h4 className="text-white font-bold text-sm uppercase tracking-wider">Categorías de Insumos</h4>
           <ul className="space-y-2 text-xs">
-            <li>
-              <Link href="/categoria/agendas/" className="hover:text-white transition-colors">
-                Interiores de Agendas
-              </Link>
-            </li>
-            <li>
-              <Link href="/categoria/cuadernos/" className="hover:text-white transition-colors">
-                Cuadernos Sublimables
-              </Link>
-            </li>
-            <li>
-              <Link href="/categoria/blocks/" className="hover:text-white transition-colors">
-                Mini Blocks & Anotadores
-              </Link>
-            </li>
-            <li>
-              <Link href="/categoria/insumos/" className="hover:text-white transition-colors">
-                Tapas 350gr & Espirales
-              </Link>
-            </li>
-            <li>
-              <Link href="/categoria/kits/" className="hover:text-white transition-colors">
-                Kits & Combos Sublimación
-              </Link>
-            </li>
+            {CATEGORIES.filter((c) => c.id !== "todos").map((cat) => (
+              <li key={cat.id}>
+                <Link href={`/categoria/${cat.id}/`} className="hover:text-white transition-colors">
+                  {cat.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

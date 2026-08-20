@@ -9,6 +9,8 @@ export const CATEGORIES: Category[] = [
   { id: "libretas", name: "Libretas y Cuadernos", slug: "libretas" },
   { id: "blocks-planners", name: "Blocks y Planners", slug: "blocks-planners" },
   { id: "kits-promos", name: "Kits Mayoristas", slug: "kits-promos" },
+  { id: "especiales", name: "Especiales", slug: "especiales" },
+  { id: "outlet", name: "Outlet", slug: "outlet" },
 ];
 
 export const INITIAL_PRODUCTS: Product[] = [];

@@ -92,6 +92,8 @@ export default function ProductModal({
     else if (lowerName.includes("cuaderno") || lowerName.includes("cuadernola") || lowerName.includes("libreta")) detectedCat = "libretas";
     else if (lowerName.includes("block") || lowerName.includes("anotador") || lowerName.includes("planner")) detectedCat = "blocks-planners";
     else if (lowerName.includes("kit") || lowerName.includes("pack") || lowerName.includes("combo") || lowerName.includes("promo")) detectedCat = "kits-promos";
+    else if (lowerName.includes("outlet") || lowerName.includes("oulet") || lowerName.includes("oferta") || lowerName.includes("liquidacion") || lowerName.includes("liquidación")) detectedCat = "outlet";
+    else if (lowerName.includes("especial") || lowerName.includes("especiales")) detectedCat = "especiales";
 
     setCategory(detectedCat);
 

@@ -22,7 +22,7 @@ export function CategoryFilter({
       <div className="max-w-md mx-auto relative">
         <input
           type="text"
-          placeholder="Buscar agendas, libretas, blocks, planners..."
+          placeholder="Buscar agendas, libretas, blocks, especiales, outlet..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full px-5 py-3.5 pl-12 rounded-2xl border border-slate-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm text-slate-800"
