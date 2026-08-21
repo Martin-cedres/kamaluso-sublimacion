@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
 import { ProductCard } from "./ProductCard";
 import { CATEGORIES, getAllProducts } from "@/lib/products";
-import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag, Search, X } from "lucide-react";
+import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag, Search, X, ArrowUpDown } from "lucide-react";
 
 interface ProductGridProps {
   initialProducts: Product[];
@@ -17,6 +17,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   const [productsList, setProductsList] = useState<Product[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState("todos");
   const [searchTerm, setSearchTerm] = useState(urlQuery);
+  const [sortBy, setSortBy] = useState<"destacados" | "precio-asc" | "precio-desc" | "nombre-asc">("destacados");
 
   useEffect(() => {
     setSearchTerm(urlQuery);
@@ -44,6 +45,19 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesCategory && matchesSearch;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === "precio-asc") {
+      return a.price - b.price;
+    }
+    if (sortBy === "precio-desc") {
+      return b.price - a.price;
+    }
+    if (sortBy === "nombre-asc") {
+      return a.name.localeCompare(b.name);
+    }
+    return 0;
   });
 
   return (
@@ -144,10 +158,38 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className="space-y-6">
+            {/* Barra de Ordenamiento y Conteo */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/70">
+              <span className="text-xs sm:text-sm font-semibold text-slate-500">
+                Mostrando <strong className="text-slate-900 font-black">{sortedProducts.length}</strong> {sortedProducts.length === 1 ? "producto" : "productos"}
+              </span>
+
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                <label htmlFor="sort-price-select" className="text-xs font-bold text-slate-600 flex items-center gap-1.5 cursor-pointer">
+                  <ArrowUpDown className="w-3.5 h-3.5 text-brand-600" />
+                  <span>Ordenar por:</span>
+                </label>
+                <select
+                  id="sort-price-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="bg-white border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 cursor-pointer shadow-xs hover:border-slate-300 transition-colors"
+                >
+                  <option value="destacados">Destacados / Predeterminado</option>
+                  <option value="precio-asc">Menor precio ($ → $$$)</option>
+                  <option value="precio-desc">Mayor precio ($$$ → $)</option>
+                  <option value="nombre-asc">Nombre (A → Z)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {sortedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
         )}
       </section>

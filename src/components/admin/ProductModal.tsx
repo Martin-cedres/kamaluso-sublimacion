@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Product } from "@/types";
-import { CATEGORIES, saveProduct } from "@/lib/products";
+import { CATEGORIES, saveProduct, getAllProducts } from "@/lib/products";
 import ImageUploader from "@/components/admin/ImageUploader";
-import { X, Save, Sparkles, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { X, Save, Sparkles, Loader2, AlertCircle, CheckCircle2, Link2 } from "lucide-react";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -27,11 +27,25 @@ export default function ProductModal({
   const [badge, setBadge] = useState("");
   const [inStock, setInStock] = useState(true);
   const [hasPromoKit, setHasPromoKit] = useState(false);
+  const [promoKitSlug, setPromoKitSlug] = useState("");
+  const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      getAllProducts()
+        .then((prods) => {
+          if (Array.isArray(prods)) {
+            setAvailableProducts(prods.filter((p) => p.id !== productToEdit?.id));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen, productToEdit]);
 
   useEffect(() => {
     setErrorMessage(null);
@@ -45,6 +59,7 @@ export default function ProductModal({
       setBadge(productToEdit.badge || "");
       setInStock(productToEdit.inStock);
       setHasPromoKit(Boolean(productToEdit.hasPromoKit));
+      setPromoKitSlug(productToEdit.promoKitSlug || "");
       setDescription(productToEdit.description || "");
       setImages(productToEdit.images || []);
     } else {
@@ -56,6 +71,7 @@ export default function ProductModal({
       setBadge("");
       setInStock(true);
       setHasPromoKit(false);
+      setPromoKitSlug("");
       setDescription("");
       setImages([]);
     }
@@ -142,6 +158,7 @@ export default function ProductModal({
         badge: badge.trim() || undefined,
         inStock,
         hasPromoKit,
+        promoKitSlug: hasPromoKit && promoKitSlug.trim() ? promoKitSlug.trim() : undefined,
         description: description.trim(),
         images: images,
       });
@@ -163,58 +180,58 @@ export default function ProductModal({
         <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-pink-400" />
-            {productToEdit ? "Editar Producto" : "Nuevo Insumo / Agenda"}
+            {productToEdit ? "Editar Insumo" : "Nuevo Insumo / Agenda"}
           </h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="text-slate-400 hover:text-white transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Mensajes de Alerta/Error */}
-        {errorMessage && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
-            <span>{errorMessage}</span>
-          </div>
-        )}
+        {/* Content Form */}
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
+          {errorMessage && (
+            <div className="p-3 bg-red-50 text-red-700 text-xs font-semibold rounded-lg flex items-center gap-2 border border-red-200">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
 
-        {successMessage && (
-          <div className="mx-6 mt-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-semibold flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-            <span>{successMessage}</span>
-          </div>
-        )}
+          {successMessage && (
+            <div className="p-3 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-lg flex items-center gap-2 border border-emerald-200 animate-fadeIn">
+              <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
+              <span>{successMessage}</span>
+            </div>
+          )}
 
-        {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1 text-slate-800">
+          {/* Subir Imágenes */}
           <ImageUploader images={images} onChange={setImages} />
 
+          {/* Campos Principales */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold uppercase text-slate-600">
-                  Nombre del producto *
+                  Nombre del Producto *
                 </label>
-                {name && (
-                  <button
-                    type="button"
-                    onClick={handleAutoGenerateSEO}
-                    className="text-[10px] text-pink-600 font-bold hover:underline flex items-center gap-0.5"
-                    title="Configurar Categoría, Slug y Badge SEO sin modificar tu título ni descripción"
-                  >
-                    <Sparkles className="w-3 h-3 text-pink-500" /> Autogenerar SEO (Invisible)
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={handleAutoGenerateSEO}
+                  className="text-[11px] font-bold text-pink-600 hover:text-pink-700 flex items-center gap-1 bg-pink-50 hover:bg-pink-100 px-2 py-0.5 rounded transition"
+                  title="Configura automáticamente la Categoría, URL Slug y Badge según el título"
+                >
+                  <Sparkles className="w-3 h-3 text-pink-600" />
+                  <span>Autogenerar SEO</span>
+                </button>
               </div>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                placeholder="Ej. Agenda 2027 1 día por página"
+                placeholder="Ej. Agenda 2027"
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none text-sm"
               />
             </div>
@@ -254,7 +271,7 @@ export default function ProductModal({
 
             <div>
               <label className="block text-xs font-semibold uppercase text-slate-600 mb-1">
-                Precio Anterior (Opcional)
+                Precio Anterior (Tachado)
               </label>
               <input
                 type="number"
@@ -274,7 +291,7 @@ export default function ProductModal({
                 type="text"
                 value={badge}
                 onChange={(e) => setBadge(e.target.value)}
-                placeholder="Ej. NUEVO 2027 o PROMO MAYORISTA"
+                placeholder="Ej. NUEVO 2027"
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none text-sm"
               />
             </div>
@@ -317,11 +334,36 @@ export default function ProductModal({
                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
                 <span className="ml-3 text-xs font-bold text-pink-700 flex items-center gap-1">
                   <Sparkles className="w-3.5 h-3.5" />
-                  Activar Banner Promo 10 + 1 de Regalo
+                  Activar Banner Promo KIT x 10 (Con Descuento)
                 </span>
               </label>
             </div>
           </div>
+
+          {/* Desplegable para seleccionar la publicación del Kit vinculado */}
+          {hasPromoKit && (
+            <div className="p-3.5 bg-pink-50/80 border border-pink-200 rounded-2xl space-y-2 animate-fadeIn">
+              <label className="block text-xs font-bold text-pink-900 flex items-center gap-1.5">
+                <Link2 className="w-3.5 h-3.5 text-pink-600" />
+                <span>Vincular con la publicación del Kit x 10:</span>
+              </label>
+              <select
+                value={promoKitSlug}
+                onChange={(e) => setPromoKitSlug(e.target.value)}
+                className="w-full px-3 py-2 border border-pink-300 rounded-xl text-xs bg-white text-slate-800 focus:ring-2 focus:ring-pink-500 focus:outline-none font-medium"
+              >
+                <option value="">-- Seleccionar producto Kit x 10 --</option>
+                {availableProducts.map((prod) => (
+                  <option key={prod.id} value={prod.slug}>
+                    {prod.name} ({prod.category === "kits-promos" ? "KIT MAYORISTA" : prod.category.toUpperCase()}) - ${prod.price} UYU
+                  </option>
+                ))}
+              </select>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                Al hacer clic en el banner desde la página del producto individual, el cliente será dirigido directamente a la publicación del Kit x 10 seleccionada.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-semibold uppercase text-slate-600 mb-1">

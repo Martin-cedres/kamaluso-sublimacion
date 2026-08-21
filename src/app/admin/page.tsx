@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Product, Order, OrderStatus } from "@/types";
-import { getAllProducts, deleteProduct, saveProduct, CATEGORIES } from "@/lib/products";
+import { getAllProducts, deleteProduct, saveProduct, saveProductsOrder, CATEGORIES } from "@/lib/products";
 import { ResourceItem, getAllResources, deleteResource } from "@/lib/resources";
 import { getAllOrders, updateOrderStatus, deleteOrder } from "@/lib/orders";
 import { getLocalAdminUser, removeLocalAdminUser, isAllowedAdminEmail, AdminUser } from "@/lib/auth";
@@ -37,6 +37,11 @@ import {
   Mail,
   MapPin,
   DollarSign,
+  ArrowUpDown,
+  GripVertical,
+  ArrowUp,
+  ArrowDown,
+  Sparkles,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -53,6 +58,7 @@ export default function AdminDashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("todos");
+  const [productSortBy, setProductSortBy] = useState<"recientes" | "precio-asc" | "precio-desc" | "nombre">("recientes");
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
@@ -70,6 +76,63 @@ export default function AdminDashboardPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState("todos");
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [selectedOrderModal, setSelectedOrderModal] = useState<Order | null>(null);
+
+  // State Reordenamiento de Productos
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+  const [orderToastMessage, setOrderToastMessage] = useState<string | null>(null);
+  const [draggedProductId, setDraggedProductId] = useState<string | null>(null);
+
+  const handleMoveProduct = async (productId: string, direction: "up" | "down") => {
+    const currentList = [...products];
+    const index = currentList.findIndex((p) => p.id === productId);
+    if (index === -1) return;
+
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= currentList.length) return;
+
+    const temp = currentList[index];
+    currentList[index] = currentList[targetIndex];
+    currentList[targetIndex] = temp;
+
+    setProducts(currentList);
+    setIsSavingOrder(true);
+    await saveProductsOrder(currentList);
+    setIsSavingOrder(false);
+    setOrderToastMessage("✨ Orden por defecto guardado y actualizado en la web");
+    setTimeout(() => setOrderToastMessage(null), 3500);
+  };
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedProductId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedProductId || draggedProductId === targetId) return;
+
+    const currentList = [...products];
+    const fromIndex = currentList.findIndex((p) => p.id === draggedProductId);
+    const toIndex = currentList.findIndex((p) => p.id === targetId);
+
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const [movedItem] = currentList.splice(fromIndex, 1);
+    currentList.splice(toIndex, 0, movedItem);
+
+    setProducts(currentList);
+    setDraggedProductId(null);
+    setIsSavingOrder(true);
+    await saveProductsOrder(currentList);
+    setIsSavingOrder(false);
+    setOrderToastMessage("✨ Orden por defecto guardado y actualizado en la web");
+    setTimeout(() => setOrderToastMessage(null), 3500);
+  };
 
   const loadData = async () => {
     setIsLoadingProducts(true);
@@ -150,7 +213,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Filtrado de productos
+  // Filtrado y ordenamiento de productos
   const filteredProducts = products.filter((p) => {
     if (!p || !p.name) return false;
     const nameStr = p.name || "";
@@ -161,6 +224,13 @@ export default function AdminDashboardPage() {
     const matchesCategory =
       selectedCategory === "todos" || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
+  });
+
+  const sortedFilteredProducts = [...filteredProducts].sort((a, b) => {
+    if (productSortBy === "precio-asc") return a.price - b.price;
+    if (productSortBy === "precio-desc") return b.price - a.price;
+    if (productSortBy === "nombre") return (a.name || "").localeCompare(b.name || "");
+    return 0;
   });
 
   // Filtrado de recursos
@@ -353,6 +423,17 @@ export default function AdminDashboardPage() {
                     </option>
                   ))}
                 </select>
+
+                <select
+                  value={productSortBy}
+                  onChange={(e) => setProductSortBy(e.target.value as any)}
+                  className="py-2 px-3 border border-slate-300 rounded-xl text-sm font-medium bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                >
+                  <option value="recientes">⭐ Orden por defecto (Web)</option>
+                  <option value="precio-asc">Menor precio ($ → $$$)</option>
+                  <option value="precio-desc">Mayor precio ($$$ → $)</option>
+                  <option value="nombre">Nombre (A → Z)</option>
+                </select>
               </div>
 
               <button
@@ -366,11 +447,19 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
+            {/* Toast o Feedback de Orden guardado */}
+            {orderToastMessage && (
+              <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-fadeIn">
+                <Sparkles className="w-4 h-4 text-emerald-200" />
+                <span>{orderToastMessage}</span>
+              </div>
+            )}
+
             {/* Table of Products */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
               {isLoadingProducts ? (
                 <div className="p-12 text-center text-slate-400 text-sm">Cargando productos...</div>
-              ) : filteredProducts.length === 0 ? (
+              ) : sortedFilteredProducts.length === 0 ? (
                 <div className="p-12 text-center text-slate-500 space-y-2">
                   <Package className="w-10 h-10 text-slate-300 mx-auto" />
                   <p className="font-semibold text-base">No se encontraron productos</p>
@@ -381,6 +470,7 @@ export default function AdminDashboardPage() {
                   <table className="w-full text-left text-sm text-slate-700">
                     <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500">
                       <tr>
+                        <th className="px-4 py-4 w-32 text-center">Orden Web</th>
                         <th className="px-6 py-4">Producto</th>
                         <th className="px-6 py-4">Categoría</th>
                         <th className="px-6 py-4">Precio</th>
@@ -389,10 +479,60 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {filteredProducts.map((product) => {
+                      {sortedFilteredProducts.map((product) => {
                         const coverImage = product.images?.[0] || "/agenda_fondo_kamaluso.jpg";
+                        const globalIndex = products.findIndex((p) => p.id === product.id);
+                        const isFirst = globalIndex === 0;
+                        const isLast = globalIndex === products.length - 1;
+                        const isCustomOrderActive = productSortBy === "recientes" && selectedCategory === "todos" && !searchQuery.trim();
+
                         return (
-                          <tr key={product.id} className="hover:bg-slate-50/80 transition">
+                          <tr
+                            key={product.id}
+                            draggable={isCustomOrderActive}
+                            onDragStart={(e) => handleDragStart(e, product.id)}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, product.id)}
+                            className={`hover:bg-slate-50/80 transition ${
+                              draggedProductId === product.id ? "opacity-30 bg-pink-50" : ""
+                            }`}
+                          >
+                            <td className="px-4 py-4 text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <div
+                                  className={`p-1 cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-600 rounded transition ${
+                                    !isCustomOrderActive ? "opacity-20 cursor-not-allowed" : ""
+                                  }`}
+                                  title={isCustomOrderActive ? "Arrastra para reordenar la posición en la web" : "Selecciona 'Orden por defecto' y sin filtros para arrastrar"}
+                                >
+                                  <GripVertical className="w-4 h-4" />
+                                </div>
+
+                                <button
+                                  type="button"
+                                  disabled={isSavingOrder || !isCustomOrderActive || isFirst}
+                                  onClick={() => handleMoveProduct(product.id, "up")}
+                                  className="p-1 rounded-md text-slate-400 hover:text-pink-600 hover:bg-pink-50 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition"
+                                  title="Subir posición en la web"
+                                >
+                                  <ArrowUp className="w-3.5 h-3.5" />
+                                </button>
+
+                                <span className="text-xs font-black text-slate-600 w-7 text-center bg-slate-100 py-0.5 rounded">
+                                  #{globalIndex + 1}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  disabled={isSavingOrder || !isCustomOrderActive || isLast}
+                                  onClick={() => handleMoveProduct(product.id, "down")}
+                                  className="p-1 rounded-md text-slate-400 hover:text-pink-600 hover:bg-pink-50 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition"
+                                  title="Bajar posición en la web"
+                                >
+                                  <ArrowDown className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
                                 <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0">

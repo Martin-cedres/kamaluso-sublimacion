@@ -12,6 +12,7 @@ export interface Product {
   badge?: string;
   catalogVersion?: number;
   hasPromoKit?: boolean;
+  promoKitSlug?: string;
   variants?: {
     name: string;
     options: string[];

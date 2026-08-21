@@ -88,17 +88,21 @@ export function AddToCartDetail({ product }: { product: Product }) {
           </div>
           <div className="space-y-1 text-xs">
             <h4 className="font-extrabold text-slate-900 flex items-center gap-1.5">
-              <span>Promo Mayorista: KIT 10 + 1 de Regalo</span>
+              <span>Promo Mayorista: KIT x 10 (Con Descuento)</span>
               <Sparkles className="w-3.5 h-3.5 text-pink-600" />
             </h4>
             <p className="text-slate-600 leading-relaxed">
-              ¿Llevás 10 o más unidades? Comprando el Kit 10 agendas te llevás <strong>1 de regalo</strong> con descuento especial en insumos.
+              ¿Llevás 10 o más unidades? Comprando el <strong>Kit x 10 obtenés precio especial con descuento</strong> por cantidad en tus insumos.
             </p>
             <Link
-              href="/p/kit-10-1-de-regalo"
-              className="inline-block pt-1 font-bold text-pink-700 hover:text-pink-800 underline underline-offset-2"
+              href={
+                product.promoKitSlug
+                  ? (product.promoKitSlug.startsWith("/") ? product.promoKitSlug : `/p/${product.promoKitSlug}`)
+                  : "/categoria/kits-promos"
+              }
+              className="inline-flex items-center gap-1 pt-1 font-bold text-pink-700 hover:text-pink-900 underline underline-offset-2"
             >
-              Ver Kit Promo 10 + 1 de Regalo →
+              <span>Ver Publicación del KIT x 10 con Descuento →</span>
             </Link>
           </div>
         </div>

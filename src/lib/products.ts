@@ -200,6 +200,7 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
     category: product.category || "agendas",
     badge: product.badge,
     hasPromoKit: product.hasPromoKit !== undefined ? product.hasPromoKit : false,
+    promoKitSlug: product.promoKitSlug || undefined,
     inStock: product.inStock !== undefined ? product.inStock : true,
     images: product.images && product.images.length > 0 ? product.images : [],
   };
@@ -261,6 +262,31 @@ export async function saveProduct(product: Partial<Product>): Promise<Product> {
   }
 
   return fullProduct;
+}
+
+export async function saveProductsOrder(orderedProducts: Product[]): Promise<boolean> {
+  // 1. Guardar localmente de inmediato
+  saveLocalStoredProducts(orderedProducts);
+
+  // 2. Persistir array completo en Vercel Blob
+  try {
+    const res = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderedProducts),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.products && Array.isArray(data.products)) {
+        saveLocalStoredProducts(data.products);
+      }
+      return true;
+    }
+  } catch (e) {
+    console.error("Error al guardar orden en Vercel Blob Cloud", e);
+  }
+
+  return true;
 }
 
 export async function deleteProduct(id: string): Promise<boolean> {
