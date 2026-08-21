@@ -11,13 +11,15 @@ import { Product } from "@/types";
 const LOGO_URL =
   "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000163-7555a7555c/LOGO.png?ph=904ccf23c3";
 
+let clientProductsCache: Product[] | null = null;
+
 function HeaderSearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   const [query, setQuery] = useState(searchParams.get("q") || "");
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(() => clientProductsCache || []);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -25,12 +27,20 @@ function HeaderSearchInput() {
     setQuery(searchParams.get("q") || "");
   }, [searchParams]);
 
-  // Cargar lista de productos para las sugerencias en vivo
+  // Cargar lista de productos con memoria en cliente
   useEffect(() => {
-    fetch("/api/products", { cache: "no-store" })
+    if (clientProductsCache && clientProductsCache.length > 0) {
+      setProducts(clientProductsCache);
+      return;
+    }
+
+    fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setProducts(data);
+        if (Array.isArray(data)) {
+          clientProductsCache = data;
+          setProducts(data);
+        }
       })
       .catch(() => {});
   }, []);

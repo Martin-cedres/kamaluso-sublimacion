@@ -99,23 +99,27 @@ function mergeWithLocal(remoteProducts: Product[], localProducts: Product[] | nu
 export async function getAllProducts(): Promise<Product[]> {
   const localStored = getLocalStoredProducts();
 
-  // 1. En el SERVIDOR (Vercel Serverless / Node.js): Consultar directamente Vercel Blob sin round-trips HTTP
+  // 1. En el SERVIDOR (Vercel Serverless / Node.js): Leer directamente de la memoria global del proceso (0ms, 0 operaciones)
   if (typeof window === "undefined") {
     try {
-      const { list } = await import("@vercel/blob");
-      const { blobs } = await list({ prefix: "data/products.json" });
-      if (blobs.length > 0) {
-        const latestBlob = blobs[blobs.length - 1];
-        const res = await fetch(`${latestBlob.url}?t=${Date.now()}`, { cache: "no-store" });
+      const memoryCache = (globalThis as any).__kamaluso_products_cache__;
+      if (memoryCache && Array.isArray(memoryCache.products) && memoryCache.products.length > 0) {
+        return mergeWithLocal(memoryCache.products, localStored);
+      }
+
+      // Si la memoria está fría, leer directamente de la URL fija del blob si existe (Simple Request, 0 Advanced Requests)
+      if (memoryCache && memoryCache.blobUrl) {
+        const res = await fetch(memoryCache.blobUrl, { next: { revalidate: 60, tags: ["products"] } });
         if (res.ok) {
           const cloudProducts = await res.json();
           if (Array.isArray(cloudProducts)) {
-            return cloudProducts;
+            memoryCache.products = cloudProducts;
+            return mergeWithLocal(cloudProducts, localStored);
           }
         }
       }
-    } catch (blobErr) {
-      console.warn("Servidor: no se pudo leer directamente de Vercel Blob, probando fallbacks:", blobErr);
+    } catch (memErr) {
+      console.warn("Servidor: error leyendo cache en memoria", memErr);
     }
   }
 
@@ -131,7 +135,7 @@ export async function getAllProducts(): Promise<Product[]> {
     }
   }
 
-  // 3. En el NAVEGADOR (Cliente): Consultar la API Route /api/products en vivo sin caché
+  // 3. En el NAVEGADOR (Cliente): Consultar la API Route /api/products en vivo (que responde de memoria en 1ms)
   if (typeof window !== "undefined") {
     try {
       const res = await fetch(`/api/products?t=${Date.now()}`, {
