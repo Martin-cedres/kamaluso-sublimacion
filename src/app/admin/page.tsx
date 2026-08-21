@@ -11,6 +11,7 @@ import { getLocalAdminUser, removeLocalAdminUser, isAllowedAdminEmail, AdminUser
 import ProductModal from "@/components/admin/ProductModal";
 import ResourceModal from "@/components/admin/ResourceModal";
 import ShippingLabelModal from "@/components/admin/ShippingLabelModal";
+import VisualReorderModal from "@/components/admin/VisualReorderModal";
 import {
   Plus,
   Search,
@@ -53,6 +54,7 @@ export default function AdminDashboardPage() {
 
   // State Etiquetas de Envío
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
+  const [isVisualReorderOpen, setIsVisualReorderOpen] = useState(false);
 
   // State Productos
   const [products, setProducts] = useState<Product[]>([]);
@@ -81,6 +83,7 @@ export default function AdminDashboardPage() {
   const [isSavingOrder, setIsSavingOrder] = useState(false);
   const [orderToastMessage, setOrderToastMessage] = useState<string | null>(null);
   const [draggedProductId, setDraggedProductId] = useState<string | null>(null);
+  const [dragOverProductId, setDragOverProductId] = useState<string | null>(null);
 
   const handleMoveProduct = async (productId: string, direction: "up" | "down") => {
     const currentList = [...products];
@@ -105,22 +108,38 @@ export default function AdminDashboardPage() {
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedProductId(id);
     e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", id);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, id: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
+    if (dragOverProductId !== id) {
+      setDragOverProductId(id);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedProductId(null);
+    setDragOverProductId(null);
   };
 
   const handleDrop = async (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
-    if (!draggedProductId || draggedProductId === targetId) return;
+    setDragOverProductId(null);
+    if (!draggedProductId || draggedProductId === targetId) {
+      setDraggedProductId(null);
+      return;
+    }
 
     const currentList = [...products];
     const fromIndex = currentList.findIndex((p) => p.id === draggedProductId);
     const toIndex = currentList.findIndex((p) => p.id === targetId);
 
-    if (fromIndex === -1 || toIndex === -1) return;
+    if (fromIndex === -1 || toIndex === -1) {
+      setDraggedProductId(null);
+      return;
+    }
 
     const [movedItem] = currentList.splice(fromIndex, 1);
     currentList.splice(toIndex, 0, movedItem);
@@ -130,7 +149,7 @@ export default function AdminDashboardPage() {
     setIsSavingOrder(true);
     await saveProductsOrder(currentList);
     setIsSavingOrder(false);
-    setOrderToastMessage("✨ Orden por defecto guardado y actualizado en la web");
+    setOrderToastMessage("✨ Orden del catálogo guardado y actualizado en la web");
     setTimeout(() => setOrderToastMessage(null), 3500);
   };
 
@@ -436,15 +455,28 @@ export default function AdminDashboardPage() {
                 </select>
               </div>
 
-              <button
-                onClick={() => {
-                  setProductToEdit(null);
-                  setIsProductModalOpen(true);
-                }}
-                className="w-full md:w-auto px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-xl shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.02]"
-              >
-                <Plus className="w-5 h-5" /> Nuevo Producto
-              </button>
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsVisualReorderOpen(true)}
+                  className="w-full sm:w-auto px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.02] text-xs sm:text-sm cursor-pointer"
+                  title="Abrir organizador visual en cuadrícula de fotos para arrastrar y soltar libremente"
+                >
+                  <Layers className="w-4 h-4 text-pink-400" />
+                  <span>Organizador Visual (Drag & Drop)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProductToEdit(null);
+                    setIsProductModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-xl shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.02] text-xs sm:text-sm cursor-pointer"
+                >
+                  <Plus className="w-5 h-5" /> Nuevo Producto
+                </button>
+              </div>
             </div>
 
             {/* Toast o Feedback de Orden guardado */}
@@ -485,22 +517,29 @@ export default function AdminDashboardPage() {
                         const isFirst = globalIndex === 0;
                         const isLast = globalIndex === products.length - 1;
                         const isCustomOrderActive = productSortBy === "recientes" && selectedCategory === "todos" && !searchQuery.trim();
+                        const isBeingDragged = draggedProductId === product.id;
+                        const isDropTarget = dragOverProductId === product.id && draggedProductId !== product.id;
 
                         return (
                           <tr
                             key={product.id}
                             draggable={isCustomOrderActive}
                             onDragStart={(e) => handleDragStart(e, product.id)}
-                            onDragOver={handleDragOver}
+                            onDragOver={(e) => handleDragOver(e, product.id)}
+                            onDragEnd={handleDragEnd}
                             onDrop={(e) => handleDrop(e, product.id)}
-                            className={`hover:bg-slate-50/80 transition ${
-                              draggedProductId === product.id ? "opacity-30 bg-pink-50" : ""
+                            className={`transition-all duration-150 ${
+                              isBeingDragged
+                                ? "opacity-25 bg-slate-100 scale-[0.99] border-dashed border-2 border-pink-400"
+                                : isDropTarget
+                                ? "bg-pink-50 ring-2 ring-pink-500 scale-[1.01] shadow-md"
+                                : "hover:bg-slate-50/80"
                             }`}
                           >
                             <td className="px-4 py-4 text-center">
                               <div className="flex items-center justify-center gap-1">
                                 <div
-                                  className={`p-1 cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-600 rounded transition ${
+                                  className={`p-1.5 cursor-grab active:cursor-grabbing text-slate-400 hover:text-pink-600 bg-slate-100 hover:bg-pink-50 rounded-lg transition ${
                                     !isCustomOrderActive ? "opacity-20 cursor-not-allowed" : ""
                                   }`}
                                   title={isCustomOrderActive ? "Arrastra para reordenar la posición en la web" : "Selecciona 'Orden por defecto' y sin filtros para arrastrar"}
@@ -1040,6 +1079,18 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de Reordenamiento Visual (Drag & Drop) */}
+      <VisualReorderModal
+        isOpen={isVisualReorderOpen}
+        onClose={() => setIsVisualReorderOpen(false)}
+        products={products}
+        onOrderSaved={(newProducts) => {
+          setProducts(newProducts);
+          setOrderToastMessage("✨ Orden del catálogo guardado y actualizado en la web");
+          setTimeout(() => setOrderToastMessage(null), 3500);
+        }}
+      />
     </div>
   );
 }
