@@ -53,12 +53,18 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kamaluso | Insumos y Papelería Sublimable en Uruguay",
     description:
-      "Interiores de agendas 2026/27, libretas y blocks con tapas sublimables de 350gr. Envíos a todo el país desde San José de Mayo.",
+      "Interiores de agendas 2026/27, libretas y blocks con tapas sublimables de 350gr. Envíos a todo Uruguay desde San José de Mayo.",
     url: "https://www.kamaluso.com",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
     type: "website",
     images: [
+      {
+        url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Kamaluso Insumos y Papelería Sublimable Uruguay",
+      },
       {
         url: KAMALUSO_LOGO_URL,
         width: 800,
@@ -72,7 +78,7 @@ export const metadata: Metadata = {
     title: "Kamaluso | Papelería Sublimable Uruguay",
     description:
       "Interiores y tapas de 350gr para sublimadores en Uruguay. San José de Mayo.",
-    images: [KAMALUSO_LOGO_URL],
+    images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
 

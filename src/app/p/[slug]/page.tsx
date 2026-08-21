@@ -30,10 +30,20 @@ export async function generateMetadata({
   if (!product) return {};
 
   const productUrl = `https://www.kamaluso.com/p/${product.slug}/`;
+  
+  // Garantizar que la imagen sea siempre una URL absoluta válida para WhatsApp / Facebook
+  const rawImage = product.images && product.images.length > 0 ? product.images[0] : "/agenda_fondo_kamaluso.jpg";
+  const absoluteImageUrl = rawImage.startsWith("http")
+    ? rawImage
+    : `https://www.kamaluso.com${rawImage.startsWith("/") ? rawImage : `/${rawImage}`}`;
+
+  const cleanDescription = product.description 
+    ? product.description.slice(0, 160) 
+    : "Insumo de papelería sublimable de 350gr en Uruguay. San José de Mayo.";
 
   return {
-    title: `${product.name} | Interiores Sublimables Kamaluso`,
-    description: product.description,
+    title: `${product.name} | Kamaluso Sublimación Uruguay`,
+    description: cleanDescription,
     alternates: {
       canonical: productUrl,
     },
@@ -45,16 +55,26 @@ export async function generateMetadata({
       product.category,
     ],
     openGraph: {
-      title: product.name,
-      description: product.description,
+      title: `${product.name} | Kamaluso`,
+      description: cleanDescription,
       url: productUrl,
-      type: "article",
+      siteName: "Kamaluso Sublimación",
+      locale: "es_UY",
+      type: "website",
       images: [
         {
-          url: (product.images && product.images.length > 0 && product.images[0]) || "/agenda_fondo_kamaluso.jpg",
-          alt: product.name,
+          url: absoluteImageUrl,
+          width: 800,
+          height: 800,
+          alt: `${product.name} - Kamaluso Sublimación Uruguay`,
         },
       ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Kamaluso`,
+      description: cleanDescription,
+      images: [absoluteImageUrl],
     },
   };
 }

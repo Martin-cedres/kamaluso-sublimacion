@@ -6,6 +6,33 @@ export const metadata = {
   title: "Plantillas y Archivos Descargables | Kamaluso Papelería Sublimable",
   description:
     "Descarga plantillas en PDF/PNG y guías de sublimación para tus tapas de agendas, libretas y blocks. Recursos 100% gratuitos para sublimadores de Uruguay.",
+  alternates: {
+    canonical: "https://www.kamaluso.com/recursos/",
+  },
+  openGraph: {
+    title: "Plantillas y Recursos Gratis para Sublimadores | Kamaluso",
+    description:
+      "Descarga gratis plantillas en PDF/PNG con sangrado para agendas A5, mini blocks y cuadernos. Fabricantes en Uruguay.",
+    url: "https://www.kamaluso.com/recursos/",
+    siteName: "Kamaluso Sublimación",
+    locale: "es_UY",
+    type: "website",
+    images: [
+      {
+        url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Kamaluso Recursos y Plantillas Gratis",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Plantillas y Recursos Gratis para Sublimadores | Kamaluso",
+    description:
+      "Descarga gratis plantillas en PDF/PNG con sangrado para agendas A5, mini blocks y cuadernos. Fabricantes en Uruguay.",
+    images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
+  },
 };
 
 export const revalidate = 86400;

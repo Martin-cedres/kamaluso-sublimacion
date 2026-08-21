@@ -4,9 +4,36 @@ import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { KAMALUSO_WHATSAPP } from "@/lib/whatsapp";
 
 export const metadata = {
-  title: "Contacto | Kamaluso Papelería Sublimable",
+  title: "Contacto | Kamaluso Papelería Sublimable Uruguay",
   description:
-    "Ponte en contacto con Kamaluso en San José, Uruguay. Consultas por ventas mayoristas de agendas, libretas y blocks sublimables.",
+    "Ponte en contacto con Kamaluso en San José de Mayo, Uruguay. Consultas directas por WhatsApp sobre insumos sublimables y ventas mayoristas.",
+  alternates: {
+    canonical: "https://www.kamaluso.com/contacto/",
+  },
+  openGraph: {
+    title: "Contacto | Kamaluso Papelería Sublimable Uruguay",
+    description:
+      "Ponte en contacto con Kamaluso en San José de Mayo, Uruguay. Consultas directas por WhatsApp sobre insumos sublimables.",
+    url: "https://www.kamaluso.com/contacto/",
+    siteName: "Kamaluso Sublimación",
+    locale: "es_UY",
+    type: "website",
+    images: [
+      {
+        url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Contacto Kamaluso Sublimación",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contacto | Kamaluso Sublimación Uruguay",
+    description:
+      "Ponte en contacto con Kamaluso en San José de Mayo, Uruguay. Consultas directas por WhatsApp.",
+    images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
+  },
 };
 
 export default function ContactoPage() {

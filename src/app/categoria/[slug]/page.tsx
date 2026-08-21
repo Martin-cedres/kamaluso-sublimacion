@@ -29,6 +29,13 @@ export async function generateMetadata({
   const description = `Comprar ${category.name.toLowerCase()} para sublimar y personalizar al por mayor y menor. Fabricación y envíos rápidos a todo Uruguay desde San José.`;
   const canonicalUrl = `https://www.kamaluso.com/categoria/${slug}/`;
 
+  const allProducts = await getAllProducts();
+  const catProduct = allProducts.find((p) => p.category === slug && p.images && p.images.length > 0);
+  const rawCatImg = catProduct && catProduct.images[0] ? catProduct.images[0] : "/agenda_fondo_kamaluso.jpg";
+  const catImageUrl = rawCatImg.startsWith("http")
+    ? rawCatImg
+    : `https://www.kamaluso.com${rawCatImg.startsWith("/") ? rawCatImg : `/${rawCatImg}`}`;
+
   return {
     title,
     description,
@@ -45,7 +52,23 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
+      siteName: "Kamaluso Sublimación",
+      locale: "es_UY",
       type: "website",
+      images: [
+        {
+          url: catImageUrl,
+          width: 800,
+          height: 800,
+          alt: `${category.name} Sublimables - Kamaluso Uruguay`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [catImageUrl],
     },
   };
 }

@@ -10,6 +10,30 @@ export const metadata = {
   alternates: {
     canonical: "https://www.kamaluso.com/faq/",
   },
+  openGraph: {
+    title: "Preguntas Frecuentes | Kamaluso Sublimación Uruguay",
+    description:
+      "Respuestas sobre tiempos de sublimación, envíos a todo Uruguay y papel 350g.",
+    url: "https://www.kamaluso.com/faq/",
+    siteName: "Kamaluso Sublimación",
+    locale: "es_UY",
+    type: "website",
+    images: [
+      {
+        url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Preguntas Frecuentes Kamaluso",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Preguntas Frecuentes | Kamaluso Sublimación Uruguay",
+    description:
+      "Respuestas sobre tiempos de sublimación y envíos a todo Uruguay.",
+    images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
+  },
 };
 
 export default function FaqPage() {
