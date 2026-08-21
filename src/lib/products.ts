@@ -2,6 +2,7 @@ import { Product, Category } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const CURRENT_CATALOG_VERSION = 3;
+export const DIRECT_BLOB_PRODUCTS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json";
 
 export const CATEGORIES: Category[] = [
   { id: "todos", name: "Todos los sublimables", slug: "todos" },
@@ -99,7 +100,7 @@ function mergeWithLocal(remoteProducts: Product[], localProducts: Product[] | nu
 export async function getAllProducts(): Promise<Product[]> {
   const localStored = getLocalStoredProducts();
 
-  // 1. En el SERVIDOR (Vercel Serverless / Node.js): Leer directamente de la memoria global del proceso (0ms, 0 operaciones)
+  // 1. En el SERVIDOR (Vercel Serverless / Node.js): Leer de memoria o directo de CDN (0 Advanced Requests)
   if (typeof window === "undefined") {
     try {
       const memoryCache = (globalThis as any).__kamaluso_products_cache__;
@@ -107,19 +108,28 @@ export async function getAllProducts(): Promise<Product[]> {
         return mergeWithLocal(memoryCache.products, localStored);
       }
 
-      // Si la memoria está fría, leer directamente de la URL fija del blob si existe (Simple Request, 0 Advanced Requests)
-      if (memoryCache && memoryCache.blobUrl) {
-        const res = await fetch(memoryCache.blobUrl, { next: { revalidate: 60, tags: ["products"] } });
-        if (res.ok) {
-          const cloudProducts = await res.json();
-          if (Array.isArray(cloudProducts)) {
-            memoryCache.products = cloudProducts;
-            return mergeWithLocal(cloudProducts, localStored);
+      // Si la memoria está fría (primer arranque de lambda), fetch directo al CDN de Blob (Simple Request 100% GRATIS)
+      const targetBlobUrl = memoryCache?.blobUrl || DIRECT_BLOB_PRODUCTS_URL;
+      const res = await fetch(targetBlobUrl, { next: { revalidate: 60, tags: ["products"] } });
+      if (res.ok) {
+        const cloudProducts = await res.json();
+        if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+          if (!(globalThis as any).__kamaluso_products_cache__) {
+            (globalThis as any).__kamaluso_products_cache__ = {
+              products: cloudProducts,
+              blobUrl: targetBlobUrl,
+              lastFetched: Date.now(),
+            };
+          } else {
+            (globalThis as any).__kamaluso_products_cache__.products = cloudProducts;
+            (globalThis as any).__kamaluso_products_cache__.blobUrl = targetBlobUrl;
+            (globalThis as any).__kamaluso_products_cache__.lastFetched = Date.now();
           }
+          return mergeWithLocal(cloudProducts, localStored);
         }
       }
     } catch (memErr) {
-      console.warn("Servidor: error leyendo cache en memoria", memErr);
+      console.warn("Servidor: error leyendo cache/CDN en memoria", memErr);
     }
   }
 
@@ -135,12 +145,10 @@ export async function getAllProducts(): Promise<Product[]> {
     }
   }
 
-  // 3. En el NAVEGADOR (Cliente): Consultar la API Route /api/products en vivo (que responde de memoria en 1ms)
+  // 3. En el NAVEGADOR (Cliente): Consultar la API Route /api/products (0 Advanced Requests)
   if (typeof window !== "undefined") {
     try {
-      const res = await fetch(`/api/products?t=${Date.now()}`, {
-        cache: "no-store",
-      });
+      const res = await fetch(`/api/products`);
       if (res.ok) {
         const cloudProducts = await res.json();
         if (Array.isArray(cloudProducts)) {

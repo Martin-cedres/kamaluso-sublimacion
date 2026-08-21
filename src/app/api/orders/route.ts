@@ -5,6 +5,7 @@ import { Order } from "@/types";
 export const dynamic = "force-dynamic";
 
 const BLOB_ORDERS_FILENAME = "data/orders.json";
+const DIRECT_BLOB_ORDERS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/orders.json";
 
 declare global {
   var __kamaluso_orders_cache__: {
@@ -17,7 +18,7 @@ declare global {
 if (!globalThis.__kamaluso_orders_cache__) {
   globalThis.__kamaluso_orders_cache__ = {
     orders: [],
-    blobUrl: null,
+    blobUrl: DIRECT_BLOB_ORDERS_URL,
     lastFetched: 0,
   };
 }
@@ -26,7 +27,7 @@ export async function GET() {
   const cache = globalThis.__kamaluso_orders_cache__!;
   const now = Date.now();
 
-  // 1. Devolver de memoria si existe (0ms, 0 requests)
+  // 1. Devolver de memoria si existe y fue actualizado recientemente (0ms, 0 requests)
   if (cache.orders.length > 0 && now - cache.lastFetched < 30000) {
     return NextResponse.json(cache.orders, {
       headers: {
@@ -35,38 +36,20 @@ export async function GET() {
     });
   }
 
-  // 2. Fetch directo por URL si existe
-  if (cache.blobUrl) {
-    try {
-      const res = await fetch(cache.blobUrl, { cache: "no-store" });
-      if (res.ok) {
-        const orders = await res.json();
-        if (Array.isArray(orders)) {
-          cache.orders = orders;
-          cache.lastFetched = now;
-          return NextResponse.json(orders);
-        }
+  // 2. Fetch directo por URL fija de CDN (Simple Request 100% GRATIS, 0 Advanced Requests)
+  const targetUrl = cache.blobUrl || DIRECT_BLOB_ORDERS_URL;
+  try {
+    const res = await fetch(targetUrl, { cache: "no-store" });
+    if (res.ok) {
+      const orders = await res.json();
+      if (Array.isArray(orders)) {
+        cache.orders = orders;
+        cache.blobUrl = targetUrl;
+        cache.lastFetched = now;
+        return NextResponse.json(orders);
       }
-    } catch (e) {}
-  }
-
-  // 3. Fallback inicial único con list()
-  if (!cache.blobUrl) {
-    try {
-      const { list } = await import("@vercel/blob");
-      const { blobs } = await list({ prefix: "data/orders.json" });
-      if (blobs.length > 0) {
-        cache.blobUrl = blobs[0].url;
-        const res = await fetch(blobs[0].url, { cache: "no-store" });
-        if (res.ok) {
-          const orders = await res.json();
-          cache.orders = orders;
-          cache.lastFetched = now;
-          return NextResponse.json(orders);
-        }
-      }
-    } catch (error) {}
-  }
+    }
+  } catch (e) {}
 
   return NextResponse.json(cache.orders || [], {
     headers: {

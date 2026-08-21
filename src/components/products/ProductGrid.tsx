@@ -24,6 +24,10 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   }, [urlQuery]);
 
   React.useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) {
+      setProductsList(initialProducts);
+      return;
+    }
     async function loadCloudProducts() {
       try {
         const data = await getAllProducts();
@@ -35,7 +39,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
       }
     }
     loadCloudProducts();
-  }, []);
+  }, [initialProducts]);
 
   const filteredProducts = productsList.filter((product) => {
     const matchesCategory =

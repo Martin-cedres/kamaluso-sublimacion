@@ -6,6 +6,7 @@ import { Product } from "@/types";
 export const dynamic = "force-dynamic";
 
 const BLOB_PRODUCTS_FILENAME = "data/products.json";
+const DIRECT_BLOB_PRODUCTS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json";
 
 // Declaración de variables globales en Node para caché en memoria sin llamadas a list()
 declare global {
@@ -19,7 +20,7 @@ declare global {
 if (!globalThis.__kamaluso_products_cache__) {
   globalThis.__kamaluso_products_cache__ = {
     products: [],
-    blobUrl: null,
+    blobUrl: DIRECT_BLOB_PRODUCTS_URL,
     lastFetched: 0,
   };
 }
@@ -58,52 +59,25 @@ export async function GET(request: Request) {
       });
     }
 
-    // 2. Si conocemos la URL directa del blob, hacer un simple fetch (Simple Request CDN, 0 Advanced Requests)
-    if (cache.blobUrl) {
-      try {
-        const res = await fetch(cache.blobUrl, { next: { revalidate: 60, tags: ["products"] } });
-        if (res.ok) {
-          const cloudProducts = await res.json();
-          if (Array.isArray(cloudProducts)) {
-            cache.products = cloudProducts;
-            cache.lastFetched = now;
-            return NextResponse.json(cloudProducts, {
-              headers: {
-                "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
-              },
-            });
-          }
+    // 2. Fetch directo por URL fija de CDN (Simple Request 100% GRATIS, 0 Advanced Requests)
+    const targetUrl = cache.blobUrl || DIRECT_BLOB_PRODUCTS_URL;
+    try {
+      const res = await fetch(targetUrl, { next: { revalidate: 60, tags: ["products"] } });
+      if (res.ok) {
+        const cloudProducts = await res.json();
+        if (Array.isArray(cloudProducts)) {
+          cache.products = cloudProducts;
+          cache.blobUrl = targetUrl;
+          cache.lastFetched = now;
+          return NextResponse.json(cloudProducts, {
+            headers: {
+              "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+            },
+          });
         }
-      } catch (fetchErr) {
-        console.warn("Fetch directo a blob URL falló, usando memoria:", fetchErr);
       }
-    }
-
-    // 3. Fallback inicial único: Si no hay URL memorizada, buscarla una sola vez con list() y guardarla para siempre en cache
-    if (!cache.blobUrl) {
-      try {
-        const { list } = await import("@vercel/blob");
-        const { blobs } = await list({ prefix: "data/products.json" });
-        if (blobs.length > 0) {
-          const latestBlob = blobs[blobs.length - 1];
-          cache.blobUrl = latestBlob.url;
-          const res = await fetch(latestBlob.url, { cache: "no-store" });
-          if (res.ok) {
-            const cloudProducts = await res.json();
-            if (Array.isArray(cloudProducts)) {
-              cache.products = cloudProducts;
-              cache.lastFetched = now;
-              return NextResponse.json(cloudProducts, {
-                headers: {
-                  "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
-                },
-              });
-            }
-          }
-        }
-      } catch (listErr) {
-        console.warn("Fallback list() no disponible o error:", listErr);
-      }
+    } catch (fetchErr) {
+      console.warn("Fetch directo a blob URL falló, usando memoria:", fetchErr);
     }
 
     return NextResponse.json(cache.products, {
