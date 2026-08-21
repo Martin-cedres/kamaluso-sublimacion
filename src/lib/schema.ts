@@ -29,6 +29,7 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
   },
   "priceRange": "$$",
   "sameAs": [
+    "https://www.instagram.com/kamaluso_sanjose/",
     "https://www.papeleriapersonalizada.uy"
   ],
   "openingHoursSpecification": [

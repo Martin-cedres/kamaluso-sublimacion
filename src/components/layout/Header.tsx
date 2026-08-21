@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink } from "lucide-react";
+import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink, Instagram } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { Product } from "@/types";
 
@@ -283,7 +283,7 @@ export function Header() {
         </div>
 
         {/* Navigation Desktop & Actions */}
-        <div className="hidden sm:flex items-center gap-6">
+        <div className="hidden sm:flex items-center gap-5">
           <nav className="hidden lg:flex items-center gap-6 font-semibold text-xs sm:text-sm text-slate-600">
             <Link href="/" className="hover:text-brand-600 transition-colors">
               Inicio
@@ -295,6 +295,18 @@ export function Header() {
               Contacto
             </Link>
           </nav>
+
+          {/* Enlace directo a Instagram */}
+          <a
+            href="https://www.instagram.com/kamaluso_sanjose/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 text-slate-500 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all"
+            title="Síguenos en Instagram @kamaluso_sanjose"
+            aria-label="Instagram @kamaluso_sanjose"
+          >
+            <Instagram className="w-5 h-5" />
+          </a>
 
           <button
             onClick={() => setIsCartOpen(true)}
@@ -336,6 +348,16 @@ export function Header() {
           >
             Contacto
           </Link>
+          <a
+            href="https://www.instagram.com/kamaluso_sanjose/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 py-2 text-pink-600 hover:text-pink-700 text-sm font-bold border-t border-slate-100 pt-3"
+          >
+            <Instagram className="w-4 h-4" />
+            <span>Seguinos en Instagram (@kamaluso_sanjose)</span>
+          </a>
         </div>
       )}
     </header>

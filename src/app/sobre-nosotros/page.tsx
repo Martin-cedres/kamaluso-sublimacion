@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { ShieldCheck, Heart, Sparkles, Truck, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Heart, Sparkles, Truck, CheckCircle2, Instagram, ExternalLink } from "lucide-react";
 
 export const metadata = {
   title: "Sobre Nosotros | Kamaluso San José, Papelería Sublimable",
@@ -113,6 +113,30 @@ export default function SobreNosotrosPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Instagram Community Banner */}
+        <div className="p-6 bg-gradient-to-r from-pink-50 via-rose-50 to-purple-50 rounded-2xl border border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-pink-600 text-white rounded-2xl shadow-sm flex-shrink-0">
+              <Instagram className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-base">Síguenos en Instagram</h4>
+              <p className="text-xs text-slate-600">
+                Mira fotos de nuestros procesos de taller, novedades de agendas y tips de sublimación en <strong>@kamaluso_sanjose</strong>.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://www.instagram.com/kamaluso_sanjose/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs rounded-xl shadow-md shadow-pink-600/20 transition-all flex items-center gap-1.5 flex-shrink-0"
+          >
+            <span>Ver @kamaluso_sanjose</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </div>
       </div>
     </div>

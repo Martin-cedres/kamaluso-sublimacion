@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { MapPin, Mail, Heart, ExternalLink, Download, HelpCircle } from "lucide-react";
+import { MapPin, Mail, Heart, ExternalLink, Download, HelpCircle, Instagram } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 import { CATEGORIES } from "@/lib/products";
@@ -108,7 +108,18 @@ export function Footer() {
               </a>
             </div>
             <div className="flex items-center gap-3">
-              <Mail className="w-4 h-4 text-brand-500" />
+              <Instagram className="w-4 h-4 text-pink-400 flex-shrink-0" />
+              <a
+                href="https://www.instagram.com/kamaluso_sanjose/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-white hover:text-pink-400 transition-colors"
+              >
+                @kamaluso_sanjose
+              </a>
+            </div>
+            <div className="flex items-center gap-3">
+              <Mail className="w-4 h-4 text-brand-500 flex-shrink-0" />
               <span>kamalusosanjose@gmail.com</span>
             </div>
             <p className="text-[11px] text-slate-500 pt-2 leading-relaxed">

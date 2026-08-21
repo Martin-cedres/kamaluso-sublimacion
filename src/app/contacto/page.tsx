@@ -1,5 +1,5 @@
 import React from "react";
-import { MapPin, Mail, Clock } from "lucide-react";
+import { MapPin, Mail, Clock, Instagram, ExternalLink } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { KAMALUSO_WHATSAPP } from "@/lib/whatsapp";
 
@@ -80,6 +80,24 @@ export default function ContactoPage() {
               <div>
                 <p className="text-xs text-slate-400 font-medium">Ubicación</p>
                 <p className="font-bold text-slate-900">San José, Uruguay</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-pink-50 text-pink-600 rounded-xl">
+                <Instagram className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-medium">Instagram Oficial</p>
+                <a
+                  href="https://www.instagram.com/kamaluso_sanjose/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-slate-900 hover:text-pink-600 transition-colors inline-flex items-center gap-1"
+                >
+                  <span>@kamaluso_sanjose</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                </a>
               </div>
             </div>
 
