@@ -138,3 +138,12 @@
 140: - Servidor de desarrollo Next.js iniciado y corriendo en segundo plano en el puerto 3000 (http://localhost:3000), respondiendo con HTTP 200 OK.
 141: - Implementación Completa de las 4 Páginas Pilares para Sublimadores: 1) `/guia-sublimacion-papeleria` con tabla técnica 170º-180ºC / 120s, técnica de enfriado bajo peso y HowTo Schema; 2) `/mayoristas` con tarifario de fábrica en pesos uruguayos (blocks, libretas, agendas, kit x10 $2.100), logística DAC/Correo a los 19 departamentos y enlace a WhatsApp; 3) `/recursos` y `/plantillas-sublimacion` con descargas PDF oficiales y guía de medidas/sangrado A5, 10x15 y 21x30; 4) `/emprender-en-papeleria-sublimable` con desglose financiero de costos (~$245) vs venta ($690-$950) con +200% de margen y calendario de temporadas. Compilación verificada con éxito (47 páginas estáticas) y desplegado a GitHub (commit `937a636`).
 142: - Implementación Integral de Guías de Compra B2B en Categorías, Optimización de Títulos/Alt Tags y Feed Oficial de Google Merchant Center: 1) Guías semánticas ricas en `/categoria/[slug]` (Agendas, Libretas, Blocks, Kits); 2) Nombres de productos enriquecidos con sinónimos de búsqueda ("Cuaderno Universitario", "Cuaderno y Libreta A5", "Anotadores 10x15"); 3) Atributos `alt` descriptivos en `ProductCard.tsx` y `ProductGallery.tsx` para Google Imágenes; 4) Textos ancla exactos en el Footer; 5) Endpoint oficial `/api/feed/google-shopping` y rewrite `/google-shopping.xml` para Merchant Center. Compilado con 0 errores y desplegado a producción (commit `57ecb36`).
+
+================================================================================
+📌 TAREAS PENDIENTES DEL USUARIO (RECORDATORIOS PARA FUTURAS SESIONES):
+================================================================================
+- [PENDIENTE POR EL USUARIO - PRIORITARIO]: Vincular manualmente el feed de Google Merchant Center.
+  * URL del feed: https://www.kamaluso.com/google-shopping.xml
+  * Pasos: Ingresar en https://merchants.google.com -> Productos -> Fuentes de datos (Feeds) -> Añadir feed programado con actualización diaria pegando dicha URL.
+- [PENDIENTE POR EL USUARIO]: Agregar backlink en www.papeleriapersonalizada.uy apuntando hacia https://www.kamaluso.com/categoria/agendas para transferir autoridad SEO directa.
+================================================================================
