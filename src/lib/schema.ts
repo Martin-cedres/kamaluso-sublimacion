@@ -23,9 +23,65 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
     "latitude": -34.3375,
     "longitude": -56.7136
   },
-  "areaServed": {
-    "@type": "Country",
-    "name": "Uruguay"
+  "areaServed": [
+    {
+      "@type": "Country",
+      "name": "Uruguay"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Montevideo"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Canelones"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Maldonado"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "San José"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Colonia"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Paysandú"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Salto"
+    }
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Catálogo de Papelería Sublimable",
+    "itemListElement": [
+      {
+        "@type": "OfferCatalog",
+        "name": "Agendas Sublimables",
+        "url": "https://www.kamaluso.com/categoria/agendas"
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Libretas y Cuadernos Sublimables",
+        "url": "https://www.kamaluso.com/categoria/libretas"
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Blocks y Planners Sublimables",
+        "url": "https://www.kamaluso.com/categoria/blocks-planners"
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Kits Mayoristas para Sublimar",
+        "url": "https://www.kamaluso.com/categoria/kits-promos"
+      }
+    ]
   },
   "priceRange": "$$",
   "sameAs": [
