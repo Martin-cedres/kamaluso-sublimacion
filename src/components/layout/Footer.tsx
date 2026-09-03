@@ -49,24 +49,39 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/faq/" className="hover:text-white transition-colors flex items-center gap-1 text-amber-400 font-semibold">
-                <HelpCircle className="w-3.5 h-3.5" />
-                <span>Preguntas Frecuentes (FAQ)</span>
+              <Link href="/mayoristas" className="hover:text-white transition-colors text-emerald-400 font-bold">
+                🏢 Portal Mayoristas (B2B)
               </Link>
             </li>
             <li>
-              <Link href="/recursos/" className="hover:text-white transition-colors flex items-center gap-1 text-brand-400 font-semibold">
+              <Link href="/guia-sublimacion-papeleria" className="hover:text-white transition-colors text-amber-400 font-semibold">
+                🔥 Guía de Sublimación (170º/120s)
+              </Link>
+            </li>
+            <li>
+              <Link href="/emprender-en-papeleria-sublimable" className="hover:text-white transition-colors text-purple-400 font-semibold">
+                💡 Cómo Emprender con Agendas
+              </Link>
+            </li>
+            <li>
+              <Link href="/recursos" className="hover:text-white transition-colors flex items-center gap-1 text-brand-400 font-semibold">
                 <Download className="w-3.5 h-3.5" />
                 <span>Plantillas PDF Descargables</span>
               </Link>
             </li>
             <li>
-              <Link href="/sobre-nosotros/" className="hover:text-white transition-colors">
+              <Link href="/faq" className="hover:text-white transition-colors flex items-center gap-1">
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span>Preguntas Frecuentes (FAQ)</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/sobre-nosotros" className="hover:text-white transition-colors">
                 Sobre Nosotros
               </Link>
             </li>
             <li>
-              <Link href="/contacto/" className="hover:text-white transition-colors">
+              <Link href="/contacto" className="hover:text-white transition-colors">
                 Contacto & Ubicación
               </Link>
             </li>

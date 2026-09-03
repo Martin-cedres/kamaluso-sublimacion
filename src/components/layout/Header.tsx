@@ -294,14 +294,20 @@ export function Header() {
 
         {/* Navigation Desktop & Actions */}
         <div className="hidden sm:flex items-center gap-5">
-          <nav className="hidden lg:flex items-center gap-6 font-semibold text-xs sm:text-sm text-slate-600">
+          <nav className="hidden lg:flex items-center gap-5 font-semibold text-xs text-slate-600">
             <Link href="/" className="hover:text-brand-600 transition-colors">
               Inicio
             </Link>
-            <Link href="/recursos/" className="hover:text-brand-600 transition-colors">
-              Recursos Gratis
+            <Link href="/mayoristas" className="hover:text-emerald-700 font-bold text-emerald-600 transition-colors">
+              Mayoristas
             </Link>
-            <Link href="/contacto/" className="hover:text-brand-600 transition-colors">
+            <Link href="/guia-sublimacion-papeleria" className="hover:text-brand-600 transition-colors">
+              Guía Sublimado
+            </Link>
+            <Link href="/recursos" className="hover:text-brand-600 transition-colors">
+              Plantillas Gratis
+            </Link>
+            <Link href="/contacto" className="hover:text-brand-600 transition-colors">
               Contacto
             </Link>
           </nav>
@@ -336,23 +342,44 @@ export function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden bg-white border-b border-slate-100 px-4 py-4 space-y-3 font-semibold text-slate-700">
+        <div className="sm:hidden bg-white border-b border-slate-100 px-4 py-4 space-y-2 font-semibold text-slate-700">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-brand-600 text-sm"
+            className="block py-2 hover:text-brand-600 text-sm border-b border-slate-50"
           >
             Inicio
           </Link>
           <Link
-            href="/recursos/"
+            href="/mayoristas"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-brand-600 text-sm font-bold text-brand-600"
+            className="block py-2 text-emerald-700 hover:text-emerald-800 text-sm font-bold border-b border-slate-50"
           >
-            🎁 Recursos Gratis (PDF)
+            🏢 Portal Mayoristas (B2B)
           </Link>
           <Link
-            href="/contacto/"
+            href="/guia-sublimacion-papeleria"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-amber-800 hover:text-amber-900 text-sm font-bold border-b border-slate-50"
+          >
+            🔥 Guía de Sublimación (170º/120s)
+          </Link>
+          <Link
+            href="/emprender-en-papeleria-sublimable"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-purple-700 hover:text-purple-800 text-sm font-bold border-b border-slate-50"
+          >
+            💡 Emprender con Agendas (+200% margen)
+          </Link>
+          <Link
+            href="/recursos"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 hover:text-brand-600 text-sm font-bold text-brand-600 border-b border-slate-50"
+          >
+            🎁 Plantillas & Descargables
+          </Link>
+          <Link
+            href="/contacto"
             onClick={() => setMobileMenuOpen(false)}
             className="block py-2 hover:text-brand-600 text-sm"
           >
