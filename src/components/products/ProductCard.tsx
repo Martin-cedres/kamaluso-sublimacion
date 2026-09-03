@@ -57,7 +57,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative w-full h-full">
           <Image
             src={product.images && product.images.length > 0 && product.images[0] ? product.images[0] : "/agenda_fondo_kamaluso.jpg"}
-            alt={product.name}
+            alt={`${product.name} - Insumo de Papelería Sublimable Kamaluso Uruguay`}
             fill
             className="object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"

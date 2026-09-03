@@ -7,6 +7,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/google-shopping.xml",
+        destination: "/api/feed/google-shopping",
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

@@ -123,7 +123,7 @@ export function ProductGallery({
         >
           <Image
             src={currentImage}
-            alt={`${productName} - Vista ${currentIndex + 1}`}
+            alt={`${productName} - Tapa 350g e Insumo Sublimable Kamaluso Uruguay (Foto ${currentIndex + 1})`}
             fill
             className="object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
             priority

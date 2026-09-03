@@ -29,13 +29,36 @@ export function Footer() {
         <div className="space-y-4">
           <h4 className="text-white font-bold text-sm uppercase tracking-wider">Categorías de Insumos</h4>
           <ul className="space-y-2 text-xs">
-            {CATEGORIES.filter((c) => c.id !== "todos").map((cat) => (
-              <li key={cat.id}>
-                <Link href={`/categoria/${cat.id}/`} className="hover:text-white transition-colors">
-                  {cat.name}
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link href="/categoria/agendas" className="hover:text-white transition-colors">
+                Agendas Sublimables por Mayor
+              </Link>
+            </li>
+            <li>
+              <Link href="/categoria/libretas" className="hover:text-white transition-colors">
+                Cuadernos y Libretas Sublimables
+              </Link>
+            </li>
+            <li>
+              <Link href="/categoria/blocks-planners" className="hover:text-white transition-colors">
+                Blocks 10x15 y Planners Sublimables
+              </Link>
+            </li>
+            <li>
+              <Link href="/categoria/kits-promos" className="hover:text-white transition-colors">
+                Kits Mayoristas para Talleres
+              </Link>
+            </li>
+            <li>
+              <Link href="/categoria/especiales" className="hover:text-white transition-colors">
+                Insumos Especiales para Sublimar
+              </Link>
+            </li>
+            <li>
+              <Link href="/categoria/outlet" className="hover:text-white transition-colors">
+                Outlet de Papelería Sublimable
+              </Link>
+            </li>
           </ul>
         </div>
 
