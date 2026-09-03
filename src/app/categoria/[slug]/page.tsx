@@ -27,7 +27,7 @@ export async function generateMetadata({
 
   const title = `${category.name} para Sublimación en Uruguay | Kamaluso`;
   const description = `Comprar ${category.name.toLowerCase()} para sublimar y personalizar al por mayor y menor. Fabricación y envíos rápidos a todo Uruguay desde San José.`;
-  const canonicalUrl = `https://www.kamaluso.com/categoria/${slug}/`;
+  const canonicalUrl = `https://www.kamaluso.com/categoria/${slug}`;
 
   const allProducts = await getAllProducts();
   const catProduct = allProducts.find((p) => p.category === slug && p.images && p.images.length > 0);

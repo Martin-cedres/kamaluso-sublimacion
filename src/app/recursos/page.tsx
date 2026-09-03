@@ -7,13 +7,13 @@ export const metadata = {
   description:
     "Descarga plantillas en PDF/PNG y guías de sublimación para tus tapas de agendas, libretas y blocks. Recursos 100% gratuitos para sublimadores de Uruguay.",
   alternates: {
-    canonical: "https://www.kamaluso.com/recursos/",
+    canonical: "https://www.kamaluso.com/recursos",
   },
   openGraph: {
     title: "Plantillas y Recursos Gratis para Sublimadores | Kamaluso",
     description:
       "Descarga gratis plantillas en PDF/PNG con sangrado para agendas A5, mini blocks y cuadernos. Fabricantes en Uruguay.",
-    url: "https://www.kamaluso.com/recursos/",
+    url: "https://www.kamaluso.com/recursos",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
     type: "website",

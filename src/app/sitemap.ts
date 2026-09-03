@@ -6,14 +6,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getAllProducts();
 
   const productUrls = products.map((product) => ({
-    url: `${baseUrl}/p/${product.slug}/`,
+    url: `${baseUrl}/p/${product.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
 
   const categoryUrls = CATEGORIES.filter((c) => c.id !== "todos").map((cat) => ({
-    url: `${baseUrl}/categoria/${cat.id}/`,
+    url: `${baseUrl}/categoria/${cat.id}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.9,
@@ -27,25 +27,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/recursos/`,
+      url: `${baseUrl}/recursos`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/faq/`,
+      url: `${baseUrl}/faq`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/sobre-nosotros/`,
+      url: `${baseUrl}/sobre-nosotros`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${baseUrl}/contacto/`,
+      url: `${baseUrl}/contacto`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,

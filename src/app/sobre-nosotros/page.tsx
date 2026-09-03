@@ -7,13 +7,13 @@ export const metadata = {
   description:
     "Nos especializamos en la confección de artículos de papelería sublimables en San José, Uruguay: agendas, libretas, blocks y cuadernos para sublimadores y revendedores.",
   alternates: {
-    canonical: "https://www.kamaluso.com/sobre-nosotros/",
+    canonical: "https://www.kamaluso.com/sobre-nosotros",
   },
   openGraph: {
     title: "Sobre Nosotros | Kamaluso San José, Papelería Sublimable",
     description:
       "Fabricantes directos de insumos para sublimación en San José de Mayo. Envíos a todo Uruguay sin mínimo de compra.",
-    url: "https://www.kamaluso.com/sobre-nosotros/",
+    url: "https://www.kamaluso.com/sobre-nosotros",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
     type: "website",

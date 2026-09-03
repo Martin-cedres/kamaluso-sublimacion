@@ -8,13 +8,13 @@ export const metadata = {
   description:
     "Ponte en contacto con Kamaluso en San José de Mayo, Uruguay. Consultas directas por WhatsApp sobre insumos sublimables y ventas mayoristas.",
   alternates: {
-    canonical: "https://www.kamaluso.com/contacto/",
+    canonical: "https://www.kamaluso.com/contacto",
   },
   openGraph: {
     title: "Contacto | Kamaluso Papelería Sublimable Uruguay",
     description:
       "Ponte en contacto con Kamaluso en San José de Mayo, Uruguay. Consultas directas por WhatsApp sobre insumos sublimables.",
-    url: "https://www.kamaluso.com/contacto/",
+    url: "https://www.kamaluso.com/contacto",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
     type: "website",

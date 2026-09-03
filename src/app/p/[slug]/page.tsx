@@ -29,7 +29,7 @@ export async function generateMetadata({
 
   if (!product) return {};
 
-  const productUrl = `https://www.kamaluso.com/p/${product.slug}/`;
+  const productUrl = `https://www.kamaluso.com/p/${product.slug}`;
   
   // Garantizar que la imagen sea siempre una URL absoluta válida para WhatsApp / Facebook
   const rawImage = product.images && product.images.length > 0 ? product.images[0] : "/agenda_fondo_kamaluso.jpg";
@@ -105,7 +105,7 @@ export default async function ProductDetailPage({
     },
     offers: {
       "@type": "Offer",
-      url: `https://www.kamaluso.com/p/${product.slug}/`,
+      url: `https://www.kamaluso.com/p/${product.slug}`,
       priceCurrency: product.currency,
       price: product.price,
       itemCondition: "https://schema.org/NewCondition",

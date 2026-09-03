@@ -8,13 +8,13 @@ export const metadata = {
   description:
     "Respuestas sobre tiempos de sublimado (170ºC/120s), mínimos de compra, envíos desde San José de Mayo a todo Uruguay y formatos de papel.",
   alternates: {
-    canonical: "https://www.kamaluso.com/faq/",
+    canonical: "https://www.kamaluso.com/faq",
   },
   openGraph: {
     title: "Preguntas Frecuentes | Kamaluso Sublimación Uruguay",
     description:
       "Respuestas sobre tiempos de sublimación, envíos a todo Uruguay y papel 350g.",
-    url: "https://www.kamaluso.com/faq/",
+    url: "https://www.kamaluso.com/faq",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
     type: "website",
