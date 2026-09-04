@@ -54,6 +54,7 @@ export default function AdminDashboardPage() {
 
   // State Etiquetas de Envío
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
+  const [selectedOrderForLabel, setSelectedOrderForLabel] = useState<Order | null>(null);
   const [isVisualReorderOpen, setIsVisualReorderOpen] = useState(false);
 
   // State Productos
@@ -844,6 +845,18 @@ export default function AdminDashboardPage() {
                   <option value="cancelado">❌ Cancelado</option>
                 </select>
               </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedOrderForLabel(null);
+                  setIsLabelModalOpen(true);
+                }}
+                className="w-full sm:w-auto py-2.5 px-4 bg-slate-900 hover:bg-pink-600 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-sm whitespace-nowrap active:scale-95"
+              >
+                <Printer className="w-4 h-4 text-pink-400" />
+                <span>Nueva Etiqueta Manual</span>
+              </button>
             </div>
 
             {/* Tabla de Pedidos */}
@@ -918,6 +931,16 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3.5 px-4 text-right">
                             <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={() => {
+                                  setSelectedOrderForLabel(order);
+                                  setIsLabelModalOpen(true);
+                                }}
+                                className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition"
+                                title="Generar e imprimir etiqueta de envío"
+                              >
+                                <Printer className="w-4 h-4 text-pink-600" />
+                              </button>
                               <button
                                 onClick={() => setSelectedOrderModal(order)}
                                 className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition"
@@ -1060,25 +1083,49 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Selector Estado */}
-              <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
-                <span className="font-bold text-slate-700">Estado del Pedido:</span>
-                <select
-                  value={selectedOrderModal.status}
-                  onChange={(e) => handleStatusChange(selectedOrderModal.id, e.target.value as OrderStatus)}
-                  className="px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-pink-500"
+              {/* Botón Imprimir Etiqueta y Selector Estado */}
+              <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedOrderForLabel(selectedOrderModal);
+                    setIsLabelModalOpen(true);
+                  }}
+                  className="px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl shadow-md shadow-pink-600/20 flex items-center gap-2 transition active:scale-95 text-xs"
                 >
-                  <option value="pendiente">⏳ Pendiente de Pago</option>
-                  <option value="pago_confirmado">💳 Pago Confirmado</option>
-                  <option value="en_preparacion">📦 En Preparación</option>
-                  <option value="despachado">🚚 Despachado</option>
-                  <option value="cancelado">❌ Cancelado</option>
-                </select>
+                  <Printer className="w-4 h-4" />
+                  <span>Generar e Imprimir Etiqueta</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-slate-700">Estado:</span>
+                  <select
+                    value={selectedOrderModal.status}
+                    onChange={(e) => handleStatusChange(selectedOrderModal.id, e.target.value as OrderStatus)}
+                    className="px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-pink-500"
+                  >
+                    <option value="pendiente">⏳ Pendiente de Pago</option>
+                    <option value="pago_confirmado">💳 Pago Confirmado</option>
+                    <option value="en_preparacion">📦 En Preparación</option>
+                    <option value="despachado">🚚 Despachado</option>
+                    <option value="cancelado">❌ Cancelado</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Modal de Etiqueta de Envío (Editable & Imprimible) */}
+      <ShippingLabelModal
+        isOpen={isLabelModalOpen}
+        onClose={() => {
+          setIsLabelModalOpen(false);
+          setSelectedOrderForLabel(null);
+        }}
+        order={selectedOrderForLabel}
+      />
 
       {/* Modal de Reordenamiento Visual (Drag & Drop) */}
       <VisualReorderModal

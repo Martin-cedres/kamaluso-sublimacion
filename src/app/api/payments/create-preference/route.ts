@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
     const client = new MercadoPagoConfig({ accessToken });
     const body = await req.json();
-    const { items, customer, shippingMethod, paymentMethod } = body;
+    const { items, customer, shippingMethod, paymentMethod, orderId } = body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
@@ -54,6 +54,7 @@ export async function POST(req: Request) {
     const host = req.headers.get("host") || "www.kamaluso.com";
     const protocol = host.includes("localhost") ? "http" : "https";
     const baseUrl = `${protocol}://${host}`;
+    const validOrderId = orderId || `KAM-${Date.now().toString().slice(-6)}`;
 
     const preferenceData = {
       items: preferenceItems,
@@ -65,12 +66,12 @@ export async function POST(req: Request) {
         },
       },
       back_urls: {
-        success: `${baseUrl}/?payment=success`,
-        failure: `${baseUrl}/?payment=failure`,
-        pending: `${baseUrl}/?payment=pending`,
+        success: `${baseUrl}/?payment=success&orderId=${validOrderId}`,
+        failure: `${baseUrl}/?payment=failure&orderId=${validOrderId}`,
+        pending: `${baseUrl}/?payment=pending&orderId=${validOrderId}`,
       },
       auto_return: "approved",
-      external_reference: `KAM-${Date.now()}`,
+      external_reference: validOrderId,
     };
 
     const preference = new Preference(client);

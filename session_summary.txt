@@ -139,6 +139,15 @@
 141: - Implementación Completa de las 4 Páginas Pilares para Sublimadores: 1) `/guia-sublimacion-papeleria` con tabla técnica 170º-180ºC / 120s, técnica de enfriado bajo peso y HowTo Schema; 2) `/mayoristas` con tarifario de fábrica en pesos uruguayos (blocks, libretas, agendas, kit x10 $2.100), logística DAC/Correo a los 19 departamentos y enlace a WhatsApp; 3) `/recursos` y `/plantillas-sublimacion` con descargas PDF oficiales y guía de medidas/sangrado A5, 10x15 y 21x30; 4) `/emprender-en-papeleria-sublimable` con desglose financiero de costos (~$245) vs venta ($690-$950) con +200% de margen y calendario de temporadas. Compilación verificada con éxito (47 páginas estáticas) y desplegado a GitHub (commit `937a636`).
 142: - Implementación Integral de Guías de Compra B2B en Categorías, Optimización de Títulos/Alt Tags y Feed Oficial de Google Merchant Center: 1) Guías semánticas ricas en `/categoria/[slug]` (Agendas, Libretas, Blocks, Kits); 2) Nombres de productos enriquecidos con sinónimos de búsqueda ("Cuaderno Universitario", "Cuaderno y Libreta A5", "Anotadores 10x15"); 3) Atributos `alt` descriptivos en `ProductCard.tsx` y `ProductGallery.tsx` para Google Imágenes; 4) Textos ancla exactos en el Footer; 5) Endpoint oficial `/api/feed/google-shopping` y rewrite `/google-shopping.xml` para Merchant Center. Compilado con 0 errores y desplegado a producción (commit `57ecb36`).
 
+- Servidor de desarrollo Next.js iniciado y corriendo activamente en http://localhost:3000.
+- Optimización Integral del Sistema de Compra y Notificaciones Duales por Correo:
+  1) Nuevas plantillas HTML responsive y de alta fidelidad para el comprador y para la administración (kamalusosanjose@gmail.com) con número de pedido único (#KAM-XXXXXX), tabla de insumos formateada, desglose financiero, datos de entrega e instrucciones bancarias completas según el método elegido (BROU, Prex, Abitab, etc.).
+  2) Enlace preconfigurado para contactar al WhatsApp de Kamaluso (098 615 074) con el pedido prellenado, y botón en el correo de administración para escribirle directamente al cliente.
+  3) Validación obligatoria de correo electrónico en el checkout (CartDrawer.tsx) con control estricto de formato.
+  4) Leyenda visible en el resumen de totales aclarando que el flete por agencia (DAC o Correo Uruguayo) se abona en destino al recibir la encomienda.
+  5) Reestructuración de la jerarquía de botones en el Paso 2: botón de Mercado Pago como acción principal al seleccionar tarjeta, y botón de WhatsApp y Correo para el resto de medios.
+  6) Sincronización del orderId con las URLs de retorno y external_reference de Mercado Pago. Compilación de producción (npm run build) verificada con 47 páginas estáticas y 0 errores.
+
 ================================================================================
 📌 TAREAS PENDIENTES DEL USUARIO (RECORDATORIOS PARA FUTURAS SESIONES):
 ================================================================================
@@ -146,4 +155,28 @@
   * URL del feed: https://www.kamaluso.com/google-shopping.xml
   * Pasos: Ingresar en https://merchants.google.com -> Productos -> Fuentes de datos (Feeds) -> Añadir feed programado con actualización diaria pegando dicha URL.
 - [PENDIENTE POR EL USUARIO]: Agregar backlink en www.papeleriapersonalizada.uy apuntando hacia https://www.kamaluso.com/categoria/agendas para transferir autoridad SEO directa.
+================================================================================
+
+================================================================================
+🚀 RESUMEN DE SESIÓN: REDISEÑO DE CORREOS KAMALUSO Y GENERADOR DE ETIQUETAS
+================================================================================
+1. REDISEÑO DE CORREOS DE COMPRA (src/app/api/send-email/route.ts):
+   - Paleta de colores oficial de Kamaluso (Fucsia/Rosa/Pizarra: #be123c, #e11d48, #fff1f2, #fecdd3).
+   - Diagramación visual superior remito/factura con cabecera #KAM-XXXXXX.
+   - Ficha de entrega con detalle de agencia y flete a pagar en destino.
+   - Tabla de productos detallada, desglose de totales y recargo de Mercado Pago.
+   - Tarjeta de instrucciones de transferencia bancaria destacada (BROU, Prex, OCA, Abitab).
+   - Botón directo de WhatsApp oficial preconfigurado para el comprador (098 615 074).
+   - Correo para la administración con botón de 1-clic para iniciar WhatsApp con el cliente y lista de insumos a empacar.
+
+2. GENERADOR DE ETIQUETAS DE ENVÍO EDITABLE (src/components/admin/ShippingLabelModal.tsx):
+   - Modal con editor en vivo y vista previa en tiempo real.
+   - 100% editable antes de imprimir: Remitente, Destinatario (Nombre, Teléfono, Depto, Ciudad, Dirección/Agencia, RUT/CI), Encomienda (DAC, Correo Uruguayo, Mirtrans, modalidad, cantidad de bultos, flete a pagar en destino, contenido declarado, aviso frágil, N° de pedido).
+   - Estilos @media print calibrados para impresoras térmicas (100x150mm / A6) y papel común.
+   - Botón de copia rápida de datos de envío para WhatsApp del fletero.
+   - Integrado en panel /admin: ícono de impresora en tabla de pedidos, botón en detalle de pedido y botón "Nueva Etiqueta Manual".
+
+3. VERIFICACIÓN Y COMPILACIÓN:
+   - Build de producción verificado exitosamente con `next build` (0 errores, 47/47 páginas estáticas y dinámicas compiladas).
+   - Servidor local activo en puerto 3000.
 ================================================================================

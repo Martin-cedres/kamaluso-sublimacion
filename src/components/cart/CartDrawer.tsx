@@ -96,12 +96,16 @@ export function CartDrawer() {
       scrollToValidationError();
       return false;
     }
-    if (customerEmail.trim()) {
-      if (!customerEmail.includes("@") || !customerEmail.includes(".")) {
-        setValidationError("Por favor ingresa un Correo Electrónico válido o déjalo en blanco.");
-        scrollToValidationError();
-        return false;
-      }
+    if (!customerEmail.trim()) {
+      setValidationError("Por favor ingresa tu Correo Electrónico para enviarte la confirmación del pedido.");
+      scrollToValidationError();
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail.trim())) {
+      setValidationError("Por favor ingresa un Correo Electrónico válido (ej. tuempresa@gmail.com).");
+      scrollToValidationError();
+      return false;
     }
     if (!customerCity.trim()) {
       setValidationError("Por favor ingresa tu Ciudad / Localidad.");
@@ -117,7 +121,7 @@ export function CartDrawer() {
     return true;
   };
 
-  // Construir mensaje estructurado, enviar Email a kamalusosanjose@gmail.com y abrir WhatsApp
+  // Construir mensaje estructurado, enviar Email a cliente y tienda y abrir WhatsApp
   const handleWhatsAppAndEmailSubmit = async () => {
     if (!validateCustomerData()) return;
 
@@ -125,11 +129,12 @@ export function CartDrawer() {
 
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
     const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+    const orderIdToUse = activeOrderId || `KAM-${Date.now().toString().slice(-6)}`;
 
     // 0. Registrar/actualizar venta en el sistema evitando duplicados en reintentos
     try {
       const saved = await saveOrder({
-        id: activeOrderId || undefined,
+        id: orderIdToUse,
         customer: {
           name: customerName.trim(),
           phone: customerPhone.trim(),
@@ -151,12 +156,13 @@ export function CartDrawer() {
       console.error("Error al guardar pedido en historial:", orderErr);
     }
 
-    // 1. Disparar notificación por Correo a kamalusosanjose@gmail.com
+    // 1. Disparar notificación por Correo al cliente y a kamalusosanjose@gmail.com
     try {
       await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId: orderIdToUse,
           cart,
           totalPrice,
           finalTotal,
@@ -178,12 +184,12 @@ export function CartDrawer() {
     }
 
     // 2. Construir mensaje estructurado para WhatsApp
-    let message = `*NUEVO PEDIDO MAYORISTA - KAMALUSO SUBLIMACIÓN*\n\n`;
+    let message = `*NUEVO PEDIDO MAYORISTA #${orderIdToUse} - KAMALUSO SUBLIMACIÓN*\n\n`;
 
     message += `👤 *DATOS DEL COMPRADOR:*\n`;
     message += `• *Nombre/Empresa:* ${customerName.trim()}\n`;
     message += `• *Teléfono:* ${customerPhone.trim()}\n`;
-    message += `• *Email:* ${customerEmail.trim() || "No especificado"}\n`;
+    message += `• *Email:* ${customerEmail.trim()}\n`;
     message += `• *Ubicación:* ${customerCity.trim()}, ${customerDepartment}\n`;
     message += `• *Dirección/Destino:* ${
       shippingMethod === "pickup" ? "Retira en Local (San José)" : customerAddress.trim()
@@ -230,11 +236,12 @@ export function CartDrawer() {
 
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
     const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+    const orderIdToUse = activeOrderId || `KAM-${Date.now().toString().slice(-6)}`;
 
     // Registrar pedido en el historial de ventas evitando duplicados
     try {
       const saved = await saveOrder({
-        id: activeOrderId || undefined,
+        id: orderIdToUse,
         customer: {
           name: customerName.trim(),
           phone: customerPhone.trim(),
@@ -262,9 +269,11 @@ export function CartDrawer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId: orderIdToUse,
           cart,
           totalPrice,
           finalTotal,
+          paymentMethodId: paymentMethod,
           paymentMethodName: selectedPay,
           shippingMethodName: selectedShip,
           customer: {
@@ -286,6 +295,7 @@ export function CartDrawer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId: orderIdToUse,
           items: cart,
           paymentMethod,
           shippingMethod,
@@ -537,11 +547,12 @@ export function CartDrawer() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                          Correo Electrónico (Opcional)
+                          Correo Electrónico *
                         </label>
                         <input
                           type="email"
-                          placeholder="correo@ejemplo.com (opcional)"
+                          required
+                          placeholder="tuempresa@gmail.com"
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
                           className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
@@ -701,6 +712,18 @@ export function CartDrawer() {
                     <span className="text-xs font-bold text-slate-500">UYU</span>
                   </div>
                 </div>
+
+                {shippingMethod !== "pickup" ? (
+                  <p className="text-[11px] text-slate-500 pt-1.5 flex items-start gap-1.5 border-t border-slate-100">
+                    <span className="flex-shrink-0">🚚</span>
+                    <span><strong>Flete de envío:</strong> se abona en destino al recibir o retirar la encomienda en la agencia ({SHIPPING_METHODS.find(s => s.id === shippingMethod)?.name.split(" - ")[0] || "DAC / Correo"}).</span>
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-emerald-700 pt-1.5 flex items-center gap-1.5 border-t border-slate-100">
+                    <span className="flex-shrink-0">📍</span>
+                    <span><strong>Retiro en Local:</strong> sin costo de flete en San José de Mayo.</span>
+                  </p>
+                )}
               </div>
 
               {step === 1 ? (
@@ -714,39 +737,53 @@ export function CartDrawer() {
                 </button>
               ) : (
                 /* Botones de Finalización de Compra (Paso 2) */
-                <div className="space-y-2">
-                  {/* Mercado Pago Botón Directo si fue seleccionado */}
-                  {isMp && (
+                <div className="space-y-2.5">
+                  {/* Mercado Pago Botón Principal si fue seleccionado */}
+                  {isMp ? (
+                    <div className="space-y-2">
+                      <button
+                        onClick={handleMercadoPagoCheckout}
+                        disabled={isLoadingMp}
+                        className="w-full py-3.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-extrabold rounded-xl shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
+                      >
+                        {isLoadingMp ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="w-4 h-4" />
+                        )}
+                        <span>Pagar Ahora con Mercado Pago</span>
+                      </button>
+
+                      <div className="text-center pt-1">
+                        <button
+                          type="button"
+                          onClick={handleWhatsAppAndEmailSubmit}
+                          disabled={isSendingOrder}
+                          className="text-[11px] font-bold text-slate-500 hover:text-emerald-700 underline transition-colors inline-flex items-center gap-1"
+                        >
+                          <Send className="w-3 h-3" />
+                          <span>O si prefieres, enviar pedido por WhatsApp y abonar por transferencia</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Botón Principal WhatsApp y Correo para el resto de medios de pago */
                     <button
-                      onClick={handleMercadoPagoCheckout}
-                      disabled={isLoadingMp}
-                      className="w-full py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition disabled:opacity-50 text-xs"
+                      onClick={handleWhatsAppAndEmailSubmit}
+                      disabled={isSendingOrder}
+                      className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
                     >
-                      {isLoadingMp ? (
+                      {isSendingOrder ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
-                        <CreditCard className="w-4 h-4" />
+                        <>
+                          <Send className="w-4 h-4" />
+                          <Mail className="w-4 h-4" />
+                        </>
                       )}
-                      <span>Pagar Ahora con Mercado Pago</span>
+                      <span>Confirmar Pedido por WhatsApp y Correo</span>
                     </button>
                   )}
-
-                  {/* Botón Principal WhatsApp y Correo */}
-                  <button
-                    onClick={handleWhatsAppAndEmailSubmit}
-                    disabled={isSendingOrder}
-                    className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
-                  >
-                    {isSendingOrder ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <Mail className="w-4 h-4" />
-                      </>
-                    )}
-                    <span>Enviar Pedido por WhatsApp y Correo</span>
-                  </button>
 
                   <button
                     onClick={() => setStep(1)}
