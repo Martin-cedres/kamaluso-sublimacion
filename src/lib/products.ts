@@ -44,6 +44,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "badge": "NUEVO 2027",
     "inStock": true,
     "images": [
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000282-391a4391a7/700/Agenda%20sublimable%20dos%20dias%20por%20hoja%202022%20%20kamaluso%201.webp?ph=904ccf23c3",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000283-bc117bc11a/700/agenda%20sublimable%202022%20tapa.webp?ph=904ccf23c3"
     ]
@@ -60,6 +61,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "badge": "NUEVO 2027",
     "inStock": true,
     "images": [
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000284-b73e8b73eb/700/agenda%20sublimable%202022%201%20dia%20por%20p%C3%A1gina%20kamaluso.webp?ph=904ccf23c3",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000285-1d8571d85b/700/agenda%20sublimable%202022%20tapa%201%20dia%20por%20p%C3%A1gina.webp?ph=904ccf23c3"
     ]
@@ -76,6 +78,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "badge": "PROMO MAYORISTA",
     "inStock": true,
     "images": [
+      "/agenda_fondo_kamaluso.jpg",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000451-7c2877c288/700/kit-7.webp?ph=904ccf23c3",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000243-e7ef8e7efb/700/WhatsApp%20Image%202022-05-18%20at%203.08.10%20PM%20%281%29.webp?ph=904ccf23c3"
     ]
@@ -104,7 +107,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "blocks-planners",
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000363-a5af0a5af3/700/Planner%20verde.webp?ph=904ccf23c3",
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/planner-verde-0SR8KoFXM6ny6Sev9sblnxLxAfAHXW.webp",
       "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000362-81e4381e45/450/Planner%20verde.jpeg?ph=904ccf23c3"
     ]
   },
@@ -119,8 +122,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "libretas",
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000298-2877d28780/700/Libreta%20A5%20sublimable.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000299-4ce4c4ce4d/700/Libreta%20A5%20sublimable%202.webp?ph=904ccf23c3"
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/libreta-a5-sublimable-dW6xRzjvjB6lwBn0eI9eg7s31Idb8o.webp",
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/libreta-a5-sublimable-tapa-s8wZbMP7jiFBQfoBnLZHtcXWXFQUF5.webp"
     ]
   },
   {
@@ -147,8 +150,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "blocks-planners",
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000314-a8a81a8a85/700/block%20sublimable%20kamaluso%20san%20jos%C3%A9%20%202-4.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000315-0d2640d267/700/block%20sublimable%20kamaluso%20san%20jos%C3%A9%20%202-3.webp?ph=904ccf23c3"
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---2-4-gB1YBdxVM5OTya2cEXzicq64uwoBEn.webp",
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---4-7-mHw7QL6IWnIHUL1EulF9nkb1Ocu5LF.webp"
     ]
   },
   {
@@ -161,8 +164,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "blocks-planners",
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000320-2cac22cac5/700/block%20sublimable%20kamaluso%20san%20jos%C3%A9%20%201.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000321-4f1ab4f1ad/700/block%20sublimable%20kamaluso%20san%20jos%C3%A9%20%201-2.webp?ph=904ccf23c3"
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---1-2-QCeHmX4c8j7MrjOraMBvpqQZTxhfQF.webp",
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---6-1-gIpJPQxgFIyDWz7bPzQkNQyoNFRX7b.webp"
     ]
   },
   {
@@ -175,8 +178,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "libretas",
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000300-89b2889b2b/700/Cuadernola%2021x30cm%20sublimable.webp?ph=904ccf23c3",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000092-7af567af59/450/Cuadernola%2021x30cm%20sublimable.jpeg?ph=904ccf23c3"
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/cuadernola-21x30cm-sublimable-7E7IyTM0QhzmNEj6XnkSw5ei6zzJk3.webp",
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/cuadernola-sublimable-9T8uQU1ngw67f9xz6AEKVHGEkhQpjK.webp"
     ]
   }
 ];
