@@ -214,3 +214,27 @@
 pm run build: 47/47 páginas generadas, 0 errores).
    - Sincronizado el repositorio remoto mediante git push origin main --force.
 ================================================================================
+
+================================================================================
+?? RESUMEN: CATÁLOGO OFICIAL DE 11 PRODUCTOS RESTAURADO CON FOTOS ORIGINALES
+================================================================================
+1. PRECIOS Y FOTOS VERIFICADAS:
+   - Producto 1 (Agenda Semanal 2027): precio actualizado a  UYU con foto de portada oficial rosa (/agenda_fondo_kamaluso.jpg).
+   - Los otros 10 productos restaurados a sus valores y fotos oficiales originales del catálogo:
+     * Agenda 2 días a la vista 2027:  (fotos WebP originales)
+     * Agenda 1 día a la vista 2027:  (fotos WebP originales)
+     * KIT 10 agendas + 1 de Regalo:  (fotos WebP originales)
+     * Citas juntos 100:  (fotos WebP originales)
+     * Planner Verde:  (fotos WebP originales)
+     * Libreta A5 (15x21 cm):  (fotos WebP originales)
+     * Cuaderno 17x22:  (fotos WebP originales)
+     * Block 10x15cm con renglones:  (fotos WebP originales)
+     * Block 10x15cm liso:  (fotos WebP originales)
+     * Cuadernola 21x30:  (fotos WebP originales)
+
+2. SINCRONIZACIÓN NUBE Y CÓDIGO:
+   - Enviado arreglo de 11 productos mediante POST a https://www.kamaluso.com/api/products y a http://localhost:3000/api/products, sobreescribiendo exitosamente data/products.json en Vercel Blob.
+   - Guardado como respaldo permanente en INITIAL_PRODUCTS dentro de src/lib/products.ts.
+   - Compilación Next.js validada con éxito (npm run build: 47/47 páginas sin errores).
+   - Commiteado y pusheado a origin main (commit d440767).
+================================================================================
