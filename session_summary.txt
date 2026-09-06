@@ -200,3 +200,17 @@
   * Servidor local corriendo y respondiendo 200 OK en puerto 3000.
 ================================================================================
 
+
+================================================================================
+? RESUMEN DE SESIÓN: REVERSIÓN AL COMMIT 2990441 Y SINCRONIZACIÓN
+================================================================================
+1. ACCIÓN SOLICITADA:
+   - El usuario solicitó detener las modificaciones recientes y regresar al commit exacto previo al problema con los productos y a las alteraciones de precios/datos generadas por la reconstrucción desde Webnode.
+
+2. PROCEDIMIENTO EJECUTADO:
+   - Creada rama de respaldo 'backup-productos-recuperados-hoy' conservando la galería y modificaciones de la sesión previa.
+   - Ejecutado git reset --hard 2990441 regresando el repositorio al estado exacto de producción del 4 de septiembre (correos responsive, generador de etiquetas, SEO y estructura limpia).
+   - Build de producción verificado con éxito (
+pm run build: 47/47 páginas generadas, 0 errores).
+   - Sincronizado el repositorio remoto mediante git push origin main --force.
+================================================================================
