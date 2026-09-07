@@ -11,6 +11,7 @@ import { getLocalAdminUser, removeLocalAdminUser, isAllowedAdminEmail, AdminUser
 import ProductModal from "@/components/admin/ProductModal";
 import ResourceModal from "@/components/admin/ResourceModal";
 import ShippingLabelModal from "@/components/admin/ShippingLabelModal";
+import OrderSummaryModal from "@/components/admin/OrderSummaryModal";
 import VisualReorderModal from "@/components/admin/VisualReorderModal";
 import {
   Plus,
@@ -52,9 +53,11 @@ export default function AdminDashboardPage() {
   // Tab Activa: "products" | "resources" | "orders"
   const [activeTab, setActiveTab] = useState<"products" | "resources" | "orders">("products");
 
-  // State Etiquetas de Envío
+  // State Etiquetas de Envío & Resumen de Pedido A4
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
   const [selectedOrderForLabel, setSelectedOrderForLabel] = useState<Order | null>(null);
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [selectedOrderForSummary, setSelectedOrderForSummary] = useState<Order | null>(null);
   const [isVisualReorderOpen, setIsVisualReorderOpen] = useState(false);
 
   // State Productos
@@ -933,11 +936,21 @@ export default function AdminDashboardPage() {
                             <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => {
+                                  setSelectedOrderForSummary(order);
+                                  setIsSummaryModalOpen(true);
+                                }}
+                                className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                title="Imprimir resumen de pedido (A4 para taller)"
+                              >
+                                <FileText className="w-4 h-4 text-blue-600" />
+                              </button>
+                              <button
+                                onClick={() => {
                                   setSelectedOrderForLabel(order);
                                   setIsLabelModalOpen(true);
                                 }}
                                 className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition"
-                                title="Generar e imprimir etiqueta de envío"
+                                title="Generar e imprimir etiqueta de envío (10x15cm)"
                               >
                                 <Printer className="w-4 h-4 text-pink-600" />
                               </button>
@@ -1083,19 +1096,35 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Botón Imprimir Etiqueta y Selector Estado */}
+              {/* Botones Imprimir (Resumen A4 & Etiqueta 10x15) y Selector Estado */}
               <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedOrderForLabel(selectedOrderModal);
-                    setIsLabelModalOpen(true);
-                  }}
-                  className="px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl shadow-md shadow-pink-600/20 flex items-center gap-2 transition active:scale-95 text-xs"
-                >
-                  <Printer className="w-4 h-4" />
-                  <span>Generar e Imprimir Etiqueta</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedOrderForSummary(selectedOrderModal);
+                      setIsSummaryModalOpen(true);
+                    }}
+                    className="px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl shadow-md flex items-center gap-2 transition active:scale-95 text-xs"
+                    title="Imprimir hoja de taller / Packing slip en hoja A4"
+                  >
+                    <FileText className="w-4 h-4 text-blue-400" />
+                    <span>Imprimir Resumen A4</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedOrderForLabel(selectedOrderModal);
+                      setIsLabelModalOpen(true);
+                    }}
+                    className="px-3.5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl shadow-md shadow-pink-600/20 flex items-center gap-2 transition active:scale-95 text-xs"
+                    title="Generar e imprimir etiqueta de envío 10x15cm"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span>Imprimir Etiqueta 10x15</span>
+                  </button>
+                </div>
 
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-slate-700">Estado:</span>
@@ -1117,7 +1146,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* Modal de Etiqueta de Envío (Editable & Imprimible) */}
+      {/* Modal de Etiqueta de Envío (Editable & Imprimible 10x15cm) */}
       <ShippingLabelModal
         isOpen={isLabelModalOpen}
         onClose={() => {
@@ -1125,6 +1154,16 @@ export default function AdminDashboardPage() {
           setSelectedOrderForLabel(null);
         }}
         order={selectedOrderForLabel}
+      />
+
+      {/* Modal de Resumen de Pedido A4 (Taller / Packing Slip) */}
+      <OrderSummaryModal
+        isOpen={isSummaryModalOpen}
+        onClose={() => {
+          setIsSummaryModalOpen(false);
+          setSelectedOrderForSummary(null);
+        }}
+        order={selectedOrderForSummary}
       />
 
       {/* Modal de Reordenamiento Visual (Drag & Drop) */}

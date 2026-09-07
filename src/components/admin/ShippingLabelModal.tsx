@@ -173,7 +173,6 @@ export default function ShippingLabelModal({
       `• *Destino:* ${recipientAddress}, ${recipientCity}, ${recipientDept}\n` +
       (rutInfo ? `• *RUT/CI:* ${rutInfo}\n` : "") +
       `• *Bultos:* ${packageCount}\n` +
-      `• *Contenido:* ${itemsSummary}\n` +
       `• *Observación:* ${notes}`;
 
     navigator.clipboard.writeText(text);
@@ -426,17 +425,6 @@ export default function ShippingLabelModal({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Contenido Declarado
-                </label>
-                <input
-                  type="text"
-                  value={itemsSummary}
-                  onChange={(e) => setItemsSummary(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
-                />
-              </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
@@ -615,17 +603,11 @@ export default function ShippingLabelModal({
                 )}
               </div>
 
-              {/* Contenido Declarado y Advertencia */}
-              <div className="space-y-1 text-xs pt-1">
-                <div className="flex justify-between items-center text-[11px]">
-                  <span className="font-bold text-slate-600">Contenido:</span>
-                  <span className="font-extrabold text-black">{itemsSummary}</span>
-                </div>
-                <div className="p-2 bg-red-50 border border-red-200 rounded-lg text-center">
-                  <p className="font-black text-red-600 text-xs tracking-wider">
-                    {notes}
-                  </p>
-                </div>
+              {/* Advertencia de Manipulación y Cuidado - Frágil */}
+              <div className="p-2.5 bg-red-50 border-2 border-red-500 rounded-xl text-center">
+                <p className="font-black text-red-700 text-xs tracking-wider uppercase">
+                  {notes || "⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE"}
+                </p>
               </div>
 
               {/* Footer con Código de Barras Simulado y Pedido */}
@@ -660,9 +642,21 @@ export default function ShippingLabelModal({
         </div>
       </div>
 
-      {/* ESTILOS CSS PARA IMPRESIÓN PRECISA (A6 / TÉRMICA 10x15cm) */}
+      {/* ESTILOS CSS PARA IMPRESIÓN PRECISA EN IMPRESORA TÉRMICA (10x15cm / 4x6") */}
       <style jsx global>{`
+        @page {
+          size: 100mm 150mm;
+          margin: 0;
+        }
         @media print {
+          html,
+          body {
+            width: 100mm !important;
+            height: 150mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+          }
           body * {
             visibility: hidden !important;
           }
@@ -678,15 +672,21 @@ export default function ShippingLabelModal({
             left: 0 !important;
             top: 0 !important;
             width: 100mm !important;
-            height: 145mm !important;
-            max-width: 100% !important;
+            height: 150mm !important;
+            max-width: 100mm !important;
+            max-height: 150mm !important;
             box-sizing: border-box !important;
-            border: 3.5px solid #000 !important;
+            border: 3.5px solid #000000 !important;
             border-radius: 0 !important;
             box-shadow: none !important;
-            padding: 12px !important;
+            padding: 10mm 7mm !important;
             margin: 0 !important;
             page-break-inside: avoid !important;
+            page-break-after: avoid !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
           }
         }
       `}</style>

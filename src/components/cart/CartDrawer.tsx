@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { saveOrder } from "@/lib/orders";
+import { getPaymentInstructions } from "@/lib/whatsapp";
 
 const PAYMENT_METHODS = [
   { id: "brou", name: "Transferencia Bancaria BROU" },
@@ -212,10 +213,12 @@ export function CartDrawer() {
       message += `💵 *TOTAL A PAGAR:* $${finalTotal.toLocaleString("es-UY")} UYU\n`;
     }
 
-    message += `\n💳 *MÉTODO DE PAGO:* ${selectedPay}\n`;
-    message += `🚚 *FORMA DE ENVÍO:* ${selectedShip}\n`;
+    message += `\n💳 *MÉTODO DE PAGO ELEGIDO:* ${selectedPay}\n`;
+    message += `🚚 *FORMA DE ENVÍO:* ${selectedShip}\n\n`;
 
-    message += `\n_Quedo a la espera del envío de datos bancarios para realizar el pago. ¡Gracias!_`;
+    // 3. Instrucciones dinámicas de pago según medio seleccionado
+    message += `${getPaymentInstructions(paymentMethod, orderIdToUse)}\n\n`;
+    message += `📦 _Despacho coordinado a todo el país. ¡Muchas gracias por tu compra en Kamaluso!_`;
 
     const url = `https://wa.me/59898615074?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
@@ -499,7 +502,7 @@ export function CartDrawer() {
 
                 <div className="p-3 bg-pink-50/70 border border-pink-200 rounded-xl text-xs text-pink-900 font-medium flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-pink-600 flex-shrink-0" />
-                  <span>Sin mínimo de compra. Despacho ágil en ~48hs a todo Uruguay.</span>
+                  <span>Sin mínimo de compra. Despacho coordinado a todo el país.</span>
                 </div>
               </div>
             ) : (

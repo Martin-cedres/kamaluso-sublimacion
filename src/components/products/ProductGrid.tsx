@@ -208,7 +208,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-800">Envíos a todo el país</h4>
-              <p className="text-xs text-slate-500">Sin mínimo de compra. Despacho en ~48hs.</p>
+              <p className="text-xs text-slate-500">Sin mínimo de compra. Despacho coordinado a todo el país.</p>
             </div>
           </div>
 

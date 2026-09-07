@@ -257,3 +257,67 @@ pm run build: 47/47 páginas generadas, 0 errores).
    - Build de producción Next.js compilado con éxito (35/35 páginas estáticas/dinámicas generadas con 0 errores).
    - Commits d440767, 473fd91 y fc172b2 subidos a origin main activando despliegue automático en Vercel.
 ================================================================================
+
+================================================================================
+?? RESUMEN: SERVICIO LOCAL ACTIVADO EN PUERTO 3000
+================================================================================
+1. ESTADO DEL SERVIDOR:
+   - Servidor de desarrollo Next.js levantado exitosamente en http://localhost:3000 (PID node activo).
+   - Verificado con respuesta HTTP 200 OK en la página de inicio.
+================================================================================
+
+================================================================================
+?? REGLA ESTABLECIDA: CONTROL DE COMMITS Y DEPLOY
+================================================================================
+- Restricción activa: No se realizarán commits ni deploys a producción (Vercel/Git) sin solicitud explícita del usuario.
+================================================================================
+
+================================================================================
+?? PLANIFICACIÓN: RESUMEN A4, ETIQUETA 10x15 Y WHATSAPP DINÁMICO
+================================================================================
+1. REQUISITOS DEFINIDOS CON EL USUARIO:
+   - Resumen del pedido en formato A4 para control de taller / packing slip.
+   - Etiqueta de envío térmica de 10x15 cm: sin contenido de productos, datos logísticos ampliados y aviso de frágil.
+   - Eliminación de referencias a 48hs en WhatsApp y textos; reemplazo por "Despacho coordinado a todo el país".
+   - Inclusión automática de datos bancarios específicos en WhatsApp según el medio de pago seleccionado.
+2. ARTEFACTO GENERADO:
+   - implementation_plan.md redactado a la espera de confirmación del usuario para proceder a la ejecución.
+================================================================================
+
+================================================================================
+? RESUMEN: IMPLEMENTACIÓN DE RESUMEN A4, ETIQUETA 10x15 Y WHATSAPP DINÁMICO
+================================================================================
+1. COMPONENTE NUEVO - RESUMEN DE PEDIDO A4 (TALLER):
+   - Creado src/components/admin/OrderSummaryModal.tsx para impresión en hoja A4.
+   - Incluye logo oficial, datos del comprador, logística/pago, tabla detallada de productos con casillas de verificación [ ] para armado de pedidos, subtotales y sección de control de calidad/despacho con firmas.
+
+2. ETIQUETA DE ENVÍO TÉRMICA 10x15 CM AJUSTADA:
+   - Modificado src/components/admin/ShippingLabelModal.tsx eliminando el contenido interno del paquete (por privacidad y seguridad).
+   - Tipografía de destinatario, teléfono y dirección ampliada para máxima legibilidad del chofer/agencia.
+   - Aviso obligatorio incluido: "?? CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE".
+   - Calibración CSS estricta para rollo térmico: @page { size: 100mm 150mm; margin: 0; }.
+
+3. WHATSAPP CON DATOS DE PAGO Y DESPACHO COORDINADO:
+   - src/lib/whatsapp.ts: Añadida función getPaymentInstructions con datos bancarios dinámicos (BROU, Prex, OCA Blue, Mi Dinero, Abitab, Red Pagos, etc.).
+   - src/components/cart/CartDrawer.tsx: El mensaje estructurado de WhatsApp ahora incluye automáticamente la cuenta bancaria del método seleccionado e instrucción para adjuntar el comprobante.
+   - Reemplazo de "48hs" en textos web y carrito por "Despacho coordinado a todo el país".
+
+4. PANEL DE ADMINISTRACIÓN (/admin):
+   - Doble botón de impresión en detalle de pedido: "Imprimir Resumen A4" e "Imprimir Etiqueta 10x15".
+   - Accesos directos rápidos (iconos FileText y Printer) agregados en cada fila de la tabla de pedidos.
+
+5. VERIFICACIÓN:
+   - npx tsc --noEmit: 0 errores de TypeScript.
+   - Servidor Next.js 15 compilando y respondiendo 200 OK en http://localhost:3000 y /admin.
+   - Regla respetada: 0 commits y 0 deploys ejecutados.
+================================================================================
+
+================================================================================
+?? AJUSTE: ELIMINACIÓN DE CHECKLIST EN HOJA DE PEDIDO A4
+================================================================================
+- Archivo: src/components/admin/OrderSummaryModal.tsx
+- Cambios realizados:
+  - Eliminado el bloque de 'Control de Armado y Despacho en Taller' y sus 4 casillas (Productos Verificados, Control de Calidad, Empacado & Protegido, Etiqueta 10x15 Pegada).
+  - Removido el icono no utilizado CheckSquare.
+  - Verificado con 0 errores en TypeScript y Next.js.
+================================================================================
