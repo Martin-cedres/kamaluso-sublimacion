@@ -517,7 +517,7 @@ export default function ShippingLabelModal({
                       KAMALUSO
                     </h2>
                     <p className="text-[9px] font-bold text-slate-700 uppercase tracking-widest mt-0.5">
-                      Sublimación & Papelería
+                      Papelería Sublimable
                     </p>
                   </div>
                 </div>

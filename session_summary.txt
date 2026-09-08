@@ -416,3 +416,13 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
 - Verificación:
   - TypeScript verificado con 0 errores (npx tsc --noEmit).
 ================================================================================
+
+================================================================================
+🏷️ ACTUALIZACIÓN SUBTÍTULO EN ETIQUETA DE ENVÍO
+================================================================================
+- Archivo modificado:
+  - src/components/admin/ShippingLabelModal.tsx:
+    - Modificado el texto secundario de cabecera bajo 'KAMALUSO':
+      Actualizado de 'Sublimación & Papelería' a 'Papelería Sublimable'.
+- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+================================================================================
