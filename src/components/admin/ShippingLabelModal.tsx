@@ -53,7 +53,7 @@ export default function ShippingLabelModal({
   const [senderName, setSenderName] = useState("KAMALUSO SUBLIMACIÓN");
   const [senderPhone, setSenderPhone] = useState("098 615 074");
   const [senderAddress, setSenderAddress] = useState("San José de Mayo, Uruguay");
-  const [senderRut, setSenderRut] = useState("RUT 21.849.201.0018");
+  const [senderRut, setSenderRut] = useState("");
 
   // Destinatario - 100% Editable
   const [recipientName, setRecipientName] = useState("");
@@ -273,7 +273,7 @@ export default function ShippingLabelModal({
                   </label>
                   <input
                     type="text"
-                    placeholder="Ej. RUT 210000000000"
+                    placeholder="Ej. RUT o C.I."
                     value={rutInfo}
                     onChange={(e) => setRutInfo(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
@@ -556,7 +556,7 @@ export default function ShippingLabelModal({
                   <span className="text-[9px] font-black uppercase text-slate-500 tracking-wider">
                     REMITENTE:
                   </span>
-                  <span className="text-[9px] font-bold text-slate-500">{senderRut}</span>
+                  {senderRut && <span className="text-[9px] font-bold text-slate-500">{senderRut}</span>}
                 </div>
                 <p className="font-extrabold text-black text-xs leading-snug">
                   {senderName}

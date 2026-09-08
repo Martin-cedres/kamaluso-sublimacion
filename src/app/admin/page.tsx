@@ -13,6 +13,7 @@ import ResourceModal from "@/components/admin/ResourceModal";
 import ShippingLabelModal from "@/components/admin/ShippingLabelModal";
 import OrderSummaryModal from "@/components/admin/OrderSummaryModal";
 import VisualReorderModal from "@/components/admin/VisualReorderModal";
+import ManualOrderModal from "@/components/admin/ManualOrderModal";
 import {
   Plus,
   Search,
@@ -59,6 +60,7 @@ export default function AdminDashboardPage() {
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
   const [selectedOrderForSummary, setSelectedOrderForSummary] = useState<Order | null>(null);
   const [isVisualReorderOpen, setIsVisualReorderOpen] = useState(false);
+  const [isManualOrderModalOpen, setIsManualOrderModalOpen] = useState(false);
 
   // State Productos
   const [products, setProducts] = useState<Product[]>([]);
@@ -849,17 +851,28 @@ export default function AdminDashboardPage() {
                 </select>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedOrderForLabel(null);
-                  setIsLabelModalOpen(true);
-                }}
-                className="w-full sm:w-auto py-2.5 px-4 bg-slate-900 hover:bg-pink-600 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-sm whitespace-nowrap active:scale-95"
-              >
-                <Printer className="w-4 h-4 text-pink-400" />
-                <span>Nueva Etiqueta Manual</span>
-              </button>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsManualOrderModalOpen(true)}
+                  className="w-full sm:w-auto py-2.5 px-4 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-pink-600/20 whitespace-nowrap active:scale-95"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Ingresar Pedido Manual</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedOrderForLabel(null);
+                    setIsLabelModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto py-2.5 px-4 bg-slate-900 hover:bg-pink-600 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-sm whitespace-nowrap active:scale-95"
+                >
+                  <Printer className="w-4 h-4 text-pink-400" />
+                  <span>Nueva Etiqueta Manual</span>
+                </button>
+              </div>
             </div>
 
             {/* Tabla de Pedidos */}
@@ -1175,6 +1188,17 @@ export default function AdminDashboardPage() {
           setProducts(newProducts);
           setOrderToastMessage("✨ Orden del catálogo guardado y actualizado en la web");
           setTimeout(() => setOrderToastMessage(null), 3500);
+        }}
+      />
+
+      {/* Modal para Ingresar Pedido Manual (Mostrador / WhatsApp / Externo) */}
+      <ManualOrderModal
+        isOpen={isManualOrderModalOpen}
+        onClose={() => setIsManualOrderModalOpen(false)}
+        products={products}
+        onOrderCreated={(newOrder) => {
+          setOrders((prev) => [newOrder, ...prev]);
+          loadOrdersData();
         }}
       />
     </div>

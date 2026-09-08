@@ -99,7 +99,7 @@ export default function OrderSummaryModal({
                     Sublimación & Papelería Mayorista
                   </p>
                   <p className="text-[10px] text-slate-500 font-medium">
-                    San José de Mayo, Uruguay • WhatsApp: 098 615 074 • RUT 21.849.201.0018
+                    San José de Mayo, Uruguay • WhatsApp: 098 615 074
                   </p>
                 </div>
               </div>

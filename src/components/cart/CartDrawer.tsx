@@ -17,6 +17,8 @@ import {
   User,
   Mail,
   CheckCircle2,
+  Home,
+  Building2,
 } from "lucide-react";
 import { saveOrder } from "@/lib/orders";
 import { getPaymentInstructions } from "@/lib/whatsapp";
@@ -35,10 +37,10 @@ const PAYMENT_METHODS = [
   },
 ];
 
-const SHIPPING_METHODS = [
-  { id: "dac_domicilio", name: "DAC - Envío a Domicilio" },
-  { id: "dac_agencia", name: "DAC - Retiro en Agencia" },
-  { id: "correo", name: "Correo Uruguayo - Retiro en Sucursal" },
+const SHIPPING_COMPANIES = [
+  { id: "dac", name: "DAC (Agencia Central)" },
+  { id: "correo", name: "Correo Uruguayo" },
+  { id: "mirtrans", name: "Mirtrans" },
   { id: "pickup", name: "Retiro en Local (San José de Mayo)" },
 ];
 
@@ -66,12 +68,44 @@ export function CartDrawer() {
 
   // Opciones comerciales
   const [paymentMethod, setPaymentMethod] = useState("brou");
-  const [shippingMethod, setShippingMethod] = useState("dac_domicilio");
+  const [deliveryType, setDeliveryType] = useState<"domicilio" | "agencia">("domicilio");
+  const [shippingCompany, setShippingCompany] = useState("dac");
   const [isLoadingMp, setIsLoadingMp] = useState(false);
   const [isSendingOrder, setIsSendingOrder] = useState(false);
   const [validationError, setValidationError] = useState("");
 
   if (!isCartOpen) return null;
+
+  const isPickup = shippingCompany === "pickup";
+
+  const getShippingMethodName = () => {
+    if (isPickup) return "Retiro en Local (San José de Mayo)";
+    if (shippingCompany === "correo") {
+      return deliveryType === "domicilio"
+        ? "Correo Uruguayo - Envío a Domicilio"
+        : "Correo Uruguayo - Retiro en Sucursal";
+    }
+    if (shippingCompany === "mirtrans") {
+      return deliveryType === "domicilio"
+        ? "Mirtrans - Envío a Domicilio"
+        : "Mirtrans - Retiro en Agencia";
+    }
+    return deliveryType === "domicilio"
+      ? "DAC - Envío a Domicilio"
+      : "DAC - Retiro en Agencia";
+  };
+
+  const getShippingMethodId = () => {
+    if (isPickup) return "pickup";
+    return `${shippingCompany}_${deliveryType}`;
+  };
+
+  const getShippingCompanyName = () => {
+    if (shippingCompany === "dac") return "DAC";
+    if (shippingCompany === "correo") return "Correo Uruguayo";
+    if (shippingCompany === "mirtrans") return "Mirtrans";
+    return "Agencia";
+  };
 
   // Recargo de Mercado Pago (+10%)
   const isMp = paymentMethod === "mercado_pago_online";
@@ -97,24 +131,25 @@ export function CartDrawer() {
       scrollToValidationError();
       return false;
     }
-    if (!customerEmail.trim()) {
-      setValidationError("Por favor ingresa tu Correo Electrónico para enviarte la confirmación del pedido.");
-      scrollToValidationError();
-      return false;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(customerEmail.trim())) {
-      setValidationError("Por favor ingresa un Correo Electrónico válido (ej. tuempresa@gmail.com).");
-      scrollToValidationError();
-      return false;
+    if (customerEmail.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(customerEmail.trim())) {
+        setValidationError("Por favor ingresa un Correo Electrónico válido (ej. tuempresa@gmail.com).");
+        scrollToValidationError();
+        return false;
+      }
     }
     if (!customerCity.trim()) {
       setValidationError("Por favor ingresa tu Ciudad / Localidad.");
       scrollToValidationError();
       return false;
     }
-    if (!customerAddress.trim() && shippingMethod !== "pickup") {
-      setValidationError("Por favor ingresa tu Dirección o Agencia de envío.");
+    if (!customerAddress.trim() && !isPickup) {
+      setValidationError(
+        deliveryType === "domicilio"
+          ? "Por favor ingresa tu Dirección de entrega a domicilio."
+          : "Por favor ingresa la Sucursal o Agencia donde retirarás el paquete."
+      );
       scrollToValidationError();
       return false;
     }
@@ -129,7 +164,7 @@ export function CartDrawer() {
     setIsSendingOrder(true);
 
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
-    const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+    const selectedShip = getShippingMethodName();
     const orderIdToUse = activeOrderId || `KAM-${Date.now().toString().slice(-6)}`;
 
     // 0. Registrar/actualizar venta en el sistema evitando duplicados en reintentos
@@ -142,14 +177,14 @@ export function CartDrawer() {
           email: customerEmail.trim(),
           department: customerDepartment,
           city: customerCity.trim(),
-          address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+          address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
         },
         items: cart,
         totalPrice,
         finalTotal,
         paymentMethodId: paymentMethod,
         paymentMethodName: selectedPay || paymentMethod,
-        shippingMethodName: selectedShip || shippingMethod,
+        shippingMethodName: selectedShip,
         status: "pendiente",
       });
       if (saved && saved.id) setActiveOrderId(saved.id);
@@ -176,7 +211,7 @@ export function CartDrawer() {
             email: customerEmail.trim(),
             department: customerDepartment,
             city: customerCity.trim(),
-            address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+            address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
           },
         }),
       });
@@ -190,10 +225,12 @@ export function CartDrawer() {
     message += `👤 *DATOS DEL COMPRADOR:*\n`;
     message += `• *Nombre/Empresa:* ${customerName.trim()}\n`;
     message += `• *Teléfono:* ${customerPhone.trim()}\n`;
-    message += `• *Email:* ${customerEmail.trim()}\n`;
+    if (customerEmail.trim()) {
+      message += `• *Email:* ${customerEmail.trim()}\n`;
+    }
     message += `• *Ubicación:* ${customerCity.trim()}, ${customerDepartment}\n`;
     message += `• *Dirección/Destino:* ${
-      shippingMethod === "pickup" ? "Retira en Local (San José)" : customerAddress.trim()
+      isPickup ? "Retira en Local (San José)" : customerAddress.trim()
     }\n\n`;
 
     message += `📦 *PRODUCTOS SOLICITADOS:*\n`;
@@ -238,7 +275,8 @@ export function CartDrawer() {
     setIsLoadingMp(true);
 
     const selectedPay = PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name;
-    const selectedShip = SHIPPING_METHODS.find((s) => s.id === shippingMethod)?.name;
+    const selectedShip = getShippingMethodName();
+    const selectedShipId = getShippingMethodId();
     const orderIdToUse = activeOrderId || `KAM-${Date.now().toString().slice(-6)}`;
 
     // Registrar pedido en el historial de ventas evitando duplicados
@@ -251,14 +289,14 @@ export function CartDrawer() {
           email: customerEmail.trim(),
           department: customerDepartment,
           city: customerCity.trim(),
-          address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+          address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
         },
         items: cart,
         totalPrice,
         finalTotal,
         paymentMethodId: paymentMethod,
         paymentMethodName: selectedPay || paymentMethod,
-        shippingMethodName: selectedShip || shippingMethod,
+        shippingMethodName: selectedShip,
         status: "pendiente",
       });
       if (saved && saved.id) setActiveOrderId(saved.id);
@@ -285,7 +323,7 @@ export function CartDrawer() {
             email: customerEmail.trim(),
             department: customerDepartment,
             city: customerCity.trim(),
-            address: shippingMethod === "pickup" ? "Retiro en Local (San José)" : customerAddress.trim(),
+            address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
           },
         }),
       });
@@ -301,12 +339,12 @@ export function CartDrawer() {
           orderId: orderIdToUse,
           items: cart,
           paymentMethod,
-          shippingMethod,
+          shippingMethod: selectedShipId,
           customer: {
             name: customerName.trim(),
             email: customerEmail.trim(),
             phone: customerPhone.trim(),
-            address: `${customerAddress.trim()}, ${customerCity.trim()}, ${customerDepartment}`,
+            address: isPickup ? "Retiro en Local (San José)" : `${customerAddress.trim()}, ${customerCity.trim()}, ${customerDepartment}`,
           },
         }),
       });
@@ -330,7 +368,7 @@ export function CartDrawer() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-[70] overflow-hidden">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
@@ -347,7 +385,7 @@ export function CartDrawer() {
               </div>
               <div>
                 <h2 className="text-sm sm:text-base font-extrabold flex items-center gap-2">
-                  <span>Tu Carrito B2B</span>
+                  <span>Tu Carrito</span>
                   <span className="text-[10px] bg-pink-500/30 text-pink-300 px-2 py-0.5 rounded-full border border-pink-500/40">
                     Paso {step} de 2
                   </span>
@@ -396,7 +434,7 @@ export function CartDrawer() {
           )}
 
           {/* Body Content con ID para scroll de validaciones */}
-          <div id="cart-drawer-body" className="flex-1 overflow-y-auto p-5 space-y-4">
+          <div id="cart-drawer-body" className="flex-1 overflow-y-auto p-4 space-y-3">
             {cart.length === 0 ? (
               <div className="text-center py-16 space-y-4">
                 <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto animate-bounce" />
@@ -515,7 +553,7 @@ export function CartDrawer() {
                 )}
 
                 {/* Formulario Datos Personales */}
-                <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                <div className="space-y-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
                   <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                     <User className="w-4 h-4 text-pink-600" />
                     <span>Datos del Comprador / Empresa</span>
@@ -550,11 +588,10 @@ export function CartDrawer() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                          Correo Electrónico *
+                          Correo Electrónico
                         </label>
                         <input
                           type="email"
-                          required
                           placeholder="tuempresa@gmail.com"
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
@@ -566,7 +603,7 @@ export function CartDrawer() {
                 </div>
 
                 {/* Formulario Dirección de Envío */}
-                <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                <div className="space-y-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
                   <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                     <MapPin className="w-4 h-4 text-emerald-600" />
                     <span>Destino de Envío en Uruguay</span>
@@ -626,23 +663,67 @@ export function CartDrawer() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                        {shippingMethod === "pickup"
-                          ? "Punto de Retiro"
-                          : "Dirección o Agencia de Preferencia *"}
-                      </label>
-                      {shippingMethod === "pickup" ? (
-                        <p className="text-xs text-slate-600 bg-white p-2.5 rounded-xl border border-slate-200 font-medium">
-                          📍 Retiro presencial en Local Kamaluso (San José de Mayo).
-                        </p>
+                      {isPickup ? (
+                        <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
+                          <p className="font-bold flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Retiro presencial en Local Kamaluso</span>
+                          </p>
+                          <p className="text-[11px] text-emerald-700 mt-0.5">
+                            San José de Mayo, Uruguay • Sin costo de envío.
+                          </p>
+                        </div>
                       ) : (
-                        <input
-                          type="text"
-                          placeholder="Ej. Av. 18 de Julio 1234 Apto 201 o Agencia DAC Centro"
-                          value={customerAddress}
-                          onChange={(e) => setCustomerAddress(e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-                        />
+                        <div className="space-y-2">
+                          <label className="block text-[11px] font-bold text-slate-700">
+                            ¿Cómo deseas recibir tu pedido? *
+                          </label>
+                          <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/80 rounded-xl">
+                            <button
+                              type="button"
+                              onClick={() => setDeliveryType("domicilio")}
+                              className={`py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                                deliveryType === "domicilio"
+                                  ? "bg-white text-pink-600 shadow-sm font-extrabold"
+                                  : "text-slate-600 hover:text-slate-900"
+                              }`}
+                            >
+                              <Home className="w-3.5 h-3.5" />
+                              <span>Dirección</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeliveryType("agencia")}
+                              className={`py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                                deliveryType === "agencia"
+                                  ? "bg-white text-pink-600 shadow-sm font-extrabold"
+                                  : "text-slate-600 hover:text-slate-900"
+                              }`}
+                            >
+                              <Building2 className="w-3.5 h-3.5" />
+                              <span>Retiro en Agencia</span>
+                            </button>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                              {deliveryType === "domicilio"
+                                ? "Dirección de Entrega (Calle, N° y Apto) *"
+                                : "Sucursal o Agencia para Retirar *"}
+                            </label>
+                            <input
+                              type="text"
+                              placeholder={
+                                deliveryType === "domicilio"
+                                  ? "Ej. Av. 18 de Julio 1234 Apto 201"
+                                  : "Ej. DAC Sucursal Centro, Terminal Tres Cruces, etc."
+                              }
+                              value={customerAddress}
+                              onChange={(e) => setCustomerAddress(e.target.value)}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                            />
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -651,13 +732,13 @@ export function CartDrawer() {
                 {/* Métodos de Pago y Envío */}
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                    <label className="block text-[11px] font-bold uppercase text-slate-700 mb-1">
                       Medio de Pago Preferido *
                     </label>
                     <select
                       value={paymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none shadow-sm"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none shadow-sm"
                     >
                       {PAYMENT_METHODS.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -668,19 +749,32 @@ export function CartDrawer() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                    <label className="block text-[11px] font-bold uppercase text-slate-700 mb-1">
                       Empresa / Opción de Envío *
                     </label>
                     <select
-                      value={shippingMethod}
-                      onChange={(e) => setShippingMethod(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none shadow-sm"
+                      value={shippingCompany}
+                      onChange={(e) => setShippingCompany(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none shadow-sm"
                     >
-                      {SHIPPING_METHODS.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name}
-                        </option>
-                      ))}
+                      <option value="dac">
+                        {deliveryType === "domicilio"
+                          ? "DAC - Envío a Domicilio"
+                          : "DAC - Retiro en Agencia"}
+                      </option>
+                      <option value="correo">
+                        {deliveryType === "domicilio"
+                          ? "Correo Uruguayo - Envío a Domicilio"
+                          : "Correo Uruguayo - Retiro en Sucursal"}
+                      </option>
+                      <option value="mirtrans">
+                        {deliveryType === "domicilio"
+                          ? "Mirtrans - Envío a Domicilio"
+                          : "Mirtrans - Retiro en Agencia"}
+                      </option>
+                      <option value="pickup">
+                        Retiro en Local (San José de Mayo)
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -688,66 +782,55 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Footer Controls */}
+          {/* Footer Controls - Simplificado y Compacto */}
           {cart.length > 0 && (
-            <div className="p-4 bg-slate-50 border-t border-slate-200 space-y-3">
-              <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1.5">
-                <div className="flex justify-between items-center text-xs text-slate-500">
-                  <span>Subtotal Insumos</span>
-                  <span className="font-bold text-slate-800">
-                    ${totalPrice.toLocaleString("es-UY")} UYU
+            <div className="p-3.5 bg-white border-t border-slate-200 space-y-2">
+              {/* Barra Resumen Compacta */}
+              <div className="flex items-center justify-between px-1">
+                <div>
+                  <span className="text-[11px] font-extrabold uppercase text-slate-500 tracking-wider block leading-none">
+                    Total a Pagar
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {isPickup ? (
+                      <span className="text-emerald-700 font-semibold">📍 Retiro en Local Kamaluso</span>
+                    ) : (
+                      <span>🚚 Flete en destino ({getShippingCompanyName()})</span>
+                    )}
                   </span>
                 </div>
-                {isMp && (
-                  <div className="flex justify-between items-center text-xs text-pink-600 font-semibold">
-                    <span>Recargo Mercado Pago (+10%)</span>
-                    <span>+${mpSurcharge.toLocaleString("es-UY")} UYU</span>
-                  </div>
-                )}
-                <div className="flex justify-between items-baseline pt-2 border-t border-slate-100 mt-1">
-                  <span className="text-xs font-black uppercase text-slate-700 tracking-wider">
-                    Total a Pagar:
+                <div className="text-right">
+                  <span className="text-2xl font-black text-pink-600 leading-none">
+                    ${finalTotal.toLocaleString("es-UY")}
                   </span>
-                  <div className="flex items-baseline gap-1 text-right">
-                    <span className="text-2xl sm:text-3xl font-black text-pink-600 leading-none">
-                      ${finalTotal.toLocaleString("es-UY")}
+                  <span className="text-xs font-bold text-slate-500 ml-1">UYU</span>
+                  {isMp && (
+                    <span className="block text-[10px] text-pink-600 font-bold leading-tight">
+                      (Incluye 10% Mercado Pago)
                     </span>
-                    <span className="text-xs font-bold text-slate-500">UYU</span>
-                  </div>
+                  )}
                 </div>
-
-                {shippingMethod !== "pickup" ? (
-                  <p className="text-[11px] text-slate-500 pt-1.5 flex items-start gap-1.5 border-t border-slate-100">
-                    <span className="flex-shrink-0">🚚</span>
-                    <span><strong>Flete de envío:</strong> se abona en destino al recibir o retirar la encomienda en la agencia ({SHIPPING_METHODS.find(s => s.id === shippingMethod)?.name.split(" - ")[0] || "DAC / Correo"}).</span>
-                  </p>
-                ) : (
-                  <p className="text-[11px] text-emerald-700 pt-1.5 flex items-center gap-1.5 border-t border-slate-100">
-                    <span className="flex-shrink-0">📍</span>
-                    <span><strong>Retiro en Local:</strong> sin costo de flete en San José de Mayo.</span>
-                  </p>
-                )}
               </div>
 
               {step === 1 ? (
                 /* Botón Ir al Paso 2 */
                 <button
                   onClick={() => setStep(2)}
-                  className="w-full py-3.5 px-4 bg-slate-900 hover:bg-pink-600 text-white font-extrabold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider"
+                  className="w-full py-3 px-4 bg-slate-900 hover:bg-pink-600 text-white font-extrabold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider"
                 >
                   <span>Continuar a Datos de Envío</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 /* Botones de Finalización de Compra (Paso 2) */
-                <div className="space-y-2.5">
+                <div className="space-y-1.5">
                   {/* Mercado Pago Botón Principal si fue seleccionado */}
                   {isMp ? (
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       <button
                         onClick={handleMercadoPagoCheckout}
                         disabled={isLoadingMp}
-                        className="w-full py-3.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-extrabold rounded-xl shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
+                        className="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 text-white font-extrabold rounded-xl shadow-md shadow-sky-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
                       >
                         {isLoadingMp ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -757,7 +840,7 @@ export function CartDrawer() {
                         <span>Pagar Ahora con Mercado Pago</span>
                       </button>
 
-                      <div className="text-center pt-1">
+                      <div className="text-center">
                         <button
                           type="button"
                           onClick={handleWhatsAppAndEmailSubmit}
@@ -765,7 +848,7 @@ export function CartDrawer() {
                           className="text-[11px] font-bold text-slate-500 hover:text-emerald-700 underline transition-colors inline-flex items-center gap-1"
                         >
                           <Send className="w-3 h-3" />
-                          <span>O si prefieres, enviar pedido por WhatsApp y abonar por transferencia</span>
+                          <span>O enviar pedido por WhatsApp y abonar por transferencia</span>
                         </button>
                       </div>
                     </div>
@@ -774,7 +857,7 @@ export function CartDrawer() {
                     <button
                       onClick={handleWhatsAppAndEmailSubmit}
                       disabled={isSendingOrder}
-                      className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
+                      className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider disabled:opacity-50"
                     >
                       {isSendingOrder ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -784,15 +867,15 @@ export function CartDrawer() {
                           <Mail className="w-4 h-4" />
                         </>
                       )}
-                      <span>Confirmar Pedido por WhatsApp y Correo</span>
+                      <span>Confirmar Pedido por WhatsApp</span>
                     </button>
                   )}
 
                   <button
                     onClick={() => setStep(1)}
-                    className="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors flex items-center justify-center gap-1"
+                    className="w-full py-1 text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors flex items-center justify-center gap-1"
                   >
-                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <ArrowLeft className="w-3 h-3" />
                     <span>Volver a Modificar Productos</span>
                   </button>
                 </div>

@@ -321,3 +321,98 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
   - Removido el icono no utilizado CheckSquare.
   - Verificado con 0 errores en TypeScript y Next.js.
 ================================================================================
+
+================================================================================
+?? DESPLIEGUE A PRODUCCI�N: COMMIT Y PUSH A GITHUB / VERCEL
+================================================================================
+- Solicitado y autorizado expl�citamente por el usuario.
+- Commit: 13e0cb2 ("feat: impresion de resumen A4, etiqueta termica 10x15 y whatsapp con datos de pago dinamicos")
+- Rama: main -> origin/main en https://github.com/Martin-cedres/kamaluso-sublimacion.git
+- Despliegue autom�tico en Vercel disparado con �xito (Build 35/35 rutas compiladas OK).
+================================================================================
+
+================================================================================
+🚀 SERVIDOR DE DESARROLLO: INICIADO EN PUERTO 3000
+================================================================================
+- Comando: npm run dev
+- Estado: Activo en segundo plano
+- URLs:
+  - Local: http://localhost:3000
+================================================================================
+
+================================================================================
+🛒 AJUSTES EN CARRITO DE COMPRAS Y REMOCIÓN DE RUT FICTICIO
+================================================================================
+- Archivos modificados:
+  - src/components/cart/CartDrawer.tsx:
+    - Título cambiado de 'Tu Carrito B2B' a 'Tu Carrito'.
+    - Campo de Correo Electrónico convertido en optativo (label actualizado a 'Correo Electrónico (Opcional)' y atributo 'required' eliminado).
+    - Validación modificada para solo verificar formato si el cliente ingresó un correo.
+    - Mensaje de WhatsApp actualizado para incluir el email únicamente si fue provisto.
+  - src/components/admin/OrderSummaryModal.tsx:
+    - Removido el RUT ficticio '21.849.201.0018' de los datos de cabecera.
+  - src/components/admin/ShippingLabelModal.tsx:
+    - Removido el valor inicial de RUT ficticio en el remitente (dejado en blanco y renderizado condicional).
+    - Actualizado placeholder de RUT/CI a texto genérico ('Ej. RUT o C.I.').
+- Verificación:
+  - TypeScript compilado sin errores (0 errores).
+================================================================================
+
+================================================================================
+📐 REDISEÑO COMPACTO DEL RESUMEN Y MODALIDAD DIRECCIÓN / RETIRO EN AGENCIA
+================================================================================
+- Archivo: src/components/cart/CartDrawer.tsx
+- Mejoras implementadas:
+  1. Simplificación y compactación del pie de página (Total a pagar):
+     - Eliminada la tarjeta voluminosa de múltiples líneas que consumía el 40% del alto vertical.
+     - Implementada barra horizontal ultra-compacta y elegante con Total a Pagar, moneda y estado de flete en destino.
+     - Botones de acción optimizados y reducción del espacio vertical en más de 120px, dejando todo el formulario visible sin compresión.
+  2. Modalidad de Entrega diferenciada (Dirección vs Retiro en Agencia):
+     - En 'Destino de Envío en Uruguay', añadido selector interactivo de 2 botones:
+       - 'Dirección': solicita 'Dirección de Entrega (Calle, N° y Apto) *'
+       - 'Retiro en Agencia': solicita 'Sucursal o Agencia para Retirar *'
+     - Si el usuario selecciona 'Retiro en Local (San José)', se muestra automáticamente el banner informativo sin solicitar dirección de encomienda.
+     - El desplegable 'Empresa / Opción de Envío' adapta dinámicamente sus etiquetas según la modalidad elegida (ej. 'DAC - Envío a Domicilio' vs 'DAC - Retiro en Agencia').
+  3. Reducción de espaciados internos y padding de tarjetas en el formulario para máxima comodidad visual tanto en desktop como mobile.
+- Verificación: 0 errores de compilación TypeScript y Next.js.
+================================================================================
+
+================================================================================
+🟢 OCULTACIÓN DE BOTÓN FLOTANTE DE WHATSAPP CON CARRITO ABIERTO
+================================================================================
+- Archivos:
+  - src/components/ui/WhatsAppFloating.tsx:
+    - Conectado con useCart() para detectar isCartOpen.
+    - Se oculta inmediatamente (return null) mientras el carrito esté abierto para evitar que tape el formulario o los botones de compra.
+    - Reducido z-index a z-40.
+  - src/components/cart/CartDrawer.tsx:
+    - Elevado z-index a z-[70] para garantizar que el panel del carrito y su backdrop queden siempre por encima de cualquier otro elemento interactivo del sitio.
+- Verificación:
+  - 0 errores en TypeScript.
+================================================================================
+
+================================================================================
+✉️ AJUSTE DE ETIQUETA: CORREO ELECTRÓNICO
+================================================================================
+- Archivo: src/components/cart/CartDrawer.tsx
+- Modificación: Etiqueta actualizada de 'Correo Electrónico (Opcional)' a 'Correo Electrónico' manteniendo su naturaleza opcional en la validación.
+- Verificación: 0 errores en TypeScript.
+================================================================================
+
+================================================================================
+📦 INGRESO MANUAL DE PEDIDOS EXTERNOS EN PANEL ADMIN (SIN CAMPOS OBLIGATORIOS)
+================================================================================
+- Archivos creados / modificados:
+  - src/components/admin/ManualOrderModal.tsx (Nuevo componente):
+    - Modal completo para registrar pedidos tomados fuera de la web (WhatsApp, teléfono, mostrador en taller, ventas directas).
+    - CERO campos obligatorios: todos los campos son 100% opcionales con fallbacks automáticos ('Cliente Mostrador / WhatsApp', etc.).
+    - Selección flexible de ítems: permite agregar productos del catálogo activo o cargar ítems/conceptos personalizados libres (nombre, precio unitario y cantidad).
+    - Total autocalculado con opción de sobreescritura manual libre (descuentos o cotizaciones especiales).
+    - Configuración de estado inicial del pedido, método de pago y logística de entrega/retiro.
+    - Persistencia en almacenamiento local, API y Supabase mediante saveOrder().
+  - src/app/admin/page.tsx:
+    - Integrado botón 'Ingresar Pedido Manual' en la barra de herramientas de la pestaña Pedidos.
+    - Conectado ManualOrderModal con recarga reactiva de pedidos al guardar (loadOrdersData y actualización de estado local).
+- Verificación:
+  - TypeScript verificado con 0 errores (npx tsc --noEmit).
+================================================================================
