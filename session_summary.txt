@@ -426,3 +426,62 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
       Actualizado de 'Sublimación & Papelería' a 'Papelería Sublimable'.
 - Verificación: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
+
+================================================================================
+🏷️ LIMPIEZA Y AJUSTES EN ETIQUETA DE ENVÍO 10x15CM
+================================================================================
+- Archivo modificado:
+  - src/components/admin/ShippingLabelModal.tsx:
+    - Eliminado texto 'A Domicilio' del encabezado de la etiqueta.
+    - Eliminada por completo la fila intermedia de '🚚 FLETE A PAGAR EN DESTINO' y '1 Bulto' tanto en la etiqueta impresa como en el formulario de edición.
+    - Añadida la dirección web 'www.kamaluso.com' a los datos del REMITENTE ('Tel: 098 615 074 | San José de Mayo, Uruguay | www.kamaluso.com'), editable en el formulario.
+    - Actualizado texto copiado para fletes/WhatsApp sin datos innecesarios.
+- Verificación:
+  - TypeScript verificado con 0 errores (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+👤 ACTUALIZACIÓN NOMBRE REMITENTE EN ETIQUETA
+================================================================================
+- Archivo modificado:
+  - src/components/admin/ShippingLabelModal.tsx:
+    - Modificado el nombre del remitente por defecto de 'KAMALUSO SUBLIMACIÓN' a 'Katherine Silva'.
+- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+📱 CÓDIGO QR REAL PARA VISITAR LA WEB EN LA ETIQUETA
+================================================================================
+- Instalación de dependencia:
+  - 'qrcode' y '@types/qrcode' para renderizado vectorial nítido sin dependencias de red externas.
+- Archivo modificado:
+  - src/components/admin/ShippingLabelModal.tsx:
+    - Removido el código de barras simulado.
+    - Implementado Código QR 100% real y escaneable apuntando a 'https://www.kamaluso.com'.
+    - Añadida llamada visual a la acción en el pie de la etiqueta: '🌐 Visitanos en www.kamaluso.com' y 'Tienda Web - Escaneá el QR'.
+- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+🏷️ REMOCIÓN DE TEXTO DE VISITA WEB EN FOOTER DE ETIQUETA
+================================================================================
+- Archivo modificado:
+  - src/components/admin/ShippingLabelModal.tsx:
+    - Removido el texto '🌐 Visitanos en www.kamaluso.com' del pie de la etiqueta.
+    - Se mantiene limpio el identificador N° de Pedido a la izquierda y el Código QR de la tienda a la derecha.
+- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+🎨 REDISEÑO Y ALTO CONTRASTE EN PESTAÑAS DEL PANEL ADMIN
+================================================================================
+- Archivo modificado:
+  - src/app/admin/page.tsx:
+    - Rediseñadas las pestañas de navegación (Catálogo, Recursos y Pedidos) en formato píldora independiente de alto contraste.
+    - Ya no se pierden en el fondo negro: cuentan con fondo propio 'bg-slate-800', bordes 'border-2 border-slate-700', texto 100% blanco y badges contrastados.
+    - Asignados colores vivos y distintivos según la sección:
+      * Catálogo de Productos: Rosa vibrante ('bg-pink-600' activo, iconos y badges 'text-pink-400').
+      * Recursos y Plantillas: Púrpura / Violeta ('bg-purple-600' activo, iconos y badges 'text-purple-400').
+      * Pedidos / Ventas: Verde esmeralda ('bg-emerald-600' activo, iconos y badges 'text-emerald-400').
+- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+================================================================================

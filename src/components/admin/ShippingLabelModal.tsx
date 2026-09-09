@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import QRCode from "qrcode";
 import { Order } from "@/types";
 import {
   X,
@@ -50,9 +51,10 @@ export default function ShippingLabelModal({
   initialData,
 }: ShippingLabelModalProps) {
   // Remitente (Kamaluso) - 100% Editable
-  const [senderName, setSenderName] = useState("KAMALUSO SUBLIMACIÓN");
+  const [senderName, setSenderName] = useState("Katherine Silva");
   const [senderPhone, setSenderPhone] = useState("098 615 074");
   const [senderAddress, setSenderAddress] = useState("San José de Mayo, Uruguay");
+  const [senderWebsite, setSenderWebsite] = useState("www.kamaluso.com");
   const [senderRut, setSenderRut] = useState("");
 
   // Destinatario - 100% Editable
@@ -65,7 +67,7 @@ export default function ShippingLabelModal({
 
   // Logística y Paquete - 100% Editable
   const [shippingAgency, setShippingAgency] = useState("DAC (Agencia Central)");
-  const [deliveryType, setDeliveryType] = useState("A Domicilio");
+  const [deliveryType, setDeliveryType] = useState("");
   const [packageCount, setPackageCount] = useState("1 Bulto");
   const [freightCondition, setFreightCondition] = useState<"destino" | "pago">("destino");
   const [orderNumber, setOrderNumber] = useState("");
@@ -74,6 +76,22 @@ export default function ShippingLabelModal({
 
   // Estado de copiado
   const [copied, setCopied] = useState(false);
+
+  // Código QR Web Real (kamaluso.com)
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+
+  useEffect(() => {
+    QRCode.toDataURL("https://www.kamaluso.com", {
+      width: 160,
+      margin: 1,
+      color: {
+        dark: "#000000",
+        light: "#ffffff",
+      },
+    })
+      .then((url) => setQrCodeUrl(url))
+      .catch((err) => console.error("Error al generar QR:", err));
+  }, []);
 
   // Sincronizar datos automáticamente cada vez que se abre con un pedido o se pasa un initialData
   useEffect(() => {
@@ -89,7 +107,7 @@ export default function ShippingLabelModal({
       const shipName = order.shippingMethodName || "";
       if (shipName.toLowerCase().includes("dac")) {
         setShippingAgency("DAC (Agencia Central)");
-        setDeliveryType(shipName.toLowerCase().includes("agencia") ? "Retiro en Agencia" : "A Domicilio");
+        setDeliveryType(shipName.toLowerCase().includes("agencia") || shipName.toLowerCase().includes("sucursal") ? "Retiro en Agencia" : "");
       } else if (shipName.toLowerCase().includes("correo")) {
         setShippingAgency("Correo Uruguayo");
         setDeliveryType("Retiro en Sucursal");
@@ -98,7 +116,7 @@ export default function ShippingLabelModal({
         setDeliveryType("Retiro Presencial");
       } else {
         setShippingAgency(shipName || "DAC (Agencia Central)");
-        setDeliveryType("A Domicilio");
+        setDeliveryType("");
       }
 
       // Resumen de productos
@@ -165,14 +183,12 @@ export default function ShippingLabelModal({
   const handleCopyText = () => {
     const text = `*DATOS PARA ENVÍO - KAMALUSO*\n` +
       `📦 *N° Pedido:* ${orderNumber}\n` +
-      `🚚 *Agencia:* ${shippingAgency} (${deliveryType})\n` +
-      `💵 *Flete:* ${freightCondition === "destino" ? "A PAGAR EN DESTINO" : "FLETE PAGO"}\n\n` +
+      `🚚 *Agencia:* ${shippingAgency}\n\n` +
       `👤 *DESTINATARIO:*\n` +
       `• *Nombre:* ${recipientName}\n` +
       `• *Teléfono:* ${recipientPhone}\n` +
       `• *Destino:* ${recipientAddress}, ${recipientCity}, ${recipientDept}\n` +
       (rutInfo ? `• *RUT/CI:* ${rutInfo}\n` : "") +
-      `• *Bultos:* ${packageCount}\n` +
       `• *Observación:* ${notes}`;
 
     navigator.clipboard.writeText(text);
@@ -367,52 +383,6 @@ export default function ShippingLabelModal({
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                    Modalidad
-                  </label>
-                  <select
-                    value={deliveryType}
-                    onChange={(e) => setDeliveryType(e.target.value)}
-                    className="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
-                  >
-                    <option value="A Domicilio">A Domicilio</option>
-                    <option value="Retiro en Sucursal">Retiro en Sucursal</option>
-                    <option value="Retiro Presencial">Retiro en Local San José</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                    Condición Flete
-                  </label>
-                  <select
-                    value={freightCondition}
-                    onChange={(e) => setFreightCondition(e.target.value as "destino" | "pago")}
-                    className={`w-full px-2 py-2 border rounded-xl text-xs font-bold focus:ring-2 focus:ring-pink-500 focus:outline-none ${
-                      freightCondition === "destino"
-                        ? "bg-amber-50 text-amber-900 border-amber-300"
-                        : "bg-emerald-50 text-emerald-900 border-emerald-300"
-                    }`}
-                  >
-                    <option value="destino">A Pagar en Destino</option>
-                    <option value="pago">Flete Pago</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                    Cant. Bultos
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="1 Bulto"
-                    value={packageCount}
-                    onChange={(e) => setPackageCount(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
                     N° Pedido
                   </label>
                   <input
@@ -424,7 +394,6 @@ export default function ShippingLabelModal({
                   />
                 </div>
               </div>
-
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
@@ -460,6 +429,26 @@ export default function ShippingLabelModal({
                     type="text"
                     value={senderPhone}
                     onChange={(e) => setSenderPhone(e.target.value)}
+                    className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold bg-white"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-1.5">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Página Web</label>
+                  <input
+                    type="text"
+                    value={senderWebsite}
+                    onChange={(e) => setSenderWebsite(e.target.value)}
+                    className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-bold text-pink-600 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Ciudad / Origen</label>
+                  <input
+                    type="text"
+                    value={senderAddress}
+                    onChange={(e) => setSenderAddress(e.target.value)}
                     className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold bg-white"
                   />
                 </div>
@@ -526,27 +515,6 @@ export default function ShippingLabelModal({
                   <span className="inline-block bg-black text-white font-black text-xs px-3 py-1.5 rounded-lg uppercase tracking-wider">
                     {shippingAgency || "DAC"}
                   </span>
-                  <p className="text-[10px] font-bold text-slate-600 mt-0.5">
-                    {deliveryType}
-                  </p>
-                </div>
-              </div>
-
-              {/* Fila Flete en Destino / Bultos */}
-              <div className="flex items-center justify-between gap-2 border-b-2 border-black pb-2">
-                <div
-                  className={`px-3 py-1 rounded-lg border-2 font-black text-xs uppercase tracking-wider ${
-                    freightCondition === "destino"
-                      ? "border-black bg-black text-white"
-                      : "border-slate-800 bg-slate-100 text-slate-900"
-                  }`}
-                >
-                  {freightCondition === "destino" ? "🚚 FLETE A PAGAR EN DESTINO" : "✅ FLETE PAGO"}
-                </div>
-                <div className="text-right">
-                  <span className="font-black text-xs text-black border border-black px-2 py-0.5 rounded">
-                    {packageCount}
-                  </span>
                 </div>
               </div>
 
@@ -562,7 +530,7 @@ export default function ShippingLabelModal({
                   {senderName}
                 </p>
                 <p className="text-[11px] text-slate-700">
-                  Tel: <strong>{senderPhone}</strong> | {senderAddress}
+                  Tel: <strong>{senderPhone}</strong> | {senderAddress} {senderWebsite ? `| ${senderWebsite}` : ""}
                 </p>
               </div>
 
@@ -610,31 +578,38 @@ export default function ShippingLabelModal({
                 </p>
               </div>
 
-              {/* Footer con Código de Barras Simulado y Pedido */}
-              <div className="pt-2 border-t-[2px] border-black flex items-center justify-between text-[10px]">
+              {/* Footer con N° de Pedido y Código QR para la Web */}
+              <div className="pt-2.5 border-t-[2.5px] border-black flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-slate-500 block">N° de Pedido:</span>
-                  <span className="font-mono font-black text-xs text-black">
+                  <span className="font-bold text-[10px] text-slate-500 uppercase tracking-wider block">
+                    N° de Pedido:
+                  </span>
+                  <span className="font-mono font-black text-sm text-black block">
                     #{orderNumber || "KAM-000000"}
                   </span>
                 </div>
 
-                <div className="flex flex-col items-end">
-                  <div className="flex gap-0.5 h-6 items-center">
-                    <div className="w-1 h-full bg-black"></div>
-                    <div className="w-0.5 h-full bg-black"></div>
-                    <div className="w-1.5 h-full bg-black"></div>
-                    <div className="w-0.5 h-full bg-black"></div>
-                    <div className="w-2 h-full bg-black"></div>
-                    <div className="w-0.5 h-full bg-black"></div>
-                    <div className="w-1 h-full bg-black"></div>
-                    <div className="w-1.5 h-full bg-black"></div>
-                    <div className="w-0.5 h-full bg-black"></div>
-                    <div className="w-1 h-full bg-black"></div>
+                <div className="flex items-center gap-2">
+                  <div className="text-right">
+                    <span className="text-[9px] font-black uppercase text-black block leading-none">
+                      Tienda Web
+                    </span>
+                    <span className="text-[8px] font-semibold text-slate-500 block mt-0.5">
+                      Escaneá el QR
+                    </span>
                   </div>
-                  <span className="text-[9px] font-mono font-bold text-slate-600 mt-0.5">
-                    {orderNumber || "KAMALUSO-UY"}
-                  </span>
+                  {qrCodeUrl ? (
+                    <div className="w-14 h-14 border-2 border-black p-0.5 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={qrCodeUrl}
+                        alt="QR Tienda Web Kamaluso"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-14 h-14 bg-slate-100 rounded border border-slate-300"></div>
+                  )}
                 </div>
               </div>
             </div>

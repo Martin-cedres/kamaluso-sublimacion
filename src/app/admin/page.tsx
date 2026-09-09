@@ -348,39 +348,69 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-2 border-t border-slate-800 pt-2">
+        {/* Navigation Tabs - Alto Contraste y Colores Vivos */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap gap-2.5 pt-3 pb-3 border-t border-slate-800">
           <button
             onClick={() => setActiveTab("products")}
-            className={`px-4 py-2 text-xs font-bold rounded-t-xl transition flex items-center gap-2 ${
+            className={`px-4 py-2.5 text-xs sm:text-sm font-extrabold rounded-xl transition-all flex items-center gap-2.5 shadow-sm active:scale-95 ${
               activeTab === "products"
-                ? "bg-slate-100 text-slate-900 border-t-2 border-pink-500"
-                : "text-slate-400 hover:text-white hover:bg-slate-800"
+                ? "bg-pink-600 text-white shadow-lg shadow-pink-600/30 border-2 border-pink-400 scale-[1.02]"
+                : "bg-slate-800 text-white border-2 border-slate-700 hover:border-pink-500/80 hover:bg-slate-750"
             }`}
           >
-            <Package className="w-4 h-4" /> Catálogo de Productos ({totalProducts})
+            <Package className={`w-4 h-4 ${activeTab === "products" ? "text-white" : "text-pink-400"}`} />
+            <span>Catálogo de Productos</span>
+            <span
+              className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-black ${
+                activeTab === "products"
+                  ? "bg-white/20 text-white"
+                  : "bg-slate-700 text-pink-300 border border-slate-600"
+              }`}
+            >
+              {totalProducts}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveTab("resources")}
-            className={`px-4 py-2 text-xs font-bold rounded-t-xl transition flex items-center gap-2 ${
+            className={`px-4 py-2.5 text-xs sm:text-sm font-extrabold rounded-xl transition-all flex items-center gap-2.5 shadow-sm active:scale-95 ${
               activeTab === "resources"
-                ? "bg-slate-100 text-slate-900 border-t-2 border-pink-500"
-                : "text-slate-400 hover:text-white hover:bg-slate-800"
+                ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 border-2 border-purple-400 scale-[1.02]"
+                : "bg-slate-800 text-white border-2 border-slate-700 hover:border-purple-500/80 hover:bg-slate-750"
             }`}
           >
-            <FileText className="w-4 h-4" /> Recursos y Plantillas ({totalResources})
+            <FileText className={`w-4 h-4 ${activeTab === "resources" ? "text-white" : "text-purple-400"}`} />
+            <span>Recursos y Plantillas</span>
+            <span
+              className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-black ${
+                activeTab === "resources"
+                  ? "bg-white/20 text-white"
+                  : "bg-slate-700 text-purple-300 border border-slate-600"
+              }`}
+            >
+              {totalResources}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveTab("orders")}
-            className={`px-4 py-2 text-xs font-bold rounded-t-xl transition flex items-center gap-2 ${
+            className={`px-4 py-2.5 text-xs sm:text-sm font-extrabold rounded-xl transition-all flex items-center gap-2.5 shadow-sm active:scale-95 ${
               activeTab === "orders"
-                ? "bg-slate-100 text-slate-900 border-t-2 border-pink-500"
-                : "text-slate-400 hover:text-white hover:bg-slate-800"
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 border-2 border-emerald-400 scale-[1.02]"
+                : "bg-slate-800 text-white border-2 border-slate-700 hover:border-emerald-500/80 hover:bg-slate-750"
             }`}
           >
-            <ShoppingBag className="w-4 h-4" /> Pedidos / Ventas ({orders.length})
+            <ShoppingBag className={`w-4 h-4 ${activeTab === "orders" ? "text-white" : "text-emerald-400"}`} />
+            <span>Pedidos / Ventas</span>
+            <span
+              className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-black ${
+                activeTab === "orders"
+                  ? "bg-white/20 text-white"
+                  : "bg-slate-700 text-emerald-300 border border-slate-600"
+              }`}
+            >
+              {orders.length}
+            </span>
           </button>
         </div>
       </header>
