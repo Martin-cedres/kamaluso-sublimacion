@@ -23,20 +23,16 @@ if (!globalThis.__kamaluso_orders_cache__) {
   };
 }
 
-export async function GET() {
+async function getLatestOrdersFromBlob(): Promise<Order[]> {
   const cache = globalThis.__kamaluso_orders_cache__!;
   const now = Date.now();
 
-  // 1. Devolver de memoria si existe y fue actualizado recientemente (0ms, 0 requests)
-  if (cache.orders.length > 0 && now - cache.lastFetched < 30000) {
-    return NextResponse.json(cache.orders, {
-      headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate",
-      },
-    });
+  // Si tenemos memoria reciente de menos de 10s, la usamos
+  if (cache.orders && cache.orders.length > 0 && now - cache.lastFetched < 10000) {
+    return cache.orders;
   }
 
-  // 2. Fetch directo por URL fija de CDN (Simple Request 100% GRATIS, 0 Advanced Requests)
+  // De lo contrario, forzar lectura fresca de la CDN de Vercel Blob
   const targetUrl = cache.blobUrl || DIRECT_BLOB_ORDERS_URL;
   try {
     const res = await fetch(targetUrl, { cache: "no-store" });
@@ -46,12 +42,19 @@ export async function GET() {
         cache.orders = orders;
         cache.blobUrl = targetUrl;
         cache.lastFetched = now;
-        return NextResponse.json(orders);
+        return orders;
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn("Error leyendo pedidos de Vercel Blob CDN:", e);
+  }
 
-  return NextResponse.json(cache.orders || [], {
+  return cache.orders || [];
+}
+
+export async function GET() {
+  const orders = await getLatestOrdersFromBlob();
+  return NextResponse.json(orders, {
     headers: {
       "Cache-Control": "no-store, no-cache, must-revalidate",
     },
@@ -62,12 +65,19 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const cache = globalThis.__kamaluso_orders_cache__!;
+    
+    // Cargar SIEMPRE los pedidos existentes antes de agregar o actualizar
+    let currentOrders = await getLatestOrdersFromBlob();
     let updatedOrders: Order[] = [];
 
     if (Array.isArray(body)) {
-      updatedOrders = body;
+      const orderMap = new Map<string, Order>();
+      currentOrders.forEach((o) => orderMap.set(o.id, o));
+      body.forEach((o) => orderMap.set(o.id, o));
+      updatedOrders = Array.from(orderMap.values()).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } else if (body && body.id) {
-      let currentOrders: Order[] = cache.orders || [];
       const idx = currentOrders.findIndex((o) => o.id === body.id);
       if (idx >= 0) {
         currentOrders[idx] = body;
@@ -107,7 +117,7 @@ export async function DELETE(request: Request) {
     if (!id) return NextResponse.json({ error: "ID requerido" }, { status: 400 });
 
     const cache = globalThis.__kamaluso_orders_cache__!;
-    const currentOrders: Order[] = cache.orders || [];
+    let currentOrders = await getLatestOrdersFromBlob();
     const filtered = currentOrders.filter((o) => o.id !== id);
 
     cache.orders = filtered;

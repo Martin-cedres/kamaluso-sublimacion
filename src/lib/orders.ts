@@ -51,7 +51,7 @@ export async function getAllOrders(): Promise<Order[]> {
     const res = await fetch("/api/orders?t=" + Date.now(), { cache: "no-store" });
     if (res.ok) {
       const cloudOrders = await res.json();
-      if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+      if (Array.isArray(cloudOrders)) {
         return mergeOrdersWithLocal(cloudOrders, localStored);
       }
     }

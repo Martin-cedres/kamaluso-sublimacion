@@ -485,3 +485,9 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
       * Pedidos / Ventas: Verde esmeralda ('bg-emerald-600' activo, iconos y badges 'text-emerald-400').
 - Verificación: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
+
+
+=== SESION: Solucion al problema de listado de solo el ultimo pedido ===
+- Diagnostico: En entornos serverless (Vercel), la memoria en cache global (__kamaluso_orders_cache__) inicia vacia ([]). Al realizar un POST o DELETE en /api/orders, no se leian los pedidos existentes almacenados en Vercel Blob (data/orders.json) antes de escribir, sobreescribiendo el JSON con solo el nuevo pedido guardado.
+- Solucion implementada: Se implemento la funcion helper getLatestOrdersFromBlob() en src/app/api/orders/route.ts que garantiza cargar la lista completa existente desde Vercel Blob CDN antes de fusionar nuevos pedidos o actualizar/eliminar pedidos existentes.
+- Verificación: Compilacion limpia con TypeScript (npx tsc --noEmit).
