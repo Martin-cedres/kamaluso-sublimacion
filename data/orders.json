@@ -1,0 +1,110 @@
+[
+  {
+    "id": "KAM-MAN-899226",
+    "createdAt": "2026-09-19T00:48:19.226Z",
+    "customer": {
+      "name": "PRUEBA",
+      "phone": "091",
+      "email": "PRUEBA",
+      "department": "San José",
+      "city": "San José de Mayo",
+      "address": "Calle Ramon Massini Nro. 136",
+      "observations": "PROBANDO",
+      "notes": "PROBANDO"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1789420977064",
+          "name": "Recetario Negro",
+          "slug": "recetario-negro",
+          "description": "Precioso Recetario con tapa y contratapa sublimables con 96 páginas. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables y el espiral para enrular. \n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 148,
+          "comparativePrice": 155,
+          "currency": "UYU",
+          "category": "especiales",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-sublimable-2-yyzjpT4QxIl6GS57v3nRP26QPRZknu.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-sublimable-1-j3MHFVqTI6nKwsGAeVpAWqTes49ZDk.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-2022-tapa-2-CFYAyz50ajjhaVFCHAk6oYSVcyCiuB.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 148,
+    "finalTotal": 148,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "Retiro en Local (San José de Mayo)",
+    "status": "pago_confirmado",
+    "observations": "PROBANDO",
+    "notes": "PROBANDO"
+  },
+  {
+    "id": "KAM-MAN-185079",
+    "createdAt": "2026-09-18T16:49:45.079Z",
+    "customer": {
+      "name": "Hevelink Franco",
+      "phone": "099879284",
+      "email": "",
+      "department": "Colonia",
+      "city": "Carmelo",
+      "address": "Retira en Agencia"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1789420834320",
+          "name": "Recetario Color",
+          "slug": "recetario-color",
+          "description": "Recetario sublimable con interior de 100 páginas a color. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables y el espiral para enrular.\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 150,
+          "comparativePrice": 160,
+          "currency": "UYU",
+          "category": "especiales",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-color-kamaluso-100-p-ginas-1-bUErOluETM4x8jqg3Qlaw652uAiDdN.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-color-kamaluso-100-p-ginas-0-56nnZa19Ekvon3hSSmg0Z8JkfnP6br.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-color-kamaluso-100-p-ginas-38LpIOqR07cusvERxOvDaahJSd1Quo.webp"
+          ]
+        },
+        "quantity": 3
+      },
+      {
+        "product": {
+          "id": "1789422073861",
+          "name": "Semanal Vertical (unisex)",
+          "slug": "semanal-vertical-comun",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. \n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-zO6AZWlurouBQyKnW4Hj6GVyUByOxD.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-a3KhNZzYigk0M27SNpLOayoD122ucy.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-3J74CxGvaExDWxEE3wIFxS9YFIWU61.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-Xj8bDrEws0aH5LaG9CYzBfSK0T9NN7.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-9Y9OUz6H2DWCwnWqTf819SJWOW1L1y.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XFOu0kGf60Ofopg5ociI4WgEfszyXs.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-jNeHKIPZGeMzXL3RnSS0cIFuuAb4HP.webp"
+          ]
+        },
+        "quantity": 2
+      }
+    ],
+    "totalPrice": 800,
+    "finalTotal": 800,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
+    "status": "pago_confirmado"
+  }
+]

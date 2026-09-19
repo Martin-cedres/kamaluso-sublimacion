@@ -1040,12 +1040,6 @@ export default function AdminDashboardPage() {
         onSaved={loadResourcesData}
       />
 
-      {/* Modal Etiqueta de Envío */}
-      <ShippingLabelModal
-        isOpen={isLabelModalOpen}
-        onClose={() => setIsLabelModalOpen(false)}
-      />
-
       {/* Modal Detalle de Pedido */}
       {selectedOrderModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">

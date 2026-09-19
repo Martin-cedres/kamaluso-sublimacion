@@ -8,7 +8,8 @@ function getLocalStoredOrders(): Order[] | null {
   const stored = localStorage.getItem(LOCAL_ORDERS_KEY);
   if (!stored) return null;
   try {
-    return JSON.parse(stored) as Order[];
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? (parsed as Order[]) : null;
   } catch (e) {
     return null;
   }
@@ -16,22 +17,55 @@ function getLocalStoredOrders(): Order[] | null {
 
 function saveLocalStoredOrders(orders: Order[]): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(orders));
+  const current = getLocalStoredOrders() || [];
+  const merged = mergeOrdersWithLocal(orders, current);
+  localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
+}
+
+function removeLocalStoredOrder(id: string): void {
+  if (typeof window === "undefined") return;
+  const current = getLocalStoredOrders() || [];
+  const filtered = current.filter((o) => o.id !== id);
+  localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(filtered));
 }
 
 function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null): Order[] {
-  if (!localOrders || localOrders.length === 0) return remoteOrders;
-
   const orderMap = new Map<string, Order>();
-  remoteOrders.forEach((o) => orderMap.set(o.id, o));
-  localOrders.forEach((lo) => orderMap.set(lo.id, lo));
 
-  const merged = Array.from(orderMap.values());
-  return merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  if (Array.isArray(localOrders)) {
+    localOrders.forEach((lo) => {
+      if (lo && lo.id) orderMap.set(lo.id, lo);
+    });
+  }
+
+  if (Array.isArray(remoteOrders)) {
+    remoteOrders.forEach((ro) => {
+      if (ro && ro.id) {
+        const existing = orderMap.get(ro.id);
+        if (!existing) {
+          orderMap.set(ro.id, ro);
+        } else {
+          orderMap.set(ro.id, {
+            ...existing,
+            ...ro,
+            customer: {
+              ...existing.customer,
+              ...ro.customer,
+            },
+            items: ro.items && ro.items.length > 0 ? ro.items : existing.items,
+          });
+        }
+      }
+    });
+  }
+
+  return Array.from(orderMap.values()).sort(
+    (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+  );
 }
 
 export async function getAllOrders(): Promise<Order[]> {
-  const localStored = getLocalStoredOrders();
+  const localStored = getLocalStoredOrders() || [];
 
   if (isSupabaseConfigured && supabase) {
     try {
@@ -40,7 +74,11 @@ export async function getAllOrders(): Promise<Order[]> {
         .select("*")
         .order("created_at", { ascending: false });
       if (!error && data && data.length > 0) {
-        return mergeOrdersWithLocal(data as Order[], localStored);
+        const merged = mergeOrdersWithLocal(data as Order[], localStored);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
+        }
+        return merged;
       }
     } catch (e) {
       console.warn("Supabase orders fetch error, fallbacking", e);
@@ -52,41 +90,66 @@ export async function getAllOrders(): Promise<Order[]> {
     if (res.ok) {
       const cloudOrders = await res.json();
       if (Array.isArray(cloudOrders)) {
-        return mergeOrdersWithLocal(cloudOrders, localStored);
+        const merged = mergeOrdersWithLocal(cloudOrders, localStored);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
+        }
+
+        // Si local tenía pedidos que el servidor no tiene (ej. creados en modo local o antes de sync), sincronizarlos
+        if (merged.length > cloudOrders.length) {
+          fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(merged),
+          }).catch(() => {});
+        }
+
+        return merged;
       }
     }
   } catch (e) {
     console.warn("Error al obtener pedidos de la API", e);
   }
 
-  return localStored || [];
+  return localStored;
 }
 
 export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
   const id = orderData.id || `KAM-${Date.now().toString().slice(-6)}`;
   const createdAt = orderData.createdAt || new Date().toISOString();
 
+  const observations =
+    orderData.observations ||
+    orderData.customer?.observations ||
+    orderData.notes ||
+    orderData.customer?.notes ||
+    "";
+
   const fullOrder: Order = {
     id,
     createdAt,
-    customer: orderData.customer || {
-      name: "Cliente",
-      phone: "",
-      email: "",
-      department: "Montevideo",
-      city: "",
-      address: "",
+    customer: {
+      name: orderData.customer?.name || "Cliente",
+      phone: orderData.customer?.phone || "",
+      email: orderData.customer?.email || "",
+      department: orderData.customer?.department || "Montevideo",
+      city: orderData.customer?.city || "",
+      address: orderData.customer?.address || "",
+      observations,
+      notes: observations,
     },
     items: orderData.items || [],
     totalPrice: orderData.totalPrice || 0,
     finalTotal: orderData.finalTotal || orderData.totalPrice || 0,
     paymentMethodId: orderData.paymentMethodId || "brou",
     paymentMethodName: orderData.paymentMethodName || "Transferencia Bancaria BROU",
-    shippingMethodName: orderData.shippingMethodName || "Envío a Domicilio",
+    shippingMethodName: orderData.shippingMethodName || "Agencia COTMI - Retiro en Agencia",
     status: orderData.status || "pendiente",
+    observations,
+    notes: observations,
   };
 
-  // 1. Guardar localmente
+  // 1. Guardar localmente de inmediato (optimista y no destructivo)
   let localOrders = getLocalStoredOrders() || [];
   const idx = localOrders.findIndex((o) => o.id === fullOrder.id);
   if (idx >= 0) {
@@ -94,7 +157,9 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
   } else {
     localOrders = [fullOrder, ...localOrders];
   }
-  saveLocalStoredOrders(localOrders);
+  if (typeof window !== "undefined") {
+    localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(localOrders));
+  }
 
   // 2. Supabase if configured
   if (isSupabaseConfigured && supabase) {
@@ -120,7 +185,7 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     }
   }
 
-  // 3. API Vercel Blob
+  // 3. API Cloud / Local backend
   try {
     const res = await fetch("/api/orders", {
       method: "POST",
@@ -145,18 +210,18 @@ export async function updateOrderStatus(id: string, status: OrderStatus): Promis
   const idx = localOrders.findIndex((o) => o.id === id);
   if (idx >= 0) {
     localOrders[idx].status = status;
-    saveLocalStoredOrders(localOrders);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(localOrders));
+    }
 
-    // Re-guardar mediante saveOrder para sincronizar con la nube
+    // Re-guardar mediante saveOrder para sincronizar con la nube y el backend
     await saveOrder(localOrders[idx]);
   }
   return true;
 }
 
 export async function deleteOrder(id: string): Promise<boolean> {
-  let localOrders = getLocalStoredOrders() || [];
-  localOrders = localOrders.filter((o) => o.id !== id);
-  saveLocalStoredOrders(localOrders);
+  removeLocalStoredOrder(id);
 
   if (isSupabaseConfigured && supabase) {
     try {

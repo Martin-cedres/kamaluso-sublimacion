@@ -62,10 +62,8 @@ const SHIPPING_OPTIONS = [
   "DAC - Retiro en Agencia",
   "Correo Uruguayo - Retiro en Sucursal",
   "Correo Uruguayo - Envío a Domicilio",
-  "Mirtrans - Envío a Domicilio",
-  "Mirtrans - Retiro en Agencia",
-  "DePunta / Turil / Nuñez",
-  "Cadetería Propia / A Coordinar",
+  "Agencia COTMI - Retiro en Agencia",
+  "COTMI - Envío a Domicilio",
 ];
 
 export default function ManualOrderModal({
@@ -81,6 +79,7 @@ export default function ManualOrderModal({
   const [customerDepartment, setCustomerDepartment] = useState("San José");
   const [customerCity, setCustomerCity] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerObservations, setCustomerObservations] = useState("");
 
   // Ítems del Pedido (100% Opcionales)
   const [items, setItems] = useState<CartItem[]>([]);
@@ -182,6 +181,7 @@ export default function ManualOrderModal({
           department: customerDepartment,
           city: customerCity.trim(),
           address: customerAddress.trim() || shippingMethodName,
+          observations: customerObservations.trim(),
         },
         items,
         totalPrice: effectiveTotal,
@@ -190,6 +190,7 @@ export default function ManualOrderModal({
         paymentMethodName: paymentName,
         shippingMethodName,
         status: orderStatus,
+        observations: customerObservations.trim(),
       });
 
       onOrderCreated(finalOrder);
@@ -321,6 +322,19 @@ export default function ManualOrderModal({
                   placeholder="Ej. Av. 18 de Julio 1234 o Agencia DAC Centro (Opcional)"
                   value={customerAddress}
                   onChange={(e) => setCustomerAddress(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                  Observaciones de Entrega (Detalles especiales)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Entregar en la tarde, casa de la esquina, etc. (Opcional)"
+                  value={customerObservations}
+                  onChange={(e) => setCustomerObservations(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
                 />
               </div>

@@ -40,6 +40,8 @@ export interface OrderCustomer {
   department: string;
   city: string;
   address: string;
+  notes?: string;
+  observations?: string;
 }
 
 export interface Order {
@@ -53,5 +55,7 @@ export interface Order {
   paymentMethodName: string;
   shippingMethodName: string;
   status: OrderStatus;
+  notes?: string;
+  observations?: string;
 }
 

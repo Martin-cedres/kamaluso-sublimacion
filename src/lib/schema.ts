@@ -113,7 +113,7 @@ export const GLOBAL_FAQ_ITEMS = [
   },
   {
     question: "¿Hacen envíos a todo Uruguay?",
-    answer: "Sí, despachamos diariamente desde San José de Mayo a Montevideo, Canelones, Maldonado, Salto, Colonia, Rivera y a todos los departamentos de Uruguay mediante agencias (DAC, Mirtrans, Turil, De Punta, etc.)."
+    answer: "Sí, despachamos diariamente desde San José de Mayo a Montevideo y a todos los departamentos de Uruguay mediante DAC, Correo Uruguayo y Agencia COTMI."
   },
   {
     question: "¿Qué incluyen los kits e interiores de agendas sublimables?",

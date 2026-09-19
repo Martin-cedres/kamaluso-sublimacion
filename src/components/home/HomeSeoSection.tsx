@@ -87,7 +87,7 @@ export function HomeSeoSection() {
             Distribución y envíos diarios a Montevideo y todo el país
           </h2>
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Desde nuestro taller en <strong>San José de Mayo</strong>, realizamos despachos continuos en 24 a 48 horas hacia los 19 departamentos a través de <strong>DAC (Grupo Agencia), Correo Uruguayo, Mirtrans y agencias de transporte interdepartamentales</strong>.
+            Desde nuestro taller en <strong>San José de Mayo</strong>, realizamos despachos continuos en 24 a 48 horas hacia los 19 departamentos a través de <strong>DAC (Grupo Agencia), Correo Uruguayo y Agencia COTMI</strong>.
           </p>
         </div>
 

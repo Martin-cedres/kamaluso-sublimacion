@@ -161,7 +161,7 @@ export function Footer() {
               <span>kamalusosanjose@gmail.com</span>
             </div>
             <p className="text-[11px] text-slate-500 pt-2 leading-relaxed">
-              Sin mínimo de compra. Envíos a todo el Uruguay desde San José de Mayo vía DAC, Mirtrans o agencia a elección.
+              Sin mínimo de compra. Envíos a todo el Uruguay desde San José de Mayo vía DAC, Correo Uruguayo o Agencia COTMI.
             </p>
           </div>
         </div>

@@ -491,3 +491,83 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
 - Diagnostico: En entornos serverless (Vercel), la memoria en cache global (__kamaluso_orders_cache__) inicia vacia ([]). Al realizar un POST o DELETE en /api/orders, no se leian los pedidos existentes almacenados en Vercel Blob (data/orders.json) antes de escribir, sobreescribiendo el JSON con solo el nuevo pedido guardado.
 - Solucion implementada: Se implemento la funcion helper getLatestOrdersFromBlob() en src/app/api/orders/route.ts que garantiza cargar la lista completa existente desde Vercel Blob CDN antes de fusionar nuevos pedidos o actualizar/eliminar pedidos existentes.
 - Verificación: Compilacion limpia con TypeScript (npx tsc --noEmit).
+- Deploy: Commit y push ejecutados a la rama main de GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion.git), lo que dispara la automatización del despliegue en Vercel.
+
+================================================================================
+REVISION DE METODOS DE ENVIO Y AGENCIAS
+================================================================================
+- Tarea: Verificacion de metodos de envio disponibles y agencias configuradas en la plataforma.
+- Analisis realizado:
+  * Carrito / Tienda Web: DAC, Correo Uruguayo, Mirtrans (Envio a Domicilio y Retiro en Agencia) y Retiro en Local (San Jose de Mayo). Modalidad flete en destino.
+  * Panel Admin: Opciones extendidas con Turil, DePunta, Nuñez y Cadeteria propia.
+  * Etiquetas de Envio: Soporte para DAC, Correo Uruguayo, Mirtrans, Turil y campos libres.
+================================================================================
+
+================================================================================
+ACTUALIZACION DE AGENCIAS Y METODOS DE ENVIO (COTMI)
+================================================================================
+- Tarea: Eliminacion de Mirtrans, Turil/DePunta/Nuñez y Cadeteria propia; incorporacion de Agencia COTMI.
+- Archivos modificados:
+  * src/components/cart/CartDrawer.tsx:
+    - Eliminado 'mirtrans'.
+    - Añadido 'cotmi' ("Agencia COTMI - Envío a Domicilio" y "Agencia COTMI - Retiro en Agencia").
+  * src/components/admin/ManualOrderModal.tsx:
+    - Removidas las opciones de Mirtrans, DePunta/Turil/Nuñez y Cadetería Propia.
+    - Añadidas las opciones: 'Agencia COTMI', 'Agencia COTMI - Retiro en Agencia', 'Agencia COTMI - Envío a Domicilio'.
+  * src/components/admin/ShippingLabelModal.tsx:
+    - Agregada autodetección de pedidos con método COTMI para asignación y rotulado automático.
+    - Actualizado placeholder a 'DAC / Correo Uruguayo / COTMI'.
+  * Textos y SEO (src/lib/schema.ts, src/components/home/HomeSeoSection.tsx, src/components/layout/Footer.tsx):
+    - Reemplazadas las menciones de Mirtrans y agencias interdepartamentales por Agencia COTMI.
+- Verificación: 0 errores de compilación con TypeScript (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+AJUSTE DE OPCIONES COTMI (EXACTAMENTE 2 OPCIONES)
+================================================================================
+- Tarea: Ajuste de COTMI para tener exclusivamente dos opciones: 'Agencia COTMI - Retiro en Agencia' y 'COTMI - Envío a Domicilio'.
+- Archivos modificados:
+  * src/components/admin/ManualOrderModal.tsx:
+    - Eliminado el item genérico 'Agencia COTMI'.
+    - Dejadas únicamente 'Agencia COTMI - Retiro en Agencia' y 'COTMI - Envío a Domicilio'.
+  * src/components/cart/CartDrawer.tsx:
+    - Ajustado el texto del select y el helper para que refleje 'COTMI - Envío a Domicilio' y 'Agencia COTMI - Retiro en Agencia'.
+- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+SERVIDOR DE DESARROLLO INICIADO
+================================================================================
+- Servidor Next.js iniciado exitosamente en http://localhost:3000 (puerto 3000 activo).
+================================================================================
+
+================================================================================
+REESTRUCTURACION DE ETIQUETA DE ENVIO Y OBSERVACIONES
+================================================================================
+- Tarea: Corrección de campos en la etiqueta de despacho:
+  * Dirección de entrega / sucursal de retiro ahora tiene su propio recuadro principal destacado con tipografía grande (text-xl/2xl, borde grueso y badge).
+  * Nuevo recuadro y campo exclusivo de Observaciones para detalles de entrega (ej: entregar en la tarde, casa de la esquina).
+  * Removido modal duplicado en admin/page.tsx que provocaba pérdida de datos de la orden.
+  * Añadido soporte de observaciones en CartDrawer (web y WhatsApp), ManualOrderModal y ShippingLabelModal.
+- Verificación: 0 errores en compilación TypeScript (npx tsc --noEmit).
+================================================================================
+
+================================================================================
+CORRECCION DE LISTADO COMPLETO Y PERSISTENCIA DE PEDIDOS / VENTAS
+================================================================================
+- Diagnóstico: 
+  * En /api/orders, al cumplirse la expiración de la memoria caché del servidor (10s), se realizaba un fetch directo a la URL pública de Vercel Blob que contenía un único pedido histórico ('KAM-MAN-185079') y sobreescribía la memoria, provocando que los pedidos adicionales desaparecieran o se listara solo el último.
+  * En el cliente (src/lib/orders.ts), saveLocalStoredOrders sobreescribía localStorage de forma destructiva cuando la API devolvía una lista menor.
+- Solución implementada:
+  1. src/app/api/orders/route.ts:
+     - Se incorporó persistencia local en disco mediante data/orders.json con helpers readLocalOrdersFile y writeLocalOrdersFile.
+     - Implementada estrategia de fusión no destructiva (mergeOrderLists) que combina los pedidos de memoria, disco local y Vercel Blob sin perder registros conocidos.
+     - Actualizados endpoints GET, POST y DELETE para sincronizar en simultáneo archivo local, caché y Vercel Blob.
+  2. src/lib/orders.ts:
+     - Función mergeOrdersWithLocal actualizada con combinación por ID.
+     - saveLocalStoredOrders ahora fusiona con lo ya almacenado en localStorage sin borrar pedidos previos.
+     - Implementada sincronización bidireccional en getAllOrders: si el cliente local tiene pedidos no registrados en el servidor, los envía automáticamente en background.
+- Verificación:
+  * TypeScript limpio (npx tsc --noEmit: 0 errores).
+  * Pruebas funcionales en servidor local: creación de pedidos múltiples (POST /api/orders), persistencia comprobada tras expiración de caché y lectura consistente de todos los pedidos (GET /api/orders).
+================================================================================

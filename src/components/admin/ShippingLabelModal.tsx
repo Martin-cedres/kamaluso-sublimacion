@@ -26,6 +26,7 @@ export interface ShippingLabelData {
   recipientCity: string;
   recipientAddress: string;
   shippingAgency: string;
+  observations?: string;
   itemsSummary?: string;
   rutInfo?: string;
   notes?: string;
@@ -63,6 +64,7 @@ export default function ShippingLabelModal({
   const [recipientDept, setRecipientDept] = useState("Montevideo");
   const [recipientCity, setRecipientCity] = useState("");
   const [recipientAddress, setRecipientAddress] = useState("");
+  const [observations, setObservations] = useState("");
   const [rutInfo, setRutInfo] = useState("");
 
   // Logística y Paquete - 100% Editable
@@ -101,6 +103,7 @@ export default function ShippingLabelModal({
       setRecipientDept(order.customer.department || "Montevideo");
       setRecipientCity(order.customer.city || "");
       setRecipientAddress(order.customer.address || "");
+      setObservations(order.customer.observations || order.observations || (order as any).notes || "");
       setOrderNumber(order.id || `KAM-${Date.now().toString().slice(-6)}`);
 
       // Determinar agencia a partir del método de envío del pedido
@@ -110,7 +113,10 @@ export default function ShippingLabelModal({
         setDeliveryType(shipName.toLowerCase().includes("agencia") || shipName.toLowerCase().includes("sucursal") ? "Retiro en Agencia" : "");
       } else if (shipName.toLowerCase().includes("correo")) {
         setShippingAgency("Correo Uruguayo");
-        setDeliveryType("Retiro en Sucursal");
+        setDeliveryType(shipName.toLowerCase().includes("domicilio") ? "Envío a Domicilio" : "Retiro en Sucursal");
+      } else if (shipName.toLowerCase().includes("cotmi")) {
+        setShippingAgency("Agencia COTMI");
+        setDeliveryType(shipName.toLowerCase().includes("agencia") || shipName.toLowerCase().includes("sucursal") ? "Retiro en Agencia" : (shipName.toLowerCase().includes("domicilio") ? "Envío a Domicilio" : "Retiro en Agencia"));
       } else if (shipName.toLowerCase().includes("retiro") || shipName.toLowerCase().includes("local")) {
         setShippingAgency("Retiro en Local (San José)");
         setDeliveryType("Retiro Presencial");
@@ -138,6 +144,7 @@ export default function ShippingLabelModal({
       setRecipientDept(initialData.recipientDept || "Montevideo");
       setRecipientCity(initialData.recipientCity || "");
       setRecipientAddress(initialData.recipientAddress || "");
+      setObservations(initialData.observations || "");
       setShippingAgency(initialData.shippingAgency || "DAC (Agencia Central)");
       setItemsSummary(initialData.itemsSummary || "Insumos de Papelería Sublimable");
       setRutInfo(initialData.rutInfo || "");
@@ -152,6 +159,7 @@ export default function ShippingLabelModal({
       setRecipientDept("Montevideo");
       setRecipientCity("");
       setRecipientAddress("");
+      setObservations("");
       setShippingAgency("DAC (Agencia Central)");
       setDeliveryType("A Domicilio");
       setItemsSummary("Insumos de Papelería Sublimable / Agendas");
@@ -176,6 +184,7 @@ export default function ShippingLabelModal({
       setRecipientDept(order.customer.department || "Montevideo");
       setRecipientCity(order.customer.city || "");
       setRecipientAddress(order.customer.address || "");
+      setObservations(order.customer.observations || order.observations || (order as any).notes || "");
       setOrderNumber(order.id);
     }
   };
@@ -183,13 +192,15 @@ export default function ShippingLabelModal({
   const handleCopyText = () => {
     const text = `*DATOS PARA ENVÍO - KAMALUSO*\n` +
       `📦 *N° Pedido:* ${orderNumber}\n` +
-      `🚚 *Agencia:* ${shippingAgency}\n\n` +
+      `🚚 *Agencia:* ${shippingAgency}${deliveryType ? ` (${deliveryType})` : ""}\n\n` +
       `👤 *DESTINATARIO:*\n` +
       `• *Nombre:* ${recipientName}\n` +
       `• *Teléfono:* ${recipientPhone}\n` +
-      `• *Destino:* ${recipientAddress}, ${recipientCity}, ${recipientDept}\n` +
+      `• *Ciudad/Depto:* ${recipientCity ? `${recipientCity}, ` : ""}${recipientDept}\n` +
+      `• *Dirección / Sucursal:* ${recipientAddress}\n` +
+      (observations ? `• *Observaciones:* ${observations}\n` : "") +
       (rutInfo ? `• *RUT/CI:* ${rutInfo}\n` : "") +
-      `• *Observación:* ${notes}`;
+      `• *Cuidado:* ${notes}`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -357,6 +368,19 @@ export default function ShippingLabelModal({
                   placeholder="Ej. Av. 18 de Julio 1234 Apto 201 o Agencia DAC Centro"
                   value={recipientAddress}
                   onChange={(e) => setRecipientAddress(e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-slate-400 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white shadow-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                  Observaciones de Entrega (Detalles especiales)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Entregar en la tarde, casa de la esquina, etc."
+                  value={observations}
+                  onChange={(e) => setObservations(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
                 />
               </div>
@@ -375,7 +399,7 @@ export default function ShippingLabelModal({
                   </label>
                   <input
                     type="text"
-                    placeholder="DAC / Correo / Mirtrans / Turil"
+                    placeholder="DAC / Correo Uruguayo / COTMI"
                     value={shippingAgency}
                     onChange={(e) => setShippingAgency(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
@@ -534,10 +558,10 @@ export default function ShippingLabelModal({
                 </p>
               </div>
 
-              {/* Destinatario Box - GRANDE, CLARO Y LEGIBLE PARA TRANSPORTISTA */}
-              <div className="p-4 bg-white rounded-xl border-[2.5px] border-black space-y-2.5 shadow-sm">
-                <div className="flex justify-between items-center border-b-2 border-slate-200 pb-1.5">
-                  <span className="text-[11px] font-black uppercase text-pink-600 tracking-wider">
+              {/* Destinatario Box */}
+              <div className="p-3 bg-white rounded-xl border-[2px] border-black space-y-1.5 shadow-sm">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-1">
+                  <span className="text-[10px] font-black uppercase text-pink-600 tracking-wider">
                     DESTINATARIO:
                   </span>
                   <span className="text-xs font-black bg-black text-white px-2.5 py-0.5 rounded uppercase">
@@ -545,34 +569,58 @@ export default function ShippingLabelModal({
                   </span>
                 </div>
 
-                <div>
-                  <h3 className="text-xl font-black text-black leading-tight uppercase">
-                    {recipientName || "[NOMBRE O EMPRESA]"}
-                  </h3>
-                  <p className="text-base font-black text-slate-900 flex items-center gap-1.5 mt-1">
-                    <Phone className="w-4 h-4 text-slate-700" />
-                    <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
-                  </p>
+                <div className="flex justify-between items-start gap-2">
+                  <div>
+                    <h3 className="text-lg font-black text-black leading-tight uppercase">
+                      {recipientName || "[NOMBRE O EMPRESA]"}
+                    </h3>
+                    <p className="text-sm font-black text-slate-900 flex items-center gap-1 mt-0.5">
+                      <Phone className="w-3.5 h-3.5 text-slate-700" />
+                      <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
+                    </p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs font-black text-black uppercase">
+                      📍 {recipientCity ? `${recipientCity}, ` : ""}{recipientDept}
+                    </p>
+                    {rutInfo && (
+                      <p className="text-[10px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded mt-0.5">
+                        RUT: {rutInfo}
+                      </p>
+                    )}
+                  </div>
                 </div>
-
-                <div className="pt-2 border-t border-slate-200 space-y-0.5">
-                  <p className="text-xs font-black text-black uppercase">
-                    📍 {recipientCity ? `${recipientCity}, ` : ""}{recipientDept}
-                  </p>
-                  <p className="text-sm font-bold text-slate-900 leading-snug">
-                    {recipientAddress || "[DIRECCIÓN DE ENTREGA O AGENCIA]"}
-                  </p>
-                </div>
-
-                {rutInfo && (
-                  <p className="text-[11px] font-bold text-slate-800 bg-slate-100 p-1.5 rounded mt-1">
-                    📝 {rutInfo}
-                  </p>
-                )}
               </div>
 
+              {/* RECUADRO GRANDE CON TIPOGRAFÍA GRANDE: DIRECCIÓN DE ENTREGA O SUCURSAL */}
+              <div className="p-3.5 bg-white rounded-xl border-[3.5px] border-black space-y-1 shadow-sm">
+                <div className="flex justify-between items-center border-b border-black pb-1">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-black bg-yellow-300 px-2 py-0.5 rounded border border-black/20">
+                    📍 DIRECCIÓN DE ENTREGA / SUCURSAL DE RETIRO
+                  </span>
+                  <span className="text-[10px] font-black uppercase text-slate-700">
+                    {recipientCity ? `${recipientCity}, ` : ""}{recipientDept}
+                  </span>
+                </div>
+                <p className="text-xl sm:text-2xl font-black text-black uppercase leading-tight tracking-wide break-words pt-1">
+                  {recipientAddress || "[DIRECCIÓN DE ENTREGA O SUCURSAL DE RETIRO]"}
+                </p>
+              </div>
+
+              {/* RECUADRO DE OBSERVACIONES (Detalles especiales: entregar en la tarde, casa de la esquina, etc.) */}
+              {observations && (
+                <div className="p-2.5 bg-slate-50 border-[2px] border-dashed border-black rounded-xl space-y-0.5">
+                  <span className="text-[9px] font-black uppercase text-slate-700 tracking-wider block">
+                    💬 OBSERVACIONES / INDICACIONES DE ENTREGA:
+                  </span>
+                  <p className="text-xs sm:text-sm font-extrabold text-black leading-snug break-words">
+                    {observations}
+                  </p>
+                </div>
+              )}
+
               {/* Advertencia de Manipulación y Cuidado - Frágil */}
-              <div className="p-2.5 bg-red-50 border-2 border-red-500 rounded-xl text-center">
+              <div className="p-2 bg-red-50 border-2 border-red-500 rounded-xl text-center">
                 <p className="font-black text-red-700 text-xs tracking-wider uppercase">
                   {notes || "⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE"}
                 </p>

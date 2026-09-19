@@ -40,7 +40,7 @@ const PAYMENT_METHODS = [
 const SHIPPING_COMPANIES = [
   { id: "dac", name: "DAC (Agencia Central)" },
   { id: "correo", name: "Correo Uruguayo" },
-  { id: "mirtrans", name: "Mirtrans" },
+  { id: "cotmi", name: "Agencia COTMI" },
   { id: "pickup", name: "Retiro en Local (San José de Mayo)" },
 ];
 
@@ -65,6 +65,7 @@ export function CartDrawer() {
   const [customerDepartment, setCustomerDepartment] = useState("Montevideo");
   const [customerCity, setCustomerCity] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerObservations, setCustomerObservations] = useState("");
 
   // Opciones comerciales
   const [paymentMethod, setPaymentMethod] = useState("brou");
@@ -85,10 +86,10 @@ export function CartDrawer() {
         ? "Correo Uruguayo - Envío a Domicilio"
         : "Correo Uruguayo - Retiro en Sucursal";
     }
-    if (shippingCompany === "mirtrans") {
+    if (shippingCompany === "cotmi") {
       return deliveryType === "domicilio"
-        ? "Mirtrans - Envío a Domicilio"
-        : "Mirtrans - Retiro en Agencia";
+        ? "COTMI - Envío a Domicilio"
+        : "Agencia COTMI - Retiro en Agencia";
     }
     return deliveryType === "domicilio"
       ? "DAC - Envío a Domicilio"
@@ -103,7 +104,7 @@ export function CartDrawer() {
   const getShippingCompanyName = () => {
     if (shippingCompany === "dac") return "DAC";
     if (shippingCompany === "correo") return "Correo Uruguayo";
-    if (shippingCompany === "mirtrans") return "Mirtrans";
+    if (shippingCompany === "cotmi") return "Agencia COTMI";
     return "Agencia";
   };
 
@@ -178,6 +179,7 @@ export function CartDrawer() {
           department: customerDepartment,
           city: customerCity.trim(),
           address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
+          observations: customerObservations.trim(),
         },
         items: cart,
         totalPrice,
@@ -186,6 +188,7 @@ export function CartDrawer() {
         paymentMethodName: selectedPay || paymentMethod,
         shippingMethodName: selectedShip,
         status: "pendiente",
+        observations: customerObservations.trim(),
       });
       if (saved && saved.id) setActiveOrderId(saved.id);
     } catch (orderErr) {
@@ -212,6 +215,7 @@ export function CartDrawer() {
             department: customerDepartment,
             city: customerCity.trim(),
             address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
+            observations: customerObservations.trim(),
           },
         }),
       });
@@ -231,7 +235,11 @@ export function CartDrawer() {
     message += `• *Ubicación:* ${customerCity.trim()}, ${customerDepartment}\n`;
     message += `• *Dirección/Destino:* ${
       isPickup ? "Retira en Local (San José)" : customerAddress.trim()
-    }\n\n`;
+    }\n`;
+    if (customerObservations.trim()) {
+      message += `• *Observaciones:* ${customerObservations.trim()}\n`;
+    }
+    message += `\n`;
 
     message += `📦 *PRODUCTOS SOLICITADOS:*\n`;
     cart.forEach((item, index) => {
@@ -290,6 +298,7 @@ export function CartDrawer() {
           department: customerDepartment,
           city: customerCity.trim(),
           address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
+          observations: customerObservations.trim(),
         },
         items: cart,
         totalPrice,
@@ -298,6 +307,7 @@ export function CartDrawer() {
         paymentMethodName: selectedPay || paymentMethod,
         shippingMethodName: selectedShip,
         status: "pendiente",
+        observations: customerObservations.trim(),
       });
       if (saved && saved.id) setActiveOrderId(saved.id);
     } catch (orderErr) {
@@ -324,6 +334,7 @@ export function CartDrawer() {
             department: customerDepartment,
             city: customerCity.trim(),
             address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
+            observations: customerObservations.trim(),
           },
         }),
       });
@@ -723,6 +734,19 @@ export function CartDrawer() {
                               className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
                             />
                           </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                              Observaciones de Entrega (Opcional)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Ej. Entregar en la tarde, casa de la esquina, etc."
+                              value={customerObservations}
+                              onChange={(e) => setCustomerObservations(e.target.value)}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
@@ -767,10 +791,10 @@ export function CartDrawer() {
                           ? "Correo Uruguayo - Envío a Domicilio"
                           : "Correo Uruguayo - Retiro en Sucursal"}
                       </option>
-                      <option value="mirtrans">
+                      <option value="cotmi">
                         {deliveryType === "domicilio"
-                          ? "Mirtrans - Envío a Domicilio"
-                          : "Mirtrans - Retiro en Agencia"}
+                          ? "COTMI - Envío a Domicilio"
+                          : "Agencia COTMI - Retiro en Agencia"}
                       </option>
                       <option value="pickup">
                         Retiro en Local (San José de Mayo)
