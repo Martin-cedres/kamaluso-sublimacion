@@ -571,3 +571,11 @@ CORRECCION DE LISTADO COMPLETO Y PERSISTENCIA DE PEDIDOS / VENTAS
   * TypeScript limpio (npx tsc --noEmit: 0 errores).
   * Pruebas funcionales en servidor local: creación de pedidos múltiples (POST /api/orders), persistencia comprobada tras expiración de caché y lectura consistente de todos los pedidos (GET /api/orders).
 ================================================================================
+
+================================================================================
+BUILD Y DEPLOY A GITHUB Y VERCEL
+================================================================================
+- Build: Ejecutado 'npm run build' exitosamente (46/46 páginas estáticas y dinámicas generadas sin errores).
+- Git: Commit '7bce03d' creado con todos los cambios (persistencia en data/orders.json, rutas de COTMI y rediseño de etiqueta de envío).
+- Push / Deploy: Cambios sincronizados en rama 'main' de GitHub (origin/main), disparando el despliegue automático a producción en Vercel.
+================================================================================
