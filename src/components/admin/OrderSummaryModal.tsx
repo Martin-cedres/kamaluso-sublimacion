@@ -209,7 +209,6 @@ export default function OrderSummaryModal({
                   <thead>
                     <tr className="bg-slate-100 border-b border-slate-300 font-extrabold text-slate-700 text-[10px] uppercase">
                       <th className="p-2.5 text-center w-10">OK</th>
-                      <th className="p-2.5 text-center w-8">#</th>
                       <th className="p-2.5">Producto & Especificaciones</th>
                       <th className="p-2.5 text-center w-20">Cant.</th>
                       <th className="p-2.5 text-right w-24">Precio Unit.</th>
@@ -224,9 +223,6 @@ export default function OrderSummaryModal({
                           {/* Casilla de tildado para taller */}
                           <td className="p-2.5 text-center align-middle">
                             <div className="w-4 h-4 border-2 border-slate-400 rounded mx-auto"></div>
-                          </td>
-                          <td className="p-2.5 text-center font-mono text-slate-500 align-middle">
-                            {index + 1}
                           </td>
                           <td className="p-2.5 align-middle">
                             <p className="font-black text-slate-900 leading-snug">

@@ -579,3 +579,25 @@ BUILD Y DEPLOY A GITHUB Y VERCEL
 - Git: Commit '7bce03d' creado con todos los cambios (persistencia en data/orders.json, rutas de COTMI y rediseño de etiqueta de envío).
 - Push / Deploy: Cambios sincronizados en rama 'main' de GitHub (origin/main), disparando el despliegue automático a producción en Vercel.
 ================================================================================
+
+================================================================================
+ELIMINACIÓN DE NUMERACIÓN (# 1, # 2, # 3) EN RECIBOS / HOJA DE PEDIDO A4
+================================================================================
+- Tarea: Remover la columna de numeración correlativa (# y 1, 2, 3...) de la tabla de artículos en el recibo/hoja de preparación A4.
+- Archivo modificado:
+  * src/components/admin/OrderSummaryModal.tsx:
+    - Eliminado el encabezado de columna <th className="p-2.5 text-center w-8">#</th>.
+    - Eliminada la celda con el índice correlativo <td className="p-2.5 text-center font-mono text-slate-500 align-middle">{index + 1}</td>.
+    - Ahora el listado presenta directamente la casilla de control (OK), el producto con sus especificaciones, cantidad, precio unitario y subtotal, dando mayor amplitud y limpieza al recibo.
+- Verificación:
+  * npx tsc --noEmit: 0 errores de TypeScript.
+================================================================================
+
+================================================================================
+BUILD Y DEPLOY A GITHUB Y VERCEL (ELIMINACIÓN DE ÍNDICES EN RECIBOS)
+================================================================================
+- Solicitado y autorizado explícitamente por el usuario: 'ok construye y haz deploy a vercel y git hub'.
+- Build: 'npm run build' ejecutado exitosamente (46/46 rutas estáticas y dinámicas compiladas OK).
+- Git: Se realiza commit y push a la rama 'main' de GitHub (origin/main).
+- Vercel: Disparo automático de nuevo despliegue a producción en Vercel.
+================================================================================
