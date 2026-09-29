@@ -79,8 +79,20 @@ export default function ShippingLabelModal({
   // Estado de copiado
   const [copied, setCopied] = useState(false);
 
+  // Modo de impresión (Color para impresoras láser/tinta o B/N para impresoras térmicas directas)
+  const [printColorMode, setPrintColorMode] = useState<"color" | "bw">("color");
+
   // Código QR Web Real (kamaluso.com)
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+
+  // Visualización limpia de Ciudad y Departamento sin duplicados (evita "Montevideo, Montevideo")
+  const cityDeptDisplay = React.useMemo(() => {
+    const city = (recipientCity || "").trim();
+    const dept = (recipientDept || "").trim();
+    if (!city) return dept || "Uruguay";
+    if (city.toLowerCase() === dept.toLowerCase()) return dept;
+    return `${city}, ${dept}`;
+  }, [recipientCity, recipientDept]);
 
   useEffect(() => {
     QRCode.toDataURL("https://www.kamaluso.com", {
@@ -483,16 +495,16 @@ export default function ShippingLabelModal({
             <div className="pt-2 flex flex-col sm:flex-row gap-2">
               <button
                 onClick={handlePrint}
-                className="flex-1 py-3.5 px-4 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-2xl shadow-lg shadow-pink-600/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider"
+                className="flex-1 py-3.5 px-4 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-2xl shadow-lg shadow-pink-600/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
-                <span>Imprimir Etiqueta</span>
+                <span>Imprimir Etiqueta ({printColorMode === "color" ? "Color" : "Térmica B/N"})</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleCopyText}
-                className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl border border-slate-300 flex items-center justify-center gap-1.5 text-xs transition"
+                className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl border border-slate-300 flex items-center justify-center gap-1.5 text-xs transition cursor-pointer"
                 title="Copiar datos para enviar por WhatsApp al fletero"
               >
                 {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -502,152 +514,178 @@ export default function ShippingLabelModal({
           </div>
 
           {/* Printable Label Preview Side */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center bg-slate-100/70 p-3 sm:p-5 rounded-3xl border border-slate-200">
-            <div className="text-xs font-bold text-slate-500 mb-3 no-print flex items-center gap-2">
-              <span>Vista previa en vivo (se actualiza mientras editas):</span>
+          <div className="lg:col-span-6 flex flex-col items-center justify-center bg-slate-100/70 p-3 sm:p-4 rounded-3xl border border-slate-200">
+            <div className="flex items-center justify-between w-full max-w-[340px] mb-2.5 no-print">
+              <span className="text-xs font-bold text-slate-500">Vista previa (10x15cm):</span>
+              {/* Selector Color vs Térmica B/N */}
+              <div className="inline-flex items-center bg-white p-0.5 rounded-xl border border-slate-300 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setPrintColorMode("color")}
+                  className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                    printColorMode === "color"
+                      ? "bg-pink-600 text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                  title="Impresión a Color (Tinta, Láser o Papel Adhesivo/Fotográfico)"
+                >
+                  <span>🎨 Color</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPrintColorMode("bw")}
+                  className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                    printColorMode === "bw"
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                  title="Impresión Térmica B/N (Alto contraste para impresoras térmicas de bobina)"
+                >
+                  <span>⬛ Térmica B/N</span>
+                </button>
+              </div>
             </div>
 
             {/* THE PRINTABLE LABEL (Targeted by @media print) */}
             <div
               id="printable-shipping-label"
-              className="printable-label-box bg-white text-slate-900 border-[3.5px] border-black rounded-2xl p-5 w-full max-w-[440px] shadow-xl space-y-3 font-sans relative"
-              style={{ minHeight: "560px" }}
+              className={`printable-label-box bg-white text-slate-900 border-2 sm:border-[2.5px] border-black rounded-xl p-3 sm:p-3.5 shadow-xl font-sans relative flex flex-col justify-between overflow-hidden ${
+                printColorMode === "bw" ? "is-bw-mode" : "is-color-mode"
+              }`}
+              style={{ width: "100%", maxWidth: "340px", height: "510px" }}
             >
               {/* Header Etiqueta con Logo Kamaluso y Agencia */}
-              <div className="flex items-center justify-between border-b-[2.5px] border-black pb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-11 h-11 relative flex-shrink-0">
+              <div className="flex items-center justify-between gap-2 border-b-2 border-black pb-1.5 flex-shrink-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 relative flex-shrink-0">
                     <Image
                       src={LOGO_URL}
                       alt="Kamaluso"
                       fill
-                      className="object-contain"
+                      className="object-contain thermal-logo"
                       unoptimized
                     />
                   </div>
-                  <div>
-                    <h2 className="font-black text-xl tracking-wider leading-none text-black">
+                  <div className="min-w-0">
+                    <h2 className="font-black text-sm sm:text-base tracking-tight leading-none text-black uppercase">
                       KAMALUSO
                     </h2>
-                    <p className="text-[9px] font-bold text-slate-700 uppercase tracking-widest mt-0.5">
+                    <p className="text-[8px] sm:text-[8.5px] font-bold text-slate-700 uppercase tracking-wider leading-tight mt-0.5 thermal-text-black">
                       Papelería Sublimable
                     </p>
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <span className="inline-block bg-black text-white font-black text-xs px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                <div className="text-right flex-shrink-0 max-w-[155px]">
+                  <span className="inline-block bg-black text-white font-black text-[9.5px] sm:text-[10.5px] px-2 py-0.5 rounded uppercase tracking-normal leading-tight thermal-black-badge">
                     {shippingAgency || "DAC"}
                   </span>
                 </div>
               </div>
 
               {/* Remitente Box */}
-              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-300 text-xs">
-                <div className="flex justify-between items-center mb-0.5">
-                  <span className="text-[9px] font-black uppercase text-slate-500 tracking-wider">
+              <div className="bg-slate-50 p-1.5 rounded-lg border border-slate-300 text-xs flex-shrink-0 thermal-box">
+                <div className="flex justify-between items-center leading-none mb-0.5">
+                  <span className="text-[7.5px] font-black uppercase text-slate-600 tracking-wider thermal-text-black">
                     REMITENTE:
                   </span>
-                  {senderRut && <span className="text-[9px] font-bold text-slate-500">{senderRut}</span>}
+                  {senderRut && <span className="text-[7.5px] font-bold text-slate-600 thermal-text-black">{senderRut}</span>}
                 </div>
-                <p className="font-extrabold text-black text-xs leading-snug">
+                <p className="font-extrabold text-black text-[11px] leading-tight">
                   {senderName}
                 </p>
-                <p className="text-[11px] text-slate-700">
+                <p className="text-[9px] sm:text-[9.5px] text-slate-700 leading-tight mt-0.5 thermal-text-black">
                   Tel: <strong>{senderPhone}</strong> | {senderAddress} {senderWebsite ? `| ${senderWebsite}` : ""}
                 </p>
               </div>
 
               {/* Destinatario Box */}
-              <div className="p-3 bg-white rounded-xl border-[2px] border-black space-y-1.5 shadow-sm">
-                <div className="flex justify-between items-center border-b border-slate-200 pb-1">
-                  <span className="text-[10px] font-black uppercase text-pink-600 tracking-wider">
+              <div className="p-2 sm:p-2.5 bg-white rounded-xl border-2 border-black flex-shrink-0 shadow-xs thermal-box space-y-1">
+                <div className="flex justify-between items-center border-b border-black pb-1">
+                  <span className="text-[9.5px] font-black uppercase tracking-wider text-pink-600 thermal-text-black">
                     DESTINATARIO:
                   </span>
-                  <span className="text-xs font-black bg-black text-white px-2.5 py-0.5 rounded uppercase">
+                  <span className="text-[11px] font-black bg-black text-white px-2 py-0.5 rounded uppercase thermal-black-badge">
                     {recipientDept || "URUGUAY"}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-start gap-2">
-                  <div>
-                    <h3 className="text-lg font-black text-black leading-tight uppercase">
-                      {recipientName || "[NOMBRE O EMPRESA]"}
-                    </h3>
-                    <p className="text-sm font-black text-slate-900 flex items-center gap-1 mt-0.5">
-                      <Phone className="w-3.5 h-3.5 text-slate-700" />
-                      <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
-                    </p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-xs font-black text-black uppercase">
-                      📍 {recipientCity ? `${recipientCity}, ` : ""}{recipientDept}
-                    </p>
-                    {rutInfo && (
-                      <p className="text-[10px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded mt-0.5">
-                        RUT: {rutInfo}
-                      </p>
-                    )}
-                  </div>
+                {/* Nombre de destinatario a ancho completo para que no se quiebre en líneas innecesarias */}
+                <h3 className="text-base sm:text-lg font-black text-black leading-tight uppercase break-words">
+                  {recipientName || "[NOMBRE O EMPRESA]"}
+                </h3>
+
+                {/* Fila con Teléfono y Ubicación limpia */}
+                <div className="flex items-center justify-between gap-2 pt-0.5 border-t border-slate-100">
+                  <p className="text-xs font-black text-slate-900 flex items-center gap-1 thermal-text-black">
+                    <Phone className="w-3.5 h-3.5 text-slate-700 thermal-text-black flex-shrink-0" />
+                    <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
+                  </p>
+                  <p className="text-[10px] font-black text-black uppercase text-right truncate">
+                    📍 {cityDeptDisplay}
+                  </p>
                 </div>
+
+                {rutInfo && (
+                  <p className="text-[8.5px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 thermal-box thermal-text-black">
+                    📝 RUT: {rutInfo}
+                  </p>
+                )}
               </div>
 
-              {/* RECUADRO GRANDE CON TIPOGRAFÍA GRANDE: DIRECCIÓN DE ENTREGA O SUCURSAL */}
-              <div className="p-3.5 bg-white rounded-xl border-[3.5px] border-black space-y-1 shadow-sm">
-                <div className="flex justify-between items-center border-b border-black pb-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-black bg-yellow-300 px-2 py-0.5 rounded border border-black/20">
+              {/* RECUADRO DIRECCIÓN DE ENTREGA O SUCURSAL */}
+              <div className="p-2.5 bg-white rounded-xl border-2 border-black shadow-xs flex-shrink-0 overflow-hidden thermal-box">
+                <div className="border-b border-black pb-1 mb-1">
+                  <span className="inline-block text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider text-black bg-yellow-300 px-2 py-0.5 rounded border border-black/20">
                     📍 DIRECCIÓN DE ENTREGA / SUCURSAL DE RETIRO
                   </span>
-                  <span className="text-[10px] font-black uppercase text-slate-700">
-                    {recipientCity ? `${recipientCity}, ` : ""}{recipientDept}
-                  </span>
                 </div>
-                <p className="text-xl sm:text-2xl font-black text-black uppercase leading-tight tracking-wide break-words pt-1">
+                <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words py-1">
                   {recipientAddress || "[DIRECCIÓN DE ENTREGA O SUCURSAL DE RETIRO]"}
                 </p>
               </div>
 
-              {/* RECUADRO DE OBSERVACIONES (Detalles especiales: entregar en la tarde, casa de la esquina, etc.) */}
+              {/* RECUADRO DE OBSERVACIONES */}
               {observations && (
-                <div className="p-2.5 bg-slate-50 border-[2px] border-dashed border-black rounded-xl space-y-0.5">
-                  <span className="text-[9px] font-black uppercase text-slate-700 tracking-wider block">
-                    💬 OBSERVACIONES / INDICACIONES DE ENTREGA:
+                <div className="p-1.5 bg-slate-50 border border-dashed border-black rounded-lg space-y-0.5 flex-shrink-0 thermal-box">
+                  <span className="text-[7.5px] font-black uppercase text-slate-700 tracking-wider block thermal-text-black">
+                    💬 OBSERVACIONES / INDICACIONES:
                   </span>
-                  <p className="text-xs sm:text-sm font-extrabold text-black leading-snug break-words">
+                  <p className="text-[10.5px] font-extrabold text-black leading-tight break-words line-clamp-2">
                     {observations}
                   </p>
                 </div>
               )}
 
               {/* Advertencia de Manipulación y Cuidado - Frágil */}
-              <div className="p-2 bg-red-50 border-2 border-red-500 rounded-xl text-center">
-                <p className="font-black text-red-700 text-xs tracking-wider uppercase">
+              <div className="py-1 px-2 bg-red-50 border border-red-500 rounded-lg text-center flex-shrink-0 thermal-box">
+                <p className="font-black text-red-700 text-[9.5px] tracking-wide uppercase leading-none thermal-text-black">
                   {notes || "⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE"}
                 </p>
               </div>
 
-              {/* Footer con N° de Pedido y Código QR para la Web */}
-              <div className="pt-2.5 border-t-[2.5px] border-black flex items-center justify-between">
+              {/* Footer con N° de Pedido y Código QR para la Web - ANCLADO AL FINAL */}
+              <div className="pt-1.5 border-t-2 border-black flex items-center justify-between flex-shrink-0">
                 <div>
-                  <span className="font-bold text-[10px] text-slate-500 uppercase tracking-wider block">
+                  <span className="font-bold text-[8.5px] text-slate-500 uppercase tracking-wider block leading-none thermal-text-black">
                     N° de Pedido:
                   </span>
-                  <span className="font-mono font-black text-sm text-black block">
+                  <span className="font-mono font-black text-xs sm:text-sm text-black block leading-tight mt-0.5">
                     #{orderNumber || "KAM-000000"}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <div className="text-right">
-                    <span className="text-[9px] font-black uppercase text-black block leading-none">
+                    <span className="text-[8px] font-black uppercase text-black block leading-none">
                       Tienda Web
                     </span>
-                    <span className="text-[8px] font-semibold text-slate-500 block mt-0.5">
+                    <span className="text-[7px] font-semibold text-slate-500 block mt-0.5 leading-none thermal-text-black">
                       Escaneá el QR
                     </span>
                   </div>
                   {qrCodeUrl ? (
-                    <div className="w-14 h-14 border-2 border-black p-0.5 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 border-2 border-black p-0.5 rounded bg-white flex items-center justify-center flex-shrink-0 thermal-box">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={qrCodeUrl}
@@ -656,7 +694,7 @@ export default function ShippingLabelModal({
                       />
                     </div>
                   ) : (
-                    <div className="w-14 h-14 bg-slate-100 rounded border border-slate-300"></div>
+                    <div className="w-10 h-10 bg-slate-100 rounded border border-slate-300"></div>
                   )}
                 </div>
               </div>
@@ -665,20 +703,25 @@ export default function ShippingLabelModal({
         </div>
       </div>
 
-      {/* ESTILOS CSS PARA IMPRESIÓN PRECISA EN IMPRESORA TÉRMICA (10x15cm / 4x6") */}
+      {/* ESTILOS CSS PARA IMPRESIÓN PRECISA EN IMPRESORA TÉRMICA (10x15cm / 100x150mm / 4x6") */}
       <style jsx global>{`
         @page {
           size: 100mm 150mm;
-          margin: 0;
+          margin: 0mm !important;
         }
         @media print {
           html,
           body {
             width: 100mm !important;
             height: 150mm !important;
+            max-width: 100mm !important;
+            max-height: 150mm !important;
             margin: 0 !important;
             padding: 0 !important;
+            overflow: hidden !important;
             background: #ffffff !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           body * {
             visibility: hidden !important;
@@ -691,25 +734,64 @@ export default function ShippingLabelModal({
             visibility: visible !important;
           }
           #printable-shipping-label {
-            position: fixed !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100mm !important;
-            height: 150mm !important;
-            max-width: 100mm !important;
-            max-height: 150mm !important;
+            position: absolute !important;
+            left: 2mm !important;
+            top: 2mm !important;
+            width: 96mm !important;
+            height: 146mm !important;
+            max-width: 96mm !important;
+            max-height: 146mm !important;
+            min-height: 0 !important;
             box-sizing: border-box !important;
-            border: 3.5px solid #000000 !important;
+            border: 2.5px solid #000000 !important;
             border-radius: 0 !important;
             box-shadow: none !important;
-            padding: 10mm 7mm !important;
+            padding: 3.5mm 4mm !important;
             margin: 0 !important;
+            overflow: hidden !important;
             page-break-inside: avoid !important;
             page-break-after: avoid !important;
-            overflow: hidden !important;
+            page-break-before: avoid !important;
+            break-inside: avoid !important;
+            break-after: avoid !important;
+            break-before: avoid !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
+            gap: 1.5mm !important;
+            z-index: 999999 !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          #printable-shipping-label > * + * {
+            margin-top: 0 !important;
+          }
+          /* Calibración Térmica Monocromática (solo activa si se selecciona modo Térmica B/N) */
+          #printable-shipping-label.is-bw-mode .thermal-box {
+            background-color: #ffffff !important;
+            border-color: #000000 !important;
+          }
+          #printable-shipping-label.is-bw-mode .thermal-black-badge {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          #printable-shipping-label.is-bw-mode .thermal-text-black {
+            color: #000000 !important;
+          }
+          #printable-shipping-label.is-bw-mode .thermal-logo {
+            filter: grayscale(100%) contrast(140%) !important;
+          }
+          /* Modo Color (activo por defecto para impresoras de tinta / láser / papel fotográfico o adhesivo) */
+          #printable-shipping-label.is-color-mode {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          #printable-shipping-label.is-color-mode .thermal-logo {
+            filter: none !important;
           }
         }
       `}</style>
