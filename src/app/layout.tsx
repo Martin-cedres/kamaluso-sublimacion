@@ -80,6 +80,9 @@ export const metadata: Metadata = {
       "Interiores y tapas de 350gr para sublimadores en Uruguay. San José de Mayo.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
+  verification: {
+    google: "bw88G4qbNAAwlXaP6oSzW37oRBZHDQxuJ6tAkWs5XFA",
+  },
 };
 
 export default function RootLayout({

@@ -1,228 +1,228 @@
-=== RESUMEN DE SESIÓN ===
-- Análisis del sitio web actual www.kamaluso.com (Webnode).
-- Identificación de categorías, productos, URLs SEO (`/p/[slug]/`), metadatos, píxeles de analítica y botón de WhatsApp.
-- Definición de Base de Datos: Supabase (PostgreSQL gratis).
-- Flujo de compra: Checkout híbrido WhatsApp (principal) + Email resumen vía Resend (gratis).
-- Estrategia de imágenes $0 Vercel: `unoptimized: true` en `next.config.js` manteniendo lazy loading y prevención de Layout Shift sin agotar cuota de Vercel Image Optimization.
-- Conservación de GTM y Facebook Pixel.
+=== RESUMEN DE SESIÃ“N ===
+- AnÃ¡lisis del sitio web actual www.kamaluso.com (Webnode).
+- IdentificaciÃ³n de categorÃ­as, productos, URLs SEO (`/p/[slug]/`), metadatos, pÃ­xeles de analÃ­tica y botÃ³n de WhatsApp.
+- DefiniciÃ³n de Base de Datos: Supabase (PostgreSQL gratis).
+- Flujo de compra: Checkout hÃ­brido WhatsApp (principal) + Email resumen vÃ­a Resend (gratis).
+- Estrategia de imÃ¡genes $0 Vercel: `unoptimized: true` en `next.config.js` manteniendo lazy loading y prevenciÃ³n de Layout Shift sin agotar cuota de Vercel Image Optimization.
+- ConservaciÃ³n de GTM y Facebook Pixel.
 - Ajuste del Enfoque Comercial (B2B / Sublimadores): El cliente objetivo son sublimadores y emprendedores que compran insumos (interiores + tapas sublimables + espirales) para personalizar y revender.
-- SEO Especializado: Palabras clave como "interiores de agendas para sublimar", "papelería sublimable Uruguay", "insumos para sublimación San José", "blocks sublimables por mayor".
-- Aceptadas optimizaciones 1, 2, 4 y 5 (JSON-LD B2B, On-Demand ISR, Buscador instantáneo, PWA). Opción 3 adaptada a variantes simples de insumo.
-- Elaboración del Plan de Implementación técnico en implementation_plan.md.
+- SEO Especializado: Palabras clave como "interiores de agendas para sublimar", "papelerÃ­a sublimable Uruguay", "insumos para sublimaciÃ³n San JosÃ©", "blocks sublimables por mayor".
+- Aceptadas optimizaciones 1, 2, 4 y 5 (JSON-LD B2B, On-Demand ISR, Buscador instantÃ¡neo, PWA). OpciÃ³n 3 adaptada a variantes simples de insumo.
+- ElaboraciÃ³n del Plan de ImplementaciÃ³n tÃ©cnico en implementation_plan.md.
 - Aprobado el plan por el usuario. Proyecto Next.js inicializado en la carpeta con App Router y TypeScript.
-- Creación de catálogo inicial en src/lib/products.ts con URLs SEO idénticas a Webnode (/p/[slug]/).
-- Configuración de imágenes unoptimized en next.config.js para garantizar $0 en Vercel.
+- CreaciÃ³n de catÃ¡logo inicial en src/lib/products.ts con URLs SEO idÃ©nticas a Webnode (/p/[slug]/).
+- ConfiguraciÃ³n de imÃ¡genes unoptimized en next.config.js para garantizar $0 en Vercel.
 - Desarrollo de componentes: Header, Footer, ProductGrid, ProductCard, CategoryFilter, CartDrawer con checkout por WhatsApp, WhatsAppFloating, sitemap.ts, robots.ts, manifest.json.
-- Inyección de metadatos SEO B2B para sublimadores y marcado JSON-LD Schema.org Product.
+- InyecciÃ³n de metadatos SEO B2B para sublimadores y marcado JSON-LD Schema.org Product.
 - Servidor de desarrollo Next.js iniciado y corriendo en http://localhost:3000.
-- Actualizado número oficial de WhatsApp a 098 615 074 (+59898615074) en toda la aplicación.
-- Creada la sección de Plantillas y Archivos Descargables (/recursos/) con guías de sublimación en PDF y plantillas de diseño con sangrado para agendas A5, mini blocks 10x15, cuadernos 17x22 y cuadernolas A4.
-- Tarjetas de producto (ProductCard.tsx) actualizadas para ser 100% clicables directamente hacia la página de detalle del producto sin requerir presionar el icono flotante del ojo.
-- Ejecutado `npm run build` con éxito. Todas las rutas, componentes, metadatos y tipografía han quedado verificados y listos para su despliegue en Vercel.
-- Build de producción `npm run build` completado con éxito absoluto: 22 páginas estáticas generadas, 0 errores de TypeScript y 0 lints. Aplicación 100% lista para ser desplegada en Vercel.
-23: - Documentación de arquitectura y guía de despliegue registrada en `walkthrough.md`.
+- Actualizado nÃºmero oficial de WhatsApp a 098 615 074 (+59898615074) en toda la aplicaciÃ³n.
+- Creada la secciÃ³n de Plantillas y Archivos Descargables (/recursos/) con guÃ­as de sublimaciÃ³n en PDF y plantillas de diseÃ±o con sangrado para agendas A5, mini blocks 10x15, cuadernos 17x22 y cuadernolas A4.
+- Tarjetas de producto (ProductCard.tsx) actualizadas para ser 100% clicables directamente hacia la pÃ¡gina de detalle del producto sin requerir presionar el icono flotante del ojo.
+- Ejecutado `npm run build` con Ã©xito. Todas las rutas, componentes, metadatos y tipografÃ­a han quedado verificados y listos para su despliegue en Vercel.
+- Build de producciÃ³n `npm run build` completado con Ã©xito absoluto: 22 pÃ¡ginas estÃ¡ticas generadas, 0 errores de TypeScript y 0 lints. AplicaciÃ³n 100% lista para ser desplegada en Vercel.
+23: - DocumentaciÃ³n de arquitectura y guÃ­a de despliegue registrada en `walkthrough.md`.
 24: - Servidor de desarrollo Next.js iniciado en http://localhost:3000.
-25: - Generado Plan de Implementación (`implementation_plan.md`) para el Panel de Administración con Google OAuth (lista blanca para 3 correos), gestión CRUD de productos y optimizador automático de imágenes a WebP.
-26: - Edición realizada en la maqueta de la agenda 2027: reemplazado el anillado doble metálico (wire-o) por un espiral plástico simple de color blanco.
-27: - Imagen guardada y expuesta públicamente para descarga en `public/agenda_espiral_simple.jpg` (y vía servidor local en `http://localhost:3000/agenda_espiral_simple.jpg`).
-28: - Generada nueva maqueta en alta calidad de la agenda con espiral plástico blanco sobre el fondo de patrón con logos de Kamaluso (sin el logo/texto anterior) guardada en `public/agenda_fondo_kamaluso.jpg`.
-29: - Desarrollado e implementado el Panel de Administración completo (`/admin`) con: autenticación Google (lista blanca para 3 correos), gestión CRUD de productos (crear, editar, borrar, toggle de stock), conversor automático de imágenes a WebP en el navegador y script de base de datos Supabase (`supabase/schema.sql`).
-30: - Verificación de compilación `npm run build` completada con éxito absoluto: 24 páginas estáticas generadas, 0 errores de TypeScript y 0 lints.
-32: - Verificación diagnóstica de estado: Proyecto 100% listo, build exitoso de 24 páginas estáticas sin errores, catálogo B2B, WhatsApp checkout, Panel Admin (/admin), Supabase schema y sección de Recursos activos.
-33: - Implementada la pestaña de Gestión de Recursos y Plantillas Descargables en el Panel Admin (/admin) con modal de carga y almacenamiento dinámico (lib/resources.ts). Añadido el asistente inteligente ✨ Autogenerar SEO por categoría en el formulario de creación/edición de productos. Compilación verificada con éxito.
-34: - Implementación de SEO Técnico y GEO (AI Search Engines): Marcado JSON-LD LocalBusiness en layout.tsx, FAQPage Schema en /faq y páginas de detalle de producto /p/[slug], rutas estáticas de categoría /categoria/[slug], canonical tags unificados, actualización de sitemap.ts a 29 páginas estáticas y enlaces estructurados en el Footer. Compilación verificada con 0 errores.
-35: - Integradas credenciales oficiales de Mercado Pago de Kamaluso (.env.local) e instalado el SDK oficial mercadopago. Creada la API Route /api/payments/create-preference. Actualizado el carrito (CartDrawer.tsx) con selector de 6 medios de pago (BROU, OCA Blue, Prex, Abitab/Redpagos, Efectivo local, Mercado Pago Online con recargo del 10%), selector de agencias de envío en Uruguay (DAC, Correo, Retiro) y opción de Factura con RUT. Compilado a 30 páginas estáticas sin errores.
-36: - Auditoría diagnóstica Senior de E-commerce: Corregida posible falla de hidratación en CartContext.tsx (protección de localStorage con isLoaded para no borrar carrito en recargas), alineados IDs de categoría en el autogenerador de SEO de ProductModal.tsx con products.ts (agendas, libretas, blocks-planners, kits-promos), y vaciado automático del carrito en CartDrawer.tsx tras checkout. Compilado y verificado con éxito absoluto.
+25: - Generado Plan de ImplementaciÃ³n (`implementation_plan.md`) para el Panel de AdministraciÃ³n con Google OAuth (lista blanca para 3 correos), gestiÃ³n CRUD de productos y optimizador automÃ¡tico de imÃ¡genes a WebP.
+26: - EdiciÃ³n realizada en la maqueta de la agenda 2027: reemplazado el anillado doble metÃ¡lico (wire-o) por un espiral plÃ¡stico simple de color blanco.
+27: - Imagen guardada y expuesta pÃºblicamente para descarga en `public/agenda_espiral_simple.jpg` (y vÃ­a servidor local en `http://localhost:3000/agenda_espiral_simple.jpg`).
+28: - Generada nueva maqueta en alta calidad de la agenda con espiral plÃ¡stico blanco sobre el fondo de patrÃ³n con logos de Kamaluso (sin el logo/texto anterior) guardada en `public/agenda_fondo_kamaluso.jpg`.
+29: - Desarrollado e implementado el Panel de AdministraciÃ³n completo (`/admin`) con: autenticaciÃ³n Google (lista blanca para 3 correos), gestiÃ³n CRUD de productos (crear, editar, borrar, toggle de stock), conversor automÃ¡tico de imÃ¡genes a WebP en el navegador y script de base de datos Supabase (`supabase/schema.sql`).
+30: - VerificaciÃ³n de compilaciÃ³n `npm run build` completada con Ã©xito absoluto: 24 pÃ¡ginas estÃ¡ticas generadas, 0 errores de TypeScript y 0 lints.
+32: - VerificaciÃ³n diagnÃ³stica de estado: Proyecto 100% listo, build exitoso de 24 pÃ¡ginas estÃ¡ticas sin errores, catÃ¡logo B2B, WhatsApp checkout, Panel Admin (/admin), Supabase schema y secciÃ³n de Recursos activos.
+33: - Implementada la pestaÃ±a de GestiÃ³n de Recursos y Plantillas Descargables en el Panel Admin (/admin) con modal de carga y almacenamiento dinÃ¡mico (lib/resources.ts). AÃ±adido el asistente inteligente âœ¨ Autogenerar SEO por categorÃ­a en el formulario de creaciÃ³n/ediciÃ³n de productos. CompilaciÃ³n verificada con Ã©xito.
+34: - ImplementaciÃ³n de SEO TÃ©cnico y GEO (AI Search Engines): Marcado JSON-LD LocalBusiness en layout.tsx, FAQPage Schema en /faq y pÃ¡ginas de detalle de producto /p/[slug], rutas estÃ¡ticas de categorÃ­a /categoria/[slug], canonical tags unificados, actualizaciÃ³n de sitemap.ts a 29 pÃ¡ginas estÃ¡ticas y enlaces estructurados en el Footer. CompilaciÃ³n verificada con 0 errores.
+35: - Integradas credenciales oficiales de Mercado Pago de Kamaluso (.env.local) e instalado el SDK oficial mercadopago. Creada la API Route /api/payments/create-preference. Actualizado el carrito (CartDrawer.tsx) con selector de 6 medios de pago (BROU, OCA Blue, Prex, Abitab/Redpagos, Efectivo local, Mercado Pago Online con recargo del 10%), selector de agencias de envÃ­o en Uruguay (DAC, Correo, Retiro) y opciÃ³n de Factura con RUT. Compilado a 30 pÃ¡ginas estÃ¡ticas sin errores.
+36: - AuditorÃ­a diagnÃ³stica Senior de E-commerce: Corregida posible falla de hidrataciÃ³n en CartContext.tsx (protecciÃ³n de localStorage con isLoaded para no borrar carrito en recargas), alineados IDs de categorÃ­a en el autogenerador de SEO de ProductModal.tsx con products.ts (agendas, libretas, blocks-planners, kits-promos), y vaciado automÃ¡tico del carrito en CartDrawer.tsx tras checkout. Compilado y verificado con Ã©xito absoluto.
 37: - Servidor de desarrollo Next.js iniciado y corriendo en segundo plano en http://localhost:3000.
-38: - Creado el componente vectorizado oficial WhatsAppIcon.tsx (SVG nativo con relleno oficial) reemplazando iconos de teléfono genéricos en Header, Footer y Contacto. Desarrollado el Widget Flotante interactivo WhatsAppFloating.tsx con tooltip de atención rápida en San José, animación de entrada y badge de notificación activo a los 4s. Servidor verificado en http://localhost:3000.
-39: - Corregido el problema de visualización de productos: Cambiada la relación de aspecto de las imágenes en tarjetas de producto (ProductCard.tsx) y galería (ProductGallery.tsx) de landscape (16/10 recorta bordes) a aspect-square con object-contain + drop-shadow. Ahora las agendas de 15x21cm, libretas y cuadernos verticales se muestran completos, nítidos y sin recortes. Servidor activo en http://localhost:3000.
-40: - Resuelto el problema de carga de CSS/404 capturado en captura de pantalla: Se limpió la carpeta de compilación corrupta (.next) causada por la superposición del proceso de build y dev server. Reiniciado limpiamente el servidor dev en http://localhost:3000 con estilos Tailwind CSS 100% operativos.
-41: - Cierre de sesión: Proyecto Kamaluso Sublimación 100% optimizado, compilación verificada con 30 páginas estáticas, pasarela de Mercado Pago Uruguay totalmente funcional, SEO/GEO optimizado para motores de IA, gestor de recursos descargables en Admin y servidor dev activo en http://localhost:3000.
-43: - Servidor de desarrollo Next.js iniciado y ejecutándose activamente en http://localhost:3000.
+38: - Creado el componente vectorizado oficial WhatsAppIcon.tsx (SVG nativo con relleno oficial) reemplazando iconos de telÃ©fono genÃ©ricos en Header, Footer y Contacto. Desarrollado el Widget Flotante interactivo WhatsAppFloating.tsx con tooltip de atenciÃ³n rÃ¡pida en San JosÃ©, animaciÃ³n de entrada y badge de notificaciÃ³n activo a los 4s. Servidor verificado en http://localhost:3000.
+39: - Corregido el problema de visualizaciÃ³n de productos: Cambiada la relaciÃ³n de aspecto de las imÃ¡genes en tarjetas de producto (ProductCard.tsx) y galerÃ­a (ProductGallery.tsx) de landscape (16/10 recorta bordes) a aspect-square con object-contain + drop-shadow. Ahora las agendas de 15x21cm, libretas y cuadernos verticales se muestran completos, nÃ­tidos y sin recortes. Servidor activo en http://localhost:3000.
+40: - Resuelto el problema de carga de CSS/404 capturado en captura de pantalla: Se limpiÃ³ la carpeta de compilaciÃ³n corrupta (.next) causada por la superposiciÃ³n del proceso de build y dev server. Reiniciado limpiamente el servidor dev en http://localhost:3000 con estilos Tailwind CSS 100% operativos.
+41: - Cierre de sesiÃ³n: Proyecto Kamaluso SublimaciÃ³n 100% optimizado, compilaciÃ³n verificada con 30 pÃ¡ginas estÃ¡ticas, pasarela de Mercado Pago Uruguay totalmente funcional, SEO/GEO optimizado para motores de IA, gestor de recursos descargables en Admin y servidor dev activo en http://localhost:3000.
+43: - Servidor de desarrollo Next.js iniciado y ejecutÃ¡ndose activamente en http://localhost:3000.
 44: - Servidor de desarrollo Next.js iniciado y corriendo en el puerto 3000 (http://localhost:3000).
-45: - Verificada la conversión automática de imágenes a WebP en el panel Admin (ImageUploader.tsx e image-optimizer.ts).
-46: - Servidor de desarrollo Next.js iniciado y ejecutándose en el puerto 3000 (http://localhost:3000).
-47: - Reubicados los bloques de políticas comerciales (Envíos a todo el país, Elaboración ágil, Pedidos mayores a $2.500) y parámetros de sublimación (Prensa Plana 170ºC / 120 seg) debajo del catálogo de productos en ProductGrid.tsx.
-48: - Configurada la apertura automática del widget de atención en línea (WhatsAppFloating.tsx) a los 3.5s para captar la atención del usuario y su posterior auto-cierre suave a los 6s para no obstaculizar la navegación.
-49: - Limpiada la caché corrupta de `.next` causada por la superposición de la compilación y reiniciado limpiamente el servidor dev en el puerto 3000 (http://localhost:3000).
-50: - Implementada la optimización e-commerce de 3 fases: Checkout en 2 pasos en CartDrawer.tsx con recolección de datos completos del comprador para WhatsApp y Mercado Pago, selector numérico de cantidad e incentivo mayorista KIT 10+1 en AddToCartDetail.tsx, y persistencia de sessionStorage en WhatsAppFloating.tsx. Compilación verificada con éxito (30 páginas estáticas).
-51: - Creado el módulo de Generación e Impresión de Etiquetas de Envío (ShippingLabelModal.tsx) en el Panel de Administración con formato estándar 10x15cm / A6, cuadro de Remitente/Destinatario en alta visibilidad, agencia de transporte seleccionable y estilos CSS de impresión nítidos `@media print`. Compilación verificada con éxito.
-52: - Actualizado el texto en `/sobre-nosotros` reemplazando "Espirales continuos metálicos resistentes" por "Espirales continuos resistentes".
-53: - Limpiada la caché de compilación en `.next` y reiniciado el servidor de desarrollo Next.js limpiamente en el puerto 3000 (http://localhost:3000) para restaurar la carga de estilos CSS y assets.
-54: - Reemplazado "Mirtrans" por "Correo Uruguayo" en la lista de envíos diarios de `/sobre-nosotros`.
-55: - Redactado e implementado texto de marketing B2B de alto impacto en `/sobre-nosotros` destacando la condición de fabricantes directos, insumos de 350g, nitidez de impresión y propuesta de valor para sublimadores.
-56: - Inicializado repositorio Git, creado el repositorio remoto en GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion) y sincronizada la rama main lista para despliegue directo a producción en Vercel.
-57: - Añadida la hidratación dinámica de `localStorage` (`kamaluso_custom_products`) en `ProductGrid.tsx` para reflejar instantáneamente en el entorno local las ediciones de productos o imágenes realizadas desde el panel de administración.
-58: - Eliminado el botón visible "Admin" de la barra de navegación pública (`Header.tsx`) y ocultada completamente la lista de correos autorizados en la pantalla de inicio de sesión de administradores (`/admin/login`). Cambios subidos a GitHub en el commit `ee49642`.
-59: - Creado e integrado el almacén de imágenes Vercel Blob Storage (100% gratuito, región GRU1 Sao Paulo para baja latencia en Uruguay) con el endpoint `/api/upload` e `ImageUploader.tsx`. Despliegue automático disparado en commit `8676fdf`.
-60: - Migrada la persistencia de productos y fotos al 100% a la Nube de Vercel Cloud Storage (`/api/products` + Vercel Blob JSON store), eliminando totalmente la dependencia de `localStorage` del navegador. Commit `e8f5a52` desplegado a producción.
-61: - Añadido el selector interactivo de Foto Principal de Portada (icono de Estrella ⭐) en `ImageUploader.tsx`. Permite mover cualquier imagen al primer lugar (`position 0`) with un solo clic. Cambios subidos en el commit `3b19691`.
-62: - Evaluada la experiencia UX del carrusel de fotos (ProductGallery.tsx), identificando oportunidades clave de mejora (Swipe en móvil, flechas de navegación, lightbox/zoom e indicador numérico).
-63: - Reescrito e integrado el carrusel de fotos en ProductGallery.tsx fijado en proporción exacta 1:1 (aspect-square), incorporando gestos táctiles (Swipe), flechas de navegación, contador numérico de imágenes y modal Lightbox de Zoom en pantalla completa con soporte de teclado (Escape/Arrows).
-64: - Condicionado el banner de la promoción "KIT 10 + 1 de Regalo" a la propiedad `hasPromoKit` por producto en AddToCartDetail.tsx, e integrado un interruptor de activación en el formulario de edición de productos del Panel de Administración (ProductModal.tsx).
-65: - Eliminado el campo de "Factura con RUT" de CartDrawer.tsx, establecido el Correo Electrónico como campo obligatorio con validación, e integrada la notificación por email a kamalusosanjose@gmail.com vía /api/send-email al finalizar el pedido por WhatsApp o Mercado Pago.
-66: - Solucionado el guardado de título y slug al editar productos en el Panel de Administración (ProductModal.tsx), eliminando el bloqueo estático de slug, sincronizando la regeneración limpia de slug con el título editado y configurando la API Route /api/products como `force-dynamic` con cabeceras `no-cache` para evitar respuestas obsoletas.
-67: - Verificada la compilación limpia del proyecto (`npm run build` sin errores, 31 páginas estáticas/dinámicas generadas) y sincronizados los cambios en el repositorio remoto GitHub en el commit `1b7d2a0`.
-68: - Removida la mención a Banco Itaú en las opciones de transferencia bancaria de CartDrawer.tsx, dejando únicamente BROU. Proyecto compilado y subido a GitHub en el commit `d8c895b`.
-69: - Extraídos los datos bancarios exactos del proyecto `kamaluso_fullstack` (BROU C/A 001199848-00001 Martín Cedrés, Prex 1216437 Katherine Silva, OCA Blue 0216811, Mi Dinero 7537707, Abitab/Redpagos C.I 4.798.217-8) e implementada la estrategia de doble envío de correo en /api/send-email (correo al comprador con sus datos de pago personalizados y correo de respaldo al admin).
-70: - Estandarizado el texto del botón principal de compra en la página de detalle (AddToCartDetail.tsx) a "Agregar al Carrito • $XXX UYU".
-71: - Ocultadas las flechas flotantes del carrusel de fotos (ProductGallery.tsx) en dispositivos móviles (`hidden sm:flex`) para no obstruir la imagen del producto, manteniéndolas únicamente en desktop al pasar el mouse.
-72: - Implementado el botón convertible de cantidad inline estilo LOI en las tarjetas del catálogo (ProductCard.tsx): cambia dinámicamente de "Agregar" a "[-] N [+]" al incluir unidades en el carrito, retornando al botón original al llegar a 0.
-73: - Integrado botón discreto de "Vaciar Carrito" en el encabezado del Paso 1 y rediseñado el bloque de Totales a alta visibilidad con tipografía gigante estilo LOI en CartDrawer.tsx.
+45: - Verificada la conversiÃ³n automÃ¡tica de imÃ¡genes a WebP en el panel Admin (ImageUploader.tsx e image-optimizer.ts).
+46: - Servidor de desarrollo Next.js iniciado y ejecutÃ¡ndose en el puerto 3000 (http://localhost:3000).
+47: - Reubicados los bloques de polÃ­ticas comerciales (EnvÃ­os a todo el paÃ­s, ElaboraciÃ³n Ã¡gil, Pedidos mayores a $2.500) y parÃ¡metros de sublimaciÃ³n (Prensa Plana 170ÂºC / 120 seg) debajo del catÃ¡logo de productos en ProductGrid.tsx.
+48: - Configurada la apertura automÃ¡tica del widget de atenciÃ³n en lÃ­nea (WhatsAppFloating.tsx) a los 3.5s para captar la atenciÃ³n del usuario y su posterior auto-cierre suave a los 6s para no obstaculizar la navegaciÃ³n.
+49: - Limpiada la cachÃ© corrupta de `.next` causada por la superposiciÃ³n de la compilaciÃ³n y reiniciado limpiamente el servidor dev en el puerto 3000 (http://localhost:3000).
+50: - Implementada la optimizaciÃ³n e-commerce de 3 fases: Checkout en 2 pasos en CartDrawer.tsx con recolecciÃ³n de datos completos del comprador para WhatsApp y Mercado Pago, selector numÃ©rico de cantidad e incentivo mayorista KIT 10+1 en AddToCartDetail.tsx, y persistencia de sessionStorage en WhatsAppFloating.tsx. CompilaciÃ³n verificada con Ã©xito (30 pÃ¡ginas estÃ¡ticas).
+51: - Creado el mÃ³dulo de GeneraciÃ³n e ImpresiÃ³n de Etiquetas de EnvÃ­o (ShippingLabelModal.tsx) en el Panel de AdministraciÃ³n con formato estÃ¡ndar 10x15cm / A6, cuadro de Remitente/Destinatario en alta visibilidad, agencia de transporte seleccionable y estilos CSS de impresiÃ³n nÃ­tidos `@media print`. CompilaciÃ³n verificada con Ã©xito.
+52: - Actualizado el texto en `/sobre-nosotros` reemplazando "Espirales continuos metÃ¡licos resistentes" por "Espirales continuos resistentes".
+53: - Limpiada la cachÃ© de compilaciÃ³n en `.next` y reiniciado el servidor de desarrollo Next.js limpiamente en el puerto 3000 (http://localhost:3000) para restaurar la carga de estilos CSS y assets.
+54: - Reemplazado "Mirtrans" por "Correo Uruguayo" en la lista de envÃ­os diarios de `/sobre-nosotros`.
+55: - Redactado e implementado texto de marketing B2B de alto impacto en `/sobre-nosotros` destacando la condiciÃ³n de fabricantes directos, insumos de 350g, nitidez de impresiÃ³n y propuesta de valor para sublimadores.
+56: - Inicializado repositorio Git, creado el repositorio remoto en GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion) y sincronizada la rama main lista para despliegue directo a producciÃ³n en Vercel.
+57: - AÃ±adida la hidrataciÃ³n dinÃ¡mica de `localStorage` (`kamaluso_custom_products`) en `ProductGrid.tsx` para reflejar instantÃ¡neamente en el entorno local las ediciones de productos o imÃ¡genes realizadas desde el panel de administraciÃ³n.
+58: - Eliminado el botÃ³n visible "Admin" de la barra de navegaciÃ³n pÃºblica (`Header.tsx`) y ocultada completamente la lista de correos autorizados en la pantalla de inicio de sesiÃ³n de administradores (`/admin/login`). Cambios subidos a GitHub en el commit `ee49642`.
+59: - Creado e integrado el almacÃ©n de imÃ¡genes Vercel Blob Storage (100% gratuito, regiÃ³n GRU1 Sao Paulo para baja latencia en Uruguay) con el endpoint `/api/upload` e `ImageUploader.tsx`. Despliegue automÃ¡tico disparado en commit `8676fdf`.
+60: - Migrada la persistencia de productos y fotos al 100% a la Nube de Vercel Cloud Storage (`/api/products` + Vercel Blob JSON store), eliminando totalmente la dependencia de `localStorage` del navegador. Commit `e8f5a52` desplegado a producciÃ³n.
+61: - AÃ±adido el selector interactivo de Foto Principal de Portada (icono de Estrella â­�) en `ImageUploader.tsx`. Permite mover cualquier imagen al primer lugar (`position 0`) with un solo clic. Cambios subidos en el commit `3b19691`.
+62: - Evaluada la experiencia UX del carrusel de fotos (ProductGallery.tsx), identificando oportunidades clave de mejora (Swipe en mÃ³vil, flechas de navegaciÃ³n, lightbox/zoom e indicador numÃ©rico).
+63: - Reescrito e integrado el carrusel de fotos en ProductGallery.tsx fijado en proporciÃ³n exacta 1:1 (aspect-square), incorporando gestos tÃ¡ctiles (Swipe), flechas de navegaciÃ³n, contador numÃ©rico de imÃ¡genes y modal Lightbox de Zoom en pantalla completa con soporte de teclado (Escape/Arrows).
+64: - Condicionado el banner de la promociÃ³n "KIT 10 + 1 de Regalo" a la propiedad `hasPromoKit` por producto en AddToCartDetail.tsx, e integrado un interruptor de activaciÃ³n en el formulario de ediciÃ³n de productos del Panel de AdministraciÃ³n (ProductModal.tsx).
+65: - Eliminado el campo de "Factura con RUT" de CartDrawer.tsx, establecido el Correo ElectrÃ³nico como campo obligatorio con validaciÃ³n, e integrada la notificaciÃ³n por email a kamalusosanjose@gmail.com vÃ­a /api/send-email al finalizar el pedido por WhatsApp o Mercado Pago.
+66: - Solucionado el guardado de tÃ­tulo y slug al editar productos en el Panel de AdministraciÃ³n (ProductModal.tsx), eliminando el bloqueo estÃ¡tico de slug, sincronizando la regeneraciÃ³n limpia de slug con el tÃ­tulo editado y configurando la API Route /api/products como `force-dynamic` con cabeceras `no-cache` para evitar respuestas obsoletas.
+67: - Verificada la compilaciÃ³n limpia del proyecto (`npm run build` sin errores, 31 pÃ¡ginas estÃ¡ticas/dinÃ¡micas generadas) y sincronizados los cambios en el repositorio remoto GitHub en el commit `1b7d2a0`.
+68: - Removida la menciÃ³n a Banco ItaÃº en las opciones de transferencia bancaria de CartDrawer.tsx, dejando Ãºnicamente BROU. Proyecto compilado y subido a GitHub en el commit `d8c895b`.
+69: - ExtraÃ­dos los datos bancarios exactos del proyecto `kamaluso_fullstack` (BROU C/A 001199848-00001 MartÃ­n CedrÃ©s, Prex 1216437 Katherine Silva, OCA Blue 0216811, Mi Dinero 7537707, Abitab/Redpagos C.I 4.798.217-8) e implementada la estrategia de doble envÃ­o de correo en /api/send-email (correo al comprador con sus datos de pago personalizados y correo de respaldo al admin).
+70: - Estandarizado el texto del botÃ³n principal de compra en la pÃ¡gina de detalle (AddToCartDetail.tsx) a "Agregar al Carrito â€¢ $XXX UYU".
+71: - Ocultadas las flechas flotantes del carrusel de fotos (ProductGallery.tsx) en dispositivos mÃ³viles (`hidden sm:flex`) para no obstruir la imagen del producto, manteniÃ©ndolas Ãºnicamente en desktop al pasar el mouse.
+72: - Implementado el botÃ³n convertible de cantidad inline estilo LOI en las tarjetas del catÃ¡logo (ProductCard.tsx): cambia dinÃ¡micamente de "Agregar" a "[-] N [+]" al incluir unidades en el carrito, retornando al botÃ³n original al llegar a 0.
+73: - Integrado botÃ³n discreto de "Vaciar Carrito" en el encabezado del Paso 1 y rediseÃ±ado el bloque de Totales a alta visibilidad con tipografÃ­a gigante estilo LOI en CartDrawer.tsx.
 74: - Iniciado el servidor de desarrollo de Next.js en el puerto 3000 (`npx next dev -p 3000`), listo en http://localhost:3000.
-75: - Integrada la barra de búsqueda en el Navbar superior (Header.tsx) con filtrado en tiempo real estilo LOI y desactivada la apertura automática del drawer al tocar "Agregar" en la tarjeta (ProductCard.tsx) para que la transformación a "[-] N [+]" ocurra 100% visible en pantalla.
-76: - Removida la barra de búsqueda duplicada del Hero central en ProductGrid.tsx, manteniendo únicamente el buscador limpio y centralizado en el Navbar superior.
-77: - Eliminado el botón redundante de WhatsApp de la barra de navegación superior (manteniendo la presencia del widget flotante en la esquina inferior derecha) y reorganizados los enlaces a: Inicio, Catálogo, Plantillas PDF y Contacto en Header.tsx.
-78: - Removido el enlace redundante 'Catálogo' del Navbar (Header.tsx) tanto en versión desktop como en menú móvil, dejando la navegación limpia: Inicio, Plantillas PDF y Contacto.
-79: - Renombrado el enlace de la sección de descargables a 'Recursos Gratis' en el Navbar (Header.tsx) para potenciar el valor percibido e incentivar clics.
-80: - Rediseñado el botón 'Agregar al Carrito' y el selector convertible '[-] N unidades en carrito [+]' para ocupar el 100% del ancho de las tarjetas en ProductCard.tsx, garantizando una amplia zona de clic.
-81: - Simplificada la visualización del selector de cantidad en ProductCard.tsx mostrando únicamente el número central en negrita destacado '[-] N [+]' al estilo LOI.
-82: - Actualizado el título y subtítulo del Hero principal en ProductGrid.tsx con la Opción 3 ("Interiores de agendas y libretas sublimables").
-83: - Agregado un mecanismo de sincronización automática (fallback a producción en Vercel) en la API route /api/products/route.ts para que el catálogo local en localhost:3000 muestre exactamente las mismas ediciones de productos guardadas en la nube.
-84: - Ajustado el título principal del Hero en ProductGrid.tsx a "Interiores de papelería sublimable".
-85: - Creado e integrado el desplegable flotante de búsqueda en vivo (Live Search Dropdown) en Header.tsx con vista previa de productos 1:1, precios y botón 'Ver N resultados' con scroll suave automático al catálogo en ProductGrid.tsx.
-86: - Mejorado el contraste visual de las tarjetas de producto en ProductCard.tsx (borde slate-200 definido, sombra shadow-md y fondo de foto contrastado) junto con un fondo de sección slate-100/60 en ProductGrid.tsx.
-87: - Eliminados todos los fondos grises dos tonos en ProductCard.tsx (fijando la superficie completa de la tarjeta en blanco puro 100% bg-white) y removida la caja gris de fondo de la sección en ProductGrid.tsx para lograr una integración visual pulida e impecable.
-88: - Configurado el carrusel de imágenes ProductGallery con comportamiento pegajoso (lg:sticky lg:top-28 self-start) en la página de detalle del producto (src/app/p/[slug]/page.tsx) para que permanezca siempre visible fijado en pantalla mientras se desplaza la columna derecha de información.
-- Reducido el espacio vertical excesivo de la barra de migas de pan (breadcrumbs) en src/app/p/[slug]/page.tsx (py-4 sm:py-6 y space-y-3), logrando un encabezado mucho más compacto y compacto.
-- Servidor de desarrollo Next.js iniciado y ejecutándose en el puerto 3000 (http://localhost:3000).
-- Proporcionada la guía paso a paso para vincular el dominio `kamaluso.com` (Webnode) con la aplicación desplegada en Vercel (Registros A/CNAME y Nameservers).
-- Confirmada la ubicación exacta del panel "Administra DNS" en Webnode para la configuración de registros.
-- Analizada la lista de registros DNS de Webnode e indicados los cambios exactos (A a 76.76.21.21, CNAME www a cname.vercel-dns.com, preservación de registros de correo MX/TXT).
-- Explicadas las garantías de conservación e incremento de SEO (URLs `/p/[slug]/` 100% idénticas, etiquetas JSON-LD B2B, mejor velocidad de carga y 301 de Vercel).
-- Verificado y actualizado `src/app/robots.ts` (`/robots.txt` excluyendo `/admin/` y `/api/`) y `src/app/sitemap.ts` (`/sitemap.xml` dinámico con 30+ URLs).
+75: - Integrada la barra de bÃºsqueda en el Navbar superior (Header.tsx) con filtrado en tiempo real estilo LOI y desactivada la apertura automÃ¡tica del drawer al tocar "Agregar" en la tarjeta (ProductCard.tsx) para que la transformaciÃ³n a "[-] N [+]" ocurra 100% visible en pantalla.
+76: - Removida la barra de bÃºsqueda duplicada del Hero central en ProductGrid.tsx, manteniendo Ãºnicamente el buscador limpio y centralizado en el Navbar superior.
+77: - Eliminado el botÃ³n redundante de WhatsApp de la barra de navegaciÃ³n superior (manteniendo la presencia del widget flotante en la esquina inferior derecha) y reorganizados los enlaces a: Inicio, CatÃ¡logo, Plantillas PDF y Contacto en Header.tsx.
+78: - Removido el enlace redundante 'CatÃ¡logo' del Navbar (Header.tsx) tanto en versiÃ³n desktop como en menÃº mÃ³vil, dejando la navegaciÃ³n limpia: Inicio, Plantillas PDF y Contacto.
+79: - Renombrado el enlace de la secciÃ³n de descargables a 'Recursos Gratis' en el Navbar (Header.tsx) para potenciar el valor percibido e incentivar clics.
+80: - RediseÃ±ado el botÃ³n 'Agregar al Carrito' y el selector convertible '[-] N unidades en carrito [+]' para ocupar el 100% del ancho de las tarjetas en ProductCard.tsx, garantizando una amplia zona de clic.
+81: - Simplificada la visualizaciÃ³n del selector de cantidad en ProductCard.tsx mostrando Ãºnicamente el nÃºmero central en negrita destacado '[-] N [+]' al estilo LOI.
+82: - Actualizado el tÃ­tulo y subtÃ­tulo del Hero principal en ProductGrid.tsx con la OpciÃ³n 3 ("Interiores de agendas y libretas sublimables").
+83: - Agregado un mecanismo de sincronizaciÃ³n automÃ¡tica (fallback a producciÃ³n en Vercel) en la API route /api/products/route.ts para que el catÃ¡logo local en localhost:3000 muestre exactamente las mismas ediciones de productos guardadas en la nube.
+84: - Ajustado el tÃ­tulo principal del Hero en ProductGrid.tsx a "Interiores de papelerÃ­a sublimable".
+85: - Creado e integrado el desplegable flotante de bÃºsqueda en vivo (Live Search Dropdown) en Header.tsx con vista previa de productos 1:1, precios y botÃ³n 'Ver N resultados' con scroll suave automÃ¡tico al catÃ¡logo en ProductGrid.tsx.
+86: - Mejorado el contraste visual de las tarjetas de producto en ProductCard.tsx (borde slate-200 definido, sombra shadow-md y fondo de foto contrastado) junto con un fondo de secciÃ³n slate-100/60 en ProductGrid.tsx.
+87: - Eliminados todos los fondos grises dos tonos en ProductCard.tsx (fijando la superficie completa de la tarjeta en blanco puro 100% bg-white) y removida la caja gris de fondo de la secciÃ³n en ProductGrid.tsx para lograr una integraciÃ³n visual pulida e impecable.
+88: - Configurado el carrusel de imÃ¡genes ProductGallery con comportamiento pegajoso (lg:sticky lg:top-28 self-start) en la pÃ¡gina de detalle del producto (src/app/p/[slug]/page.tsx) para que permanezca siempre visible fijado en pantalla mientras se desplaza la columna derecha de informaciÃ³n.
+- Reducido el espacio vertical excesivo de la barra de migas de pan (breadcrumbs) en src/app/p/[slug]/page.tsx (py-4 sm:py-6 y space-y-3), logrando un encabezado mucho mÃ¡s compacto y compacto.
+- Servidor de desarrollo Next.js iniciado y ejecutÃ¡ndose en el puerto 3000 (http://localhost:3000).
+- Proporcionada la guÃ­a paso a paso para vincular el dominio `kamaluso.com` (Webnode) con la aplicaciÃ³n desplegada en Vercel (Registros A/CNAME y Nameservers).
+- Confirmada la ubicaciÃ³n exacta del panel "Administra DNS" en Webnode para la configuraciÃ³n de registros.
+- Analizada la lista de registros DNS de Webnode e indicados los cambios exactos (A a 76.76.21.21, CNAME www a cname.vercel-dns.com, preservaciÃ³n de registros de correo MX/TXT).
+- Explicadas las garantÃ­as de conservaciÃ³n e incremento de SEO (URLs `/p/[slug]/` 100% idÃ©nticas, etiquetas JSON-LD B2B, mejor velocidad de carga y 301 de Vercel).
+- Verificado y actualizado `src/app/robots.ts` (`/robots.txt` excluyendo `/admin/` y `/api/`) y `src/app/sitemap.ts` (`/sitemap.xml` dinÃ¡mico con 30+ URLs).
 - Copiados e integrados los 4 archivos PDF descargables exactos de `kamaluso.com` en `src/lib/resources.ts` (`DESCARGAR CAPIBARA.pdf`, `DESCARGAR BRILLOS.pdf`, `DESCARGAR COLORES.pdf`, `DESCARGAR RECETAS.pdf`).
-- Configurada la sincronización automática en tiempo real del catálogo en vivo (`https://kamaluso-three.vercel.app/api/products` y Vercel Blob) tanto en `/api/products/route.ts` como en `lib/products.ts`, garantizando que cualquier cambio de imágenes o productos realizado desde la web se refleje de inmediato en `localhost:3000`.
+- Configurada la sincronizaciÃ³n automÃ¡tica en tiempo real del catÃ¡logo en vivo (`https://kamaluso-three.vercel.app/api/products` y Vercel Blob) tanto en `/api/products/route.ts` como en `lib/products.ts`, garantizando que cualquier cambio de imÃ¡genes o productos realizado desde la web se refleje de inmediato en `localhost:3000`.
 - Actualizada la maqueta inicial de la Agenda Semanal 2026/27 a la imagen con fondo oficial Kamaluso (`/agenda_fondo_kamaluso.jpg`).
-97: - Configurado el campo de Correo Electrónico como opcional en el checkout (CartDrawer.tsx). Instalado `nodemailer` y añadidas credenciales SMTP de Gmail (kamalusosanjose@gmail.com) en `.env.local`. Actualizada la API route `/api/send-email` para enviar correos automáticos desde `kamalusosanjose@gmail.com` al cliente con el detalle del pedido e instrucciones exactas de pago cuando proporcione su email, manteniendo la notificación a la tienda.
-98: - Corregido el problema de persistencia al editar productos (títulos, precios, descripciones, badges, imágenes): implementada la fusión `mergeWithLocal` y guardado incondicional en `localStorage` en `lib/products.ts` + compatibilidad tolerante en la API route `POST /api/products`, garantizando que cualquier cambio realizado desde el Panel Admin se conserve de forma inmediata en el catálogo y vistas de detalle.
-99: - Elaborada e integrada la auditoría técnica y comercial Senior de E-Commerce (`auditoria_ecommerce_kamaluso.md`), evaluando arquitectura, CRO, rendimiento, SEO B2B y seguridad con un veredicto final de 9.3/10.
-100: - Desarrollado el módulo completo de Registro de Ventas e Historial de Pedidos (`lib/orders.ts` + `/api/orders` + pestaña `📦 Pedidos / Ventas` en `/admin`). Cada compra desde la tienda se registra automáticamente con datos del comprador, productos, montos, medios de pago y selector interactivo de estado (`Pendiente`, `Pago Confirmado`, `En Preparación`, `Despachado`, `Cancelado`).
-101: - Corregido el flujo de creación de nuevos productos en entorno de desarrollo (`lib/products.ts`): eliminado el sobreescribir involuntario de `localStorage` que producía `/api/products` en `saveProduct()`, implementada la lista negra `kamaluso_deleted_product_ids` para eliminaciones locales y garantizado el guardado incondicional en `localStorage` tanto para productos editados como para insumos creados desde cero.
+97: - Configurado el campo de Correo ElectrÃ³nico como opcional en el checkout (CartDrawer.tsx). Instalado `nodemailer` y aÃ±adidas credenciales SMTP de Gmail (kamalusosanjose@gmail.com) en `.env.local`. Actualizada la API route `/api/send-email` para enviar correos automÃ¡ticos desde `kamalusosanjose@gmail.com` al cliente con el detalle del pedido e instrucciones exactas de pago cuando proporcione su email, manteniendo la notificaciÃ³n a la tienda.
+98: - Corregido el problema de persistencia al editar productos (tÃ­tulos, precios, descripciones, badges, imÃ¡genes): implementada la fusiÃ³n `mergeWithLocal` y guardado incondicional en `localStorage` en `lib/products.ts` + compatibilidad tolerante en la API route `POST /api/products`, garantizando que cualquier cambio realizado desde el Panel Admin se conserve de forma inmediata en el catÃ¡logo y vistas de detalle.
+99: - Elaborada e integrada la auditorÃ­a tÃ©cnica y comercial Senior de E-Commerce (`auditoria_ecommerce_kamaluso.md`), evaluando arquitectura, CRO, rendimiento, SEO B2B y seguridad con un veredicto final de 9.3/10.
+100: - Desarrollado el mÃ³dulo completo de Registro de Ventas e Historial de Pedidos (`lib/orders.ts` + `/api/orders` + pestaÃ±a `ðŸ“¦ Pedidos / Ventas` en `/admin`). Cada compra desde la tienda se registra automÃ¡ticamente con datos del comprador, productos, montos, medios de pago y selector interactivo de estado (`Pendiente`, `Pago Confirmado`, `En PreparaciÃ³n`, `Despachado`, `Cancelado`).
+101: - Corregido el flujo de creaciÃ³n de nuevos productos en entorno de desarrollo (`lib/products.ts`): eliminado el sobreescribir involuntario de `localStorage` que producÃ­a `/api/products` en `saveProduct()`, implementada la lista negra `kamaluso_deleted_product_ids` para eliminaciones locales y garantizado el guardado incondicional en `localStorage` tanto para productos editados como para insumos creados desde cero.
 102: - Servidor de desarrollo Next.js iniciado y corriendo en segundo plano en http://localhost:3000.
-103: - Brindada asesoría de SEO sobre arquitectura de URLs (slugs evergreen sin año) para mantener autoridad acumulada en agendas e insumos anuales.
-104: - Realizada auditoría técnica Senior del ciclo de vida CRUD de productos (seguridad de API routes, concurrencia en Vercel Blob vs Supabase, validación de slugs y revalidación ISR de Next.js).
-105: - Implementadas las mejoras solicitadas: Drag & Drop reordenable de fotos en ImageUploader, "Autogenerar SEO" que respeta título y descripción intactos, validación de slugs duplicados, eliminación de fotos huérfanas en Vercel Blob y revalidación ISR instantánea.
+103: - Brindada asesorÃ­a de SEO sobre arquitectura de URLs (slugs evergreen sin aÃ±o) para mantener autoridad acumulada en agendas e insumos anuales.
+104: - Realizada auditorÃ­a tÃ©cnica Senior del ciclo de vida CRUD de productos (seguridad de API routes, concurrencia en Vercel Blob vs Supabase, validaciÃ³n de slugs y revalidaciÃ³n ISR de Next.js).
+105: - Implementadas las mejoras solicitadas: Drag & Drop reordenable de fotos en ImageUploader, "Autogenerar SEO" que respeta tÃ­tulo y descripciÃ³n intactos, validaciÃ³n de slugs duplicados, eliminaciÃ³n de fotos huÃ©rfanas en Vercel Blob y revalidaciÃ³n ISR instantÃ¡nea.
 106: - Explicado el aislamiento de productos de prueba en el entorno local (localStorage / Vercel Blob) y las formas de eliminarlos limpiamente desde el panel Admin.
-107: - Solucionado el error de pantalla blanca "Application error: client-side exception" al eliminar productos: blindados los filtros de búsqueda (`filteredProducts`), `getLocalStoredProducts` y `mergeWithLocal` con comprobaciones tolerantes a valores nulos y opcionales (`p?.name`).
-108: - Auditoría Senior integral del código completada: corregidos accesos no protegidos a arreglos de imágenes (`images[0]`) en `ProductCard`, `CartDrawer`, `Header` y `p/[slug]`, implementados fallbacks defensivos ante imágenes vacías y comprobadas las 31 rutas del proyecto.
-109: - Resueltos todos los hallazgos del flujo de compras en `CartDrawer.tsx` y `/api/payments/create-preference`: implementado el scroll automático al error de validación para dispositivos móviles, reuso de `activeOrderId` para evitar duplicados en admin ante reintentos de pago, fallback seguro para emails vacíos en Mercado Pago y aclaración del 10% de recargo en el mensaje de WhatsApp.
-110: - Solucionado el error 404 de Vercel en la URL `/p/agenda-sublimable-semanal`: actualizados los slugs iniciales en `INITIAL_PRODUCTS` a nombres de URL evergreen (`agenda-sublimable-semanal`, `agenda-2-dias-a-la-vista`, `agenda-1-dia-a-la-vista`) e implementada la coincidencia inteligente por alias en `getProductBySlug` para garantizar resolución sin 404 ante cualquier variación de slug.
-111: - Solucionado el parpadeo e intercambio de imágenes (flicker) al cargar la página: sincronizados los valores base en `INITIAL_PRODUCTS` con las imágenes de mayor resolución `/agenda_fondo_kamaluso.jpg` y badges `NUEVO 2027` para que la renderización del servidor Vercel y el cliente sean 100% idénticas desde el primer milisegundo.
-112: - Establecida la identidad oficial B2B de `www.kamaluso.com` en pie de página, copyright y metadata SEO. Añadida la barra superior de notificación (Top Announcement Bar) y bloque destacado en el Footer que promociona la tienda minorista de regalos ya personalizados en `www.papeleriapersonalizada.uy` para consumidores finales.
-113: - Solucionada la discrepancia en modo incógnito en Vercel: actualizada la API route `/api/products` para migrar y sincronizar automáticamente cualquier archivo legacy de `products.json` guardado en la nube Vercel Blob hacia las portadas oficiales `/agenda_fondo_kamaluso.jpg`.
-115: - Reiniciado el catálogo a cero (`INITIAL_PRODUCTS = []`): removidos todos los elementos de prueba legados y configurado un estado de bienvenida limpio en `ProductGrid.tsx` listo para publicar productos oficiales desde el panel `/admin`.
-116: - Ejecutado commit y deploy oficial a Vercel (`86a845d`) con purga remota exitosa de Blob Storage (`reset=true`), dejando el catálogo en la nube 100% limpio e igual para todos los usuarios en cualquier navegador.
+107: - Solucionado el error de pantalla blanca "Application error: client-side exception" al eliminar productos: blindados los filtros de bÃºsqueda (`filteredProducts`), `getLocalStoredProducts` y `mergeWithLocal` con comprobaciones tolerantes a valores nulos y opcionales (`p?.name`).
+108: - AuditorÃ­a Senior integral del cÃ³digo completada: corregidos accesos no protegidos a arreglos de imÃ¡genes (`images[0]`) en `ProductCard`, `CartDrawer`, `Header` y `p/[slug]`, implementados fallbacks defensivos ante imÃ¡genes vacÃ­as y comprobadas las 31 rutas del proyecto.
+109: - Resueltos todos los hallazgos del flujo de compras en `CartDrawer.tsx` y `/api/payments/create-preference`: implementado el scroll automÃ¡tico al error de validaciÃ³n para dispositivos mÃ³viles, reuso de `activeOrderId` para evitar duplicados en admin ante reintentos de pago, fallback seguro para emails vacÃ­os en Mercado Pago y aclaraciÃ³n del 10% de recargo en el mensaje de WhatsApp.
+110: - Solucionado el error 404 de Vercel en la URL `/p/agenda-sublimable-semanal`: actualizados los slugs iniciales en `INITIAL_PRODUCTS` a nombres de URL evergreen (`agenda-sublimable-semanal`, `agenda-2-dias-a-la-vista`, `agenda-1-dia-a-la-vista`) e implementada la coincidencia inteligente por alias en `getProductBySlug` para garantizar resoluciÃ³n sin 404 ante cualquier variaciÃ³n de slug.
+111: - Solucionado el parpadeo e intercambio de imÃ¡genes (flicker) al cargar la pÃ¡gina: sincronizados los valores base en `INITIAL_PRODUCTS` con las imÃ¡genes de mayor resoluciÃ³n `/agenda_fondo_kamaluso.jpg` y badges `NUEVO 2027` para que la renderizaciÃ³n del servidor Vercel y el cliente sean 100% idÃ©nticas desde el primer milisegundo.
+112: - Establecida la identidad oficial B2B de `www.kamaluso.com` en pie de pÃ¡gina, copyright y metadata SEO. AÃ±adida la barra superior de notificaciÃ³n (Top Announcement Bar) y bloque destacado en el Footer que promociona la tienda minorista de regalos ya personalizados en `www.papeleriapersonalizada.uy` para consumidores finales.
+113: - Solucionada la discrepancia en modo incÃ³gnito en Vercel: actualizada la API route `/api/products` para migrar y sincronizar automÃ¡ticamente cualquier archivo legacy de `products.json` guardado en la nube Vercel Blob hacia las portadas oficiales `/agenda_fondo_kamaluso.jpg`.
+115: - Reiniciado el catÃ¡logo a cero (`INITIAL_PRODUCTS = []`): removidos todos los elementos de prueba legados y configurado un estado de bienvenida limpio en `ProductGrid.tsx` listo para publicar productos oficiales desde el panel `/admin`.
+116: - Ejecutado commit y deploy oficial a Vercel (`86a845d`) con purga remota exitosa de Blob Storage (`reset=true`), dejando el catÃ¡logo en la nube 100% limpio e igual para todos los usuarios en cualquier navegador.
 117: - Servidor de desarrollo Next.js levantado y operativo en el puerto 3000 (http://localhost:3000).
-118: - Implementada la arquitectura de Incremental Static Regeneration (ISR): caché estática de 15 minutos (revalidate = 900) con invalidación On-Demand modular por tags (`revalidateTag('products')`) en la API y `dynamicParams = true` en rutas de producto. Build de producción verificado con 0 errores y servidor dev operativo en localhost:3000.
-119: - Ajustada la revalidación periódica de ISR a 24 horas (`revalidate = 86400`) para minimizar el consumo de cómputo en Vercel, conservando la invalidación On-Demand instantánea (`revalidateTag('products')`) en el panel Admin. Compilación de producción verificada (`Revalidate: 1d`).
-119: - Cambios subidos exitosamente a GitHub (commit `047005e`), disparando el despliegue automático a producción en Vercel con la arquitectura ISR 100% activa.
-120: - Diagnóstico de raíz del error 404 al crear productos en Vercel: Se identificó la discrepancia entre el estado optimista en cliente (`localStorage`) y la renderización en servidor de Next.js (`/p/[slug]` Server Component). Al fallar la persistencia remota en Vercel Blob por ausencia de `BLOB_READ_WRITE_TOKEN` o cuota de `localStorage` con Base64, el servidor no encuentra el producto (404) y el SSR subsiguiente vacía la vista.
-121: - Solución definitiva de persistencia en Vercel Blob Storage: El almacén Blob Store estaba conectado en Vercel pero `@vercel/blob` v2.6.1 rechazaba las escrituras al no incluir `allowOverwrite: true`, arrojando `BlobAlreadyExistsError`. Se actualizó `/api/products`, `/api/upload` y `/api/orders` con `allowOverwrite: true`, sincronización bidireccional y tolerancia a fallos. Verificado con `npm run build` y desplegado a GitHub (commit `f5d5974`) disparando el deploy a producción.
-122: - Eliminación del 404 estático en Vercel: Se reemplazó el `fetch` interno con caché estática de 24h (`revalidate = 86400`) por la lectura directa de `@vercel/blob` en Server Components (`getAllProducts()`), configurando las rutas `/p/[slug]`, `/` y `/categoria/[slug]` como `dynamic = "force-dynamic"`. Desplegado en el commit `5683e4f`.
-123: - Agregadas las categorías 'Especiales' y 'Outlet' a la configuración global de categorías (CATEGORIES en src/lib/products.ts). Actualizado el modal de creación de productos en el Panel Admin (ProductModal.tsx), el asistente SEO por nombre, el filtro de productos (CategoryFilter.tsx), enlaces en el Footer (Footer.tsx) y rutas dinámicas de categoría (/categoria/especiales y /categoria/outlet). Compilación y verificación de producción Next.js completadas con 0 errores.
-124: - Implementado el filtro de ordenamiento por precio y nombre (Destacados, Menor precio, Mayor precio, Nombre A-Z) tanto en el catálogo de la tienda (ProductGrid.tsx) con barra de conteo y selector estilizado, como en la tabla de productos del Panel de Administración (admin/page.tsx). Build de producción completado con 0 errores.
-125: - Desarrollado el sistema de Reordenamiento Manual de Productos por defecto desde el Panel de Administración: Botones interactivos de subir/bajar posición (▲/▼), Drag & Drop nativo de filas con agarrador visual Grip, badges de posición (#1, #2, etc.), persistencia inmediata con saveProductsOrder() en Vercel Blob y confirmación visual tipo Toast. Sincronizado automáticamente con la vista por defecto de la tienda. Build verificado con 0 errores.
-126: - Actualizado el sistema de Cross-selling a 'Promo Mayorista: KIT x 10 (Con Descuento)'. Integrado en ProductModal.tsx el selector desplegable para vincular cada producto individual con la publicación del Kit Mayorista correspondiente (promoKitSlug). El banner en la página de producto (AddToCartDetail.tsx) enlaza de forma directa con la publicación del Kit x 10 con descuento seleccionado. Build de producción completado con 0 errores.
-129: - Auditoría Estratégica Senior de SEO Uruguay: Identificadas las 6 áreas clave faltantes para liderar las SERPs uruguayas (#1 en Google): optimización de Google Business Profile (San José + alcance nacional), incorporación de textos semánticos H2/H3 en la Home, creación de centro de guías para sublimadores (Topical Authority), enriquecimiento de schemas JSON-LD (BreadcrumbList y LocalBusiness con departamentos de UY), optimización de Core Web Vitals y estrategia de backlinks locales (.uy y papeleriapersonalizada.uy).
-130: - Verificación técnica para migración de dominio oficial `www.kamaluso.com`: Confirmada compatibilidad total de rutas canónicas, sitemap.xml, robots.txt y metadataBase. Build de producción verificado con 0 errores listo para asignación de DNS en Vercel.
-131: - Configuración de DNS completada en Webnode: Registro A apuntado a `76.76.21.21`, registro A duplicado eliminado y CNAME de `www` apuntado a `cname.vercel-dns.com` preservando registros de correo intactos. En proceso de propagación y verificación SSL en Vercel.
-132: - Implementación de OpenGraph y Twitter Cards para WhatsApp: Configuración de metadatos dinámicos con URLs absolutas de imagen, dimensiones (800x800 y 1200x630), `siteName`, `locale: es_UY` y descripciones limpias en páginas de producto `/p/[slug]`, categorías `/categoria/[slug]`, recursos, contacto, FAQ y layout general. Desplegado a producción en GitHub (commit `4e66179`).
-133: - Integración de Instagram `@kamaluso_sanjose` en puntos estratégicos: Header superior (icono desktop y enlace en menú móvil), Footer (sección de contacto mayorista), página de Contacto (`/contacto` con tarjeta e icono), página Sobre Nosotros (`/sobre-nosotros` con banner de comunidad de taller) y marcado Schema.org `sameAs` para vinculación de entidad en Google. Desplegado a producción (commit `294f74f`).
-134: - Plan de indexación inmediata y estrategia SEO para Google Search Console: Instrucciones paso a paso para enviar `sitemap.xml`, forzar rastreo mediante Inspección de URLs, vinculación de Google Business Profile y plan de contenidos enfocado en liderar las SERPs de Uruguay.
-135: - Optimización y Blindaje de Cuota Vercel Blob ($0 permanente): Eliminadas todas las llamadas a `list()` en el flujo de lectura público (`getAllProducts()`, `GET /api/products`, `GET /api/orders` y `HeaderSearchInput`). Implementada arquitectura de memoria global en servidor (`__kamaluso_products_cache__` y `__kamaluso_orders_cache__`) con revalidación ISR instantánea al guardar productos. Las visitas de clientes ahora consumen 0 Advanced Requests y la web responde en <10ms. Desplegado a producción (commit `edfdb4e`).
-136: - Blindaje Definitivo de Advanced Requests en Vercel Blob (Cero llamadas a list() y consumo de cuota $0): Se identificó que las funciones serverless efímeras de Vercel reiniciaban la memoria en cada arranque en frío (cold start), ejecutando el fallback de `list({ prefix: 'data/products.json' })` ante visitas y bots de búsqueda (consumiendo 1.500 de las 2.000 operaciones mensuales gratuitas). Se eliminó al 100% la importación y llamada a `list()` en `/api/products` y `/api/orders`, enrutando todas las lecturas de catálogo y SSR directamente a la URL pública fija de CDN (`https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json`), las cuales son 'Simple Requests' (100% gratuitas e ilimitadas). Se optimizó `ProductGrid.tsx` para evitar refetches redundantes en cliente cuando el SSR ya entrega los productos. Compilación verificada con éxito (43 páginas generadas, 0 errores).
-137: - Diagnóstico y asesoría de Google Search Console: Análisis de las advertencias de 'Mejorar el aspecto de los elementos' en los 23 productos (campos opcionales 'aggregateRating' y 'review'). Aclarado que no son errores y que los productos están 100% válidos e indexados; evaluadas las implicaciones de políticas de Google sobre reseñas falsas vs implementación de sistema de reviews reales.
-138: - Auditoría Competitiva Exhaustiva y Plan de Crecimiento SEO/GEO: Rastreo en vivo de competidores en Uruguay (Disershop, BR Importaciones, Cromos, DRAM). Confirmado que Kamaluso es el #1 indiscutido en citas de motores de IA (Gemini, Perplexity, ChatGPT) para 'papelería sublimable' e 'interiores de agenda'. Trazada la estrategia en 4 pilares: GEO con tablas técnicas estructuradas y HowTo Schemas, conquista semántica de búsquedas de Montevideo/departamentos, limpieza de encoding en catálogo y campaña de reseñas reales.
-139: - Implementación de Arquitectura de Posicionamiento Rápido SEO y GEO en Producción: Creado el componente semántico `HomeSeoSection.tsx` con H2/H3 de autoridad B2B, chip semántico de los 19 departamentos de Uruguay y tabla técnica de sublimado para motores de IA. Enriquecida la página de producto con Ficha Técnica estructurada del insumo y BreadcrumbList Schema. Integrado WebSite Schema con SearchAction y expandida la cobertura geográfica departamental (`areaServed`) en LocalBusiness Schema. Compilación verificada con éxito (43 páginas estáticas) y desplegado a producción en GitHub (commit `687fb24`).
+118: - Implementada la arquitectura de Incremental Static Regeneration (ISR): cachÃ© estÃ¡tica de 15 minutos (revalidate = 900) con invalidaciÃ³n On-Demand modular por tags (`revalidateTag('products')`) en la API y `dynamicParams = true` en rutas de producto. Build de producciÃ³n verificado con 0 errores y servidor dev operativo en localhost:3000.
+119: - Ajustada la revalidaciÃ³n periÃ³dica de ISR a 24 horas (`revalidate = 86400`) para minimizar el consumo de cÃ³mputo en Vercel, conservando la invalidaciÃ³n On-Demand instantÃ¡nea (`revalidateTag('products')`) en el panel Admin. CompilaciÃ³n de producciÃ³n verificada (`Revalidate: 1d`).
+119: - Cambios subidos exitosamente a GitHub (commit `047005e`), disparando el despliegue automÃ¡tico a producciÃ³n en Vercel con la arquitectura ISR 100% activa.
+120: - DiagnÃ³stico de raÃ­z del error 404 al crear productos en Vercel: Se identificÃ³ la discrepancia entre el estado optimista en cliente (`localStorage`) y la renderizaciÃ³n en servidor de Next.js (`/p/[slug]` Server Component). Al fallar la persistencia remota en Vercel Blob por ausencia de `BLOB_READ_WRITE_TOKEN` o cuota de `localStorage` con Base64, el servidor no encuentra el producto (404) y el SSR subsiguiente vacÃ­a la vista.
+121: - SoluciÃ³n definitiva de persistencia en Vercel Blob Storage: El almacÃ©n Blob Store estaba conectado en Vercel pero `@vercel/blob` v2.6.1 rechazaba las escrituras al no incluir `allowOverwrite: true`, arrojando `BlobAlreadyExistsError`. Se actualizÃ³ `/api/products`, `/api/upload` y `/api/orders` con `allowOverwrite: true`, sincronizaciÃ³n bidireccional y tolerancia a fallos. Verificado con `npm run build` y desplegado a GitHub (commit `f5d5974`) disparando el deploy a producciÃ³n.
+122: - EliminaciÃ³n del 404 estÃ¡tico en Vercel: Se reemplazÃ³ el `fetch` interno con cachÃ© estÃ¡tica de 24h (`revalidate = 86400`) por la lectura directa de `@vercel/blob` en Server Components (`getAllProducts()`), configurando las rutas `/p/[slug]`, `/` y `/categoria/[slug]` como `dynamic = "force-dynamic"`. Desplegado en el commit `5683e4f`.
+123: - Agregadas las categorÃ­as 'Especiales' y 'Outlet' a la configuraciÃ³n global de categorÃ­as (CATEGORIES en src/lib/products.ts). Actualizado el modal de creaciÃ³n de productos en el Panel Admin (ProductModal.tsx), el asistente SEO por nombre, el filtro de productos (CategoryFilter.tsx), enlaces en el Footer (Footer.tsx) y rutas dinÃ¡micas de categorÃ­a (/categoria/especiales y /categoria/outlet). CompilaciÃ³n y verificaciÃ³n de producciÃ³n Next.js completadas con 0 errores.
+124: - Implementado el filtro de ordenamiento por precio y nombre (Destacados, Menor precio, Mayor precio, Nombre A-Z) tanto en el catÃ¡logo de la tienda (ProductGrid.tsx) con barra de conteo y selector estilizado, como en la tabla de productos del Panel de AdministraciÃ³n (admin/page.tsx). Build de producciÃ³n completado con 0 errores.
+125: - Desarrollado el sistema de Reordenamiento Manual de Productos por defecto desde el Panel de AdministraciÃ³n: Botones interactivos de subir/bajar posiciÃ³n (â–²/â–¼), Drag & Drop nativo de filas con agarrador visual Grip, badges de posiciÃ³n (#1, #2, etc.), persistencia inmediata con saveProductsOrder() en Vercel Blob y confirmaciÃ³n visual tipo Toast. Sincronizado automÃ¡ticamente con la vista por defecto de la tienda. Build verificado con 0 errores.
+126: - Actualizado el sistema de Cross-selling a 'Promo Mayorista: KIT x 10 (Con Descuento)'. Integrado en ProductModal.tsx el selector desplegable para vincular cada producto individual con la publicaciÃ³n del Kit Mayorista correspondiente (promoKitSlug). El banner en la pÃ¡gina de producto (AddToCartDetail.tsx) enlaza de forma directa con la publicaciÃ³n del Kit x 10 con descuento seleccionado. Build de producciÃ³n completado con 0 errores.
+129: - AuditorÃ­a EstratÃ©gica Senior de SEO Uruguay: Identificadas las 6 Ã¡reas clave faltantes para liderar las SERPs uruguayas (#1 en Google): optimizaciÃ³n de Google Business Profile (San JosÃ© + alcance nacional), incorporaciÃ³n de textos semÃ¡nticos H2/H3 en la Home, creaciÃ³n de centro de guÃ­as para sublimadores (Topical Authority), enriquecimiento de schemas JSON-LD (BreadcrumbList y LocalBusiness con departamentos de UY), optimizaciÃ³n de Core Web Vitals y estrategia de backlinks locales (.uy y papeleriapersonalizada.uy).
+130: - VerificaciÃ³n tÃ©cnica para migraciÃ³n de dominio oficial `www.kamaluso.com`: Confirmada compatibilidad total de rutas canÃ³nicas, sitemap.xml, robots.txt y metadataBase. Build de producciÃ³n verificado con 0 errores listo para asignaciÃ³n de DNS en Vercel.
+131: - ConfiguraciÃ³n de DNS completada en Webnode: Registro A apuntado a `76.76.21.21`, registro A duplicado eliminado y CNAME de `www` apuntado a `cname.vercel-dns.com` preservando registros de correo intactos. En proceso de propagaciÃ³n y verificaciÃ³n SSL en Vercel.
+132: - ImplementaciÃ³n de OpenGraph y Twitter Cards para WhatsApp: ConfiguraciÃ³n de metadatos dinÃ¡micos con URLs absolutas de imagen, dimensiones (800x800 y 1200x630), `siteName`, `locale: es_UY` y descripciones limpias en pÃ¡ginas de producto `/p/[slug]`, categorÃ­as `/categoria/[slug]`, recursos, contacto, FAQ y layout general. Desplegado a producciÃ³n en GitHub (commit `4e66179`).
+133: - IntegraciÃ³n de Instagram `@kamaluso_sanjose` en puntos estratÃ©gicos: Header superior (icono desktop y enlace en menÃº mÃ³vil), Footer (secciÃ³n de contacto mayorista), pÃ¡gina de Contacto (`/contacto` con tarjeta e icono), pÃ¡gina Sobre Nosotros (`/sobre-nosotros` con banner de comunidad de taller) y marcado Schema.org `sameAs` para vinculaciÃ³n de entidad en Google. Desplegado a producciÃ³n (commit `294f74f`).
+134: - Plan de indexaciÃ³n inmediata y estrategia SEO para Google Search Console: Instrucciones paso a paso para enviar `sitemap.xml`, forzar rastreo mediante InspecciÃ³n de URLs, vinculaciÃ³n de Google Business Profile y plan de contenidos enfocado en liderar las SERPs de Uruguay.
+135: - OptimizaciÃ³n y Blindaje de Cuota Vercel Blob ($0 permanente): Eliminadas todas las llamadas a `list()` en el flujo de lectura pÃºblico (`getAllProducts()`, `GET /api/products`, `GET /api/orders` y `HeaderSearchInput`). Implementada arquitectura de memoria global en servidor (`__kamaluso_products_cache__` y `__kamaluso_orders_cache__`) con revalidaciÃ³n ISR instantÃ¡nea al guardar productos. Las visitas de clientes ahora consumen 0 Advanced Requests y la web responde en <10ms. Desplegado a producciÃ³n (commit `edfdb4e`).
+136: - Blindaje Definitivo de Advanced Requests en Vercel Blob (Cero llamadas a list() y consumo de cuota $0): Se identificÃ³ que las funciones serverless efÃ­meras de Vercel reiniciaban la memoria en cada arranque en frÃ­o (cold start), ejecutando el fallback de `list({ prefix: 'data/products.json' })` ante visitas y bots de bÃºsqueda (consumiendo 1.500 de las 2.000 operaciones mensuales gratuitas). Se eliminÃ³ al 100% la importaciÃ³n y llamada a `list()` en `/api/products` y `/api/orders`, enrutando todas las lecturas de catÃ¡logo y SSR directamente a la URL pÃºblica fija de CDN (`https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json`), las cuales son 'Simple Requests' (100% gratuitas e ilimitadas). Se optimizÃ³ `ProductGrid.tsx` para evitar refetches redundantes en cliente cuando el SSR ya entrega los productos. CompilaciÃ³n verificada con Ã©xito (43 pÃ¡ginas generadas, 0 errores).
+137: - DiagnÃ³stico y asesorÃ­a de Google Search Console: AnÃ¡lisis de las advertencias de 'Mejorar el aspecto de los elementos' en los 23 productos (campos opcionales 'aggregateRating' y 'review'). Aclarado que no son errores y que los productos estÃ¡n 100% vÃ¡lidos e indexados; evaluadas las implicaciones de polÃ­ticas de Google sobre reseÃ±as falsas vs implementaciÃ³n de sistema de reviews reales.
+138: - AuditorÃ­a Competitiva Exhaustiva y Plan de Crecimiento SEO/GEO: Rastreo en vivo de competidores en Uruguay (Disershop, BR Importaciones, Cromos, DRAM). Confirmado que Kamaluso es el #1 indiscutido en citas de motores de IA (Gemini, Perplexity, ChatGPT) para 'papelerÃ­a sublimable' e 'interiores de agenda'. Trazada la estrategia en 4 pilares: GEO con tablas tÃ©cnicas estructuradas y HowTo Schemas, conquista semÃ¡ntica de bÃºsquedas de Montevideo/departamentos, limpieza de encoding en catÃ¡logo y campaÃ±a de reseÃ±as reales.
+139: - ImplementaciÃ³n de Arquitectura de Posicionamiento RÃ¡pido SEO y GEO en ProducciÃ³n: Creado el componente semÃ¡ntico `HomeSeoSection.tsx` con H2/H3 de autoridad B2B, chip semÃ¡ntico de los 19 departamentos de Uruguay y tabla tÃ©cnica de sublimado para motores de IA. Enriquecida la pÃ¡gina de producto con Ficha TÃ©cnica estructurada del insumo y BreadcrumbList Schema. Integrado WebSite Schema con SearchAction y expandida la cobertura geogrÃ¡fica departamental (`areaServed`) en LocalBusiness Schema. CompilaciÃ³n verificada con Ã©xito (43 pÃ¡ginas estÃ¡ticas) y desplegado a producciÃ³n en GitHub (commit `687fb24`).
 140: - Servidor de desarrollo Next.js iniciado y corriendo en segundo plano en el puerto 3000 (http://localhost:3000), respondiendo con HTTP 200 OK.
-141: - Implementación Completa de las 4 Páginas Pilares para Sublimadores: 1) `/guia-sublimacion-papeleria` con tabla técnica 170º-180ºC / 120s, técnica de enfriado bajo peso y HowTo Schema; 2) `/mayoristas` con tarifario de fábrica en pesos uruguayos (blocks, libretas, agendas, kit x10 $2.100), logística DAC/Correo a los 19 departamentos y enlace a WhatsApp; 3) `/recursos` y `/plantillas-sublimacion` con descargas PDF oficiales y guía de medidas/sangrado A5, 10x15 y 21x30; 4) `/emprender-en-papeleria-sublimable` con desglose financiero de costos (~$245) vs venta ($690-$950) con +200% de margen y calendario de temporadas. Compilación verificada con éxito (47 páginas estáticas) y desplegado a GitHub (commit `937a636`).
-142: - Implementación Integral de Guías de Compra B2B en Categorías, Optimización de Títulos/Alt Tags y Feed Oficial de Google Merchant Center: 1) Guías semánticas ricas en `/categoria/[slug]` (Agendas, Libretas, Blocks, Kits); 2) Nombres de productos enriquecidos con sinónimos de búsqueda ("Cuaderno Universitario", "Cuaderno y Libreta A5", "Anotadores 10x15"); 3) Atributos `alt` descriptivos en `ProductCard.tsx` y `ProductGallery.tsx` para Google Imágenes; 4) Textos ancla exactos en el Footer; 5) Endpoint oficial `/api/feed/google-shopping` y rewrite `/google-shopping.xml` para Merchant Center. Compilado con 0 errores y desplegado a producción (commit `57ecb36`).
+141: - ImplementaciÃ³n Completa de las 4 PÃ¡ginas Pilares para Sublimadores: 1) `/guia-sublimacion-papeleria` con tabla tÃ©cnica 170Âº-180ÂºC / 120s, tÃ©cnica de enfriado bajo peso y HowTo Schema; 2) `/mayoristas` con tarifario de fÃ¡brica en pesos uruguayos (blocks, libretas, agendas, kit x10 $2.100), logÃ­stica DAC/Correo a los 19 departamentos y enlace a WhatsApp; 3) `/recursos` y `/plantillas-sublimacion` con descargas PDF oficiales y guÃ­a de medidas/sangrado A5, 10x15 y 21x30; 4) `/emprender-en-papeleria-sublimable` con desglose financiero de costos (~$245) vs venta ($690-$950) con +200% de margen y calendario de temporadas. CompilaciÃ³n verificada con Ã©xito (47 pÃ¡ginas estÃ¡ticas) y desplegado a GitHub (commit `937a636`).
+142: - ImplementaciÃ³n Integral de GuÃ­as de Compra B2B en CategorÃ­as, OptimizaciÃ³n de TÃ­tulos/Alt Tags y Feed Oficial de Google Merchant Center: 1) GuÃ­as semÃ¡nticas ricas en `/categoria/[slug]` (Agendas, Libretas, Blocks, Kits); 2) Nombres de productos enriquecidos con sinÃ³nimos de bÃºsqueda ("Cuaderno Universitario", "Cuaderno y Libreta A5", "Anotadores 10x15"); 3) Atributos `alt` descriptivos en `ProductCard.tsx` y `ProductGallery.tsx` para Google ImÃ¡genes; 4) Textos ancla exactos en el Footer; 5) Endpoint oficial `/api/feed/google-shopping` y rewrite `/google-shopping.xml` para Merchant Center. Compilado con 0 errores y desplegado a producciÃ³n (commit `57ecb36`).
 
 - Servidor de desarrollo Next.js iniciado y corriendo activamente en http://localhost:3000.
-- Optimización Integral del Sistema de Compra y Notificaciones Duales por Correo:
-  1) Nuevas plantillas HTML responsive y de alta fidelidad para el comprador y para la administración (kamalusosanjose@gmail.com) con número de pedido único (#KAM-XXXXXX), tabla de insumos formateada, desglose financiero, datos de entrega e instrucciones bancarias completas según el método elegido (BROU, Prex, Abitab, etc.).
-  2) Enlace preconfigurado para contactar al WhatsApp de Kamaluso (098 615 074) con el pedido prellenado, y botón en el correo de administración para escribirle directamente al cliente.
-  3) Validación obligatoria de correo electrónico en el checkout (CartDrawer.tsx) con control estricto de formato.
+- OptimizaciÃ³n Integral del Sistema de Compra y Notificaciones Duales por Correo:
+  1) Nuevas plantillas HTML responsive y de alta fidelidad para el comprador y para la administraciÃ³n (kamalusosanjose@gmail.com) con nÃºmero de pedido Ãºnico (#KAM-XXXXXX), tabla de insumos formateada, desglose financiero, datos de entrega e instrucciones bancarias completas segÃºn el mÃ©todo elegido (BROU, Prex, Abitab, etc.).
+  2) Enlace preconfigurado para contactar al WhatsApp de Kamaluso (098 615 074) con el pedido prellenado, y botÃ³n en el correo de administraciÃ³n para escribirle directamente al cliente.
+  3) ValidaciÃ³n obligatoria de correo electrÃ³nico en el checkout (CartDrawer.tsx) con control estricto de formato.
   4) Leyenda visible en el resumen de totales aclarando que el flete por agencia (DAC o Correo Uruguayo) se abona en destino al recibir la encomienda.
-  5) Reestructuración de la jerarquía de botones en el Paso 2: botón de Mercado Pago como acción principal al seleccionar tarjeta, y botón de WhatsApp y Correo para el resto de medios.
-  6) Sincronización del orderId con las URLs de retorno y external_reference de Mercado Pago. Compilación de producción (npm run build) verificada con 47 páginas estáticas y 0 errores.
+  5) ReestructuraciÃ³n de la jerarquÃ­a de botones en el Paso 2: botÃ³n de Mercado Pago como acciÃ³n principal al seleccionar tarjeta, y botÃ³n de WhatsApp y Correo para el resto de medios.
+  6) SincronizaciÃ³n del orderId con las URLs de retorno y external_reference de Mercado Pago. CompilaciÃ³n de producciÃ³n (npm run build) verificada con 47 pÃ¡ginas estÃ¡ticas y 0 errores.
 
 ================================================================================
-📌 TAREAS PENDIENTES DEL USUARIO (RECORDATORIOS PARA FUTURAS SESIONES):
+ðŸ“Œ TAREAS PENDIENTES DEL USUARIO (RECORDATORIOS PARA FUTURAS SESIONES):
 ================================================================================
 - [PENDIENTE POR EL USUARIO - PRIORITARIO]: Vincular manualmente el feed de Google Merchant Center.
   * URL del feed: https://www.kamaluso.com/google-shopping.xml
-  * Pasos: Ingresar en https://merchants.google.com -> Productos -> Fuentes de datos (Feeds) -> Añadir feed programado con actualización diaria pegando dicha URL.
+  * Pasos: Ingresar en https://merchants.google.com -> Productos -> Fuentes de datos (Feeds) -> AÃ±adir feed programado con actualizaciÃ³n diaria pegando dicha URL.
 - [PENDIENTE POR EL USUARIO]: Agregar backlink en www.papeleriapersonalizada.uy apuntando hacia https://www.kamaluso.com/categoria/agendas para transferir autoridad SEO directa.
 ================================================================================
 
 ================================================================================
-🚀 RESUMEN DE SESIÓN: REDISEÑO DE CORREOS KAMALUSO Y GENERADOR DE ETIQUETAS
+ðŸš€ RESUMEN DE SESIÃ“N: REDISEÃ‘O DE CORREOS KAMALUSO Y GENERADOR DE ETIQUETAS
 ================================================================================
-1. REDISEÑO DE CORREOS DE COMPRA (src/app/api/send-email/route.ts):
+1. REDISEÃ‘O DE CORREOS DE COMPRA (src/app/api/send-email/route.ts):
    - Paleta de colores oficial de Kamaluso (Fucsia/Rosa/Pizarra: #be123c, #e11d48, #fff1f2, #fecdd3).
-   - Diagramación visual superior remito/factura con cabecera #KAM-XXXXXX.
+   - DiagramaciÃ³n visual superior remito/factura con cabecera #KAM-XXXXXX.
    - Ficha de entrega con detalle de agencia y flete a pagar en destino.
    - Tabla de productos detallada, desglose de totales y recargo de Mercado Pago.
    - Tarjeta de instrucciones de transferencia bancaria destacada (BROU, Prex, OCA, Abitab).
-   - Botón directo de WhatsApp oficial preconfigurado para el comprador (098 615 074).
-   - Correo para la administración con botón de 1-clic para iniciar WhatsApp con el cliente y lista de insumos a empacar.
+   - BotÃ³n directo de WhatsApp oficial preconfigurado para el comprador (098 615 074).
+   - Correo para la administraciÃ³n con botÃ³n de 1-clic para iniciar WhatsApp con el cliente y lista de insumos a empacar.
 
-2. GENERADOR DE ETIQUETAS DE ENVÍO EDITABLE (src/components/admin/ShippingLabelModal.tsx):
+2. GENERADOR DE ETIQUETAS DE ENVÃ�O EDITABLE (src/components/admin/ShippingLabelModal.tsx):
    - Modal con editor en vivo y vista previa en tiempo real.
-   - 100% editable antes de imprimir: Remitente, Destinatario (Nombre, Teléfono, Depto, Ciudad, Dirección/Agencia, RUT/CI), Encomienda (DAC, Correo Uruguayo, Mirtrans, modalidad, cantidad de bultos, flete a pagar en destino, contenido declarado, aviso frágil, N° de pedido).
-   - Estilos @media print calibrados para impresoras térmicas (100x150mm / A6) y papel común.
-   - Botón de copia rápida de datos de envío para WhatsApp del fletero.
-   - Integrado en panel /admin: ícono de impresora en tabla de pedidos, botón en detalle de pedido y botón "Nueva Etiqueta Manual".
+   - 100% editable antes de imprimir: Remitente, Destinatario (Nombre, TelÃ©fono, Depto, Ciudad, DirecciÃ³n/Agencia, RUT/CI), Encomienda (DAC, Correo Uruguayo, Mirtrans, modalidad, cantidad de bultos, flete a pagar en destino, contenido declarado, aviso frÃ¡gil, NÂ° de pedido).
+   - Estilos @media print calibrados para impresoras tÃ©rmicas (100x150mm / A6) y papel comÃºn.
+   - BotÃ³n de copia rÃ¡pida de datos de envÃ­o para WhatsApp del fletero.
+   - Integrado en panel /admin: Ã­cono de impresora en tabla de pedidos, botÃ³n en detalle de pedido y botÃ³n "Nueva Etiqueta Manual".
 
-3. VERIFICACIÓN Y COMPILACIÓN:
-   - Build de producción verificado exitosamente con `next build` (0 errores, 47/47 páginas estáticas y dinámicas compiladas).
+3. VERIFICACIÃ“N Y COMPILACIÃ“N:
+   - Build de producciÃ³n verificado exitosamente con `next build` (0 errores, 47/47 pÃ¡ginas estÃ¡ticas y dinÃ¡micas compiladas).
    - Servidor local activo en puerto 3000.
 ================================================================================
 
 ================================================================================
-📱 RESUMEN DE OPTIMIZACIÓN: ALINEACIÓN PERFECTA Y RESPONSIVIDAD DE CORREOS
+ðŸ“± RESUMEN DE OPTIMIZACIÃ“N: ALINEACIÃ“N PERFECTA Y RESPONSIVIDAD DE CORREOS
 ================================================================================
-- ALINEACIÓN UNIVERSAL Y CERO FLEXBOX FRÁGIL (src/app/api/send-email/route.ts):
-  * Reemplazado el uso de flexbox por tablas HTML con `table-layout: fixed; width: 100%` en totales, desgloses, encabezados y datos bancarios, garantizando alineación impecable en clientes antiguos y modernos (Gmail, Outlook, iOS Mail, Android Mail).
-  * Columnas calibradas con anchos porcentuales exactos (44% Insumo, 14% Cant., 19% Unitario, 23% Subtotal) que evitan desplazamientos o desbordes en cualquier tamaño de pantalla.
-  * Protección contra desbordes: incorporación de `word-break: break-word`, `word-break: break-all` en números de cuenta y `white-space: nowrap` en montos numéricos.
+- ALINEACIÃ“N UNIVERSAL Y CERO FLEXBOX FRÃ�GIL (src/app/api/send-email/route.ts):
+  * Reemplazado el uso de flexbox por tablas HTML con `table-layout: fixed; width: 100%` en totales, desgloses, encabezados y datos bancarios, garantizando alineaciÃ³n impecable en clientes antiguos y modernos (Gmail, Outlook, iOS Mail, Android Mail).
+  * Columnas calibradas con anchos porcentuales exactos (44% Insumo, 14% Cant., 19% Unitario, 23% Subtotal) que evitan desplazamientos o desbordes en cualquier tamaÃ±o de pantalla.
+  * ProtecciÃ³n contra desbordes: incorporaciÃ³n de `word-break: break-word`, `word-break: break-all` en nÃºmeros de cuenta y `white-space: nowrap` en montos numÃ©ricos.
 
 - AJUSTE RESPONSIVE FLUIDO MULTIDISPOSITIVO (320px hasta desktop):
   * Contenedores con envoltorio de tabla externa centrado universalmente y tarjeta con `max-width: 600px`.
-  * Media queries especializadas para pantallas móviles (`@media only screen and (max-width: 620px)`) para reducir paddings proporcionalmente, ajustar tipografías y convertir botones en bloques táctiles de ancho completo (100% full-width con mínimo de 44px de área táctil para el pulgar).
+  * Media queries especializadas para pantallas mÃ³viles (`@media only screen and (max-width: 620px)`) para reducir paddings proporcionalmente, ajustar tipografÃ­as y convertir botones en bloques tÃ¡ctiles de ancho completo (100% full-width con mÃ­nimo de 44px de Ã¡rea tÃ¡ctil para el pulgar).
   * Metatags universales de correo (`viewport`, `x-apple-disable-message-reformatting`, `color-scheme: light`).
 
-- VALIDACIÓN:
-  * Envío SMTP real ejecutado y validado (`250 2.0.0 OK`).
-  * Compilación de producción con `npm run build` completada con éxito (código 0).
+- VALIDACIÃ“N:
+  * EnvÃ­o SMTP real ejecutado y validado (`250 2.0.0 OK`).
+  * CompilaciÃ³n de producciÃ³n con `npm run build` completada con Ã©xito (cÃ³digo 0).
   * Servidor local corriendo y respondiendo 200 OK en puerto 3000.
 ================================================================================
 
 
 ================================================================================
-? RESUMEN DE SESI�N: REVERSI�N AL COMMIT 2990441 Y SINCRONIZACI�N
+? RESUMEN DE SESIÓN: REVERSIÓN AL COMMIT 2990441 Y SINCRONIZACIÓN
 ================================================================================
-1. ACCI�N SOLICITADA:
-   - El usuario solicit� detener las modificaciones recientes y regresar al commit exacto previo al problema con los productos y a las alteraciones de precios/datos generadas por la reconstrucci�n desde Webnode.
+1. ACCIÓN SOLICITADA:
+   - El usuario solicitó detener las modificaciones recientes y regresar al commit exacto previo al problema con los productos y a las alteraciones de precios/datos generadas por la reconstrucción desde Webnode.
 
 2. PROCEDIMIENTO EJECUTADO:
-   - Creada rama de respaldo 'backup-productos-recuperados-hoy' conservando la galer�a y modificaciones de la sesi�n previa.
-   - Ejecutado git reset --hard 2990441 regresando el repositorio al estado exacto de producci�n del 4 de septiembre (correos responsive, generador de etiquetas, SEO y estructura limpia).
-   - Build de producci�n verificado con �xito (
-pm run build: 47/47 p�ginas generadas, 0 errores).
+   - Creada rama de respaldo 'backup-productos-recuperados-hoy' conservando la galería y modificaciones de la sesión previa.
+   - Ejecutado git reset --hard 2990441 regresando el repositorio al estado exacto de producción del 4 de septiembre (correos responsive, generador de etiquetas, SEO y estructura limpia).
+   - Build de producción verificado con éxito (
+pm run build: 47/47 páginas generadas, 0 errores).
    - Sincronizado el repositorio remoto mediante git push origin main --force.
 ================================================================================
 
 ================================================================================
-?? RESUMEN: CAT�LOGO OFICIAL DE 11 PRODUCTOS RESTAURADO CON FOTOS ORIGINALES
+?? RESUMEN: CATÁLOGO OFICIAL DE 11 PRODUCTOS RESTAURADO CON FOTOS ORIGINALES
 ================================================================================
 1. PRECIOS Y FOTOS VERIFICADAS:
    - Producto 1 (Agenda Semanal 2027): precio actualizado a  UYU con foto de portada oficial rosa (/agenda_fondo_kamaluso.jpg).
-   - Los otros 10 productos restaurados a sus valores y fotos oficiales originales del cat�logo:
-     * Agenda 2 d�as a la vista 2027:  (fotos WebP originales)
-     * Agenda 1 d�a a la vista 2027:  (fotos WebP originales)
+   - Los otros 10 productos restaurados a sus valores y fotos oficiales originales del catálogo:
+     * Agenda 2 días a la vista 2027:  (fotos WebP originales)
+     * Agenda 1 día a la vista 2027:  (fotos WebP originales)
      * KIT 10 agendas + 1 de Regalo:  (fotos WebP originales)
      * Citas juntos 100:  (fotos WebP originales)
      * Planner Verde:  (fotos WebP originales)
@@ -232,30 +232,30 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
      * Block 10x15cm liso:  (fotos WebP originales)
      * Cuadernola 21x30:  (fotos WebP originales)
 
-2. SINCRONIZACI�N NUBE Y C�DIGO:
+2. SINCRONIZACIÓN NUBE Y CÓDIGO:
    - Enviado arreglo de 11 productos mediante POST a https://www.kamaluso.com/api/products y a http://localhost:3000/api/products, sobreescribiendo exitosamente data/products.json en Vercel Blob.
    - Guardado como respaldo permanente en INITIAL_PRODUCTS dentro de src/lib/products.ts.
-   - Compilaci�n Next.js validada con �xito (npm run build: 47/47 p�ginas sin errores).
+   - Compilación Next.js validada con éxito (npm run build: 47/47 páginas sin errores).
    - Commiteado y pusheado a origin main (commit d440767).
 ================================================================================
 
 ================================================================================
-?? RESUMEN: ASIGNACI�N DE PORTADA OFICIAL ROSA A TODAS LAS AGENDAS
+?? RESUMEN: ASIGNACIÓN DE PORTADA OFICIAL ROSA A TODAS LAS AGENDAS
 ================================================================================
-1. FOTOGRAF�AS ACTUALIZADAS EN LAS 4 AGENDAS:
+1. FOTOGRAFÍAS ACTUALIZADAS EN LAS 4 AGENDAS:
    - Agenda Semanal 2027 ( UYU): Portada principal /agenda_fondo_kamaluso.jpg.
-   - Agenda 2 d�as a la vista 2027 ( UYU): Portada principal /agenda_fondo_kamaluso.jpg + fotos de interior.
-   - Agenda 1 d�a a la vista 2027 ( UYU): Portada principal /agenda_fondo_kamaluso.jpg + fotos de interior.
+   - Agenda 2 días a la vista 2027 ( UYU): Portada principal /agenda_fondo_kamaluso.jpg + fotos de interior.
+   - Agenda 1 día a la vista 2027 ( UYU): Portada principal /agenda_fondo_kamaluso.jpg + fotos de interior.
    - KIT 10 agendas semanales + 1 de Regalo ( UYU): Portada principal /agenda_fondo_kamaluso.jpg + fotos de kit.
 
-2. FOTOGRAF�AS EN ALTA RESOLUCI�N (VERCEL BLOB):
-   - Cuadernola 21x30, Libreta A5, Planner Verde, Block con renglones y Block liso vinculados con sus im�genes CDN de Vercel Blob en 200 OK.
+2. FOTOGRAFÍAS EN ALTA RESOLUCIÓN (VERCEL BLOB):
+   - Cuadernola 21x30, Libreta A5, Planner Verde, Block con renglones y Block liso vinculados con sus imágenes CDN de Vercel Blob en 200 OK.
 
-3. DESPLIEGUE Y SINCRONIZACI�N:
-   - Nube Vercel Blob actualizada de inmediato v�a POST en producci�n (200 OK).
+3. DESPLIEGUE Y SINCRONIZACIÓN:
+   - Nube Vercel Blob actualizada de inmediato vía POST en producción (200 OK).
    - Servidor local sincronizado en http://localhost:3000.
-   - Build de producci�n Next.js compilado con �xito (35/35 p�ginas est�ticas/din�micas generadas con 0 errores).
-   - Commits d440767, 473fd91 y fc172b2 subidos a origin main activando despliegue autom�tico en Vercel.
+   - Build de producción Next.js compilado con éxito (35/35 páginas estáticas/dinámicas generadas con 0 errores).
+   - Commits d440767, 473fd91 y fc172b2 subidos a origin main activando despliegue automático en Vercel.
 ================================================================================
 
 ================================================================================
@@ -263,57 +263,57 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
 ================================================================================
 1. ESTADO DEL SERVIDOR:
    - Servidor de desarrollo Next.js levantado exitosamente en http://localhost:3000 (PID node activo).
-   - Verificado con respuesta HTTP 200 OK en la p�gina de inicio.
+   - Verificado con respuesta HTTP 200 OK en la página de inicio.
 ================================================================================
 
 ================================================================================
 ?? REGLA ESTABLECIDA: CONTROL DE COMMITS Y DEPLOY
 ================================================================================
-- Restricci�n activa: No se realizar�n commits ni deploys a producci�n (Vercel/Git) sin solicitud expl�cita del usuario.
+- Restricción activa: No se realizarán commits ni deploys a producción (Vercel/Git) sin solicitud explícita del usuario.
 ================================================================================
 
 ================================================================================
-?? PLANIFICACI�N: RESUMEN A4, ETIQUETA 10x15 Y WHATSAPP DIN�MICO
+?? PLANIFICACIÓN: RESUMEN A4, ETIQUETA 10x15 Y WHATSAPP DINÁMICO
 ================================================================================
 1. REQUISITOS DEFINIDOS CON EL USUARIO:
    - Resumen del pedido en formato A4 para control de taller / packing slip.
-   - Etiqueta de env�o t�rmica de 10x15 cm: sin contenido de productos, datos log�sticos ampliados y aviso de fr�gil.
-   - Eliminaci�n de referencias a 48hs en WhatsApp y textos; reemplazo por "Despacho coordinado a todo el pa�s".
-   - Inclusi�n autom�tica de datos bancarios espec�ficos en WhatsApp seg�n el medio de pago seleccionado.
+   - Etiqueta de envío térmica de 10x15 cm: sin contenido de productos, datos logísticos ampliados y aviso de frágil.
+   - Eliminación de referencias a 48hs en WhatsApp y textos; reemplazo por "Despacho coordinado a todo el país".
+   - Inclusión automática de datos bancarios específicos en WhatsApp según el medio de pago seleccionado.
 2. ARTEFACTO GENERADO:
-   - implementation_plan.md redactado a la espera de confirmaci�n del usuario para proceder a la ejecuci�n.
+   - implementation_plan.md redactado a la espera de confirmación del usuario para proceder a la ejecución.
 ================================================================================
 
 ================================================================================
-? RESUMEN: IMPLEMENTACI�N DE RESUMEN A4, ETIQUETA 10x15 Y WHATSAPP DIN�MICO
+? RESUMEN: IMPLEMENTACIÓN DE RESUMEN A4, ETIQUETA 10x15 Y WHATSAPP DINÁMICO
 ================================================================================
 1. COMPONENTE NUEVO - RESUMEN DE PEDIDO A4 (TALLER):
-   - Creado src/components/admin/OrderSummaryModal.tsx para impresi�n en hoja A4.
-   - Incluye logo oficial, datos del comprador, log�stica/pago, tabla detallada de productos con casillas de verificaci�n [ ] para armado de pedidos, subtotales y secci�n de control de calidad/despacho con firmas.
+   - Creado src/components/admin/OrderSummaryModal.tsx para impresión en hoja A4.
+   - Incluye logo oficial, datos del comprador, logística/pago, tabla detallada de productos con casillas de verificación [ ] para armado de pedidos, subtotales y sección de control de calidad/despacho con firmas.
 
-2. ETIQUETA DE ENV�O T�RMICA 10x15 CM AJUSTADA:
+2. ETIQUETA DE ENVÍO TÉRMICA 10x15 CM AJUSTADA:
    - Modificado src/components/admin/ShippingLabelModal.tsx eliminando el contenido interno del paquete (por privacidad y seguridad).
-   - Tipograf�a de destinatario, tel�fono y direcci�n ampliada para m�xima legibilidad del chofer/agencia.
-   - Aviso obligatorio incluido: "?? CUIDADO: FR�GIL - PAPELER�A SUBLIMABLE".
-   - Calibraci�n CSS estricta para rollo t�rmico: @page { size: 100mm 150mm; margin: 0; }.
+   - Tipografía de destinatario, teléfono y dirección ampliada para máxima legibilidad del chofer/agencia.
+   - Aviso obligatorio incluido: "?? CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE".
+   - Calibración CSS estricta para rollo térmico: @page { size: 100mm 150mm; margin: 0; }.
 
 3. WHATSAPP CON DATOS DE PAGO Y DESPACHO COORDINADO:
-   - src/lib/whatsapp.ts: A�adida funci�n getPaymentInstructions con datos bancarios din�micos (BROU, Prex, OCA Blue, Mi Dinero, Abitab, Red Pagos, etc.).
-   - src/components/cart/CartDrawer.tsx: El mensaje estructurado de WhatsApp ahora incluye autom�ticamente la cuenta bancaria del m�todo seleccionado e instrucci�n para adjuntar el comprobante.
-   - Reemplazo de "48hs" en textos web y carrito por "Despacho coordinado a todo el pa�s".
+   - src/lib/whatsapp.ts: Añadida función getPaymentInstructions con datos bancarios dinámicos (BROU, Prex, OCA Blue, Mi Dinero, Abitab, Red Pagos, etc.).
+   - src/components/cart/CartDrawer.tsx: El mensaje estructurado de WhatsApp ahora incluye automáticamente la cuenta bancaria del método seleccionado e instrucción para adjuntar el comprobante.
+   - Reemplazo de "48hs" en textos web y carrito por "Despacho coordinado a todo el país".
 
-4. PANEL DE ADMINISTRACI�N (/admin):
-   - Doble bot�n de impresi�n en detalle de pedido: "Imprimir Resumen A4" e "Imprimir Etiqueta 10x15".
-   - Accesos directos r�pidos (iconos FileText y Printer) agregados en cada fila de la tabla de pedidos.
+4. PANEL DE ADMINISTRACIÓN (/admin):
+   - Doble botón de impresión en detalle de pedido: "Imprimir Resumen A4" e "Imprimir Etiqueta 10x15".
+   - Accesos directos rápidos (iconos FileText y Printer) agregados en cada fila de la tabla de pedidos.
 
-5. VERIFICACI�N:
+5. VERIFICACIÓN:
    - npx tsc --noEmit: 0 errores de TypeScript.
    - Servidor Next.js 15 compilando y respondiendo 200 OK en http://localhost:3000 y /admin.
    - Regla respetada: 0 commits y 0 deploys ejecutados.
 ================================================================================
 
 ================================================================================
-?? AJUSTE: ELIMINACI�N DE CHECKLIST EN HOJA DE PEDIDO A4
+?? AJUSTE: ELIMINACIÓN DE CHECKLIST EN HOJA DE PEDIDO A4
 ================================================================================
 - Archivo: src/components/admin/OrderSummaryModal.tsx
 - Cambios realizados:
@@ -323,16 +323,16 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
 ================================================================================
 
 ================================================================================
-?? DESPLIEGUE A PRODUCCI�N: COMMIT Y PUSH A GITHUB / VERCEL
+?? DESPLIEGUE A PRODUCCIÓN: COMMIT Y PUSH A GITHUB / VERCEL
 ================================================================================
-- Solicitado y autorizado expl�citamente por el usuario.
+- Solicitado y autorizado explícitamente por el usuario.
 - Commit: 13e0cb2 ("feat: impresion de resumen A4, etiqueta termica 10x15 y whatsapp con datos de pago dinamicos")
 - Rama: main -> origin/main en https://github.com/Martin-cedres/kamaluso-sublimacion.git
-- Despliegue autom�tico en Vercel disparado con �xito (Build 35/35 rutas compiladas OK).
+- Despliegue automático en Vercel disparado con éxito (Build 35/35 rutas compiladas OK).
 ================================================================================
 
 ================================================================================
-🚀 SERVIDOR DE DESARROLLO: INICIADO EN PUERTO 3000
+ðŸš€ SERVIDOR DE DESARROLLO: INICIADO EN PUERTO 3000
 ================================================================================
 - Comando: npm run dev
 - Estado: Activo en segundo plano
@@ -341,157 +341,157 @@ pm run build: 47/47 p�ginas generadas, 0 errores).
 ================================================================================
 
 ================================================================================
-🛒 AJUSTES EN CARRITO DE COMPRAS Y REMOCIÓN DE RUT FICTICIO
+ðŸ›’ AJUSTES EN CARRITO DE COMPRAS Y REMOCIÃ“N DE RUT FICTICIO
 ================================================================================
 - Archivos modificados:
   - src/components/cart/CartDrawer.tsx:
-    - Título cambiado de 'Tu Carrito B2B' a 'Tu Carrito'.
-    - Campo de Correo Electrónico convertido en optativo (label actualizado a 'Correo Electrónico (Opcional)' y atributo 'required' eliminado).
-    - Validación modificada para solo verificar formato si el cliente ingresó un correo.
-    - Mensaje de WhatsApp actualizado para incluir el email únicamente si fue provisto.
+    - TÃ­tulo cambiado de 'Tu Carrito B2B' a 'Tu Carrito'.
+    - Campo de Correo ElectrÃ³nico convertido en optativo (label actualizado a 'Correo ElectrÃ³nico (Opcional)' y atributo 'required' eliminado).
+    - ValidaciÃ³n modificada para solo verificar formato si el cliente ingresÃ³ un correo.
+    - Mensaje de WhatsApp actualizado para incluir el email Ãºnicamente si fue provisto.
   - src/components/admin/OrderSummaryModal.tsx:
     - Removido el RUT ficticio '21.849.201.0018' de los datos de cabecera.
   - src/components/admin/ShippingLabelModal.tsx:
     - Removido el valor inicial de RUT ficticio en el remitente (dejado en blanco y renderizado condicional).
-    - Actualizado placeholder de RUT/CI a texto genérico ('Ej. RUT o C.I.').
-- Verificación:
+    - Actualizado placeholder de RUT/CI a texto genÃ©rico ('Ej. RUT o C.I.').
+- VerificaciÃ³n:
   - TypeScript compilado sin errores (0 errores).
 ================================================================================
 
 ================================================================================
-📐 REDISEÑO COMPACTO DEL RESUMEN Y MODALIDAD DIRECCIÓN / RETIRO EN AGENCIA
+ðŸ“� REDISEÃ‘O COMPACTO DEL RESUMEN Y MODALIDAD DIRECCIÃ“N / RETIRO EN AGENCIA
 ================================================================================
 - Archivo: src/components/cart/CartDrawer.tsx
 - Mejoras implementadas:
-  1. Simplificación y compactación del pie de página (Total a pagar):
-     - Eliminada la tarjeta voluminosa de múltiples líneas que consumía el 40% del alto vertical.
+  1. SimplificaciÃ³n y compactaciÃ³n del pie de pÃ¡gina (Total a pagar):
+     - Eliminada la tarjeta voluminosa de mÃºltiples lÃ­neas que consumÃ­a el 40% del alto vertical.
      - Implementada barra horizontal ultra-compacta y elegante con Total a Pagar, moneda y estado de flete en destino.
-     - Botones de acción optimizados y reducción del espacio vertical en más de 120px, dejando todo el formulario visible sin compresión.
-  2. Modalidad de Entrega diferenciada (Dirección vs Retiro en Agencia):
-     - En 'Destino de Envío en Uruguay', añadido selector interactivo de 2 botones:
-       - 'Dirección': solicita 'Dirección de Entrega (Calle, N° y Apto) *'
+     - Botones de acciÃ³n optimizados y reducciÃ³n del espacio vertical en mÃ¡s de 120px, dejando todo el formulario visible sin compresiÃ³n.
+  2. Modalidad de Entrega diferenciada (DirecciÃ³n vs Retiro en Agencia):
+     - En 'Destino de EnvÃ­o en Uruguay', aÃ±adido selector interactivo de 2 botones:
+       - 'DirecciÃ³n': solicita 'DirecciÃ³n de Entrega (Calle, NÂ° y Apto) *'
        - 'Retiro en Agencia': solicita 'Sucursal o Agencia para Retirar *'
-     - Si el usuario selecciona 'Retiro en Local (San José)', se muestra automáticamente el banner informativo sin solicitar dirección de encomienda.
-     - El desplegable 'Empresa / Opción de Envío' adapta dinámicamente sus etiquetas según la modalidad elegida (ej. 'DAC - Envío a Domicilio' vs 'DAC - Retiro en Agencia').
-  3. Reducción de espaciados internos y padding de tarjetas en el formulario para máxima comodidad visual tanto en desktop como mobile.
-- Verificación: 0 errores de compilación TypeScript y Next.js.
+     - Si el usuario selecciona 'Retiro en Local (San JosÃ©)', se muestra automÃ¡ticamente el banner informativo sin solicitar direcciÃ³n de encomienda.
+     - El desplegable 'Empresa / OpciÃ³n de EnvÃ­o' adapta dinÃ¡micamente sus etiquetas segÃºn la modalidad elegida (ej. 'DAC - EnvÃ­o a Domicilio' vs 'DAC - Retiro en Agencia').
+  3. ReducciÃ³n de espaciados internos y padding de tarjetas en el formulario para mÃ¡xima comodidad visual tanto en desktop como mobile.
+- VerificaciÃ³n: 0 errores de compilaciÃ³n TypeScript y Next.js.
 ================================================================================
 
 ================================================================================
-🟢 OCULTACIÓN DE BOTÓN FLOTANTE DE WHATSAPP CON CARRITO ABIERTO
+ðŸŸ¢ OCULTACIÃ“N DE BOTÃ“N FLOTANTE DE WHATSAPP CON CARRITO ABIERTO
 ================================================================================
 - Archivos:
   - src/components/ui/WhatsAppFloating.tsx:
     - Conectado con useCart() para detectar isCartOpen.
-    - Se oculta inmediatamente (return null) mientras el carrito esté abierto para evitar que tape el formulario o los botones de compra.
+    - Se oculta inmediatamente (return null) mientras el carrito estÃ© abierto para evitar que tape el formulario o los botones de compra.
     - Reducido z-index a z-40.
   - src/components/cart/CartDrawer.tsx:
     - Elevado z-index a z-[70] para garantizar que el panel del carrito y su backdrop queden siempre por encima de cualquier otro elemento interactivo del sitio.
-- Verificación:
+- VerificaciÃ³n:
   - 0 errores en TypeScript.
 ================================================================================
 
 ================================================================================
-✉️ AJUSTE DE ETIQUETA: CORREO ELECTRÓNICO
+âœ‰ï¸� AJUSTE DE ETIQUETA: CORREO ELECTRÃ“NICO
 ================================================================================
 - Archivo: src/components/cart/CartDrawer.tsx
-- Modificación: Etiqueta actualizada de 'Correo Electrónico (Opcional)' a 'Correo Electrónico' manteniendo su naturaleza opcional en la validación.
-- Verificación: 0 errores en TypeScript.
+- ModificaciÃ³n: Etiqueta actualizada de 'Correo ElectrÃ³nico (Opcional)' a 'Correo ElectrÃ³nico' manteniendo su naturaleza opcional en la validaciÃ³n.
+- VerificaciÃ³n: 0 errores en TypeScript.
 ================================================================================
 
 ================================================================================
-📦 INGRESO MANUAL DE PEDIDOS EXTERNOS EN PANEL ADMIN (SIN CAMPOS OBLIGATORIOS)
+ðŸ“¦ INGRESO MANUAL DE PEDIDOS EXTERNOS EN PANEL ADMIN (SIN CAMPOS OBLIGATORIOS)
 ================================================================================
 - Archivos creados / modificados:
   - src/components/admin/ManualOrderModal.tsx (Nuevo componente):
-    - Modal completo para registrar pedidos tomados fuera de la web (WhatsApp, teléfono, mostrador en taller, ventas directas).
-    - CERO campos obligatorios: todos los campos son 100% opcionales con fallbacks automáticos ('Cliente Mostrador / WhatsApp', etc.).
-    - Selección flexible de ítems: permite agregar productos del catálogo activo o cargar ítems/conceptos personalizados libres (nombre, precio unitario y cantidad).
-    - Total autocalculado con opción de sobreescritura manual libre (descuentos o cotizaciones especiales).
-    - Configuración de estado inicial del pedido, método de pago y logística de entrega/retiro.
+    - Modal completo para registrar pedidos tomados fuera de la web (WhatsApp, telÃ©fono, mostrador en taller, ventas directas).
+    - CERO campos obligatorios: todos los campos son 100% opcionales con fallbacks automÃ¡ticos ('Cliente Mostrador / WhatsApp', etc.).
+    - SelecciÃ³n flexible de Ã­tems: permite agregar productos del catÃ¡logo activo o cargar Ã­tems/conceptos personalizados libres (nombre, precio unitario y cantidad).
+    - Total autocalculado con opciÃ³n de sobreescritura manual libre (descuentos o cotizaciones especiales).
+    - ConfiguraciÃ³n de estado inicial del pedido, mÃ©todo de pago y logÃ­stica de entrega/retiro.
     - Persistencia en almacenamiento local, API y Supabase mediante saveOrder().
   - src/app/admin/page.tsx:
-    - Integrado botón 'Ingresar Pedido Manual' en la barra de herramientas de la pestaña Pedidos.
-    - Conectado ManualOrderModal con recarga reactiva de pedidos al guardar (loadOrdersData y actualización de estado local).
-- Verificación:
+    - Integrado botÃ³n 'Ingresar Pedido Manual' en la barra de herramientas de la pestaÃ±a Pedidos.
+    - Conectado ManualOrderModal con recarga reactiva de pedidos al guardar (loadOrdersData y actualizaciÃ³n de estado local).
+- VerificaciÃ³n:
   - TypeScript verificado con 0 errores (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
-🏷️ ACTUALIZACIÓN SUBTÍTULO EN ETIQUETA DE ENVÍO
+ðŸ�·ï¸� ACTUALIZACIÃ“N SUBTÃ�TULO EN ETIQUETA DE ENVÃ�O
 ================================================================================
 - Archivo modificado:
   - src/components/admin/ShippingLabelModal.tsx:
     - Modificado el texto secundario de cabecera bajo 'KAMALUSO':
-      Actualizado de 'Sublimación & Papelería' a 'Papelería Sublimable'.
-- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+      Actualizado de 'SublimaciÃ³n & PapelerÃ­a' a 'PapelerÃ­a Sublimable'.
+- VerificaciÃ³n: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
-🏷️ LIMPIEZA Y AJUSTES EN ETIQUETA DE ENVÍO 10x15CM
+ðŸ�·ï¸� LIMPIEZA Y AJUSTES EN ETIQUETA DE ENVÃ�O 10x15CM
 ================================================================================
 - Archivo modificado:
   - src/components/admin/ShippingLabelModal.tsx:
     - Eliminado texto 'A Domicilio' del encabezado de la etiqueta.
-    - Eliminada por completo la fila intermedia de '🚚 FLETE A PAGAR EN DESTINO' y '1 Bulto' tanto en la etiqueta impresa como en el formulario de edición.
-    - Añadida la dirección web 'www.kamaluso.com' a los datos del REMITENTE ('Tel: 098 615 074 | San José de Mayo, Uruguay | www.kamaluso.com'), editable en el formulario.
+    - Eliminada por completo la fila intermedia de 'ðŸšš FLETE A PAGAR EN DESTINO' y '1 Bulto' tanto en la etiqueta impresa como en el formulario de ediciÃ³n.
+    - AÃ±adida la direcciÃ³n web 'www.kamaluso.com' a los datos del REMITENTE ('Tel: 098 615 074 | San JosÃ© de Mayo, Uruguay | www.kamaluso.com'), editable en el formulario.
     - Actualizado texto copiado para fletes/WhatsApp sin datos innecesarios.
-- Verificación:
+- VerificaciÃ³n:
   - TypeScript verificado con 0 errores (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
-👤 ACTUALIZACIÓN NOMBRE REMITENTE EN ETIQUETA
+ðŸ‘¤ ACTUALIZACIÃ“N NOMBRE REMITENTE EN ETIQUETA
 ================================================================================
 - Archivo modificado:
   - src/components/admin/ShippingLabelModal.tsx:
-    - Modificado el nombre del remitente por defecto de 'KAMALUSO SUBLIMACIÓN' a 'Katherine Silva'.
-- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+    - Modificado el nombre del remitente por defecto de 'KAMALUSO SUBLIMACIÃ“N' a 'Katherine Silva'.
+- VerificaciÃ³n: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
-📱 CÓDIGO QR REAL PARA VISITAR LA WEB EN LA ETIQUETA
+ðŸ“± CÃ“DIGO QR REAL PARA VISITAR LA WEB EN LA ETIQUETA
 ================================================================================
-- Instalación de dependencia:
-  - 'qrcode' y '@types/qrcode' para renderizado vectorial nítido sin dependencias de red externas.
+- InstalaciÃ³n de dependencia:
+  - 'qrcode' y '@types/qrcode' para renderizado vectorial nÃ­tido sin dependencias de red externas.
 - Archivo modificado:
   - src/components/admin/ShippingLabelModal.tsx:
-    - Removido el código de barras simulado.
-    - Implementado Código QR 100% real y escaneable apuntando a 'https://www.kamaluso.com'.
-    - Añadida llamada visual a la acción en el pie de la etiqueta: '🌐 Visitanos en www.kamaluso.com' y 'Tienda Web - Escaneá el QR'.
-- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+    - Removido el cÃ³digo de barras simulado.
+    - Implementado CÃ³digo QR 100% real y escaneable apuntando a 'https://www.kamaluso.com'.
+    - AÃ±adida llamada visual a la acciÃ³n en el pie de la etiqueta: 'ðŸŒ� Visitanos en www.kamaluso.com' y 'Tienda Web - EscaneÃ¡ el QR'.
+- VerificaciÃ³n: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
-🏷️ REMOCIÓN DE TEXTO DE VISITA WEB EN FOOTER DE ETIQUETA
+ðŸ�·ï¸� REMOCIÃ“N DE TEXTO DE VISITA WEB EN FOOTER DE ETIQUETA
 ================================================================================
 - Archivo modificado:
   - src/components/admin/ShippingLabelModal.tsx:
-    - Removido el texto '🌐 Visitanos en www.kamaluso.com' del pie de la etiqueta.
-    - Se mantiene limpio el identificador N° de Pedido a la izquierda y el Código QR de la tienda a la derecha.
-- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+    - Removido el texto 'ðŸŒ� Visitanos en www.kamaluso.com' del pie de la etiqueta.
+    - Se mantiene limpio el identificador NÂ° de Pedido a la izquierda y el CÃ³digo QR de la tienda a la derecha.
+- VerificaciÃ³n: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
-🎨 REDISEÑO Y ALTO CONTRASTE EN PESTAÑAS DEL PANEL ADMIN
+ðŸŽ¨ REDISEÃ‘O Y ALTO CONTRASTE EN PESTAÃ‘AS DEL PANEL ADMIN
 ================================================================================
 - Archivo modificado:
   - src/app/admin/page.tsx:
-    - Rediseñadas las pestañas de navegación (Catálogo, Recursos y Pedidos) en formato píldora independiente de alto contraste.
+    - RediseÃ±adas las pestaÃ±as de navegaciÃ³n (CatÃ¡logo, Recursos y Pedidos) en formato pÃ­ldora independiente de alto contraste.
     - Ya no se pierden en el fondo negro: cuentan con fondo propio 'bg-slate-800', bordes 'border-2 border-slate-700', texto 100% blanco y badges contrastados.
-    - Asignados colores vivos y distintivos según la sección:
-      * Catálogo de Productos: Rosa vibrante ('bg-pink-600' activo, iconos y badges 'text-pink-400').
-      * Recursos y Plantillas: Púrpura / Violeta ('bg-purple-600' activo, iconos y badges 'text-purple-400').
+    - Asignados colores vivos y distintivos segÃºn la secciÃ³n:
+      * CatÃ¡logo de Productos: Rosa vibrante ('bg-pink-600' activo, iconos y badges 'text-pink-400').
+      * Recursos y Plantillas: PÃºrpura / Violeta ('bg-purple-600' activo, iconos y badges 'text-purple-400').
       * Pedidos / Ventas: Verde esmeralda ('bg-emerald-600' activo, iconos y badges 'text-emerald-400').
-- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+- VerificaciÃ³n: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
 
 
 === SESION: Solucion al problema de listado de solo el ultimo pedido ===
 - Diagnostico: En entornos serverless (Vercel), la memoria en cache global (__kamaluso_orders_cache__) inicia vacia ([]). Al realizar un POST o DELETE en /api/orders, no se leian los pedidos existentes almacenados en Vercel Blob (data/orders.json) antes de escribir, sobreescribiendo el JSON con solo el nuevo pedido guardado.
 - Solucion implementada: Se implemento la funcion helper getLatestOrdersFromBlob() en src/app/api/orders/route.ts que garantiza cargar la lista completa existente desde Vercel Blob CDN antes de fusionar nuevos pedidos o actualizar/eliminar pedidos existentes.
-- Verificación: Compilacion limpia con TypeScript (npx tsc --noEmit).
-- Deploy: Commit y push ejecutados a la rama main de GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion.git), lo que dispara la automatización del despliegue en Vercel.
+- VerificaciÃ³n: Compilacion limpia con TypeScript (npx tsc --noEmit).
+- Deploy: Commit y push ejecutados a la rama main de GitHub (https://github.com/Martin-cedres/kamaluso-sublimacion.git), lo que dispara la automatizaciÃ³n del despliegue en Vercel.
 
 ================================================================================
 REVISION DE METODOS DE ENVIO Y AGENCIAS
@@ -499,40 +499,40 @@ REVISION DE METODOS DE ENVIO Y AGENCIAS
 - Tarea: Verificacion de metodos de envio disponibles y agencias configuradas en la plataforma.
 - Analisis realizado:
   * Carrito / Tienda Web: DAC, Correo Uruguayo, Mirtrans (Envio a Domicilio y Retiro en Agencia) y Retiro en Local (San Jose de Mayo). Modalidad flete en destino.
-  * Panel Admin: Opciones extendidas con Turil, DePunta, Nuñez y Cadeteria propia.
+  * Panel Admin: Opciones extendidas con Turil, DePunta, NuÃ±ez y Cadeteria propia.
   * Etiquetas de Envio: Soporte para DAC, Correo Uruguayo, Mirtrans, Turil y campos libres.
 ================================================================================
 
 ================================================================================
 ACTUALIZACION DE AGENCIAS Y METODOS DE ENVIO (COTMI)
 ================================================================================
-- Tarea: Eliminacion de Mirtrans, Turil/DePunta/Nuñez y Cadeteria propia; incorporacion de Agencia COTMI.
+- Tarea: Eliminacion de Mirtrans, Turil/DePunta/NuÃ±ez y Cadeteria propia; incorporacion de Agencia COTMI.
 - Archivos modificados:
   * src/components/cart/CartDrawer.tsx:
     - Eliminado 'mirtrans'.
-    - Añadido 'cotmi' ("Agencia COTMI - Envío a Domicilio" y "Agencia COTMI - Retiro en Agencia").
+    - AÃ±adido 'cotmi' ("Agencia COTMI - EnvÃ­o a Domicilio" y "Agencia COTMI - Retiro en Agencia").
   * src/components/admin/ManualOrderModal.tsx:
-    - Removidas las opciones de Mirtrans, DePunta/Turil/Nuñez y Cadetería Propia.
-    - Añadidas las opciones: 'Agencia COTMI', 'Agencia COTMI - Retiro en Agencia', 'Agencia COTMI - Envío a Domicilio'.
+    - Removidas las opciones de Mirtrans, DePunta/Turil/NuÃ±ez y CadeterÃ­a Propia.
+    - AÃ±adidas las opciones: 'Agencia COTMI', 'Agencia COTMI - Retiro en Agencia', 'Agencia COTMI - EnvÃ­o a Domicilio'.
   * src/components/admin/ShippingLabelModal.tsx:
-    - Agregada autodetección de pedidos con método COTMI para asignación y rotulado automático.
+    - Agregada autodetecciÃ³n de pedidos con mÃ©todo COTMI para asignaciÃ³n y rotulado automÃ¡tico.
     - Actualizado placeholder a 'DAC / Correo Uruguayo / COTMI'.
   * Textos y SEO (src/lib/schema.ts, src/components/home/HomeSeoSection.tsx, src/components/layout/Footer.tsx):
     - Reemplazadas las menciones de Mirtrans y agencias interdepartamentales por Agencia COTMI.
-- Verificación: 0 errores de compilación con TypeScript (npx tsc --noEmit).
+- VerificaciÃ³n: 0 errores de compilaciÃ³n con TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
 AJUSTE DE OPCIONES COTMI (EXACTAMENTE 2 OPCIONES)
 ================================================================================
-- Tarea: Ajuste de COTMI para tener exclusivamente dos opciones: 'Agencia COTMI - Retiro en Agencia' y 'COTMI - Envío a Domicilio'.
+- Tarea: Ajuste de COTMI para tener exclusivamente dos opciones: 'Agencia COTMI - Retiro en Agencia' y 'COTMI - EnvÃ­o a Domicilio'.
 - Archivos modificados:
   * src/components/admin/ManualOrderModal.tsx:
-    - Eliminado el item genérico 'Agencia COTMI'.
-    - Dejadas únicamente 'Agencia COTMI - Retiro en Agencia' y 'COTMI - Envío a Domicilio'.
+    - Eliminado el item genÃ©rico 'Agencia COTMI'.
+    - Dejadas Ãºnicamente 'Agencia COTMI - Retiro en Agencia' y 'COTMI - EnvÃ­o a Domicilio'.
   * src/components/cart/CartDrawer.tsx:
-    - Ajustado el texto del select y el helper para que refleje 'COTMI - Envío a Domicilio' y 'Agencia COTMI - Retiro en Agencia'.
-- Verificación: 0 errores en TypeScript (npx tsc --noEmit).
+    - Ajustado el texto del select y el helper para que refleje 'COTMI - EnvÃ­o a Domicilio' y 'Agencia COTMI - Retiro en Agencia'.
+- VerificaciÃ³n: 0 errores en TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
@@ -544,60 +544,103 @@ SERVIDOR DE DESARROLLO INICIADO
 ================================================================================
 REESTRUCTURACION DE ETIQUETA DE ENVIO Y OBSERVACIONES
 ================================================================================
-- Tarea: Corrección de campos en la etiqueta de despacho:
-  * Dirección de entrega / sucursal de retiro ahora tiene su propio recuadro principal destacado con tipografía grande (text-xl/2xl, borde grueso y badge).
+- Tarea: CorrecciÃ³n de campos en la etiqueta de despacho:
+  * DirecciÃ³n de entrega / sucursal de retiro ahora tiene su propio recuadro principal destacado con tipografÃ­a grande (text-xl/2xl, borde grueso y badge).
   * Nuevo recuadro y campo exclusivo de Observaciones para detalles de entrega (ej: entregar en la tarde, casa de la esquina).
-  * Removido modal duplicado en admin/page.tsx que provocaba pérdida de datos de la orden.
-  * Añadido soporte de observaciones en CartDrawer (web y WhatsApp), ManualOrderModal y ShippingLabelModal.
-- Verificación: 0 errores en compilación TypeScript (npx tsc --noEmit).
+  * Removido modal duplicado en admin/page.tsx que provocaba pÃ©rdida de datos de la orden.
+  * AÃ±adido soporte de observaciones en CartDrawer (web y WhatsApp), ManualOrderModal y ShippingLabelModal.
+- VerificaciÃ³n: 0 errores en compilaciÃ³n TypeScript (npx tsc --noEmit).
 ================================================================================
 
 ================================================================================
 CORRECCION DE LISTADO COMPLETO Y PERSISTENCIA DE PEDIDOS / VENTAS
 ================================================================================
-- Diagnóstico: 
-  * En /api/orders, al cumplirse la expiración de la memoria caché del servidor (10s), se realizaba un fetch directo a la URL pública de Vercel Blob que contenía un único pedido histórico ('KAM-MAN-185079') y sobreescribía la memoria, provocando que los pedidos adicionales desaparecieran o se listara solo el último.
-  * En el cliente (src/lib/orders.ts), saveLocalStoredOrders sobreescribía localStorage de forma destructiva cuando la API devolvía una lista menor.
-- Solución implementada:
+- DiagnÃ³stico: 
+  * En /api/orders, al cumplirse la expiraciÃ³n de la memoria cachÃ© del servidor (10s), se realizaba un fetch directo a la URL pÃºblica de Vercel Blob que contenÃ­a un Ãºnico pedido histÃ³rico ('KAM-MAN-185079') y sobreescribÃ­a la memoria, provocando que los pedidos adicionales desaparecieran o se listara solo el Ãºltimo.
+  * En el cliente (src/lib/orders.ts), saveLocalStoredOrders sobreescribÃ­a localStorage de forma destructiva cuando la API devolvÃ­a una lista menor.
+- SoluciÃ³n implementada:
   1. src/app/api/orders/route.ts:
-     - Se incorporó persistencia local en disco mediante data/orders.json con helpers readLocalOrdersFile y writeLocalOrdersFile.
-     - Implementada estrategia de fusión no destructiva (mergeOrderLists) que combina los pedidos de memoria, disco local y Vercel Blob sin perder registros conocidos.
-     - Actualizados endpoints GET, POST y DELETE para sincronizar en simultáneo archivo local, caché y Vercel Blob.
+     - Se incorporÃ³ persistencia local en disco mediante data/orders.json con helpers readLocalOrdersFile y writeLocalOrdersFile.
+     - Implementada estrategia de fusiÃ³n no destructiva (mergeOrderLists) que combina los pedidos de memoria, disco local y Vercel Blob sin perder registros conocidos.
+     - Actualizados endpoints GET, POST y DELETE para sincronizar en simultÃ¡neo archivo local, cachÃ© y Vercel Blob.
   2. src/lib/orders.ts:
-     - Función mergeOrdersWithLocal actualizada con combinación por ID.
+     - FunciÃ³n mergeOrdersWithLocal actualizada con combinaciÃ³n por ID.
      - saveLocalStoredOrders ahora fusiona con lo ya almacenado en localStorage sin borrar pedidos previos.
-     - Implementada sincronización bidireccional en getAllOrders: si el cliente local tiene pedidos no registrados en el servidor, los envía automáticamente en background.
-- Verificación:
+     - Implementada sincronizaciÃ³n bidireccional en getAllOrders: si el cliente local tiene pedidos no registrados en el servidor, los envÃ­a automÃ¡ticamente en background.
+- VerificaciÃ³n:
   * TypeScript limpio (npx tsc --noEmit: 0 errores).
-  * Pruebas funcionales en servidor local: creación de pedidos múltiples (POST /api/orders), persistencia comprobada tras expiración de caché y lectura consistente de todos los pedidos (GET /api/orders).
+  * Pruebas funcionales en servidor local: creaciÃ³n de pedidos mÃºltiples (POST /api/orders), persistencia comprobada tras expiraciÃ³n de cachÃ© y lectura consistente de todos los pedidos (GET /api/orders).
 ================================================================================
 
 ================================================================================
 BUILD Y DEPLOY A GITHUB Y VERCEL
 ================================================================================
-- Build: Ejecutado 'npm run build' exitosamente (46/46 páginas estáticas y dinámicas generadas sin errores).
-- Git: Commit '7bce03d' creado con todos los cambios (persistencia en data/orders.json, rutas de COTMI y rediseño de etiqueta de envío).
-- Push / Deploy: Cambios sincronizados en rama 'main' de GitHub (origin/main), disparando el despliegue automático a producción en Vercel.
+- Build: Ejecutado 'npm run build' exitosamente (46/46 pÃ¡ginas estÃ¡ticas y dinÃ¡micas generadas sin errores).
+- Git: Commit '7bce03d' creado con todos los cambios (persistencia en data/orders.json, rutas de COTMI y rediseÃ±o de etiqueta de envÃ­o).
+- Push / Deploy: Cambios sincronizados en rama 'main' de GitHub (origin/main), disparando el despliegue automÃ¡tico a producciÃ³n en Vercel.
 ================================================================================
 
 ================================================================================
-ELIMINACIÓN DE NUMERACIÓN (# 1, # 2, # 3) EN RECIBOS / HOJA DE PEDIDO A4
+ELIMINACIÃ“N DE NUMERACIÃ“N (# 1, # 2, # 3) EN RECIBOS / HOJA DE PEDIDO A4
 ================================================================================
-- Tarea: Remover la columna de numeración correlativa (# y 1, 2, 3...) de la tabla de artículos en el recibo/hoja de preparación A4.
+- Tarea: Remover la columna de numeraciÃ³n correlativa (# y 1, 2, 3...) de la tabla de artÃ­culos en el recibo/hoja de preparaciÃ³n A4.
 - Archivo modificado:
   * src/components/admin/OrderSummaryModal.tsx:
     - Eliminado el encabezado de columna <th className="p-2.5 text-center w-8">#</th>.
-    - Eliminada la celda con el índice correlativo <td className="p-2.5 text-center font-mono text-slate-500 align-middle">{index + 1}</td>.
+    - Eliminada la celda con el Ã­ndice correlativo <td className="p-2.5 text-center font-mono text-slate-500 align-middle">{index + 1}</td>.
     - Ahora el listado presenta directamente la casilla de control (OK), el producto con sus especificaciones, cantidad, precio unitario y subtotal, dando mayor amplitud y limpieza al recibo.
+- VerificaciÃ³n:
+  * npx tsc --noEmit: 0 errores de TypeScript.
+================================================================================
+
+================================================================================
+BUILD Y DEPLOY A GITHUB Y VERCEL (ELIMINACIÃ“N DE Ã�NDICES EN RECIBOS)
+================================================================================
+- Solicitado y autorizado explÃ­citamente por el usuario: 'ok construye y haz deploy a vercel y git hub'.
+- Build: 'npm run build' ejecutado exitosamente (46/46 rutas estÃ¡ticas y dinÃ¡micas compiladas OK).
+- Git: Se realiza commit y push a la rama 'main' de GitHub (origin/main).
+- Vercel: Disparo automÃ¡tico de nuevo despliegue a producciÃ³n en Vercel.
+================================================================================
+
+================================================================================
+CORRECCION DE MARGENES DE ETIQUETA TERMICA Y HOJA DE PEDIDO A4 EN 1 SOLA COPIA
+================================================================================
+- Tarea: 
+  1. Corregir desborde de márgenes en la etiqueta de despacho 10x15cm (el código QR y pie quedaban fuera o cortados).
+  2. Corregir emisión de 3 páginas/copias en la nota/hoja de preparación de pedido A4 (forzar exactamente 1 hoja).
+- Archivos modificados:
+  * src/components/admin/ShippingLabelModal.tsx:
+    - Incorporado margen perimetral seguro de 2.5mm (width: 95mm, height: 145mm, left/top: 2.5mm) para proteger el área imprimible de impresoras térmicas (Zebra, Xprinter).
+    - Padding de impresión reducido de 10mm a 3.5mm/4mm, ganando más de 12mm de espacio vertical.
+    - Espaciado vertical compactado a space-y-2 (6-8px) y tipografía de dirección balanceada.
+    - Contenedor de código QR optimizado a 44x44px con márgenes seguros para garantizar 100% de visibilidad sin desbordes.
+  * src/components/admin/OrderSummaryModal.tsx:
+    - Solucionado el bug de 'visibility: hidden' que mantenía la altura de 3000px del panel admin provocando la emisión de 3 páginas.
+    - Forzado html, body con height: 100%, max-height: 297mm y overflow: hidden.
+    - Fijado #printable-order-summary con position: fixed, max-height: 277mm y page-break-after: avoid.
+    - Espaciado optimizado (space-y-4, padding de tablas y firmas) para garantizar que todo el pedido entre estrictamente en 1 sola hoja A4.
 - Verificación:
   * npx tsc --noEmit: 0 errores de TypeScript.
 ================================================================================
 
 ================================================================================
-BUILD Y DEPLOY A GITHUB Y VERCEL (ELIMINACIÓN DE ÍNDICES EN RECIBOS)
+INICIO DE SERVIDOR DE DESARROLLO NEXT.JS
 ================================================================================
-- Solicitado y autorizado explícitamente por el usuario: 'ok construye y haz deploy a vercel y git hub'.
-- Build: 'npm run build' ejecutado exitosamente (46/46 rutas estáticas y dinámicas compiladas OK).
-- Git: Se realiza commit y push a la rama 'main' de GitHub (origin/main).
-- Vercel: Disparo automático de nuevo despliegue a producción en Vercel.
+- Tarea: Levantar el servidor de desarrollo del proyecto.
+- Ejecución:
+  * Servidor Next.js iniciado en segundo plano.
+  * Puerto asignado: http://localhost:3001 (el puerto 3000 se encuentra ocupado por otra instancia en ejecución).
+  * Verificación HTTP exitosa con código 200 en http://localhost:3001.
+================================================================================
+
+================================================================================
+VERIFICACION DE GOOGLE SEARCH CONSOLE
+================================================================================
+- Tarea: Agregar etiqueta meta de verificacion de propiedad de Google Search Console para https://www.kamaluso.com/.
+- Etiqueta: <meta name="google-site-verification" content="bw88G4qbNAAwlXaP6oSzW37oRBZHDQxuJ6tAkWs5XFA" />
+- Implementacion:
+  * Agregada clave verification: { google: "bw88G4qbNAAwlXaP6oSzW37oRBZHDQxuJ6tAkWs5XFA" } en metadata de src/app/layout.tsx.
+- Validacion:
+  * Compilacion de produccion (npm run build) exitosa con 46 paginas estaticas/dinamicas generadas y 0 errores.
+  * Verificada la presencia de la etiqueta <meta name="google-site-verification" ...> en el HTML generado.
 ================================================================================
