@@ -644,3 +644,34 @@ VERIFICACION DE GOOGLE SEARCH CONSOLE
   * Compilacion de produccion (npm run build) exitosa con 46 paginas estaticas/dinamicas generadas y 0 errores.
   * Verificada la presencia de la etiqueta <meta name="google-site-verification" ...> en el HTML generado.
 ================================================================================
+
+================================================================================
+AUDITORIA DE ENVIO AUTOMATICO DE CORREOS ELECTRONICOS (NOTIFICACIONES DE PEDIDOS)
+================================================================================
+- Tarea: Analizar si esta configurado el envio automatico de correos tanto al vendedor como al cliente/administrador ante un nuevo pedido.
+- Hallazgos principales:
+  1. Estado general: SI, el sistema de envio automatico dual esta implementado e integrado en el codigo fuente.
+  2. Endpoint y Servicio: src/app/api/send-email/route.ts utiliza Nodemailer con transporte SMTP de Gmail (y fallback a Resend). Credenciales configuradas en .env.local (EMAIL_SERVER_USER="kamalusosanjose@gmail.com", app password activa).
+  3. Destinatarios:
+     - Al Vendedor / Tienda: Se envia siempre a ADMIN_EMAIL ("kamalusosanjose@gmail.com").
+     - Al Comprador / Cliente: Se envia a customer.email (siempre que el cliente lo haya completado en el checkout).
+     - Al correo personal (ej. martinfernandocedres@gmail.com): No figura en la lista de destinatarios directos de send-email; unicamente se despacha a la cuenta de la tienda kamalusosanjose@gmail.com.
+  4. Triggers: Disparado desde CartDrawer.tsx tanto en compras manuales/WhatsApp como en compras con Mercado Pago Online.
+  5. Puntos clave: El campo de email del cliente es opcional; las credenciales SMTP deben residir en las Environment Variables de Vercel para operar en produccion.
+================================================================================
+
+================================================================================
+OPTIMIZACION Y BLINDAJE DEL SISTEMA DE NOTIFICACIONES POR CORREO
+================================================================================
+- Tarea: Resolver problemas de entrega de correos electrónicos de compras, blindar checkout e incorporar destinatario dual.
+- Cambios realizados:
+  1. src/app/api/send-email/route.ts:
+     - Configurado envío dual automático a la tienda ("kamalusosanjose@gmail.com") y a la cuenta del administrador ("martinfernandocedres@gmail.com") para garantizar notificación push inmediata en el móvil sin depender del hilo interno de auto-correo de Gmail.
+     - Mantenida compatibilidad completa tanto para Nodemailer como para Resend API.
+  2. src/components/cart/CartDrawer.tsx:
+     - Campo de Correo Electrónico convertido en OBLIGATORIO en el formulario del carrito, con indicador visual asterisco rosado y validación de formato antes de proceder.
+     - Añadido flag `keepalive: true` a las llamadas fetch("/api/send-email") para evitar que el navegador cancele la petición HTTP durante la redirección externa a la pasarela de Mercado Pago.
+- Verificación:
+  * TypeScript verificado con éxito (npx tsc --noEmit: 0 errores).
+  * Conexión SMTP comprobada con Nodemailer Verify y SendMail a nivel local.
+================================================================================

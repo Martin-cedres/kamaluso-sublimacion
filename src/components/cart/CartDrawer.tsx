@@ -132,13 +132,16 @@ export function CartDrawer() {
       scrollToValidationError();
       return false;
     }
-    if (customerEmail.trim()) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(customerEmail.trim())) {
-        setValidationError("Por favor ingresa un Correo Electrónico válido (ej. tuempresa@gmail.com).");
-        scrollToValidationError();
-        return false;
-      }
+    if (!customerEmail.trim()) {
+      setValidationError("Por favor ingresa tu Correo Electrónico para recibir la confirmación y comprobante.");
+      scrollToValidationError();
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail.trim())) {
+      setValidationError("Por favor ingresa un Correo Electrónico válido (ej. tuempresa@gmail.com).");
+      scrollToValidationError();
+      return false;
     }
     if (!customerCity.trim()) {
       setValidationError("Por favor ingresa tu Ciudad / Localidad.");
@@ -199,6 +202,7 @@ export function CartDrawer() {
     try {
       await fetch("/api/send-email", {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderId: orderIdToUse,
@@ -318,6 +322,7 @@ export function CartDrawer() {
     try {
       await fetch("/api/send-email", {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderId: orderIdToUse,
@@ -599,10 +604,11 @@ export function CartDrawer() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                          Correo Electrónico
+                          Correo Electrónico <span className="text-pink-600 font-extrabold">*</span>
                         </label>
                         <input
                           type="email"
+                          required
                           placeholder="tuempresa@gmail.com"
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}

@@ -6,7 +6,11 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const ADMIN_EMAIL = "kamalusosanjose@gmail.com";
+const ADMIN_EMAILS = [
+  "kamalusosanjose@gmail.com",
+  "martinfernandocedres@gmail.com",
+];
+const ADMIN_EMAIL = ADMIN_EMAILS[0];
 
 const getTransporter = () => {
   const user = (process.env.EMAIL_SERVER_USER || "").replace(/^"|"$/g, "").trim();
@@ -735,12 +739,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Enviar correo a la TIENDA (kamalusosanjose@gmail.com)
+    // 2. Enviar correo a la TIENDA y ADMINISTRACIÓN (kamalusosanjose@gmail.com + martinfernandocedres@gmail.com)
     let adminRes = null;
     if (transporter) {
       adminRes = await transporter.sendMail({
         from: fromAddress,
-        to: ADMIN_EMAIL,
+        to: ADMIN_EMAILS.join(", "),
         replyTo: customer?.email && customer.email.trim() ? customer.email.trim() : undefined,
         subject: `🛍️ NUEVO PEDIDO #${displayOrderId}: ${customer?.name || "Cliente"} ($${computedTotal.toLocaleString("es-UY")} UYU) - ${shippingMethodName || "Envío"}`,
         html: adminEmailHtml,
@@ -748,7 +752,7 @@ export async function POST(request: NextRequest) {
     } else if (resend) {
       adminRes = await resend.emails.send({
         from: "Kamaluso Web <onboarding@resend.dev>",
-        to: [ADMIN_EMAIL],
+        to: ADMIN_EMAILS,
         replyTo: customer?.email && customer.email.trim() ? customer.email.trim() : undefined,
         subject: `🛍️ NUEVO PEDIDO #${displayOrderId}: ${customer?.name || "Cliente"} ($${computedTotal.toLocaleString("es-UY")} UYU) - ${shippingMethodName || "Envío"}`,
         html: adminEmailHtml,
