@@ -204,8 +204,19 @@ const getPaymentInstructionsHTML = (methodId: string, orderId: string) => {
           </p>
         </div>
       `;
+    case "otro":
     default:
-      return "";
+      return `
+        <div style="background-color: #f8fafc; border: 1.5px solid #cbd5e1; padding: 18px 16px; border-radius: 16px; margin-top: 18px;">
+          <div style="margin-bottom: 8px;">
+            <span style="background-color: #475569; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; display: inline-block;">A Convenir</span>
+          </div>
+          <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px; font-weight: 900;">🤝 Pago a Coordinar:</h4>
+          <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.5;">
+            Coordinaremos contigo los detalles del pago directamente a través de nuestro WhatsApp <strong>098 615 074</strong> indicando el Pedido <strong>#${orderId}</strong>.
+          </p>
+        </div>
+      `;
   }
 };
 
@@ -422,10 +433,20 @@ export async function POST(request: NextRequest) {
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Agencia / Método:</td>
                           <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 800; color: #be123c; vertical-align: top; word-break: break-word;">${shippingMethodName || "-"}</td>
                         </tr>
-                        <tr>
+                        <tr${customer?.observations && customer.observations.trim() ? ' style="border-bottom: 1px dashed #fecdd3;"' : ''}>
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Dirección / Destino:</td>
                           <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 600; color: #0f172a; vertical-align: top; word-break: break-word;">${customer?.address || "-"}, ${customer?.city || "-"}, ${customer?.department || "-"}</td>
                         </tr>
+                        ${
+                          customer?.observations && customer.observations.trim()
+                            ? `
+                        <tr>
+                          <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Observaciones:</td>
+                          <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 700; color: #be123c; vertical-align: top; word-break: break-word;">${customer.observations.trim()}</td>
+                        </tr>
+                        `
+                            : ""
+                        }
                       </table>
 
                       <div style="margin-top: 12px; padding: 10px 12px; background-color: #ffffff; border: 1px solid #fbcfe8; border-radius: 10px; font-size: 12px; color: #881337; line-height: 1.45;">
@@ -515,7 +536,7 @@ export async function POST(request: NextRequest) {
                       <tr>
                         <td align="center">
                           <a href="${waCustomerLink}" class="mobile-btn" style="background-color: #16a34a; color: #ffffff; padding: 16px 28px; text-decoration: none; font-weight: 900; font-size: 14px; border-radius: 14px; display: inline-block; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35); text-align: center; letter-spacing: 0.3px; max-width: 100%; box-sizing: border-box;">
-                            📲 ENVIAR COMPROBANTE POR WHATSAPP (098 615 074)
+                            ${isMp ? "📲 SEGUIR ESTADO POR WHATSAPP (098 615 074)" : "📲 ENVIAR COMPROBANTE POR WHATSAPP (098 615 074)"}
                           </a>
                           <p style="margin: 10px 0 0 0; font-size: 12px; color: #64748b; line-height: 1.4;">
                             Atención personalizada directa desde nuestro taller en San José de Mayo.
@@ -645,10 +666,20 @@ export async function POST(request: NextRequest) {
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Dirección / Destino:</td>
                           <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 700; color: #0f172a; vertical-align: top; word-break: break-word;">${customer?.address || "-"}, ${customer?.city || "-"}, ${customer?.department || "-"}</td>
                         </tr>
-                        <tr>
+                        <tr${customer?.observations && customer.observations.trim() ? ' style="border-bottom: 1px dashed #fecdd3;"' : ''}>
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Método de Pago:</td>
                           <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 800; color: #166534; vertical-align: top; word-break: break-word;">${paymentMethodName || "-"}</td>
                         </tr>
+                        ${
+                          customer?.observations && customer.observations.trim()
+                            ? `
+                        <tr>
+                          <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Observaciones:</td>
+                          <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 700; color: #be123c; vertical-align: top; word-break: break-word;">${customer.observations.trim()}</td>
+                        </tr>
+                        `
+                            : ""
+                        }
                       </table>
 
                       <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top: 14px;">
