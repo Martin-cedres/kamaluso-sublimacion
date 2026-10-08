@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Upload, X, Check, Loader2, Star, GripVertical } from "lucide-react";
 import { convertToWebP, fileToDataUrl } from "@/lib/image-optimizer";
@@ -86,6 +86,35 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
     setStatusMessage("¡Imagen convertida a WebP con éxito!");
     setTimeout(() => setStatusMessage(null), 3000);
   };
+
+  // Capturar pegado de imágenes (Ctrl + V) en cualquier lugar del formulario
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      const imageFiles: File[] = [];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            imageFiles.push(file);
+          }
+        }
+      }
+
+      if (imageFiles.length > 0) {
+        // Bloquear el pegado del texto alternativo o metadatos de Google en el textarea
+        e.preventDefault();
+        e.stopPropagation();
+        handleFiles(imageFiles);
+      }
+    };
+
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [images]);
 
   const handleDropFiles = (e: React.DragEvent) => {
     e.preventDefault();

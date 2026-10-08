@@ -367,12 +367,23 @@ export default function ProductModal({
 
           <div>
             <label className="block text-xs font-semibold uppercase text-slate-600 mb-1">
-              Descripción y Parámetros de Sublimado
+              Descripción del Producto
             </label>
             <textarea
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onDrop={(e) => {
+                // Si el elemento arrastrado es un archivo o una imagen externa de la web, prevenir que se pegue el texto alternativo
+                if (
+                  (e.dataTransfer.files && e.dataTransfer.files.length > 0) ||
+                  e.dataTransfer.types.includes("Files") ||
+                  e.dataTransfer.getData("text/html")?.includes("<img")
+                ) {
+                  e.preventDefault();
+                }
+              }}
+              placeholder="Ingresa la descripción de tu insumo (medidas, cantidad de hojas, etc.)..."
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none text-sm"
             />
           </div>

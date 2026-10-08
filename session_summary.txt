@@ -675,3 +675,60 @@ OPTIMIZACION Y BLINDAJE DEL SISTEMA DE NOTIFICACIONES POR CORREO
   * TypeScript verificado con éxito (npx tsc --noEmit: 0 errores).
   * Conexión SMTP comprobada con Nodemailer Verify y SendMail a nivel local.
 ================================================================================
+
+================================================================================
+COMMIT Y DEPLOY AUTOMATICO A GITHUB Y VERCEL (NOTIFICACIONES DE CORREO DUAL)
+================================================================================
+- Tarea: Desplegar a produccion los cambios del sistema de correos.
+- Commit: '425223b' (feat(email): obligatoriedad de correo en checkout, soporte dual admin y keepalive en mp).
+- Cambios desplegados:
+  * Campo de correo obligatorio en checkout (CartDrawer.tsx).
+  * Soporte de notificaciones simultaneas para kamalusosanjose@gmail.com y martinfernandocedres@gmail.com.
+  * Proteccion keepalive en redireccion de Mercado Pago.
+- Estado: Rama main sincronizada con origin/main en GitHub y disparado el despliegue en Vercel con las nuevas variables de entorno.
+================================================================================
+
+================================================================================
+AUDITORIA EXHAUSTIVA DE TEXTOS Y COPIES DE CORREOS ELECTRONICOS
+================================================================================
+- Tarea: Analizar y verificar la adecuacion de todos los textos de correos para cada caso (comprador, administracion, metodos de pago y envio) sin modificar codigo previo a la aprobacion del usuario.
+- Evaluacion de textos actuales:
+  * Asuntos, datos bancarios (BROU, Prex, OCA Blue, Mi Dinero, Abitab, Red Pagos, Efectivo, Mercado Pago) y aclaraciones de envio (Retiro vs Flete en destino) verificados como correctos y coherentes.
+- Puntos de mejora propuestos al usuario:
+  1. Inclusion de observaciones del cliente (customer.observations) en la ficha de entrega de ambos correos.
+  2. Dinamismo en el boton de WhatsApp del comprador (diferenciar "Enviar comprobante" para transferencias vs "Consultar estado" para Mercado Pago).
+  3. Soporte para metodo de pago "Otro / A convenir".
+================================================================================
+
+================================================================================
+MEJORAS DE TEXTOS Y COPIES DE CORREOS IMPLEMENTADAS Y DESPLEGADAS
+================================================================================
+- Tarea: Aplicar las 3 mejoras de textos aprobadas por el usuario y desplegar a produccion.
+- Archivo modificado: src/app/api/send-email/route.ts
+- Mejoras aplicadas:
+  1. Observaciones del Cliente: Ahora se renderiza el campo 'Observaciones' en la tabla de datos de envio tanto del correo del comprador como del administrador si el cliente escribio alguna nota.
+  2. Boton Dinamico de WhatsApp: Para Mercado Pago el boton del comprador ahora dice 'SEGUIR ESTADO POR WHATSAPP (098 615 074)', mientras que para transferencias/redes mantiene 'ENVIAR COMPROBANTE POR WHATSAPP (098 615 074)'.
+  3. Metodo de Pago 'Otro / A Convenir': Se anadio recuadro estilizado indicando que los detalles del pago se coordinaran por WhatsApp con el taller.
+- Verificacion:
+  * TypeScript verificado (npx tsc --noEmit: 0 errores).
+  * Build de produccion ejecutado con exito (46/46 paginas generadas).
+  * Commit '526b8a5' sincronizado con GitHub y disparado el auto-deploy en Vercel.
+================================================================================
+================================================================================
+CORRECCIÓN DE VOLCADO DE TEXTO EN DESCRIPCIÓN Y LIMPIEZA DE FICHA TÉCNICA
+================================================================================
+- Diagnóstico del problema:
+  1. El texto ("INTERIOR AGENDA MANICURA PERPETUA FLORAL... TIENDA EMEFÉ - Imagen de...") se originaba al copiar una foto desde Google Imágenes o la web y presionar Ctrl+V (o arrastrar la imagen sobre el formulario). Como el uploader de imágenes no interceptaba Ctrl+V, el navegador ejecutaba la acción por defecto y volcaba en el cuadro de texto activo (descripción) todo el texto alternativo / SEO que Google adjunta a las imágenes.
+  2. En la página de producto (/p/[slug]), se encontraban bloques estáticos en la plantilla ("Ficha Técnica del Insumo" con "Kit Incluye: Tapa + Contratapa + Interior" y "Parámetros de Estampado 170ºC") que aparecían en todas las publicaciones aunque fueran cartulinas o tapas sueltas.
+- Solución implementada:
+  1. src/components/admin/ImageUploader.tsx:
+     - Incorporado listener de 'paste' para interceptar imágenes pegadas con Ctrl+V, procesarlas directamente como archivo WebP y ejecutar preventDefault()/stopPropagation() para bloquear el volcado de texto o metadatos de Google en el textarea de descripción.
+  2. src/components/admin/ProductModal.tsx:
+     - Agregada protección onDrop en el textarea de descripción para evitar que arrastrar una imagen o elemento web vuelque texto alternativo en el campo.
+     - Simplificada la etiqueta a "Descripción del Producto" con placeholder explicativo.
+  3. src/app/p/[slug]/page.tsx:
+     - Eliminadas las secciones fijas de "Ficha Técnica" y "Parámetros de Estampado", manteniendo únicamente la descripción real ingresada por el usuario y las políticas de envío.
+     - Añadido whitespace-pre-line para respetar los saltos de línea y párrafos escritos por el usuario.
+- Validación:
+  * TypeScript verificado (npx tsc --noEmit: 0 errores).
+================================================================================
