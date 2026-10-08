@@ -732,3 +732,23 @@ CORRECCIÓN DE VOLCADO DE TEXTO EN DESCRIPCIÓN Y LIMPIEZA DE FICHA TÉCNICA
 - Validación:
   * TypeScript verificado (npx tsc --noEmit: 0 errores).
 ================================================================================
+================================================================================
+CORRECCIÓN DEFINITIVA DE ELIMINACIÓN DE PEDIDOS (TEST ORDER KAM-MAN-899226)
+================================================================================
+- Diagnóstico del problema:
+  1. En el servidor (/api/orders), getLatestOrders() leía en cada petición data/orders.json en disco y fusionaba (mergeOrderLists) con la memoria y Vercel Blob. Al estar el pedido de prueba 'KAM-MAN-899226' (PRUEBA, $148) grabado en el archivo local desde el despliegue anterior, el servidor lo resucitaba automáticamente tras cualquier intento de borrado.
+  2. En el cliente (lib/orders.ts), no existía una lista negra de IDs eliminados (a diferencia de productos), y getAllOrders() re-subía los pedidos si la lista local superaba a la nube.
+- Solución implementada:
+  1. src/app/api/orders/route.ts:
+     - getLatestOrders() ahora prioriza Vercel Blob como fuente de verdad en producción y ya no fusiona indiscriminadamente los pedidos viejos del disco en cada petición.
+     - POST ahora permite reemplazo directo de la lista completa cuando recibe un arreglo (para sincronización y depuración).
+     - DELETE ahora filtra de la memoria y persiste la lista limpia en Vercel Blob de inmediato.
+  2. src/lib/orders.ts:
+     - Implementada la lista negra 'kamaluso_deleted_order_ids' en localStorage.
+     - Blindadas mergeOrdersWithLocal y getAllOrders para ignorar y descartar permanentemente cualquier pedido en la lista negra.
+     - deleteOrder ahora registra el ID en la lista negra y actualiza localStorage inmediatamente con la respuesta limpia del servidor.
+  3. data/orders.json:
+     - Removido el pedido de prueba KAM-MAN-899226 y sincronizados los 11 pedidos reales de clientes.
+- Validación:
+  * TypeScript verificado con éxito (npx tsc --noEmit: 0 errores).
+================================================================================

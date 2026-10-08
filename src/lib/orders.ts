@@ -2,6 +2,33 @@ import { Order, OrderStatus } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
 const LOCAL_ORDERS_KEY = "kamaluso_orders";
+const DELETED_ORDERS_KEY = "kamaluso_deleted_order_ids";
+
+function getDeletedOrderIds(): string[] {
+  if (typeof window === "undefined") return [];
+  const stored = localStorage.getItem(DELETED_ORDERS_KEY);
+  if (!stored) return [];
+  try {
+    return JSON.parse(stored) as string[];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveDeletedOrderId(id: string): void {
+  if (typeof window === "undefined") return;
+  const list = getDeletedOrderIds();
+  if (!list.includes(id)) {
+    list.push(id);
+    localStorage.setItem(DELETED_ORDERS_KEY, JSON.stringify(list));
+  }
+}
+
+function removeDeletedOrderId(id: string): void {
+  if (typeof window === "undefined") return;
+  const list = getDeletedOrderIds().filter((dId) => dId !== id);
+  localStorage.setItem(DELETED_ORDERS_KEY, JSON.stringify(list));
+}
 
 function getLocalStoredOrders(): Order[] | null {
   if (typeof window === "undefined") return null;
@@ -9,7 +36,9 @@ function getLocalStoredOrders(): Order[] | null {
   if (!stored) return null;
   try {
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? (parsed as Order[]) : null;
+    if (!Array.isArray(parsed)) return null;
+    const deletedIds = getDeletedOrderIds();
+    return parsed.filter((o) => o && o.id && !deletedIds.includes(o.id));
   } catch (e) {
     return null;
   }
@@ -17,9 +46,9 @@ function getLocalStoredOrders(): Order[] | null {
 
 function saveLocalStoredOrders(orders: Order[]): void {
   if (typeof window === "undefined") return;
-  const current = getLocalStoredOrders() || [];
-  const merged = mergeOrdersWithLocal(orders, current);
-  localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
+  const deletedIds = getDeletedOrderIds();
+  const clean = orders.filter((o) => o && o.id && !deletedIds.includes(o.id));
+  localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(clean));
 }
 
 function removeLocalStoredOrder(id: string): void {
@@ -30,17 +59,18 @@ function removeLocalStoredOrder(id: string): void {
 }
 
 function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null): Order[] {
+  const deletedIds = getDeletedOrderIds();
   const orderMap = new Map<string, Order>();
 
   if (Array.isArray(localOrders)) {
     localOrders.forEach((lo) => {
-      if (lo && lo.id) orderMap.set(lo.id, lo);
+      if (lo && lo.id && !deletedIds.includes(lo.id)) orderMap.set(lo.id, lo);
     });
   }
 
   if (Array.isArray(remoteOrders)) {
     remoteOrders.forEach((ro) => {
-      if (ro && ro.id) {
+      if (ro && ro.id && !deletedIds.includes(ro.id)) {
         const existing = orderMap.get(ro.id);
         if (!existing) {
           orderMap.set(ro.id, ro);
@@ -66,6 +96,7 @@ function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null
 
 export async function getAllOrders(): Promise<Order[]> {
   const localStored = getLocalStoredOrders() || [];
+  const deletedIds = getDeletedOrderIds();
 
   if (isSupabaseConfigured && supabase) {
     try {
@@ -74,7 +105,8 @@ export async function getAllOrders(): Promise<Order[]> {
         .select("*")
         .order("created_at", { ascending: false });
       if (!error && data && data.length > 0) {
-        const merged = mergeOrdersWithLocal(data as Order[], localStored);
+        const cleanData = (data as Order[]).filter((o) => !deletedIds.includes(o.id));
+        const merged = mergeOrdersWithLocal(cleanData, localStored);
         if (typeof window !== "undefined") {
           localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
         }
@@ -90,20 +122,11 @@ export async function getAllOrders(): Promise<Order[]> {
     if (res.ok) {
       const cloudOrders = await res.json();
       if (Array.isArray(cloudOrders)) {
-        const merged = mergeOrdersWithLocal(cloudOrders, localStored);
+        const cleanCloud = cloudOrders.filter((o: Order) => !deletedIds.includes(o.id));
+        const merged = mergeOrdersWithLocal(cleanCloud, localStored);
         if (typeof window !== "undefined") {
           localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
         }
-
-        // Si local tenía pedidos que el servidor no tiene (ej. creados en modo local o antes de sync), sincronizarlos
-        if (merged.length > cloudOrders.length) {
-          fetch("/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(merged),
-          }).catch(() => {});
-        }
-
         return merged;
       }
     }
@@ -116,6 +139,7 @@ export async function getAllOrders(): Promise<Order[]> {
 
 export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
   const id = orderData.id || `KAM-${Date.now().toString().slice(-6)}`;
+  removeDeletedOrderId(id);
   const createdAt = orderData.createdAt || new Date().toISOString();
 
   const observations =
@@ -221,6 +245,7 @@ export async function updateOrderStatus(id: string, status: OrderStatus): Promis
 }
 
 export async function deleteOrder(id: string): Promise<boolean> {
+  saveDeletedOrderId(id);
   removeLocalStoredOrder(id);
 
   if (isSupabaseConfigured && supabase) {
@@ -230,10 +255,18 @@ export async function deleteOrder(id: string): Promise<boolean> {
   }
 
   try {
-    await fetch(`/api/orders?id=${id}`, {
+    const res = await fetch(`/api/orders?id=${id}`, {
       method: "DELETE",
     });
-  } catch (e) {}
+    if (res.ok) {
+      const data = await res.json();
+      if (data.orders && Array.isArray(data.orders)) {
+        saveLocalStoredOrders(data.orders);
+      }
+    }
+  } catch (e) {
+    console.error("Error al eliminar pedido de API cloud", e);
+  }
 
   return true;
 }

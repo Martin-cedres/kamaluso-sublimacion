@@ -87,17 +87,13 @@ async function getLatestOrders(): Promise<Order[]> {
   const cache = globalThis.__kamaluso_orders_cache__!;
   const now = Date.now();
 
-  const fileOrders = readLocalOrdersFile();
-
-  // Si la memoria es muy reciente (< 5s), devolver fusión rápida de memoria y disco
-  if (cache.orders && cache.orders.length > 0 && now - cache.lastFetched < 5000) {
-    const fastMerged = mergeOrderLists(cache.orders, fileOrders);
-    cache.orders = fastMerged;
-    return fastMerged;
+  // Si la memoria es reciente (< 10s), devolver memoria
+  if (cache.orders && cache.orders.length > 0 && now - cache.lastFetched < 10000) {
+    return cache.orders;
   }
 
   // Consultar Vercel Blob con cache busting
-  let blobOrders: Order[] = [];
+  let blobOrders: Order[] | null = null;
   const targetUrl = (cache.blobUrl || DIRECT_BLOB_ORDERS_URL) + `?t=${now}`;
   try {
     const res = await fetch(targetUrl, { cache: "no-store" });
@@ -111,16 +107,25 @@ async function getLatestOrders(): Promise<Order[]> {
     console.warn("[API Orders] Aviso al leer de Vercel Blob:", e);
   }
 
-  // Fusionar de forma segura: Memoria + Archivo en disco + Vercel Blob (NUNCA se pierden pedidos)
-  const mergedOrders = mergeOrderLists(cache.orders, fileOrders, blobOrders);
+  let finalOrders: Order[] = [];
 
-  cache.orders = mergedOrders;
+  if (blobOrders !== null) {
+    // Si Blob respondió, Blob es la única fuente de verdad en producción
+    finalOrders = blobOrders;
+  } else if (cache.orders && cache.orders.length > 0) {
+    finalOrders = cache.orders;
+  } else {
+    // Solo como fallback de arranque en frío si Blob falló y la memoria está vacía
+    finalOrders = readLocalOrdersFile();
+  }
+
+  cache.orders = finalOrders;
   cache.lastFetched = now;
 
   // Persistir en disco local
-  writeLocalOrdersFile(mergedOrders);
+  writeLocalOrdersFile(finalOrders);
 
-  return mergedOrders;
+  return finalOrders;
 }
 
 export async function GET() {
@@ -136,18 +141,29 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const cache = globalThis.__kamaluso_orders_cache__!;
+    let updatedOrders: Order[] = [];
 
-    // Cargar todos los pedidos conocidos hasta el momento
-    const existingOrders = await getLatestOrders();
-
-    let incomingOrders: Order[] = [];
     if (Array.isArray(body)) {
-      incomingOrders = body;
+      // Reemplazo total explícito (útil para sincronizaciones y depuración)
+      updatedOrders = body;
     } else if (body && body.id) {
-      incomingOrders = [body];
+      const existingOrders = await getLatestOrders();
+      const idx = existingOrders.findIndex((o) => o.id === body.id);
+      if (idx >= 0) {
+        existingOrders[idx] = {
+          ...existingOrders[idx],
+          ...body,
+          customer: {
+            ...existingOrders[idx].customer,
+            ...body.customer,
+          },
+          items: body.items && body.items.length > 0 ? body.items : existingOrders[idx].items,
+        };
+        updatedOrders = existingOrders;
+      } else {
+        updatedOrders = [body, ...existingOrders];
+      }
     }
-
-    const updatedOrders = mergeOrderLists(existingOrders, incomingOrders);
 
     cache.orders = updatedOrders;
     cache.lastFetched = Date.now();
@@ -155,7 +171,7 @@ export async function POST(request: Request) {
     // Guardar en disco local
     writeLocalOrdersFile(updatedOrders);
 
-    // Intentar guardar en Vercel Blob si está configurado
+    // Guardar en Vercel Blob
     let blobUrl = cache.blobUrl || "";
     try {
       const blob = await put(BLOB_ORDERS_FILENAME, JSON.stringify(updatedOrders, null, 2), {
@@ -167,7 +183,7 @@ export async function POST(request: Request) {
       blobUrl = blob.url;
       cache.blobUrl = blobUrl;
     } catch (blobErr: any) {
-      // Ignorar si no hay token de Vercel Blob en local
+      console.warn("Aviso al guardar en Vercel Blob:", blobErr);
     }
 
     return NextResponse.json({ success: true, url: blobUrl, orders: updatedOrders });
@@ -191,6 +207,7 @@ export async function DELETE(request: Request) {
 
     writeLocalOrdersFile(filtered);
 
+    let blobUrl = cache.blobUrl || "";
     try {
       const blob = await put(BLOB_ORDERS_FILENAME, JSON.stringify(filtered, null, 2), {
         access: "public",
@@ -198,8 +215,11 @@ export async function DELETE(request: Request) {
         allowOverwrite: true,
         contentType: "application/json",
       });
-      cache.blobUrl = blob.url;
-    } catch (e) {}
+      blobUrl = blob.url;
+      cache.blobUrl = blobUrl;
+    } catch (e) {
+      console.warn("Aviso al actualizar Vercel Blob tras DELETE:", e);
+    }
 
     return NextResponse.json({ success: true, orders: filtered });
   } catch (error: any) {
