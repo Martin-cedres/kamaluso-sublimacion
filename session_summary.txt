@@ -764,3 +764,7 @@ RESTAURACIÓN DE FICHA TÉCNICA Y PARÁMETROS DE ESTAMPADO
 - Verificación:
   * TypeScript verificado con éxito (npx tsc --noEmit: 0 errores).
 ================================================================================
+- Verificación de Build:
+  * Ejecutado `npm run build` con éxito absoluto (0 errores, 46/46 páginas estáticas y dinámicas generadas).
+  * Despliegue automático a producción en Vercel activo con el commit `5ab5bc3`.
+================================================================================
