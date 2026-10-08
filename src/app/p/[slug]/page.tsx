@@ -247,6 +247,48 @@ export default async function ProductDetailPage({
             </div>
           )}
 
+          {/* Ficha Técnica Estructurada (GEO & Especificaciones de Taller) */}
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2.5">
+            <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              📋 Ficha Técnica del Insumo
+            </h4>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-400 block text-[10px] font-bold uppercase">Gramaje de Tapa</span>
+                <span className="font-bold text-slate-800">350 gr (Cartón Cristal)</span>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-400 block text-[10px] font-bold uppercase">Polímero Térmico</span>
+                <span className="font-bold text-emerald-700">Virgen Alta Transferencia</span>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-400 block text-[10px] font-bold uppercase">Kit Incluye</span>
+                <span className="font-bold text-slate-800">Tapa + Contratapa + Interior</span>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-400 block text-[10px] font-bold uppercase">Fabricación</span>
+                <span className="font-bold text-slate-800">San José de Mayo, Uruguay</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bloque Destacado de Parámetros de Sublimación */}
+          <div className="p-4 bg-amber-50/80 border border-amber-200/80 rounded-2xl space-y-2">
+            <h4 className="font-extrabold text-xs text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+              🔥 Parámetros de Estampado Recomendados
+            </h4>
+            <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-amber-950">
+              <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
+                <span className="text-slate-400 block text-[10px]">Temperatura</span>
+                <span className="text-base font-black text-amber-700">170 ºC</span>
+              </div>
+              <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
+                <span className="text-slate-400 block text-[10px]">Tiempo Prensa Plana</span>
+                <span className="text-base font-black text-amber-700">120 segundos</span>
+              </div>
+            </div>
+          </div>
+
           {/* Políticas de Elaboración y Envíos */}
           <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2 text-xs text-slate-700">
             <div className="flex items-center gap-2 font-bold text-slate-900">

@@ -752,3 +752,15 @@ CORRECCIÓN DEFINITIVA DE ELIMINACIÓN DE PEDIDOS (TEST ORDER KAM-MAN-899226)
 - Validación:
   * TypeScript verificado con éxito (npx tsc --noEmit: 0 errores).
 ================================================================================
+================================================================================
+RESTAURACIÓN DE FICHA TÉCNICA Y PARÁMETROS DE ESTAMPADO
+================================================================================
+- Tarea: Reincorporar la Ficha Técnica del Insumo y los Parámetros de Estampado en la página de producto (/p/[slug]).
+- Cambios realizados:
+  * src/app/p/[slug]/page.tsx:
+    - Restaurados los bloques estructurados de '📋 Ficha Técnica del Insumo' (Gramaje de Tapa 350 gr, Polímero Térmico Virgen, Kit Incluye Tapa+Contratapa+Interior, Fabricación San José de Mayo).
+    - Restaurado el bloque destacado de '🔥 Parámetros de Estampado Recomendados' (170 ºC / 120 segundos en prensa plana).
+    - Preservada la descripción editable con whitespace-pre-line.
+- Verificación:
+  * TypeScript verificado con éxito (npx tsc --noEmit: 0 errores).
+================================================================================
