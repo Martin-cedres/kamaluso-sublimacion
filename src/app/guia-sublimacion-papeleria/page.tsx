@@ -110,21 +110,21 @@ export default function GuiaSublimacionPage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30">
-            <span className="text-amber-200 text-xs block font-semibold">Temperatura</span>
-            <span className="text-2xl sm:text-3xl font-black">170º - 180º C</span>
+          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30 flex flex-col justify-center">
+            <span className="text-amber-200 text-xs block font-semibold mb-1">Temperatura</span>
+            <span className="text-xl sm:text-2xl lg:text-3xl font-black whitespace-nowrap block">170° - 180°C</span>
           </div>
-          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30">
-            <span className="text-amber-200 text-xs block font-semibold">Tiempo</span>
-            <span className="text-2xl sm:text-3xl font-black">120 seg</span>
+          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30 flex flex-col justify-center">
+            <span className="text-amber-200 text-xs block font-semibold mb-1">Tiempo</span>
+            <span className="text-xl sm:text-2xl lg:text-3xl font-black whitespace-nowrap block">120 seg</span>
           </div>
-          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30">
-            <span className="text-amber-200 text-xs block font-semibold">Presión</span>
-            <span className="text-2xl sm:text-3xl font-black">Media - Alta</span>
+          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30 flex flex-col justify-center">
+            <span className="text-amber-200 text-xs block font-semibold mb-1">Presión</span>
+            <span className="text-xl sm:text-2xl lg:text-3xl font-black whitespace-nowrap block">Media - Alta</span>
           </div>
-          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30">
-            <span className="text-amber-200 text-xs block font-semibold">Enfriado</span>
-            <span className="text-xl sm:text-2xl font-black">Bajo Peso</span>
+          <div className="bg-amber-700/40 p-4 rounded-2xl border border-amber-400/30 flex flex-col justify-center">
+            <span className="text-amber-200 text-xs block font-semibold mb-1">Enfriado</span>
+            <span className="text-xl sm:text-2xl lg:text-3xl font-black whitespace-nowrap block">Bajo Peso</span>
           </div>
         </div>
       </div>

@@ -68,7 +68,7 @@ export default function MayoristasPage() {
           </div>
           <h3 className="font-extrabold text-lg text-slate-900">Despachos en ~48 Horas</h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Fabricamos de forma ágil y despachamos diariamente por DAC, Correo Uruguayo o agencias hacia Montevideo y todos los departamentos del interior.
+            Fabricamos de forma ágil y despachamos diariamente por DAC, Correo Uruguayo y Agencia COTMI hacia Montevideo y todos los departamentos del interior.
           </p>
         </div>
 

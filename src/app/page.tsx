@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
 import { ProductGrid } from "@/components/products/ProductGrid";
-import { HomeSeoSection } from "@/components/home/HomeSeoSection";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -49,7 +48,7 @@ export default async function HomePage() {
   const products = await getAllProducts();
 
   return (
-    <main className="min-h-screen pb-16">
+    <main className="min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
@@ -57,9 +56,6 @@ export default async function HomePage() {
       <Suspense fallback={<div className="min-h-screen bg-slate-50 animate-pulse" />}>
         <ProductGrid initialProducts={products} />
       </Suspense>
-
-      {/* Contenido Semántico de Autoridad y Cobertura Nacional */}
-      <HomeSeoSection />
     </main>
   );
 }

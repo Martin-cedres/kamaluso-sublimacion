@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
 import { ProductCard } from "./ProductCard";
 import { CATEGORIES, getAllProducts } from "@/lib/products";
-import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag, Search, X, ArrowUpDown } from "lucide-react";
+import { Flame, ShieldCheck, Truck, CreditCard, ShoppingBag, Search, X, ArrowUpDown, ArrowRight } from "lucide-react";
 
 interface ProductGridProps {
   initialProducts: Product[];
@@ -207,8 +208,8 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-slate-800">Envíos a todo el país</h4>
-              <p className="text-xs text-slate-500">Sin mínimo de compra. Despacho coordinado a todo el país.</p>
+              <h4 className="font-bold text-sm text-slate-800">Envíos a todo Uruguay</h4>
+              <p className="text-xs text-slate-500">DAC, Correo Uruguayo y COTMI desde San José. Sin mínimo.</p>
             </div>
           </div>
 
@@ -227,8 +228,8 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-slate-800">Pedidos mayores a $2.500</h4>
-              <p className="text-xs text-slate-500">Consultar tiempos de preparación.</p>
+              <h4 className="font-bold text-sm text-slate-800">Venta por mayor y menor</h4>
+              <p className="text-xs text-slate-500">Precios directos de fábrica para revendedores y talleres.</p>
             </div>
           </div>
         </div>
@@ -245,13 +246,17 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
                   🔥 Parámetro de Sublimación: Prensa Plana
                 </h4>
                 <p className="text-xs text-amber-800 font-medium">
-                  Estampado a <strong>170ºC durante 120 seg</strong> para tapas sublimables de 350gr.
+                  Estampado a <strong>170ºC – 180ºC durante 120 seg</strong> para tapas sublimables de 350gr.
                 </p>
               </div>
             </div>
-            <span className="text-xs bg-white text-amber-900 font-extrabold px-3.5 py-2 rounded-xl border border-amber-200 shadow-sm flex-shrink-0">
-              170ºC / 120 seg
-            </span>
+            <Link
+              href="/guia-sublimacion-papeleria"
+              className="text-xs bg-white hover:bg-amber-100 text-amber-900 font-extrabold px-3.5 py-2 rounded-xl border border-amber-200 shadow-sm flex-shrink-0 flex items-center gap-1.5 transition-colors"
+            >
+              <span>170ºC / 120 seg · Ver Guía</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </div>

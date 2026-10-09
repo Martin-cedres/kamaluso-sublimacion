@@ -768,3 +768,76 @@ RESTAURACIÓN DE FICHA TÉCNICA Y PARÁMETROS DE ESTAMPADO
   * Ejecutado `npm run build` con éxito absoluto (0 errores, 46/46 páginas estáticas y dinámicas generadas).
   * Despliegue automático a producción en Vercel activo con el commit `5ab5bc3`.
 ================================================================================
+================================================================================
+INICIO DE SERVIDOR DE DESARROLLO
+================================================================================
+- Tarea: Levantar la aplicación en el servidor local de desarrollo.
+- Ejecución:
+  * Comando: `npm run dev`
+  * Puerto 3000 ocupado por otro proceso; Next.js asignó automáticamente el puerto 3001.
+  * URL local: http://localhost:3001
+  * Verificación HTTP: Respuesta 200 OK confirmada (compilación de rutas exitosa).
+================================================================================
+OPTIMIZACIÓN Y ALIGERAMIENTO DEL HOME (SEO, GEO Y CONVERSIÓN B2B)
+===============================================================================
+- Tarea: Aligerar la sección inferior del Home para evitar sobrecarga visual y fatiga de scroll, optimizando la jerarquía de contenidos y garantizando las agencias oficiales (DAC, Correo Uruguayo y COTMI).
+- Cambios realizados:
+  1. `src/components/home/HomeSeoSection.tsx`:
+     - Eliminada la densa tabla técnica de estampado (queda centralizada en `/guia-sublimacion-papeleria` y en las fichas de producto `/p/[slug]`).
+     - Eliminada la lista masiva de 19 chips de departamentos (sustituida por copy fluido de alta conversión).
+     - Transformado el bloque de FAQs a un acordeón interactivo ultraligero (<details>) con las 3 dudas críticas y enlace canónico a `/faq`.
+     - Creada tarjeta destacada con acceso directo a la Guía Técnica oficial de parámetros de estampado.
+     - Ajustadas las agencias de logística a DAC (Grupo Agencia), Correo Uruguayo y Agencia COTMI, suprimiendo cualquier mención a transportistas no autorizados.
+  2. `public/llms.txt`:
+     - Actualizada la referencia de logística para agentes IA y rastreadores GEO eliminando Mirtrans y fijando DAC, Correo Uruguayo y Agencia COTMI.
+- Verificación:
+  * TypeScript verificado: `npx tsc --noEmit` completado con 0 errores.
+  * Servidor de desarrollo recargado y respondiendo HTTP 200 en http://localhost:3001.
+================================================================================
+REDISTRIBUCIÓN ARQUITECTÓNICA DEL HOME (DESACOPLE COMPLETO)
+================================================================================
+- Tarea: Remover completamente la sección inferior del Home para dejarlo 100% enfocado en conversión/catálogo, redistribuyendo su contenido de valor en ubicaciones canónicas sin pérdida de SEO/GEO.
+- Cambios realizados:
+  1. `src/app/page.tsx`:
+     - Retirado `<HomeSeoSection />` del render del Home. El Home queda ultralimpio: Hero con H1 y buscador + Grilla de productos + Tarjetas de políticas comerciales + Footer.
+  2. `src/components/products/ProductGrid.tsx`:
+     - Actualizada la tarjeta de logística al pie del catálogo para reflejar: "DAC, Correo Uruguayo y COTMI desde San José. Sin mínimo."
+     - Enlazada la píldora técnica de sublimado (170-180ºC / 120s) directamente a `/guia-sublimacion-papeleria`.
+  3. `src/app/sobre-nosotros/page.tsx`:
+     - Integrados los 3 pilares de fabricante (Kits Listos para Armar, Tapas Rígidas de 350gr con polímero virgen, Precios Directos Sin Mínimo) asegurando la transferencia de autoridad B2B a su página institucional.
+     - Actualizada la mención de envíos diarios a DAC, Correo Uruguayo y Agencia COTMI.
+  4. `src/app/mayoristas/page.tsx`:
+     - Fijadas las agencias de despacho oficiales a DAC, Correo Uruguayo y Agencia COTMI.
+  5. `src/app/contacto/page.tsx`:
+     - Reflejados los despachos diarios a todo el país vía DAC, Correo Uruguayo y Agencia COTMI.
+- Verificación:
+  * TypeScript verificado: `npx tsc --noEmit` completado con 0 errores.
+  * Respuestas HTTP 200 confirmadas en Home (/), /sobre-nosotros, /mayoristas y /contacto.
+================================================================================
+CORRECCIÓN TIPOGRÁFICA EN GUÍA TÉCNICA (CELSIUS EN LÍNEA)
+================================================================================
+- Tarea: Corregir el salto de línea involuntario de la 'C' de Celsius en el panel de parámetros de la Guía Técnica (/guia-sublimacion-papeleria).
+- Solución:
+  * `src/app/guia-sublimacion-papeleria/page.tsx`:
+    - Cambiado "170º - 180º C" a "170° - 180°C" eliminando el espacio antes de la C.
+    - Aplicada la clase `whitespace-nowrap` y escalado tipográfico responsivo (`text-xl sm:text-2xl lg:text-3xl font-black block`) en las 4 tarjetas de parámetros para evitar desbordes o saltos en cualquier resolución de pantalla.
+- Verificación:
+  * `npx tsc --noEmit` completado con 0 errores.
+  * Respuesta HTTP 200 confirmada en `/guia-sublimacion-papeleria` en http://localhost:3001.
+================================================================================
+OPTIMIZACIÓN DEL SISTEMA DE ORDENAMIENTO DE PUBLICACIONES (DRAG & DROP + INPUT NUMÉRICO)
+================================================================================
+- Tarea: Mejorar la experiencia y facilidad de reordenamiento de productos en el catálogo web para el administrador.
+- Solución implementada:
+  1. `src/components/admin/VisualReorderModal.tsx`:
+     - Incorporado input numérico directo ("Ir a #[X]") en cada tarjeta: permite escribir cualquier posición (ej. de 35 a 2) y presionar Enter para reubicarse al instante sin arrastrar.
+     - Añadido botón "Al Final (⬇)" en cada tarjeta como contraparte de "⭐ #1 Portada".
+     - Agregada barra de herramientas con filtro por Categoría (Agendas, Libretas, Blocks, Promos) y Buscador por texto en tiempo real.
+     - Rehecho el motor de Drag & Drop para basarse en IDs únicos en lugar de índices estáticos, haciéndolo 100% inmune a búsquedas y filtros.
+  2. `src/app/admin/page.tsx`:
+     - Agregada función `handleDirectMove` para permitir saltos directos de posición.
+     - Reemplazado el indicador estático `#{X}` en la tabla principal por un input numérico interactivo que guarda y actualiza la web de forma automática.
+- Verificación:
+  * TypeScript verificado: `npx tsc --noEmit` completado con 0 errores.
+  * Respuestas HTTP 200 en `/admin` y `/` en http://localhost:3001.
+================================================================================

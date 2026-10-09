@@ -137,7 +137,7 @@ export default function ContactoPage() {
               <Clock className="w-4 h-4 text-brand-400" />
               <span>Respuesta rápida en WhatsApp</span>
             </div>
-            <p>Envíos por encomienda a todo Uruguay de lunes a sábados.</p>
+            <p>Despachos a todo Uruguay vía DAC, Correo Uruguayo y Agencia COTMI.</p>
           </div>
         </div>
       </div>

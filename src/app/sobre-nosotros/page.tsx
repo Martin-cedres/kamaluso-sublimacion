@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { ShieldCheck, Heart, Sparkles, Truck, CheckCircle2, Instagram, ExternalLink } from "lucide-react";
+import { ShieldCheck, Heart, Sparkles, Truck, CheckCircle2, Instagram, ExternalLink, Layers, Award, Flame } from "lucide-react";
 
 export const metadata = {
   title: "Sobre Nosotros | Kamaluso San José, Papelería Sublimable",
@@ -84,7 +84,51 @@ export default function SobreNosotrosPage() {
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="text-sm font-semibold text-slate-800">Envíos diarios vía Correo Uruguayo, DAC y Agencias</span>
+            <span className="text-sm font-semibold text-slate-800">Envíos diarios vía DAC, Correo Uruguayo y Agencia COTMI</span>
+          </div>
+        </div>
+
+        {/* 3 Pilares de Fabricante B2B */}
+        <div className="pt-6 border-t border-slate-100 space-y-4">
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-brand-600 uppercase tracking-wider">
+              Propuesta de Valor de Taller
+            </span>
+            <h3 className="text-xl font-extrabold text-slate-900">
+              Por qué elegir insumos Kamaluso
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                <Layers className="w-5 h-5 text-brand-600" />
+              </div>
+              <h4 className="font-bold text-sm text-slate-900">Kits Listos para Armar</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Tapas, contratapas, hojas impresas y espiral. Emprende o produce en serie sin necesidad de encuadernadora industrial.
+              </p>
+            </div>
+
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                <Award className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h4 className="font-bold text-sm text-slate-900">Tapas Rígidas de 350gr</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Tratadas con polímero virgen que brinda colores de máxima vivacidad y enfriado plano sin doblarse.
+              </p>
+            </div>
+
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                <Flame className="w-5 h-5 text-purple-600" />
+              </div>
+              <h4 className="font-bold text-sm text-slate-900">Precios Directos Sin Mínimo</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Venta por mayor y menor desde 1 unidad. Precios de taller pensados para maximizar tu rentabilidad comercial.
+              </p>
+            </div>
           </div>
         </div>
 

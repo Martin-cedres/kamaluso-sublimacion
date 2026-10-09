@@ -111,6 +111,24 @@ export default function AdminDashboardPage() {
     setTimeout(() => setOrderToastMessage(null), 3500);
   };
 
+  const handleDirectMove = async (productId: string, targetPosition1Based: number) => {
+    const currentList = [...products];
+    const fromIndex = currentList.findIndex((p) => p.id === productId);
+    if (fromIndex === -1) return;
+    const toIndex = Math.max(0, Math.min(currentList.length - 1, targetPosition1Based - 1));
+    if (fromIndex === toIndex) return;
+
+    const [movedItem] = currentList.splice(fromIndex, 1);
+    currentList.splice(toIndex, 0, movedItem);
+
+    setProducts(currentList);
+    setIsSavingOrder(true);
+    await saveProductsOrder(currentList);
+    setIsSavingOrder(false);
+    setOrderToastMessage(`✨ Producto reubicado en la posición #${toIndex + 1}`);
+    setTimeout(() => setOrderToastMessage(null), 3500);
+  };
+
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedProductId(id);
     e.dataTransfer.effectAllowed = "move";
@@ -593,9 +611,32 @@ export default function AdminDashboardPage() {
                                   <ArrowUp className="w-3.5 h-3.5" />
                                 </button>
 
-                                <span className="text-xs font-black text-slate-600 w-7 text-center bg-slate-100 py-0.5 rounded">
-                                  #{globalIndex + 1}
-                                </span>
+                                <div className="relative" title="Escribe un número y presiona Enter para mover a esa posición">
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={products.length}
+                                    defaultValue={globalIndex + 1}
+                                    key={`table-pos-${product.id}-${globalIndex}`}
+                                    disabled={isSavingOrder}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        const val = parseInt((e.target as HTMLInputElement).value, 10);
+                                        if (!isNaN(val) && val >= 1 && val <= products.length) {
+                                          handleDirectMove(product.id, val);
+                                        }
+                                        (e.target as HTMLInputElement).blur();
+                                      }
+                                    }}
+                                    onBlur={(e) => {
+                                      const val = parseInt(e.target.value, 10);
+                                      if (!isNaN(val) && val >= 1 && val <= products.length && val !== globalIndex + 1) {
+                                        handleDirectMove(product.id, val);
+                                      }
+                                    }}
+                                    className="text-xs font-black text-slate-800 w-11 text-center bg-slate-100 hover:bg-slate-200 focus:bg-pink-100 focus:text-pink-700 focus:ring-1 focus:ring-pink-500 py-0.5 rounded outline-none transition cursor-text shadow-xs"
+                                  />
+                                </div>
 
                                 <button
                                   type="button"
