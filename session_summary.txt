@@ -841,3 +841,12 @@ OPTIMIZACIÓN DEL SISTEMA DE ORDENAMIENTO DE PUBLICACIONES (DRAG & DROP + INPUT 
   * TypeScript verificado: `npx tsc --noEmit` completado con 0 errores.
   * Respuestas HTTP 200 en `/admin` y `/` en http://localhost:3001.
 ================================================================================
+CONSTRUCCIÓN DE PRODUCCIÓN Y DESPLIEGUE A GITHUB Y VERCEL
+================================================================================
+- Tarea: Compilar el proyecto en modo producción y desplegar a GitHub y Vercel.
+- Proceso:
+  * Ejecutado `npm run build`: Compilación exitosa (0 errores, 50/50 páginas estáticas y dinámicas optimizadas).
+  * Creado commit `d261d08`: "feat: optimizacion de home, ordenamiento visual con input numerico y alineacion logistica DAC/Correo/COTMI".
+  * Subido con éxito a GitHub: `git push origin main` -> repositorio https://github.com/Martin-cedres/kamaluso-sublimacion.git.
+  * Despliegue automático de Vercel activado y producción validada con respuesta HTTP 200 en https://www.kamaluso.com.
+================================================================================
