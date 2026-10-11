@@ -850,3 +850,50 @@ CONSTRUCCIÓN DE PRODUCCIÓN Y DESPLIEGUE A GITHUB Y VERCEL
   * Subido con éxito a GitHub: `git push origin main` -> repositorio https://github.com/Martin-cedres/kamaluso-sublimacion.git.
   * Despliegue automático de Vercel activado y producción validada con respuesta HTTP 200 en https://www.kamaluso.com.
 ================================================================================
+================================================================================
+INICIO DEL SERVIDOR DE DESARROLLO
+================================================================================
+- Tarea: Levantar el servidor de desarrollo local.
+- Resultado:
+  * Servidor Next.js iniciado con `npm run dev`.
+  * Disponible en: http://localhost:3000
+  * Estado: 200 OK verificado en `/`.
+================================================================================
+================================================================================
+REDISEÑO DE ETIQUETA DE ENVÍO (DESTINATARIO Y DIRECCIÓN UNIFICADOS)
+================================================================================
+- Tarea: Mejorar la legibilidad de la etiqueta de envío física y térmica de 10x15cm.
+- Cambios realizados en `src/components/admin/ShippingLabelModal.tsx`:
+  1. Remitente: Aumentado de tamaño (tipografía en mayúsculas negrita para Katherine Silva, teléfono destacado y preservada la ciudad de origen San José de Mayo).
+  2. Contenedor unificado: Fusionados los recuadros de destinatario y dirección en un solo bloque principal con borde negro definido.
+  3. Orden de lectura: Primero Nombre completo y Teléfono del destinatario con su Departamento/Ciudad, seguido inmediatamente por la Dirección de entrega / Sucursal de retiro en fuente destacada (sin fondo amarillo) y observaciones.
+- Verificación:
+  * TypeScript verificado: `npx tsc --noEmit` completado con 0 errores.
+  * Ruta `/admin` respondiendo 200 OK en http://localhost:3000/admin.
+================================================================================
+================================================================================
+AJUSTES EN REMITENTE Y PLACEHOLDER SUGERENTE DE VIVIENDA
+================================================================================
+- Tarea: Mejorar el placeholder de observaciones en la web para guiar la identificación de viviendas, y ajustar jerarquías tipográficas del remitente en la etiqueta de envío.
+- Cambios realizados:
+  1. `src/components/cart/CartDrawer.tsx` y modales de administración:
+     - Placeholder actualizado con texto sugerente: `"Ej. Casa de rejas negras, portón de madera, entre calles X e Y, timbre blanco..."`.
+     - Label actualizado a `"Observaciones / Indicaciones para identificar la vivienda (Opcional)"`.
+  2. `src/components/admin/ShippingLabelModal.tsx`:
+     - Remitente: Nombre (Katherine Silva) y Teléfono en tipografía más grande y enérgica (`font-black`), destacando especialmente el número telefónico.
+     - Ubicación y web: `San José de Mayo, Uruguay | www.kamaluso.com` compactado en tipografía ajustada en un solo renglón continuo sin saltos de línea.
+- Verificación:
+  * TypeScript validado con `npx tsc --noEmit` (0 errores).
+  * HTTP 200 verificado en `/admin`.
+================================================================================
+================================================================================
+BORDES REDONDEADOS EN EL CONTORNO DE LA ETIQUETA DE IMPRESIÓN
+================================================================================
+- Tarea: Aplicar bordes redondeados al contorno exterior de la etiqueta tanto en pantalla como en el diálogo de impresión / impresión física.
+- Solución en `src/components/admin/ShippingLabelModal.tsx`:
+  * En `@media print`, cambiado `border-radius: 0 !important;` por `border-radius: 4.5mm !important;` en `#printable-shipping-label`.
+  * En vista previa del modal, ajustado a `rounded-2xl`.
+- Verificación:
+  * `npx tsc --noEmit` completado con 0 errores.
+  * Ruta `/admin` respondiendo 200 OK.
+================================================================================

@@ -386,11 +386,11 @@ export default function ShippingLabelModal({
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Observaciones de Entrega (Detalles especiales)
+                  Observaciones / Indicaciones para identificar la vivienda (Opcional)
                 </label>
                 <input
                   type="text"
-                  placeholder="Ej. Entregar en la tarde, casa de la esquina, etc."
+                  placeholder="Ej. Casa de rejas negras, portón de madera, entre calles X e Y, timbre blanco..."
                   value={observations}
                   onChange={(e) => setObservations(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
@@ -549,7 +549,7 @@ export default function ShippingLabelModal({
             {/* THE PRINTABLE LABEL (Targeted by @media print) */}
             <div
               id="printable-shipping-label"
-              className={`printable-label-box bg-white text-slate-900 border-2 sm:border-[2.5px] border-black rounded-xl p-3 sm:p-3.5 shadow-xl font-sans relative flex flex-col justify-between overflow-hidden ${
+              className={`printable-label-box bg-white text-slate-900 border-2 sm:border-[2.5px] border-black rounded-2xl p-3 sm:p-3.5 shadow-xl font-sans relative flex flex-col justify-between overflow-hidden ${
                 printColorMode === "bw" ? "is-bw-mode" : "is-color-mode"
               }`}
               style={{ width: "100%", maxWidth: "340px", height: "510px" }}
@@ -583,79 +583,88 @@ export default function ShippingLabelModal({
                 </div>
               </div>
 
-              {/* Remitente Box */}
-              <div className="bg-slate-50 p-1.5 rounded-lg border border-slate-300 text-xs flex-shrink-0 thermal-box">
+              {/* Remitente Box - Mayor tamaño y jerarquía */}
+              <div className="bg-slate-50 p-2 sm:p-2.5 rounded-xl border border-slate-300 text-xs flex-shrink-0 thermal-box">
                 <div className="flex justify-between items-center leading-none mb-0.5">
-                  <span className="text-[7.5px] font-black uppercase text-slate-600 tracking-wider thermal-text-black">
+                  <span className="text-[8px] sm:text-[8.5px] font-black uppercase text-slate-600 tracking-wider thermal-text-black">
                     REMITENTE:
                   </span>
-                  {senderRut && <span className="text-[7.5px] font-bold text-slate-600 thermal-text-black">{senderRut}</span>}
+                  {senderRut && <span className="text-[8px] sm:text-[8.5px] font-bold text-slate-600 thermal-text-black">{senderRut}</span>}
                 </div>
-                <p className="font-extrabold text-black text-[11px] leading-tight">
-                  {senderName}
-                </p>
-                <p className="text-[9px] sm:text-[9.5px] text-slate-700 leading-tight mt-0.5 thermal-text-black">
-                  Tel: <strong>{senderPhone}</strong> | {senderAddress} {senderWebsite ? `| ${senderWebsite}` : ""}
+
+                {/* Renglón principal: Nombre y Teléfono con tipografía más grande (sobre todo el teléfono) */}
+                <div className="flex items-baseline justify-between gap-2 mt-0.5">
+                  <p className="font-black text-black text-sm sm:text-base leading-tight uppercase">
+                    {senderName}
+                  </p>
+                  <p className="font-black text-black text-xs sm:text-sm leading-tight thermal-text-black whitespace-nowrap">
+                    Tel: <span className="text-sm sm:text-base font-black tracking-wide">{senderPhone}</span>
+                  </p>
+                </div>
+
+                {/* Renglón secundario: Origen y web en UN SOLO renglón sin partirse */}
+                <p className="text-[8.5px] sm:text-[9px] font-bold text-slate-700 leading-none mt-1 thermal-text-black whitespace-nowrap truncate">
+                  {senderAddress} {senderWebsite ? `| ${senderWebsite}` : ""}
                 </p>
               </div>
 
-              {/* Destinatario Box */}
-              <div className="p-2 sm:p-2.5 bg-white rounded-xl border-2 border-black flex-shrink-0 shadow-xs thermal-box space-y-1">
+              {/* CONTENEDOR UNIFICADO: DESTINATARIO Y DIRECCIÓN DE ENTREGA */}
+              <div className="p-2 sm:p-2.5 bg-white rounded-xl border-2 border-black flex-shrink-0 shadow-xs thermal-box space-y-1.5">
+                {/* Cabecera Destinatario */}
                 <div className="flex justify-between items-center border-b border-black pb-1">
-                  <span className="text-[9.5px] font-black uppercase tracking-wider text-pink-600 thermal-text-black">
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-pink-600 thermal-text-black">
                     DESTINATARIO:
                   </span>
-                  <span className="text-[11px] font-black bg-black text-white px-2 py-0.5 rounded uppercase thermal-black-badge">
+                  <span className="text-xs font-black bg-black text-white px-2.5 py-0.5 rounded uppercase thermal-black-badge">
                     {recipientDept || "URUGUAY"}
                   </span>
                 </div>
 
-                {/* Nombre de destinatario a ancho completo para que no se quiebre en líneas innecesarias */}
-                <h3 className="text-base sm:text-lg font-black text-black leading-tight uppercase break-words">
-                  {recipientName || "[NOMBRE O EMPRESA]"}
-                </h3>
+                {/* 1. Nombre y Teléfono del Destinatario */}
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-black leading-tight uppercase break-words">
+                    {recipientName || "[NOMBRE O EMPRESA]"}
+                  </h3>
 
-                {/* Fila con Teléfono y Ubicación limpia */}
-                <div className="flex items-center justify-between gap-2 pt-0.5 border-t border-slate-100">
-                  <p className="text-xs font-black text-slate-900 flex items-center gap-1 thermal-text-black">
-                    <Phone className="w-3.5 h-3.5 text-slate-700 thermal-text-black flex-shrink-0" />
-                    <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
-                  </p>
-                  <p className="text-[10px] font-black text-black uppercase text-right truncate">
-                    📍 {cityDeptDisplay}
-                  </p>
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <p className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5 thermal-text-black">
+                      <Phone className="w-3.5 h-3.5 text-slate-700 thermal-text-black flex-shrink-0" />
+                      <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
+                    </p>
+                    <p className="text-[11px] font-black text-black uppercase text-right truncate">
+                      📍 {cityDeptDisplay}
+                    </p>
+                  </div>
+
+                  {rutInfo && (
+                    <p className="text-[8.5px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 thermal-box thermal-text-black mt-1 inline-block">
+                      📝 RUT: {rutInfo}
+                    </p>
+                  )}
                 </div>
 
-                {rutInfo && (
-                  <p className="text-[8.5px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 thermal-box thermal-text-black">
-                    📝 RUT: {rutInfo}
-                  </p>
-                )}
-              </div>
-
-              {/* RECUADRO DIRECCIÓN DE ENTREGA O SUCURSAL */}
-              <div className="p-2.5 bg-white rounded-xl border-2 border-black shadow-xs flex-shrink-0 overflow-hidden thermal-box">
-                <div className="border-b border-black pb-1 mb-1">
-                  <span className="inline-block text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider text-black bg-yellow-300 px-2 py-0.5 rounded border border-black/20">
-                    📍 DIRECCIÓN DE ENTREGA / SUCURSAL DE RETIRO
+                {/* 2. Dirección de Entrega / Sucursal de Retiro en el mismo contenedor */}
+                <div className="border-t-2 border-black pt-1.5">
+                  <span className="text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider text-black block thermal-text-black mb-0.5">
+                    📍 DIRECCIÓN DE ENTREGA / SUCURSAL DE RETIRO:
                   </span>
-                </div>
-                <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words py-1">
-                  {recipientAddress || "[DIRECCIÓN DE ENTREGA O SUCURSAL DE RETIRO]"}
-                </p>
-              </div>
-
-              {/* RECUADRO DE OBSERVACIONES */}
-              {observations && (
-                <div className="p-1.5 bg-slate-50 border border-dashed border-black rounded-lg space-y-0.5 flex-shrink-0 thermal-box">
-                  <span className="text-[7.5px] font-black uppercase text-slate-700 tracking-wider block thermal-text-black">
-                    💬 OBSERVACIONES / INDICACIONES:
-                  </span>
-                  <p className="text-[10.5px] font-extrabold text-black leading-tight break-words line-clamp-2">
-                    {observations}
+                  <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
+                    {recipientAddress || "[DIRECCIÓN DE ENTREGA O SUCURSAL DE RETIRO]"}
                   </p>
+
+                  {/* Observaciones dentro del mismo contenedor si existen */}
+                  {observations && (
+                    <div className="mt-1.5 pt-1 border-t border-dashed border-slate-300">
+                      <span className="text-[7.5px] font-black uppercase text-slate-600 block thermal-text-black">
+                        💬 OBSERVACIONES:
+                      </span>
+                      <p className="text-[10px] font-bold text-black leading-tight break-words">
+                        {observations}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
 
               {/* Advertencia de Manipulación y Cuidado - Frágil */}
               <div className="py-1 px-2 bg-red-50 border border-red-500 rounded-lg text-center flex-shrink-0 thermal-box">
@@ -744,7 +753,7 @@ export default function ShippingLabelModal({
             min-height: 0 !important;
             box-sizing: border-box !important;
             border: 2.5px solid #000000 !important;
-            border-radius: 0 !important;
+            border-radius: 4.5mm !important;
             box-shadow: none !important;
             padding: 3.5mm 4mm !important;
             margin: 0 !important;

@@ -328,11 +328,11 @@ export default function ManualOrderModal({
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Observaciones de Entrega (Detalles especiales)
+                  Observaciones / Indicaciones para identificar la vivienda
                 </label>
                 <input
                   type="text"
-                  placeholder="Ej. Entregar en la tarde, casa de la esquina, etc. (Opcional)"
+                  placeholder="Ej. Casa de rejas negras, portón de madera, entre calles X e Y, timbre... (Opcional)"
                   value={customerObservations}
                   onChange={(e) => setCustomerObservations(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"

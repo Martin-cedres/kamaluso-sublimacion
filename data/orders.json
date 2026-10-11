@@ -50,48 +50,6 @@
     "notes": ""
   },
   {
-    "id": "KAM-792186",
-    "createdAt": "2026-10-08T21:26:32.212Z",
-    "customer": {
-      "name": "Karen Figueroa",
-      "phone": "098184239",
-      "email": "figueroapercivale@hotmail.com",
-      "department": "Canelones",
-      "city": "Tala",
-      "address": "Agencia CITA TALA",
-      "observations": "",
-      "notes": ""
-    },
-    "items": [
-      {
-        "product": {
-          "id": "1789423161567",
-          "name": "Semanal Horizontal (flor)",
-          "slug": "semanal-horizontal-flor",
-          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país.\n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
-          "price": 175,
-          "currency": "UYU",
-          "category": "agendas",
-          "badge": "NUEVO 2027",
-          "hasPromoKit": false,
-          "inStock": true,
-          "images": [
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-nk9KuW18EpyB4a726X5i4fAOHWVk6x.webp"
-          ]
-        },
-        "quantity": 2
-      }
-    ],
-    "totalPrice": 350,
-    "finalTotal": 350,
-    "paymentMethodId": "red_pagos",
-    "paymentMethodName": "Giro RED PAGOS",
-    "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "pago_confirmado",
-    "observations": "",
-    "notes": ""
-  },
-  {
     "id": "KAM-666263",
     "createdAt": "2026-10-07T16:31:06.264Z",
     "customer": {
