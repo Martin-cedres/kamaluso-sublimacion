@@ -1,4 +1,5 @@
 const path = require("path");
+const redirects = require("./data/redirects.json");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -6,6 +7,9 @@ const nextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   images: {
     unoptimized: true,
+  },
+  async redirects() {
+    return redirects;
   },
   async rewrites() {
     return [
@@ -18,4 +22,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-

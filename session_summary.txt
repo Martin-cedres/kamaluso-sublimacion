@@ -897,3 +897,90 @@ BORDES REDONDEADOS EN EL CONTORNO DE LA ETIQUETA DE IMPRESIÓN
   * `npx tsc --noEmit` completado con 0 errores.
   * Ruta `/admin` respondiendo 200 OK.
 ================================================================================
+================================================================================
+COMPILACIÓN DE PRODUCCIÓN Y DESPLIEGUE A GITHUB Y VERCEL
+================================================================================
+- Tarea: Compilar el proyecto en modo producción y desplegar a GitHub y Vercel.
+- Proceso:
+  * Ejecutado `npm run build`: Compilación exitosa (0 errores, 50/50 páginas generadas y optimizadas).
+  * Creado commit `4de55a0`: "feat: rediseno de etiqueta de envio con contenedor unificado, remitente ampliado, bordes redondeados y placeholder sugerente de vivienda".
+  * Subido con éxito a GitHub: `git push origin main` -> repositorio https://github.com/Martin-cedres/kamaluso-sublimacion.git.
+  * Despliegue automático de Vercel activado y producción validada con respuesta HTTP 200 en https://www.kamaluso.com.
+================================================================================
+================================================================================
+ANÁLISIS: CUENTAS DE CLIENTE, HISTORIAL DE PEDIDOS Y DATOS GUARDADOS
+================================================================================
+- Tarea: Evaluar si conviene que el cliente quede registrado, vea su historial y reutilice datos de envío.
+- Conclusión: Sí conviene, en fases y sin obligar a registrarse (checkout invitado siempre disponible).
+- Hallazgos críticos previos (bloqueantes antes de crear cuentas):
+  1. Pedidos con datos personales en Vercel Blob con `access: "public"` y URL fija en el código (src/app/api/orders/route.ts).
+  2. `data/orders.json` versionado en git y subido a GitHub.
+  3. GET/POST/DELETE de /api/orders sin autenticación (POST acepta array y reemplaza todos los pedidos).
+  4. RLS de products usa `auth.role() = 'authenticated'`: cualquier cliente logueado podría editar productos.
+  5. Sesión admin basada en localStorage + whitelist del lado cliente.
+- Plan propuesto: Fase 0 seguridad -> Fase 1 "Recordar mis datos" (localStorage) -> Fase 2 cuentas opcionales (magic link / Google) con Supabase + RLS por user_id, "Mis pedidos" y "Repetir pedido".
+- Sin cambios de código en esta sesión (solo análisis).
+================================================================================
+================================================================================
+PLAN COMPLETO: CUENTAS DE CLIENTE OPCIONALES (GUEST-FIRST)
+================================================================================
+- Tarea: Diseñar plan senior de cuentas, historial, direcciones guardadas y mejor UX, manteniendo navegación y carrito 100% públicos.
+- Entregable: artefacto plan_cuentas_clientes.md (principios UX, flujos, arquitectura Supabase Auth + @supabase/ssr, modelo de datos con RLS, seguridad, Ley 18.331, fases 0-5, métricas, verificación).
+- Hallazgos adicionales: .env.local sin variables de Supabase; precios enviados desde el cliente al pedido y a la preferencia de Mercado Pago; sin webhook de MP; IDs de pedido adivinables.
+- Sin cambios de código (pendiente aprobación del usuario).
+================================================================================
+================================================================================
+AJUSTE DEL PLAN: GOOGLE ONE TAP CON LOGIN AUTOMÁTICO
+================================================================================
+- Consulta: ¿login automático con Google como mejor práctica?
+- Decisión: Google One Tap (FedCM) + auto_select para clientes que vuelven, como método principal; código por email como alternativa (Hotmail/Outlook, Safari/iOS, sin cuenta Google).
+- One Tap solo en momentos de intención (checkout, post-compra, /mi-cuenta); nunca al entrar a la home.
+- Integración vía supabase.auth.signInWithIdToken (sin redirecciones). Teléfono se pide una vez (Google no lo provee).
+- Plan actualizado en plan_cuentas_clientes.md (sección 2.3 y principios). Sin cambios de código.
+================================================================================
+================================================================================
+AJUSTE DEL PLAN: INTERFAZ RESPONSIVE Y EMAILS TRANSACCIONALES
+================================================================================
+- Consulta: ¿el plan incluye interfaz responsive completa y emails automáticos tipo e-commerce?
+- Agregado al plan (plan_cuentas_clientes.md):
+  * 2.7 Interfaz responsive mobile-first: comportamiento por pantalla (login, checkout, Mi Cuenta, pedidos, detalle, direcciones, seguimiento), estándares táctiles, skeletons, WCAG 2.1 AA, safe-area iOS, QA en 5 anchos.
+  * 2.8 Emails transaccionales: confirmación, pago confirmado, en preparación, despachado (con rastreo), cancelado, recordatorio de pago 48 h, código de acceso, bienvenida, avisos de seguridad. React Email + dominio verificado (SPF/DKIM/DMARC), email_log anti-duplicados.
+  * Fases 1-4 re-estimadas con estos alcances.
+- Sin cambios de código.
+================================================================================
+================================================================================
+CLARIFICACIÓN DE INFRAESTRUCTURA Y BASE DE DATOS
+================================================================================
+- Consulta usuario: "tengo la base de datos creo que en couldflare".
+- Hallazgo en el repositorio:
+  1. La persistencia actual está en Vercel Blob (archivos JSON: data/products.json y data/orders.json) en Vercel.
+  2. DNS de kamaluso.com delegados en register.it apuntando directo a Vercel (76.76.21.21).
+  3. No hay bindings de Cloudflare (D1, KV o R2) configurados en el proyecto.
+- Recomendación:
+  * Si tiene Cloudflare D1, requiere armar auth y sesiones desde cero.
+  * Supabase ya tiene el cliente instanciado en el proyecto (lib/supabase/client.ts) y resuelve Auth + Google One Tap + base de datos con RLS de forma nativa.
+================================================================================
+================================================================================
+OPTIMIZACIÓN SEO GOOGLE SEARCH CONSOLE: RESOLUCIÓN 404, CANONICALS Y REDIRECCIONES
+================================================================================
+- Tarea: Resolver 47 errores 404, corregir páginas duplicadas sin canónica y blindar la indexación en Google Search Console para kamaluso.com.
+- Roles de Enjambre Ejecutados:
+  * Arquitecto: Mapeo exhaustivo de las 47 URLs huérfanas reportadas en GSC desde Webnode hacia sus productos equivalentes vigentes (2026/27) y categorías oficiales.
+  * Programmer:
+    1. Creación de `data/redirects.json` con 48 reglas de redirección permanente (301/308).
+    2. Integración limpia en `next.config.js` (`async redirects()`).
+    3. Remoción del tag canónico genérico erróneo `alternates: { canonical: "/" }` en `src/app/layout.tsx` para evitar que las URLs 404 y subpáginas hereden la raíz indebidamente.
+  * QA:
+    1. Compilación de producción ejecutada con `npm run build`: 50/50 páginas estáticas y rutas dinámicas generadas exitosamente con 0 errores y 0 fallos de tipos.
+    2. Verificación de servidor local: comprobada la respuesta HTTP 308 permanente hacia los destinos canónicos correctos (HTTP 200).
+    3. Respetada la directiva del usuario de no realizar push a GitHub ni despliegue a producción todavía.
+================================================================================
+================================================================================
+DESPLIEGUE A PRODUCCIÓN: REDIRECCIONES 301 SEO Y CANONICALS (VERCEL & GITHUB)
+================================================================================
+- Tarea: Desplegar en producción el blindaje SEO para Search Console en kamaluso.com.
+- Acciones:
+  * Agregado `data/redirects.json`, actualización de `next.config.js` y `src/app/layout.tsx`.
+  * Commit y push directo a GitHub `main` disparando el despliegue automático de Vercel.
+  * Verificación HTTP de producción en https://www.kamaluso.com.
+================================================================================

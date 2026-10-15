@@ -31,9 +31,6 @@ export const metadata: Metadata = {
   description:
     "Fabricantes de interiores y tapas sublimables de 350gr para agendas, libretas, blocks y cuadernos. Envíos a todo Uruguay desde San José de Mayo.",
   metadataBase: new URL("https://www.kamaluso.com"),
-  alternates: {
-    canonical: "/",
-  },
   keywords: [
     "interiores de agendas para sublimar",
     "papeleria sublimable uruguay",
