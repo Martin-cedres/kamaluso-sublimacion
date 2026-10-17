@@ -211,9 +211,9 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <>
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
       {/* Top Announcement Bar - Aclaración B2B e Insumos + Publicidad B2C */}
-      <div className="bg-slate-900 text-white text-[11px] py-1.5 px-4 font-semibold border-b border-slate-800">
+      <div className="bg-slate-900 text-white text-[11px] py-1.5 px-4 font-semibold border-b border-slate-800" data-nosnippet>
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
           <div className="flex items-center gap-2 justify-center sm:justify-start">
             <span className="bg-pink-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -236,7 +236,6 @@ export function Header() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 sm:py-0 sm:h-20 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
         <div className="w-full sm:w-auto flex items-center justify-between gap-4">
           {/* Logo Brand con Icono Oficial */}
@@ -285,7 +284,7 @@ export function Header() {
           </div>
         </div>
 
-        {/* Buscador Integrado en el Navbar (Estilo LOI / Mercado Libre con Desplegable Flotante) */}
+        {/* Buscador Integrado en el Navbar */}
         <div className="w-full sm:flex-1 sm:max-w-md my-1 sm:my-0">
           <Suspense fallback={<div className="h-9 bg-slate-100 rounded-full animate-pulse" />}>
             <HeaderSearchInput />
@@ -294,7 +293,7 @@ export function Header() {
 
         {/* Navigation Desktop & Actions */}
         <div className="hidden sm:flex items-center gap-5">
-          <nav className="hidden lg:flex items-center gap-5 font-semibold text-xs text-slate-600">
+          <nav aria-label="Navegación principal" className="hidden lg:flex items-center gap-5 font-semibold text-xs text-slate-600">
             <Link href="/" className="hover:text-brand-600 transition-colors">
               Inicio
             </Link>
@@ -342,7 +341,7 @@ export function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden bg-white border-b border-slate-100 px-4 py-4 space-y-2 font-semibold text-slate-700">
+        <nav aria-label="Navegación móvil" className="sm:hidden bg-white border-b border-slate-100 px-4 py-4 space-y-2 font-semibold text-slate-700">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
@@ -395,9 +394,8 @@ export function Header() {
             <Instagram className="w-4 h-4" />
             <span>Seguinos en Instagram (@kamaluso_sanjose)</span>
           </a>
-        </div>
+        </nav>
       )}
     </header>
-  </>
   );
 }

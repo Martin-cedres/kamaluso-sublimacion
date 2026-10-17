@@ -6,7 +6,7 @@ import { getAllProducts, getProductBySlug } from "@/lib/products";
 import { ChevronRight, ArrowLeft, ShieldCheck, Truck, PackageCheck } from "lucide-react";
 import { AddToCartDetail } from "./AddToCartDetail";
 import { ProductGallery } from "./ProductGallery";
-
+import { Product } from "@/types";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -19,6 +19,58 @@ export async function generateStaticParams() {
   }));
 }
 
+function getProductMeasures(product: Product): string {
+  const n = product.name.toLowerCase();
+  const d = product.description.toLowerCase();
+  if (n.includes("21x30") || d.includes("21x30")) return "21x30cm";
+  if (n.includes("10x15") || d.includes("10x15")) return "10x15cm";
+  if (n.includes("17x22") || d.includes("17x22")) return "17x22cm";
+  if (n.includes("cartulina") || d.includes("cartulina")) return "A4";
+  return "15x21cm";
+}
+
+function getProductDisplayName(product: Product): string {
+  // Mantener año comercial actual (2027) en title y H1 para agendas con fecha
+  if (
+    product.category === "agendas" &&
+    !product.name.includes("202") &&
+    !product.name.toLowerCase().includes("perpetua") &&
+    !product.name.toLowerCase().includes("profesor") &&
+    !product.name.toLowerCase().includes("lashista") &&
+    !product.name.toLowerCase().includes("manicurista") &&
+    !product.name.toLowerCase().includes("embarazo") &&
+    !product.name.toLowerCase().includes("pack")
+  ) {
+    return `${product.name} 2027`;
+  }
+  return product.name;
+}
+
+function getProductMetaDescription(product: Product): string {
+  const measure = getProductMeasures(product);
+  const isKit =
+    !product.name.toLowerCase().includes("cartulina") &&
+    !product.name.toLowerCase().includes("pack 2 tapas");
+  const includes = isKit
+    ? "hojas interiores impresas + tapas sublimables 350gr + espiral"
+    : "tapas sublimables de cartón cristal 350gr";
+
+  let desc = `${product.name} (${measure}): kit de ${includes}. Parámetros: 170ºC / 120s. $${product.price} UYU. Envíos a todo Uruguay.`;
+  if (desc.length > 160) {
+    desc = `${product.name} (${measure}): kit de ${includes}. Estampar 170ºC/120s. $${product.price} UYU. Envíos a todo Uruguay.`;
+  }
+  if (desc.length > 160) {
+    desc = `${product.name} (${measure}): hojas impresas + tapas 350gr + espiral. 170ºC/120s. $${product.price} UYU. Envíos a todo Uruguay.`;
+  }
+  if (desc.length < 140) {
+    desc = `${product.name} (${measure}): kit de ${includes}. Parámetros: 170ºC / 120s. Precio: $${product.price} UYU. Envíos a todo Uruguay desde San José.`;
+  }
+  if (desc.length > 160) {
+    desc = desc.slice(0, 157) + "...";
+  }
+  return desc;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -29,34 +81,38 @@ export async function generateMetadata({
 
   if (!product) return {};
 
+  const displayName = getProductDisplayName(product);
   const productUrl = `https://www.kamaluso.com/p/${product.slug}`;
-  
-  // Garantizar que la imagen sea siempre una URL absoluta válida para WhatsApp / Facebook
-  const rawImage = product.images && product.images.length > 0 ? product.images[0] : "/agenda_fondo_kamaluso.jpg";
+  const dynamicMetaDesc = getProductMetaDescription(product);
+
+  // Garantizar que la imagen sea siempre una URL absoluta válida
+  const rawImage =
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : "/agenda_fondo_kamaluso.jpg";
   const absoluteImageUrl = rawImage.startsWith("http")
     ? rawImage
     : `https://www.kamaluso.com${rawImage.startsWith("/") ? rawImage : `/${rawImage}`}`;
 
-  const cleanDescription = product.description 
-    ? product.description.slice(0, 160) 
-    : "Insumo de papelería sublimable de 350gr en Uruguay. San José de Mayo.";
-
   return {
-    title: `${product.name} | Kamaluso Sublimación Uruguay`,
-    description: cleanDescription,
+    title: `${displayName} | Kamaluso Papelería Sublimable Uruguay`,
+    description: dynamicMetaDesc,
     alternates: {
       canonical: productUrl,
     },
     keywords: [
+      displayName,
       product.name,
       "insumos sublimables Uruguay",
       "papeleria sublimacion",
+      "tapas sublimables 350gr",
       "interiores de agenda para sublimar",
       product.category,
+      "San José de Mayo",
     ],
     openGraph: {
-      title: `${product.name} | Kamaluso`,
-      description: cleanDescription,
+      title: `${displayName} | Kamaluso`,
+      description: dynamicMetaDesc,
       url: productUrl,
       siteName: "Kamaluso Sublimación",
       locale: "es_UY",
@@ -66,14 +122,14 @@ export async function generateMetadata({
           url: absoluteImageUrl,
           width: 800,
           height: 800,
-          alt: `${product.name} - Kamaluso Sublimación Uruguay`,
+          alt: `${displayName} - Kamaluso Sublimación Uruguay`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} | Kamaluso`,
-      description: cleanDescription,
+      title: `${displayName} | Kamaluso`,
+      description: dynamicMetaDesc,
       images: [absoluteImageUrl],
     },
   };
@@ -91,22 +147,27 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  // Schema.org JSON-LD para Google Shopping y Rich Snippets B2B
+  const displayName = getProductDisplayName(product);
+  const productUrl = `https://www.kamaluso.com/p/${product.slug}`;
+  const productDesc = getProductMetaDescription(product);
+
+  // Schema.org JSON-LD para Google Shopping y Rich Snippets GEO B2B
   const jsonLdProduct = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.name,
+    name: displayName,
     image: product.images,
-    description: product.description,
+    description: product.description || productDesc,
     sku: product.id,
+    material: "Cartón cristal sublimable de 350gr con polímero virgen y papel obra impreso",
     brand: {
       "@type": "Brand",
       name: "Kamaluso",
     },
     offers: {
       "@type": "Offer",
-      url: `https://www.kamaluso.com/p/${product.slug}`,
-      priceCurrency: product.currency,
+      url: productUrl,
+      priceCurrency: product.currency || "UYU",
       price: product.price,
       itemCondition: "https://schema.org/NewCondition",
       availability: product.inStock
@@ -114,7 +175,28 @@ export default async function ProductDetailPage({
         : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "Kamaluso Sublimación",
+        name: "Kamaluso",
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "UYU",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "UY",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 2,
+            unitCode: "DAY",
+          },
+        },
       },
     },
   };
@@ -123,50 +205,50 @@ export default async function ProductDetailPage({
   const jsonLdFaq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [
+    mainEntity: [
       {
         "@type": "Question",
-        "name": `¿Cuáles son los parámetros recomendados para sublimar ${product.name}?`,
-        "acceptedAnswer": {
+        name: `¿Cuáles son los parámetros recomendados para sublimar ${product.name}?`,
+        acceptedAnswer: {
           "@type": "Answer",
-          "text": "Se recomienda estampación en prensa plana de calor a 170ºC - 180ºC durante 120 segundos con presión media a alta."
-        }
+          text: "Se recomienda estampación en prensa plana de calor a 170ºC - 180ºC durante 120 segundos con presión media a alta y enfriamiento bajo peso plano de 60 a 120 segundos.",
+        },
       },
       {
         "@type": "Question",
-        "name": "¿Cuál es el tiempo de despacho y envío a departamentos de Uruguay?",
-        "acceptedAnswer": {
+        name: "¿Cuál es el tiempo de despacho y envío a departamentos de Uruguay?",
+        acceptedAnswer: {
           "@type": "Answer",
-          "text": "El tiempo de preparación estimado es de 48 horas hábiles. Realizamos envíos a todo Uruguay desde San José de Mayo mediante agencias de transporte."
-        }
-      }
-    ]
+          text: "El tiempo de preparación estimado es de 48 horas hábiles. Realizamos envíos diarios a Montevideo y los 19 departamentos de Uruguay desde San José de Mayo mediante DAC, Correo Uruguayo y COTMI sin mínimo de compra.",
+        },
+      },
+    ],
   };
 
   // Schema BreadcrumbList para navegación estructurada en Google
   const jsonLdBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Inicio",
-        "item": "https://www.kamaluso.com"
+        position: 1,
+        name: "Inicio",
+        item: "https://www.kamaluso.com",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": product.category.toUpperCase().replace("-", " "),
-        "item": `https://www.kamaluso.com/categoria/${product.category}`
+        position: 2,
+        name: product.category.toUpperCase().replace("-", " "),
+        item: `https://www.kamaluso.com/categoria/${product.category}`,
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": product.name,
-        "item": `https://www.kamaluso.com/p/${product.slug}`
-      }
-    ]
+        position: 3,
+        name: displayName,
+        item: productUrl,
+      },
+    ],
   };
 
   return (
@@ -191,12 +273,15 @@ export default async function ProductDetailPage({
           Inicio
         </Link>
         <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-        <Link href="/#catalogo" className="hover:text-brand-600 uppercase transition-colors">
+        <Link
+          href={`/categoria/${product.category}`}
+          className="hover:text-brand-600 uppercase transition-colors"
+        >
           {product.category.replace("-", " ")}
         </Link>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
         <span className="text-slate-900 font-bold truncate max-w-xs sm:max-w-none">
-          {product.name}
+          {displayName}
         </span>
       </nav>
 
@@ -206,11 +291,10 @@ export default async function ProductDetailPage({
         <div className="lg:sticky lg:top-24 self-start">
           <ProductGallery
             images={product.images}
-            productName={product.name}
+            productName={displayName}
             badge={product.badge}
           />
         </div>
-
 
         {/* Right: Info and Purchase */}
         <div className="space-y-6">
@@ -219,7 +303,7 @@ export default async function ProductDetailPage({
               Insumo de Papelería Sublimable
             </span>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-              {product.name}
+              {displayName}
             </h1>
           </div>
 
@@ -280,7 +364,7 @@ export default async function ProductDetailPage({
             <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-amber-950">
               <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
                 <span className="text-slate-400 block text-[10px]">Temperatura</span>
-                <span className="text-base font-black text-amber-700">170 ºC</span>
+                <span className="text-base font-black text-amber-700">170 ºC – 180 ºC</span>
               </div>
               <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
                 <span className="text-slate-400 block text-[10px]">Tiempo Prensa Plana</span>
@@ -297,13 +381,11 @@ export default async function ProductDetailPage({
             </div>
             <ul className="space-y-1 text-slate-600 pl-5 list-disc">
               <li><strong>Sin mínimo de compra</strong>. Envíos a todo el Uruguay.</li>
-              <li>Despacho estimado en aproximado <strong>48hs</strong>.</li>
+              <li>Despacho estimado en aproximado <strong>48hs</strong> por DAC, Correo Uruguayo y COTMI.</li>
               <li>La elaboración inicia al recibir el <strong>comprobante de pago</strong>.</li>
               <li>Para pedidos mayores a <strong>$2.500 UYU</strong>, consultar tiempo de preparación.</li>
             </ul>
           </div>
-
-
 
           {/* Add to Cart Component */}
           <AddToCartDetail product={product} />

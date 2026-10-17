@@ -25,11 +25,11 @@ const KAMALUSO_LOGO_URL =
 
 export const metadata: Metadata = {
   title: {
-    default: "Kamaluso | Insumos y Papelería Sublimable en Uruguay",
-    template: "%s | Kamaluso Sublimación",
+    default: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
+    template: "%s | Kamaluso Papelería Sublimable",
   },
   description:
-    "Fabricantes de interiores y tapas sublimables de 350gr para agendas, libretas, blocks y cuadernos. Envíos a todo Uruguay desde San José de Mayo.",
+    "Fabricantes directos en San José, Uruguay de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de 350gr con espiral. Venta por mayor y menor sin mínimo. Envíos a todo el país.",
   metadataBase: new URL("https://www.kamaluso.com"),
   keywords: [
     "interiores de agendas para sublimar",
@@ -104,7 +104,7 @@ export default function RootLayout({
       <body className="font-sans antialiased bg-slate-50 text-slate-800 flex flex-col min-h-screen">
         <CartProvider>
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main id="main-content" className="flex-grow">{children}</main>
           <Footer />
           <CartDrawer />
           <WhatsAppFloating />

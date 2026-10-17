@@ -9,6 +9,65 @@ export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 export const revalidate = 0;
 
+const CATEGORY_SEO: Record<
+  string,
+  {
+    h1: string;
+    title: string;
+    metaDescription: string;
+    intro: string;
+  }
+> = {
+  agendas: {
+    h1: "Agendas Sublimables 2027 y Perpetuas en Uruguay",
+    title: "Agendas Sublimables 2027 y Perpetuas en Uruguay | Kamaluso",
+    metaDescription:
+      "Kits completos de agendas para sublimar directos de fábrica en San José de Mayo. Incluyen hojas interiores impresas, tapas rígidas de cartón cristal de 350gr tratadas con polímero virgen y espirales plásticos. Envíos a todo el país.",
+    intro:
+      "Kits completos de agendas para sublimar directos de fábrica en San José de Mayo. Incluyen hojas interiores impresas, tapas rígidas de cartón cristal de 350gr tratadas con polímero virgen y espirales plásticos. Envíos a Montevideo y los 19 departamentos sin mínimo de compra.",
+  },
+  libretas: {
+    h1: "Libretas y Cuadernos Sublimables en Uruguay (A5, 17x22 y A4)",
+    title: "Libretas y Cuadernos Sublimables en Uruguay (A5, 17x22 y A4) | Kamaluso",
+    metaDescription:
+      "Insumos de libretas, cuadernos y cuadernolas 21x30 para sublimación en Uruguay. Sets listos para estampar y encuadernar con tapas de 350gr e interiores de alto gramaje para talleres.",
+    intro:
+      "Insumos de libretas, cuadernos y cuadernolas 21x30 para sublimación en Uruguay. Sets listos para estampar y encuadernar con tapas de 350gr e interiores de alto gramaje, pensados para talleres de personalización y papelería corporativa.",
+  },
+  "blocks-planners": {
+    h1: "Blocks 10x15 y Planners Sublimables en Uruguay",
+    title: "Blocks 10x15 y Planners Sublimables en Uruguay | Kamaluso",
+    metaDescription:
+      "Organizadores perpetuos, planners semanales y blocks anotadores 10x15cm (lisos y renglonados) con tapas sublimables de 350gr y espiral incluido en Uruguay. Sin mínimo.",
+    intro:
+      "Organizadores perpetuos, planners semanales y blocks anotadores 10x15cm (lisos y renglonados) con tapas sublimables de 350gr y espiral incluido. Ideales para souvenirs, regalos empresariales y emprendimientos de sublimación.",
+  },
+  especiales: {
+    h1: "Insumos Especiales y Cartulina Sublimable 350gr en Uruguay",
+    title: "Insumos Especiales y Cartulina Sublimable 350gr en Uruguay | Kamaluso",
+    metaDescription:
+      "Packs de cartulina sublimable A4 de 350gr, repuestos de tapas perforadas y recetarios sublimables (color, negro e infantil) listos para estampar a 170ºC durante 120 segundos.",
+    intro:
+      "Packs de cartulina sublimable A4 de 350gr, repuestos de tapas perforadas y recetarios sublimables (color, negro e infantil) listos para estampar a 170ºC durante 120 segundos.",
+  },
+  outlet: {
+    h1: "Outlet de Papelería e Insumos Sublimables en Uruguay",
+    title: "Outlet de Papelería e Insumos Sublimables en Uruguay | Kamaluso",
+    metaDescription:
+      "Liquidación de temporada, lotes promocionales y formatos discontinuados de papelería sublimable con descuento directo de taller. Sin mínimo de compra y con envíos a todo el país.",
+    intro:
+      "Liquidación de temporada, lotes promocionales y formatos discontinuados de papelería sublimable con descuento directo de taller. Sin mínimo de compra y con envíos a todo el país.",
+  },
+  "kits-promos": {
+    h1: "Kits Mayoristas de Papelería Sublimable en Uruguay",
+    title: "Kits Mayoristas de Papelería Sublimable en Uruguay | Kamaluso",
+    metaDescription:
+      "Kits mayoristas de papelería sublimable con descuento directo de fábrica. Promociones por volumen en agendas y cuadernos para talleres y sublimadores en Uruguay.",
+    intro:
+      "Packs y promociones por volumen en agendas y cuadernos para sublimar con descuento directo de fábrica. Aumenta la rentabilidad de tu taller de personalización.",
+  },
+};
+
 export async function generateStaticParams() {
   return CATEGORIES.filter((c) => c.id !== "todos").map((cat) => ({
     slug: cat.id,
@@ -25,8 +84,13 @@ export async function generateMetadata({
 
   if (!category || slug === "todos") return {};
 
-  const title = `${category.name} para Sublimación en Uruguay | Kamaluso`;
-  const description = `Comprar ${category.name.toLowerCase()} para sublimar y personalizar al por mayor y menor. Fabricación y envíos rápidos a todo Uruguay desde San José.`;
+  const seoData = CATEGORY_SEO[slug] || {
+    h1: `${category.name} en Uruguay`,
+    title: `${category.name} | Kamaluso Papelería Sublimable Uruguay`,
+    metaDescription: `Insumos de ${category.name.toLowerCase()} para sublimación e imprenta en Uruguay. Fabricación directa en San José de Mayo sin mínimo de compra.`,
+    intro: `Encuentra kits completos de ${category.name.toLowerCase()} para sublimar y personalizar en Uruguay.`,
+  };
+
   const canonicalUrl = `https://www.kamaluso.com/categoria/${slug}`;
 
   const allProducts = await getAllProducts();
@@ -37,8 +101,8 @@ export async function generateMetadata({
     : `https://www.kamaluso.com${rawCatImg.startsWith("/") ? rawCatImg : `/${rawCatImg}`}`;
 
   return {
-    title,
-    description,
+    title: seoData.title,
+    description: seoData.metaDescription,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -47,10 +111,11 @@ export async function generateMetadata({
       `comprar ${category.name.toLowerCase()} sublimacion`,
       "insumos para sublimar san jose",
       "papeleria sublimable por mayor",
+      "tapas 350gr sublimacion",
     ],
     openGraph: {
-      title,
-      description,
+      title: seoData.title,
+      description: seoData.metaDescription,
       url: canonicalUrl,
       siteName: "Kamaluso Sublimación",
       locale: "es_UY",
@@ -60,14 +125,14 @@ export async function generateMetadata({
           url: catImageUrl,
           width: 800,
           height: 800,
-          alt: `${category.name} Sublimables - Kamaluso Uruguay`,
+          alt: `${category.name} - Kamaluso Papelería Sublimable Uruguay`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: seoData.title,
+      description: seoData.metaDescription,
       images: [catImageUrl],
     },
   };
@@ -88,19 +153,26 @@ export default async function CategoryPage({
   const allProducts = await getAllProducts();
   const categoryProducts = allProducts.filter((p) => p.category === slug);
 
+  const seoData = CATEGORY_SEO[slug] || {
+    h1: `${category.name} en Uruguay`,
+    title: `${category.name} | Kamaluso`,
+    metaDescription: `Insumos de ${category.name.toLowerCase()} para sublimar.`,
+    intro: `Encuentra kits completos de ${category.name.toLowerCase()} para sublimar y personalizar en Uruguay.`,
+  };
+
   // Schema.org ItemList para la categoría
   const jsonLdItemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": `${category.name} Sublimables`,
-    "description": `Catálogo de ${category.name.toLowerCase()} para sublimación e imprenta en Uruguay`,
+    "name": seoData.h1,
+    "description": seoData.metaDescription,
     "numberOfItems": categoryProducts.length,
     "itemListElement": categoryProducts.map((prod, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "url": `https://www.kamaluso.com/p/${prod.slug}`,
-      "name": prod.name
-    }))
+      "name": prod.name,
+    })),
   };
 
   return (
@@ -122,16 +194,16 @@ export default async function CategoryPage({
         </span>
       </nav>
 
-      {/* Category Banner */}
+      {/* Category Banner con H1 e Intro Limpios y Específicos */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-pink-950 p-8 sm:p-10 rounded-3xl text-white space-y-3 shadow-lg relative overflow-hidden">
         <div className="flex items-center gap-2 text-xs font-bold text-pink-400 uppercase tracking-widest">
-          <Layers className="w-4 h-4" /> Categoría de Insumos
+          <Layers className="w-4 h-4" /> Categoría de Insumos Sublimables
         </div>
         <h1 className="text-3xl sm:text-4xl font-black">
-          {category.name} Sublimables en Uruguay
+          {seoData.h1}
         </h1>
-        <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-          Encuentra los mejores interiores de {category.name.toLowerCase()}, tapas de 350gr preparadas para estampar y accesorios para encuadernación. Sin mínimo de compra y envíos a todo el país desde San José de Mayo.
+        <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
+          {seoData.intro}
         </p>
       </div>
 
@@ -153,18 +225,68 @@ export default async function CategoryPage({
       {/* Guía Semántica B2B por Categoría (SEO & GEO Content) */}
       <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-sm space-y-6 text-slate-700">
         {slug === "agendas" && (
-          <div className="space-y-4">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Guía de Agendas Sublimables en Uruguay: Modelos, Tapas e Interiores
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              En <strong>Kamaluso</strong> confeccionamos kits completos de <strong>agendas para sublimar</strong> pensados específicamente para talleres de personalización y emprendedores. Cada set incluye hojas interiores temáticas impresas con nitidez, tapas y contratapas de <strong>cartón cristal de 350gr con polímero virgen</strong> y espirales plásticos continuos.
-            </p>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+                Guía de Agendas Sublimables en Uruguay: Modelos, Tapas e Interiores
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                En <strong>Kamaluso</strong> confeccionamos kits completos de <strong>agendas para sublimar</strong> pensados específicamente para talleres de personalización y emprendedores. Cada set incluye hojas interiores temáticas impresas con nitidez, tapas y contratapas de <strong>cartón cristal de 350gr con polímero virgen</strong> y espirales plásticos continuos.
+              </p>
+            </div>
+
+            {/* Tabla Semántica de Especificaciones Técnicas (Answer-First GEO & AI Overviews) */}
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/80 space-y-3">
+              <h3 className="font-extrabold text-sm text-slate-900 uppercase tracking-wider">
+                Ficha Técnica de Agendas Sublimables Kamaluso
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                      <th className="py-2.5 px-3">Parámetro / Componente</th>
+                      <th className="py-2.5 px-3">Especificación Oficial de Fábrica</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200/60 text-slate-700">
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Gramaje de tapa</td>
+                      <td className="py-2.5 px-3">350gr Cartón Cristal de alta rigidez</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Polímero térmico</td>
+                      <td className="py-2.5 px-3 text-emerald-700 font-semibold">Virgen de alta transferencia (brillo y viveza de color)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Temperatura de estampado</td>
+                      <td className="py-2.5 px-3 font-bold text-amber-700">170ºC – 180ºC en prensa térmica plana</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Tiempo de prensado</td>
+                      <td className="py-2.5 px-3 font-bold text-amber-700">120 segundos constantes</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Presión recomendada</td>
+                      <td className="py-2.5 px-3">Media a alta con presión uniforme</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Técnica de enfriamiento</td>
+                      <td className="py-2.5 px-3">Bajo peso plano durante 60 a 120 segundos (anti-curvatura)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">Logística y envíos</td>
+                      <td className="py-2.5 px-3">DAC, Correo Uruguayo y COTMI a Montevideo y los 19 departamentos</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
                 <h3 className="font-bold text-slate-900 text-sm">Variedad de Interiores Temáticos</h3>
                 <p className="text-slate-600">
-                  Agendas semanales horizontales, un día a la vista, dos días por página, agenda docente primaria (con planillas de calificaciones y asistencia), agenda para peluquería, control de embarazo y diarios íntimos.
+                  Agendas semanales horizontales y verticales, un día a la vista, dos días por página, agenda docente primaria (con planillas de calificaciones y asistencia), agenda para peluquería, lashistas, manicuristas, control de embarazo y diarios íntimos.
                 </p>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">

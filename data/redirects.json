@@ -1,50 +1,262 @@
 [
-  { "source": "/home", "destination": "/", "permanent": true },
-  { "source": "/cart", "destination": "/", "permanent": true },
-  { "source": "/&", "destination": "/", "permanent": true },
-  { "source": "/$", "destination": "/", "permanent": true },
-  { "source": "/p-zmtyzmzq/:path*", "destination": "/", "permanent": true },
-  { "source": "/p-k1mtm1mq/:path*", "destination": "/", "permanent": true },
-  { "source": "/p-xmjuxmda/:path*", "destination": "/", "permanent": true },
-  { "source": "/p/agenda-docente-perpetua-sublimable-para-personalizar-260-paginas", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-semana-a-la-vista-horizontal-sublimable", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-dos-dias-por-pagina-horitonzal", "destination": "/p/agenda-2-dias-a-la-vista", "permanent": true },
-  { "source": "/p/agenda-dos-dias-por-pagina-horizontal", "destination": "/p/agenda-2-dias-a-la-vista", "permanent": true },
-  { "source": "/p/agenda-2-dias-a-la-vista-2024", "destination": "/p/agenda-2-dias-a-la-vista", "permanent": true },
-  { "source": "/p/agenda-1-dia-a-la-vista-2024", "destination": "/p/agenda-1-dia-a-la-vista", "permanent": true },
-  { "source": "/p/agenda-un-dia-a-la-vista-sublimable", "destination": "/p/agenda-1-dia-a-la-vista", "permanent": true },
-  { "source": "/p/agenda-de-peluqueria-perpetua", "destination": "/categoria/agendas", "permanent": true },
-  { "source": "/p/agenda-colores-sublimable", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-semanal-2027", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-semanal-2024-estrellas", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-semanal-20241", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-semanal-2023-sublimable", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-semanal-vertical-2026", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-2-dias-vertical-2026", "destination": "/p/agenda-2-dias-a-la-vista", "permanent": true },
-  { "source": "/p/agenda-floral-semanal-sublimable-20241", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-perpetua-semanal-sublimable", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agendas-semanales-2026-18x28", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/agenda-perpetua-gatitos-sublimable", "destination": "/categoria/agendas", "permanent": true },
-  { "source": "/p/agenda-perpetua-peluqueria-sublimable", "destination": "/categoria/agendas", "permanent": true },
-  { "source": "/p/bullet-semanal-2025", "destination": "/p/agenda-sublimable-semanal", "permanent": true },
-  { "source": "/p/papel-80gr", "destination": "/categoria/agendas", "permanent": true },
-  { "source": "/p/planner-infantil-semanal", "destination": "/p/planner-verde", "permanent": true },
-  { "source": "/p/planificador-diario-colores", "destination": "/p/planner-verde", "permanent": true },
-  { "source": "/p/planificador-diario-colores-sublimable", "destination": "/p/planner-verde", "permanent": true },
-  { "source": "/p/planner-semanal", "destination": "/p/planner-verde", "permanent": true },
-  { "source": "/p/planner-verde-sublimable", "destination": "/p/planner-verde", "permanent": true },
-  { "source": "/p/control-de-gastos", "destination": "/categoria/blocks-planners", "permanent": true },
-  { "source": "/p/block-10x15cm-liso", "destination": "/p/block-sublimable-10x15cm-sin-renglones", "permanent": true },
-  { "source": "/p/block-10x15cm-con-renglones-sublimable", "destination": "/p/copia-de-block-sublimable-10x15cm-con-renglones", "permanent": true },
-  { "source": "/p/block-sublimable-10x15cm-con-renglones", "destination": "/p/copia-de-block-sublimable-10x15cm-con-renglones", "permanent": true },
-  { "source": "/p/libreta-de-pedidos-sublimable", "destination": "/p/libreta-sublimable-tamano-15x21-cm", "permanent": true },
-  { "source": "/p/libreta-tamano-15x21-cm-sublimable", "destination": "/p/libreta-sublimable-tamano-15x21-cm", "permanent": true },
-  { "source": "/p/diario-intimo-rosado", "destination": "/categoria/libretas", "permanent": true },
-  { "source": "/p/diario-intimo-rosado-sublimable", "destination": "/categoria/libretas", "permanent": true },
-  { "source": "/p/cuadernola-21x30", "destination": "/p/cuaderno", "permanent": true },
-  { "source": "/p/cien-citas-juntos-sublimable", "destination": "/p/citas-juntos-100", "permanent": true },
-  { "source": "/p/recetario-sublimable", "destination": "/p/recetario-infantil-sublimable1", "permanent": true },
-  { "source": "/p/recetario-color-sublimable", "destination": "/p/recetario-infantil-sublimable1", "permanent": true },
-  { "source": "/p/recetario-sublimable-96-paginas", "destination": "/p/recetario-infantil-sublimable1", "permanent": true },
-  { "source": "/p/control-de-embarazo-sublimable", "destination": "/categoria/especiales", "permanent": true }
+  {
+    "source": "/home",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/cart",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/&",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/$",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/p-zmtyzmzq/:path*",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/p-k1mtm1mq/:path*",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/p-xmjuxmda/:path*",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-docente-perpetua-sublimable-para-personalizar-260-paginas",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-semana-a-la-vista-horizontal-sublimable",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-dos-dias-por-pagina-horitonzal",
+    "destination": "/p/agenda-2-dias-a-la-vista",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-dos-dias-por-pagina-horizontal",
+    "destination": "/p/agenda-2-dias-a-la-vista",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-2-dias-a-la-vista-2024",
+    "destination": "/p/agenda-2-dias-a-la-vista",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-1-dia-a-la-vista-2024",
+    "destination": "/p/agenda-1-dia-a-la-vista",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-un-dia-a-la-vista-sublimable",
+    "destination": "/p/agenda-1-dia-a-la-vista",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-de-peluqueria-perpetua",
+    "destination": "/categoria/agendas",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-colores-sublimable",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-semanal-2027",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-semanal-2024-estrellas",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-semanal-20241",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-semanal-2023-sublimable",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-semanal-vertical-2026",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-2-dias-vertical-2026",
+    "destination": "/p/agenda-2-dias-a-la-vista",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-floral-semanal-sublimable-20241",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-perpetua-semanal-sublimable",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agendas-semanales-2026-18x28",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-perpetua-gatitos-sublimable",
+    "destination": "/categoria/agendas",
+    "permanent": true
+  },
+  {
+    "source": "/p/agenda-perpetua-peluqueria-sublimable",
+    "destination": "/categoria/agendas",
+    "permanent": true
+  },
+  {
+    "source": "/p/bullet-semanal-2025",
+    "destination": "/p/agenda-sublimable-semanal",
+    "permanent": true
+  },
+  {
+    "source": "/p/papel-80gr",
+    "destination": "/categoria/agendas",
+    "permanent": true
+  },
+  {
+    "source": "/p/planner-infantil-semanal",
+    "destination": "/p/planner-verde",
+    "permanent": true
+  },
+  {
+    "source": "/p/planificador-diario-colores",
+    "destination": "/p/planner-verde",
+    "permanent": true
+  },
+  {
+    "source": "/p/planificador-diario-colores-sublimable",
+    "destination": "/p/planner-verde",
+    "permanent": true
+  },
+  {
+    "source": "/p/planner-semanal",
+    "destination": "/p/planner-verde",
+    "permanent": true
+  },
+  {
+    "source": "/p/planner-verde-sublimable",
+    "destination": "/p/planner-verde",
+    "permanent": true
+  },
+  {
+    "source": "/p/control-de-gastos",
+    "destination": "/categoria/blocks-planners",
+    "permanent": true
+  },
+  {
+    "source": "/p/block-10x15cm-liso",
+    "destination": "/p/block-sublimable-10x15cm-sin-renglones",
+    "permanent": true
+  },
+  {
+    "source": "/p/block-10x15cm-con-renglones-sublimable",
+    "destination": "/p/block-sublimable-10x15cm-con-renglones",
+    "permanent": true
+  },
+  {
+    "source": "/p/libreta-de-pedidos-sublimable",
+    "destination": "/p/libreta-sublimable-tamano-15x21-cm",
+    "permanent": true
+  },
+  {
+    "source": "/p/libreta-tamano-15x21-cm-sublimable",
+    "destination": "/p/libreta-sublimable-tamano-15x21-cm",
+    "permanent": true
+  },
+  {
+    "source": "/p/diario-intimo-rosado",
+    "destination": "/categoria/libretas",
+    "permanent": true
+  },
+  {
+    "source": "/p/diario-intimo-rosado-sublimable",
+    "destination": "/categoria/libretas",
+    "permanent": true
+  },
+  {
+    "source": "/p/cuadernola-21x30",
+    "destination": "/p/cuadernola-21x30-sublimable",
+    "permanent": true
+  },
+  {
+    "source": "/p/cien-citas-juntos-sublimable",
+    "destination": "/p/citas-juntos-100",
+    "permanent": true
+  },
+  {
+    "source": "/p/recetario-sublimable",
+    "destination": "/p/recetario-color",
+    "permanent": true
+  },
+  {
+    "source": "/p/recetario-color-sublimable",
+    "destination": "/p/recetario-color",
+    "permanent": true
+  },
+  {
+    "source": "/p/recetario-sublimable-96-paginas",
+    "destination": "/p/recetario-color",
+    "permanent": true
+  },
+  {
+    "source": "/p/control-de-embarazo-sublimable",
+    "destination": "/categoria/especiales",
+    "permanent": true
+  },
+  {
+    "source": "/p/recetario-infantil-sublimable1",
+    "destination": "/p/cuadernola-21x30-sublimable",
+    "permanent": true
+  },
+  {
+    "source": "/p/recetario-ifantil",
+    "destination": "/p/recetario-infantil",
+    "permanent": true
+  },
+  {
+    "source": "/p/semanal-vertival-flor",
+    "destination": "/p/semanal-vertical-flor",
+    "permanent": true
+  },
+  {
+    "source": "/p/copia-de-block-sublimable-10x15cm-con-renglones",
+    "destination": "/p/block-sublimable-10x15cm-con-renglones",
+    "permanent": true
+  },
+  {
+    "source": "/plantillas-sublimacion",
+    "destination": "/recursos",
+    "permanent": true
+  }
 ]

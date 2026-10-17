@@ -45,7 +45,7 @@ export function WhatsAppFloating() {
   if (isCartOpen) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 font-sans">
+    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 font-sans" data-nosnippet>
       {/* Pop-up de Asesoramiento (UX de Alta Conversión que se auto-cierra y respeta sessionStorage) */}
       {(isOpen || showNotification) && (
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 max-w-xs w-72 animate-in fade-in slide-in-from-bottom-4 duration-300 relative text-slate-800">

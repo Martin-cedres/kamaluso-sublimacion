@@ -984,3 +984,44 @@ DESPLIEGUE A PRODUCCIÓN: REDIRECCIONES 301 SEO Y CANONICALS (VERCEL & GITHUB)
   * Commit y push directo a GitHub `main` disparando el despliegue automático de Vercel.
   * Verificación HTTP de producción en https://www.kamaluso.com.
 ================================================================================
+
+================================================================================
+OPTIMIZACIÓN INTEGRAL SEO TÉCNICO, GEO (IA ENGINES) Y CATÁLOGO E-COMMERCE KAMALUSO
+================================================================================
+- Auditoría e Implementación de 5 Fases para www.kamaluso.com (San José de Mayo, Uruguay):
+  1. FASE 1: Catálogo, Slugs y Redirecciones 301
+     * Corrección de slug de 'Cuadernola 21x30' (/p/cuadernola-21x30-sublimable) y redirección 301 desde /p/recetario-infantil-sublimable1 y /p/cuadernola-21x30.
+     * Corrección tipográfica de 'Recetario Infantil' (/p/recetario-infantil) y 301 desde /p/recetario-ifantil.
+     * Corrección de slug perenne en 'Agenda 1 día a la vista' (/p/agenda-1-dia-a-la-vista) con 301 desde /p/agenda-1-dia-a-la-vista-2024.
+     * Corrección de slugs residuales ('semanal-vertical-flor', 'block-sublimable-10x15cm-con-renglones', 'recetario-color').
+     * Actualización de 52 reglas de redirección 301 en `data/redirects.json` integradas en `next.config.js`.
+     * Limpieza y sanitización de catálogo en `data/products.json`, `src/lib/products.ts` (CURRENT_CATALOG_VERSION = 4) y `src/app/api/products/route.ts`.
+  2. FASE 2: Plantillas de Categorías (/categoria/[slug])
+     * Eliminación de duplicaciones ("Agendas Sublimables Sublimables...") e interpolaciones genéricas ("de outlet", "de especiales").
+     * Diccionario SEO específico (CATEGORY_SEO) con títulos H1, meta titles y descripciones ricas en entidades de insumos sublimables en Uruguay.
+     * Tabla técnica Answer-First con parámetros de sublimado (170ºC-180ºC / 120s) en /categoria/agendas.
+  3. FASE 3: Meta Titles, Descriptions y Anti-Snippets Semánticos
+     * Meta titles y descriptions únicas con canonicals absolutos (https://www.kamaluso.com) en /, /mayoristas, /recursos, /guia-sublimacion-papeleria y /emprender-en-papeleria-sublimable.
+     * H1 con primer párrafo rico en entidades en la Home para Google Snippets.
+     * Meta descriptions dinámicas (140-160 caracteres) con especificaciones exactas por producto en /p/[slug].
+     * Semántica HTML5 estricta: <header>, <nav aria-label="...">, <main id="main-content">, <footer>.
+     * data-nosnippet aplicado en barra de anuncios, navegación de footer y widget flotante de WhatsApp para evitar contaminación en SERPs.
+  4. FASE 4: Estrategia GEO (Generative Engine Optimization) y Desambiguación de Entidad
+     * JSON-LD Schema.org completo: Organization + LocalBusiness + WholesaleStore con geolocalización en San José de Mayo, desambiguación de entidad frente a papeleriapersonalizada.uy y mismo taller.
+     * Product + Offer + Breadcrumbs + FAQPage Schemas con especificación de materiales (cartón cristal 350gr con polímero virgen y papel obra impreso).
+     * HowTo Schema y FAQPage Schema detallado en /guia-sublimacion-papeleria.
+     * Creación de `public/llms.txt` y `public/llms-full.txt` con especificaciones técnicas completas de los 26 productos para crawlers de IA (Gemini, ChatGPT, Perplexity, Claude, Meta).
+  5. FASE 5: Indexación Técnica y Rastreo de IA
+     * `src/app/sitemap.ts`: Generación dinámica de 8 páginas estáticas, todas las categorías y 26 productos canónicos limpios, excluyendo rutas obsoletas.
+     * `src/app/robots.ts`: Reglas explícitas para Googlebot, Google-Extended, OAI-SearchBot, ChatGPT-User, PerplexityBot, ClaudeBot y referencia a llms.txt y sitemap.xml.
+================================================================================
+
+================================================================================
+DESPLIEGUE A PRODUCCIÓN: BUILD, GITHUB Y VERCEL (SEO, GEO Y CATÁLOGO LIMPIO)
+================================================================================
+- Tarea: Build y deploy de las 5 fases de SEO Técnico, GEO y correcciones de catálogo.
+- Acciones:
+  * Ejecutado `npm run build` con éxito absoluto: 50/50 páginas estáticas y dinámicas compiladas, 0 errores TypeScript, 0 lints.
+  * Cambios staged en Git incluyendo `data/products.json`, `public/llms-full.txt`, `data/redirects.json`, schemas y componentes semánticos.
+  * Commit y push directo a GitHub `origin main` disparando el despliegue automático de Vercel.
+================================================================================

@@ -2,6 +2,7 @@ import { put, del } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { Product } from "@/types";
+import { sanitizeProduct, INITIAL_PRODUCTS } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export async function GET(request: Request) {
     // 1. Si tenemos productos en memoria del servidor y fueron actualizados hace menos de 60s, devolver al instante (0ms, 0 requests)
     const now = Date.now();
     if (cache.products.length > 0 && now - cache.lastFetched < 60000) {
-      return NextResponse.json(cache.products, {
+      return NextResponse.json(cache.products.length > 0 ? cache.products.map(sanitizeProduct) : INITIAL_PRODUCTS, {
         headers: {
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
         },
@@ -66,10 +67,10 @@ export async function GET(request: Request) {
       if (res.ok) {
         const cloudProducts = await res.json();
         if (Array.isArray(cloudProducts)) {
-          cache.products = cloudProducts;
+          cache.products = cloudProducts.map(sanitizeProduct);
           cache.blobUrl = targetUrl;
           cache.lastFetched = now;
-          return NextResponse.json(cloudProducts, {
+          return NextResponse.json(cache.products, {
             headers: {
               "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
             },
@@ -87,7 +88,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.warn("Error en GET /api/products:", error);
-    return NextResponse.json(globalThis.__kamaluso_products_cache__?.products || []);
+    return NextResponse.json((globalThis.__kamaluso_products_cache__?.products || INITIAL_PRODUCTS).map(sanitizeProduct));
   }
 }
 

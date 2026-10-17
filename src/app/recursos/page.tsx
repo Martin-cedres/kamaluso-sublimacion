@@ -4,16 +4,16 @@ import { getAllResources } from "@/lib/resources";
 import RecursosListClient from "@/components/recursos/RecursosListClient";
 
 export const metadata = {
-  title: "Plantillas y Archivos Descargables | Kamaluso Papelería Sublimable",
+  title: "Plantillas para Agendas y Libretas Sublimables Gratis (PDF/PNG) | Kamaluso Uruguay",
   description:
-    "Descarga plantillas en PDF/PNG y guías de sublimación para tus tapas de agendas, libretas y blocks. Recursos 100% gratuitos para sublimadores de Uruguay.",
+    "Descarga gratis plantillas para agendas sublimables, moldes de tapas 15x21cm (A5), blocks 10x15cm y guías con medidas de sangrado para sublimar papelería en Uruguay.",
   alternates: {
     canonical: "https://www.kamaluso.com/recursos",
   },
   openGraph: {
-    title: "Plantillas y Recursos Gratis para Sublimadores | Kamaluso",
+    title: "Plantillas para Agendas y Libretas Sublimables Gratis (PDF/PNG) | Kamaluso Uruguay",
     description:
-      "Descarga gratis plantillas en PDF/PNG con sangrado para agendas A5, mini blocks y cuadernos. Fabricantes en Uruguay.",
+      "Descarga gratis plantillas para agendas sublimables, moldes de tapas 15x21cm (A5), blocks 10x15cm y guías con medidas de sangrado para sublimar papelería en Uruguay.",
     url: "https://www.kamaluso.com/recursos",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -29,9 +29,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Plantillas y Recursos Gratis para Sublimadores | Kamaluso",
+    title: "Plantillas para Agendas y Libretas Sublimables Gratis (PDF/PNG) | Kamaluso Uruguay",
     description:
-      "Descarga gratis plantillas en PDF/PNG con sangrado para agendas A5, mini blocks y cuadernos. Fabricantes en Uruguay.",
+      "Descarga gratis plantillas para agendas sublimables, moldes de tapas 15x21cm (A5), blocks 10x15cm y guías con medidas de sangrado para sublimar papelería en Uruguay.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
@@ -48,8 +48,8 @@ export default async function RecursosPage() {
         <span className="text-xs font-bold text-brand-600 uppercase tracking-widest bg-brand-50 px-3 py-1 rounded-full">
           Recursos Gratuitos para Sublimadores
         </span>
-        <h1 className="text-4xl font-extrabold text-slate-900">
-          Plantillas & Descargables
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+          Plantillas para Agendas, Libretas y Tapas Sublimables Descargables (Gratis)
         </h1>
         <p className="text-slate-600 leading-relaxed text-base max-w-2xl mx-auto">
           Descarga gratis las guías de sublimación y plantillas con medidas exactas para diseñar las tapas de tus agendas, libretas y cuadernos.

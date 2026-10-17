@@ -26,7 +26,7 @@ export function Footer() {
         </div>
 
         {/* Categories SEO Links */}
-        <div className="space-y-4">
+        <div className="space-y-4" data-nosnippet>
           <h4 className="text-white font-bold text-sm uppercase tracking-wider">Categorías de Insumos</h4>
           <ul className="space-y-2 text-xs">
             <li>
@@ -63,7 +63,7 @@ export function Footer() {
         </div>
 
         {/* Quick Links */}
-        <div className="space-y-4">
+        <div className="space-y-4" data-nosnippet>
           <h4 className="text-white font-bold text-sm uppercase tracking-wider">Navegación & Ayuda</h4>
           <ul className="space-y-2 text-xs">
             <li>
@@ -167,7 +167,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4" data-nosnippet>
         <p>© {new Date().getFullYear()} Kamaluso Sublimación (www.kamaluso.com). San José de Mayo, Uruguay.</p>
         <p className="flex items-center gap-1">
           Hecho con <Heart className="w-3.5 h-3.5 text-brand-500 fill-brand-500" /> para sublimadores de Uruguay.

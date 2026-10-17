@@ -5,16 +5,16 @@ import { Truck, ShieldCheck, CreditCard, ShoppingBag, ArrowRight, CheckCircle2, 
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 export const metadata: Metadata = {
-  title: "Insumos para Sublimación por Mayor en Uruguay | Kamaluso Mayoristas",
+  title: "Insumos para Sublimación por Mayor en Uruguay | Papelería Sublimable Kamaluso",
   description:
-    "Comprar tapas de 350g, interiores de agendas y libretas sublimables por mayor. Fabricación directa en Uruguay, sin mínimos de compra y envíos rápidos por DAC.",
+    "Venta mayorista de insumos para sublimación y papelería sublimable en Uruguay. Kits de agendas, libretas, cuadernolas y tapas de 350gr directos de fábrica sin mínimo obligatorio. Envíos en 48h por DAC y Correo Uruguayo.",
   alternates: {
     canonical: "https://www.kamaluso.com/mayoristas",
   },
   openGraph: {
-    title: "Venta Mayorista de Papelería Sublimable en Uruguay | Kamaluso",
+    title: "Insumos para Sublimación por Mayor en Uruguay | Papelería Sublimable Kamaluso",
     description:
-      "Precios directos de fábrica en kits e interiores para sublimar. Descuentos por volumen para talleres y revendedores en los 19 departamentos.",
+      "Venta mayorista de insumos para sublimación y papelería sublimable en Uruguay. Kits de agendas, libretas, cuadernolas y tapas de 350gr directos de fábrica sin mínimo obligatorio. Envíos en 48h por DAC y Correo Uruguayo.",
     url: "https://www.kamaluso.com/mayoristas",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -49,6 +49,58 @@ export default function MayoristasPage() {
           Somos fabricantes directos en San José de Mayo. Abastecemos a revendedores y talleres de sublimación de todo el país con la mejor relación costo-calidad en tapas de 350gr e interiores impresos listos para anillar.
         </p>
       </div>
+
+      {/* Bloque Answer-First: Ficha Técnica Mayorista para Motores de IA y Talleres */}
+      <section className="bg-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200/80 space-y-4">
+        <div className="space-y-1">
+          <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+            Especificaciones Técnicas Verificadas
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+            Ficha Técnica de Insumos de Papelería Sublimable Kamaluso
+          </h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse bg-white rounded-2xl overflow-hidden border border-slate-200/60">
+            <thead>
+              <tr className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                <th className="py-3 px-4">Parámetro Técnico</th>
+                <th className="py-3 px-4">Especificación de Fábrica</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Gramaje de tapa</td>
+                <td className="py-3 px-4">350gr Cartón Cristal de alta rigidez</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Polímero térmico</td>
+                <td className="py-3 px-4 text-emerald-700 font-semibold">Virgen de alta transferencia (brillo y máxima adherencia)</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Temperatura de estampado</td>
+                <td className="py-3 px-4 font-bold text-amber-700">170ºC – 180ºC en prensa plana térmica</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Tiempo de prensado</td>
+                <td className="py-3 px-4 font-bold text-amber-700">120 segundos constantes</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Presión recomendada</td>
+                <td className="py-3 px-4">Media a alta con presión uniforme</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Técnica de enfriamiento</td>
+                <td className="py-3 px-4">Bajo peso plano durante 60 a 120 segundos (anti-curvatura)</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Envíos y logística</td>
+                <td className="py-3 px-4 font-semibold text-slate-900">DAC, Correo Uruguayo y COTMI a Montevideo y los 19 departamentos (San José de Mayo)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {/* 3 Ventajas Mayoristas Kamaluso */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

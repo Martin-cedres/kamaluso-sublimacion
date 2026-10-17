@@ -4,16 +4,16 @@ import { Metadata } from "next";
 import { Flame, ShieldCheck, HelpCircle, CheckCircle2, ArrowRight, AlertTriangle, Sparkles, BookOpen, Layers } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Guía de Sublimación de Papelería: Tiempos y Temperaturas en Uruguay | Kamaluso",
+  title: "Cómo Sublimar Tapas de Cartón 350gr: Tiempos y Temperatura (170ºC / 120s) | Kamaluso",
   description:
-    "Aprende a estampar tapas sublimables de cartón de 350gr con acabado profesional y sin que se doblen. Tabla de parámetros (170ºC / 120s), presión y tips de taller.",
+    "Guía técnica oficial para sublimar tapas de cartón cristal de 350gr en prensa plana: 170ºC a 180ºC por 120 segundos, presión media-alta y técnica de enfriamiento bajo peso plano sin curvar.",
   alternates: {
     canonical: "https://www.kamaluso.com/guia-sublimacion-papeleria",
   },
   openGraph: {
-    title: "Guía de Sublimación de Papelería: Parámetros Oficiales | Kamaluso Uruguay",
+    title: "Cómo Sublimar Tapas de Cartón 350gr: Tiempos y Temperatura (170ºC / 120s) | Kamaluso",
     description:
-      "Tiempos, temperaturas y trucos de taller para sublimar tapas de 350g sin arqueamiento en Uruguay. Parámetros verificados en prensa plana.",
+      "Guía técnica oficial para sublimar tapas de cartón cristal de 350gr en prensa plana: 170ºC a 180ºC por 120 segundos, presión media-alta y técnica de enfriamiento bajo peso plano sin curvar.",
     url: "https://www.kamaluso.com/guia-sublimacion-papeleria",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -23,9 +23,16 @@ export const metadata: Metadata = {
         url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
         width: 1200,
         height: 630,
-        alt: "Guía Técnica de Sublimación de Papelería Kamaluso",
+        alt: "Guía Técnica Oficial de Sublimación de Tapas Kamaluso",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cómo Sublimar Tapas de Cartón 350gr: Tiempos y Temperatura (170ºC / 120s) | Kamaluso",
+    description:
+      "Guía técnica oficial para sublimar tapas de cartón cristal de 350gr en prensa plana: 170ºC a 180ºC por 120 segundos, presión media-alta y técnica de enfriamiento bajo peso plano sin curvar.",
+    images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
 
@@ -36,39 +43,78 @@ const jsonLdHowTo = {
   "description": "Procedimiento paso a paso para estampar tapas de papelería sublimable con polímero virgen en Uruguay.",
   "totalTime": "PT5M",
   "supply": [
-    { "@type": "HowToSupply", "name": "Tapas de cartón cristal 350gr Kamaluso" },
-    { "@type": "HowToSupply", "name": "Papel de sublimación impreso en modo espejo con tinta de sublimación" },
+    { "@type": "HowToSupply", "name": "Tapas de cartón cristal 350gr Kamaluso con polímero virgen" },
+    { "@type": "HowToSupply", "name": "Papel de sublimación impreso en modo espejo con 5mm de sangrado" },
     { "@type": "HowToSupply", "name": "Cinta térmica de alta temperatura" },
     { "@type": "HowToSupply", "name": "Papel manteca o teflón protector" }
   ],
   "tool": [
     { "@type": "HowToTool", "name": "Prensa térmica plana de calor" },
-    { "@type": "HowToTool", "name": "Objeto plano y pesado (libro, tabla o bloque de madera) para enfriar" }
+    { "@type": "HowToTool", "name": "Objeto plano y pesado (libro, tabla o bloque de madera) para enfriar bajo peso" }
   ],
   "step": [
     {
       "@type": "HowToStep",
-      "name": "Preparar la impresión y encintado",
-      "text": "Imprime tu diseño en papel para sublimar en espejo. Fija el papel a la tapa de 350g utilizando cinta térmica en las cuatro esquinas para evitar imágenes fantasma.",
-      "position": 1
+      "position": 1,
+      "name": "Diseño en espejo con 5mm de sangrado",
+      "text": "Diseña tu portada dejando 5mm de sangrado por lado e imprime en papel de sublimación de secado rápido siempre en modo espejo con perfil de color fotográfico."
     },
     {
       "@type": "HowToStep",
-      "name": "Configurar la prensa plana",
-      "text": "Calienta la prensa térmica plana a 170ºC o 180ºC con presión media a alta. Coloca papel manteca o teflón para proteger la base.",
-      "position": 2
+      "position": 2,
+      "name": "Encintado térmico firme",
+      "text": "Coloca la tapa con el lado blanco resinado frente al papel impreso y pega con cinta térmica firme en las cuatro esquinas para evitar imágenes fantasma o desenfoque."
     },
     {
       "@type": "HowToStep",
-      "name": "Estampar durante 120 segundos",
-      "text": "Coloca la tapa con el papel hacia arriba y cierra la prensa térmica plana durante 120 segundos constantes.",
-      "position": 3
+      "position": 3,
+      "name": "Prensado a 170ºC–180ºC por 120s",
+      "text": "Estampa en prensa plana térmica a 170ºC – 180ºC durante 120 segundos constantes con presión uniforme media a alta."
     },
     {
       "@type": "HowToStep",
-      "name": "Enfriar bajo peso plano (El secreto anti-arqueamiento)",
-      "text": "Retira la tapa con guantes térmicos, retira rápidamente el papel de sublimación y colócala de inmediato sobre una superficie plana bajo un objeto pesado (libro, madera o mármol) durante 1 a 2 minutos hasta que enfríe por completo.",
-      "position": 4
+      "position": 4,
+      "name": "Enfriamiento bajo peso plano por 60–120s",
+      "text": "Retira el papel de sublimación de inmediato al salir de la prensa y coloca la tapa caliente sobre una mesa plana bajo un objeto pesado plano durante 60 a 120 segundos para fijar la rigidez del cartón sin curvatura."
+    }
+  ]
+};
+
+const jsonLdFaqTroubleshooting = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Por qué la tapa queda combada o doblada al sublimar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El calor evapora la humedad natural del cartón y provoca tensión superficial. Se soluciona al 100% aplicando peso plano inmediatamente al retirarla de la prensa mientras las fibras se enfrían durante 60 a 120 segundos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué el papel se pega al cartón sublimable?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ocurre por exceso de temperatura (más de 185ºC) o por retirar el papel cuando la tapa ya se enfrió. Asegúrate de retirar el papel en caliente con un movimiento fluido apenas sale de la prensa."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué los tonos negros salen marrones al estampar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Es el clásico síntoma de 'quemado' por exceso de tiempo o temperatura. Baja la plancha a 170ºC exactos y comprueba con un termómetro láser que la resistencia de la prensa sea uniforme."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué los bordes quedan con menos color o desvanecidos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Indica falta de presión o silicona desgastada en la base de la prensa térmica. Ajusta la perilla de presión a media-alta para que la fuerza sea pareja tanto en el centro como en las esquinas."
+      }
     }
   ]
 };
@@ -76,9 +122,14 @@ const jsonLdHowTo = {
 export default function GuiaSublimacionPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 sm:py-16 space-y-12">
+      {/* Schemas HowTo y FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdHowTo) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaqTroubleshooting) }}
       />
 
       {/* Header */}
@@ -88,7 +139,7 @@ export default function GuiaSublimacionPage() {
           Guía Técnica Oficial Kamaluso
         </span>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          Cómo Sublimar Tapas de Cartón (350gr) con Acabado Profesional
+          Cómo Sublimar Tapas de Cartón 350gr: Tiempos y Temperatura (170ºC / 120s)
         </h1>
         <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
           Tiempos, temperaturas exactas y el método definitivo de taller para lograr colores intensos, nitidez fotográfica y evitar que las tapas se doblen o curven.
@@ -129,6 +180,53 @@ export default function GuiaSublimacionPage() {
         </div>
       </div>
 
+      {/* Tabla Semántica Answer-First para Google y Motores de IA (GEO) */}
+      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-amber-200/80 shadow-xs space-y-4">
+        <h3 className="font-extrabold text-sm text-slate-900 uppercase tracking-wider">
+          Ficha Técnica Oficial para Sublimar Tapas Kamaluso (350gr)
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr className="bg-amber-50 text-amber-950 font-bold border-b border-amber-200">
+                <th className="py-3 px-4">Parámetro</th>
+                <th className="py-3 px-4">Valor Recomendado</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Gramaje de tapa</td>
+                <td className="py-3 px-4">350gr Cartón Cristal de alta rigidez</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Polímero térmico</td>
+                <td className="py-3 px-4 text-emerald-700 font-semibold">Virgen de alta transferencia (máximo brillo y durabilidad)</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Temperatura de estampado</td>
+                <td className="py-3 px-4 font-bold text-amber-700">170ºC – 180ºC en prensa térmica plana</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Tiempo de prensado</td>
+                <td className="py-3 px-4 font-bold text-amber-700">120 segundos</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Presión recomendada</td>
+                <td className="py-3 px-4">Media - Alta con cierre uniforme</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Técnica de enfriado</td>
+                <td className="py-3 px-4">Bajo peso plano durante 60 a 120 segundos inmediatamente al retirar de la prensa</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Envíos y distribución</td>
+                <td className="py-3 px-4 font-semibold text-slate-900">DAC, Correo Uruguayo y COTMI a los 19 departamentos (San José de Mayo)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {/* Paso a Paso */}
       <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-sm space-y-8">
         <div className="space-y-2">
@@ -144,7 +242,7 @@ export default function GuiaSublimacionPage() {
               1
             </div>
             <div className="space-y-1">
-              <h3 className="font-bold text-base text-slate-900">Diseño e Impresión en Espejo</h3>
+              <h3 className="font-bold text-base text-slate-900">1. Diseño en espejo con 5mm de sangrado</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Diseña tu portada dejando <strong>5 mm de sangrado adicional</strong> por lado (ej. si tu tapa mide 15x21cm, diseña en 15.5x21.5cm). Imprime en papel de sublimación de secado rápido siempre en <strong>modo espejo</strong> con perfil de color fotográfico.
               </p>
@@ -156,7 +254,7 @@ export default function GuiaSublimacionPage() {
               2
             </div>
             <div className="space-y-1">
-              <h3 className="font-bold text-base text-slate-900">Encintado Térmico Firme</h3>
+              <h3 className="font-bold text-base text-slate-900">2. Encintado térmico firme</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Coloca la tapa con el lado blanco resinado frente al papel impreso. Pega con cinta térmica en los 4 extremos. La tensión firme evita que el papel se mueva al abrir la prensa y provoque efecto "fantasma" o desenfoque.
               </p>
@@ -168,7 +266,7 @@ export default function GuiaSublimacionPage() {
               3
             </div>
             <div className="space-y-1">
-              <h3 className="font-bold text-base text-slate-900">Prensado a 170ºC – 180ºC por 120 Segundos</h3>
+              <h3 className="font-bold text-base text-slate-900">3. Prensado a 170ºC – 180ºC por 120 segundos</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Usa una lámina de teflón o papel limpio arriba y abajo para proteger las placas de tu prensa. Cierra la prensa con presión uniforme media a alta. El tiempo de 120s garantiza que el gas de la tinta penetre profundamente en el polímero virgen de la tapa.
               </p>
@@ -181,7 +279,7 @@ export default function GuiaSublimacionPage() {
             </div>
             <div className="space-y-1">
               <h3 className="font-bold text-base text-amber-950 flex items-center gap-2">
-                <span>El Secreto de Taller: Enfriamiento Bajo Peso</span>
+                <span>4. Enfriamiento bajo peso plano por 60–120s (El Secreto de Taller)</span>
                 <Sparkles className="w-4 h-4 text-amber-600" />
               </h3>
               <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">

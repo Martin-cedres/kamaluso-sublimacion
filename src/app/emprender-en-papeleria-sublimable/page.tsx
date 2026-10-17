@@ -5,16 +5,16 @@ import { TrendingUp, Calculator, CheckCircle2, Calendar, ArrowRight, DollarSign,
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 export const metadata: Metadata = {
-  title: "Cómo Emprender con Papelería Sublimable en Uruguay: Costos y Rentabilidad | Kamaluso",
+  title: "Cómo Emprender con Agendas y Papelería Sublimable en Uruguay | Guía Kamaluso",
   description:
-    "Descubre cómo iniciar un negocio rentable de agendas y libretas personalizadas en Uruguay. Costos reales en UYU, márgenes de ganancia (+200%) y fechas de mayor venta.",
+    "Guía práctica para iniciar tu taller de agendas y cuadernos personalizados en Uruguay: costos en pesos uruguayos (UYU), márgenes de rentabilidad, insumos necesarios y calendario de zafra.",
   alternates: {
     canonical: "https://www.kamaluso.com/emprender-en-papeleria-sublimable",
   },
   openGraph: {
-    title: "Guía de Negocio: Emprender con Agendas Sublimables en Uruguay | Kamaluso",
+    title: "Cómo Emprender con Agendas y Papelería Sublimable en Uruguay | Guía Kamaluso",
     description:
-      "Aprende a montar tu taller de papelería personalizada con prensa plana. Costos reales de fabricación, maquinaria y márgenes de ganancia superiores al 200%.",
+      "Guía práctica para iniciar tu taller de agendas y cuadernos personalizados en Uruguay: costos en pesos uruguayos (UYU), márgenes de rentabilidad, insumos necesarios y calendario de zafra.",
     url: "https://www.kamaluso.com/emprender-en-papeleria-sublimable",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -24,9 +24,16 @@ export const metadata: Metadata = {
         url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
         width: 1200,
         height: 630,
-        alt: "Emprender con Agendas Sublimables en Uruguay",
+        alt: "Emprender con Agendas Sublimables en Uruguay - Guía Kamaluso",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cómo Emprender con Agendas y Papelería Sublimable en Uruguay | Guía Kamaluso",
+    description:
+      "Guía práctica para iniciar tu taller de agendas y cuadernos personalizados en Uruguay: costos en UYU, márgenes y zafra.",
+    images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
 
