@@ -1072,3 +1072,13 @@ BASE DE DATOS DE CLIENTES REGISTRADOS Y AUTOCOMPLETADO INTELIGENTE POR EMAIL
   5. Verificación:
      * `npx tsc --noEmit` y `npm run build` superados con 0 errores (50/50 páginas generadas).
 ================================================================================
+
+================================================================================
+SIMPLIFICACIÓN DEL BOTÓN FLOTANTE DE WHATSAPP (BOTÓN LIMPIO SIN DESPLEGABLE)
+================================================================================
+- Tarea: Eliminar el popup/desplegable emergente de asesoramiento de WhatsApp y mantener únicamente el botón flotante directo.
+- Acciones en `src/components/ui/WhatsAppFloating.tsx`:
+  * Eliminado el globo/desplegable emergente ("Atención Kamaluso / ¿Tienes dudas...?"), el timer de apertura automática a los 3.5s, `sessionStorage` y el badge rojo de notificación.
+  * Mantenido como enlace flotante directo (`<a>`) a `https://wa.me/59898615074` con icono oficial de WhatsApp, micro-interacción hover sutil (expansión del número de teléfono 098 615 074) y ocultamiento automático cuando el carrito está abierto (`isCartOpen`).
+- Verificación: `npx tsc --noEmit` y `npm run build` ejecutados con éxito (50/50 páginas compiladas, 0 errores).
+================================================================================
