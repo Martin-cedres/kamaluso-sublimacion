@@ -1025,3 +1025,24 @@ DESPLIEGUE A PRODUCCIÓN: BUILD, GITHUB Y VERCEL (SEO, GEO Y CATÁLOGO LIMPIO)
   * Cambios staged en Git incluyendo `data/products.json`, `public/llms-full.txt`, `data/redirects.json`, schemas y componentes semánticos.
   * Commit y push directo a GitHub `origin main` disparando el despliegue automático de Vercel.
 ================================================================================
+
+================================================================================
+CORRECCIÓN Y OPTIMIZACIÓN INTEGRAL DEL CHECKOUT Y COMPRA EN WEB (CARTDRAWER)
+================================================================================
+- Problema detectado: Los usuarios no podían continuar ni culminar compras en la tienda web debido a:
+  1. Obligatoriedad estricta de correo electrónico (`!customerEmail.trim()`) en el paso 2, impidiendo avanzar a compradores mayoristas y talleres en Uruguay que operan por celular/WhatsApp sin correo.
+  2. Falta de feedback visual por campo en validaciones: los errores se mostraban arriba fuera de pantalla en móviles, sin marcar campos en rojo ni hacer scroll/foco en el input faltante.
+  3. Bloqueo de popups en navegadores móviles (Safari iOS y Chrome Android): la apertura de WhatsApp (`window.open`) se ejecutaba tras 5-7 segundos de espera asíncrona de guardado y SMTP, lo que provocaba que el navegador la bloqueara como popup emergente y vaciara el carrito sin redirigir al usuario.
+  4. Flujo de envío desordenado: la selección de agencia o retiro en local estaba al final, forzando dirección a quienes retiraban en persona.
+
+- Acciones y soluciones implementadas:
+  1. `customerEmail` ahora es OPCIONAL: si se ingresa se valida formato; si se omite, permite continuar de inmediato.
+  2. Sistema de validación con feedback visual por campo (`fieldErrors`): bordes rojos, textos de ayuda bajo cada input y auto-scroll/foco inmediato al primer campo requerido.
+  3. Redirección anti-bloqueo para WhatsApp: `saveOrder` y `send-email` (con `keepalive: true`) se procesan en segundo plano sin demorar la interacción del usuario. Se abre WhatsApp de inmediato con fallback resiliente `window.location.href`.
+  4. Pantalla de confirmación y persistencia de pedido (`OrderSuccessState`): se muestra en el drawer el pedido registrado con botón prominente "Continuar en WhatsApp Ahora", protegiendo al usuario si el navegador retiene la ventana.
+  5. Reorganización de entrega: selector de Agencia (DAC / Correo / COTMI) o Retiro en Local al inicio del paso 2; si es retiro en local, se ocultan los campos innecesarios de dirección.
+  6. Auto-guardado en `localStorage` de los datos de contacto y entrega para que el comprador no pierda lo escrito al recargar.
+  7. Botón del paso 1 clarificado a "Continuar con la Compra".
+  8. Conexión de Mercado Pago optimizada: creación de preferencia directa sin esperar los 6 segundos de SMTP y manejo de errores inline sin `alert()`.
+  9. Verificación de compilación: `npx tsc --noEmit` y `npm run build` ejecutados con 0 errores (50/50 páginas estáticas y dinámicas compiladas).
+================================================================================
