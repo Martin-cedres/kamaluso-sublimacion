@@ -171,6 +171,64 @@ export async function POST(request: Request) {
     // Guardar en disco local
     writeLocalOrdersFile(updatedOrders);
 
+    // Sincronizar automáticamente cliente registrado en data/customers.json
+    try {
+      if (body && body.id && body.customer) {
+        const custFile = path.join(process.cwd(), "data", "customers.json");
+        let list: any[] = [];
+        if (fs.existsSync(custFile)) {
+          list = JSON.parse(fs.readFileSync(custFile, "utf-8"));
+        }
+        const cEmail = (body.customer.email || "").trim().toLowerCase();
+        const cPhone = (body.customer.phone || "").trim();
+        const cName = (body.customer.name || "").trim();
+        if (cName || cEmail || cPhone) {
+          const cIdx = list.findIndex((item) => {
+            if (cEmail && item.email && item.email.toLowerCase() === cEmail) return true;
+            if (cPhone && item.phone && item.phone === cPhone) return true;
+            return false;
+          });
+          const nowStr = new Date().toISOString();
+          const spent = Number(body.finalTotal || body.totalPrice || 0);
+          if (cIdx >= 0) {
+            list[cIdx] = {
+              ...list[cIdx],
+              name: cName || list[cIdx].name,
+              phone: cPhone || list[cIdx].phone,
+              email: cEmail || list[cIdx].email,
+              department: body.customer.department || list[cIdx].department,
+              city: body.customer.city || list[cIdx].city,
+              address: body.customer.address || list[cIdx].address,
+              totalOrders: (list[cIdx].totalOrders || 0) + 1,
+              totalSpent: (list[cIdx].totalSpent || 0) + spent,
+              lastOrderAt: body.createdAt || nowStr,
+              updatedAt: nowStr,
+            };
+          } else {
+            list.unshift({
+              id: `CUST-${Date.now().toString(36).toUpperCase()}`,
+              name: cName || "Cliente",
+              phone: cPhone,
+              email: cEmail,
+              department: body.customer.department || "Montevideo",
+              city: body.customer.city || "",
+              address: body.customer.address || "",
+              deliveryType: (body.shippingMethodName || "").toLowerCase().includes("agencia") ? "agencia" : "domicilio",
+              shippingCompany: "dac",
+              totalOrders: 1,
+              totalSpent: spent,
+              lastOrderAt: body.createdAt || nowStr,
+              createdAt: nowStr,
+              updatedAt: nowStr,
+            });
+          }
+          fs.writeFileSync(custFile, JSON.stringify(list, null, 2), "utf-8");
+        }
+      }
+    } catch (custSyncErr) {
+      // Ignorar en serverless
+    }
+
     // Guardar en Vercel Blob
     let blobUrl = cache.blobUrl || "";
     try {

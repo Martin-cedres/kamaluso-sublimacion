@@ -1046,3 +1046,29 @@ CORRECCIÓN Y OPTIMIZACIÓN INTEGRAL DEL CHECKOUT Y COMPRA EN WEB (CARTDRAWER)
   8. Conexión de Mercado Pago optimizada: creación de preferencia directa sin esperar los 6 segundos de SMTP y manejo de errores inline sin `alert()`.
   9. Verificación de compilación: `npx tsc --noEmit` y `npm run build` ejecutados con 0 errores (50/50 páginas estáticas y dinámicas compiladas).
 ================================================================================
+
+================================================================================
+BASE DE DATOS DE CLIENTES REGISTRADOS Y AUTOCOMPLETADO INTELIGENTE POR EMAIL
+================================================================================
+- Tarea: Implementar base de datos centralizada de clientes con autocompletado en checkout por email (Opción A) y módulo CRM en `/admin`.
+- Acciones y componentes implementados:
+  1. Base de datos persistente:
+     * Creado `data/customers.json` y sincronización con Vercel Blob (`data/customers.json`).
+     * Migrados e inicializados 12 clientes históricos reales desde `data/orders.json`.
+     * Nuevo endpoint `src/app/api/customers/route.ts` con soporte `GET` (búsqueda por email/teléfono o listado completo), `POST` (registro y actualización de historial de gasto y compras) y `DELETE`.
+  2. Sincronización automática de órdenes:
+     * `src/app/api/orders/route.ts`: Al recibir o registrar un pedido, actualiza o registra automáticamente el cliente en `data/customers.json` sumando su total gastado y contabilizando órdenes.
+     * `src/lib/customers.ts`: Librería cliente/servidor para `lookupCustomerByEmail`, `registerOrUpdateCustomer` y `getAllCustomers`.
+  3. Experiencia de compra en carrito (`src/components/cart/CartDrawer.tsx`):
+     * Detección instantánea con debounce (350ms) al tipear el email.
+     * Si el email coincide con un cliente registrado, aparece una tarjeta sugerente: *"¡Hola [Nombre]! Encontramos tus datos habituales. ¿Deseas autocompletar el pedido?"*.
+     * Botón *"Cargar mis datos guardados"* que autocompleta con 1 clic: nombre, celular, departamento, localidad, dirección, modalidad de envío y agencia preferida.
+     * Feedback de confirmación visual y registro automático en checkout.
+  4. Panel de Administración (`src/app/admin/page.tsx`):
+     * Nueva pestaña *"Clientes Registrados"* en el header con contador en tiempo real.
+     * 4 métricas clave: Total Clientes, Con Email, Recurrentes (2+ compras) y Facturación acumulada.
+     * Buscador multi-campo en tiempo real (nombre, email, teléfono, ciudad o departamento).
+     * Tabla detallada con botón directo para abrir chat de WhatsApp, mailto y gestión de registros.
+  5. Verificación:
+     * `npx tsc --noEmit` y `npm run build` superados con 0 errores (50/50 páginas generadas).
+================================================================================

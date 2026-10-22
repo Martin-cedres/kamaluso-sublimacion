@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import { saveOrder } from "@/lib/orders";
 import { getPaymentInstructions } from "@/lib/whatsapp";
+import { Customer } from "@/types";
+import { lookupCustomerByEmail, registerOrUpdateCustomer } from "@/lib/customers";
 
 const PAYMENT_METHODS = [
   { id: "brou", name: "Transferencia Bancaria BROU" },
@@ -123,6 +125,52 @@ export function CartDrawer() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [mpError, setMpError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState<OrderSuccessState | null>(null);
+  const [detectedCustomer, setDetectedCustomer] = useState<Customer | null>(null);
+  const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
+  const [customerDataLoaded, setCustomerDataLoaded] = useState(false);
+
+  // Detección inteligente de cliente registrado por email al escribir
+  useEffect(() => {
+    if (!customerEmail.trim()) {
+      setDetectedCustomer(null);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail.trim())) return;
+
+    const timer = setTimeout(async () => {
+      setIsSearchingCustomer(true);
+      try {
+        const found = await lookupCustomerByEmail(customerEmail.trim());
+        if (found && (found.name || found.city || found.address)) {
+          setDetectedCustomer(found);
+        } else {
+          setDetectedCustomer(null);
+        }
+      } catch {
+        setDetectedCustomer(null);
+      } finally {
+        setIsSearchingCustomer(false);
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [customerEmail]);
+
+  const handleApplyCustomerData = () => {
+    if (!detectedCustomer) return;
+    if (detectedCustomer.name) setCustomerName(detectedCustomer.name);
+    if (detectedCustomer.phone) setCustomerPhone(detectedCustomer.phone);
+    if (detectedCustomer.department) setCustomerDepartment(detectedCustomer.department);
+    if (detectedCustomer.city) setCustomerCity(detectedCustomer.city);
+    if (detectedCustomer.address) setCustomerAddress(detectedCustomer.address);
+    if (detectedCustomer.deliveryType) setDeliveryType(detectedCustomer.deliveryType);
+    if (detectedCustomer.shippingCompany) setShippingCompany(detectedCustomer.shippingCompany);
+    setCustomerDataLoaded(true);
+    setDetectedCustomer(null);
+    setTimeout(() => setCustomerDataLoaded(false), 4000);
+  };
 
   // Cargar datos previos del comprador desde localStorage
   useEffect(() => {
@@ -334,6 +382,24 @@ export function CartDrawer() {
       console.warn("Aviso al despachar email:", err);
     }
 
+    // Registrar o actualizar datos del cliente en la base de datos
+    registerOrUpdateCustomer({
+      name: customerName.trim(),
+      phone: customerPhone.trim(),
+      email: customerEmail.trim(),
+      department: isPickup ? "San José" : customerDepartment,
+      city: isPickup ? "San José de Mayo" : customerCity.trim(),
+      address: isPickup
+        ? "Retiro en Local (San José)"
+        : deliveryType === "domicilio"
+        ? customerAddress.trim()
+        : (customerAddress.trim() || `Retiro en Agencia ${getShippingCompanyName()} (${customerCity.trim()})`),
+      deliveryType,
+      shippingCompany,
+      incrementOrder: true,
+      orderAmount: finalTotal,
+    });
+
     // 3. Construir mensaje estructurado para WhatsApp
     let message = `*NUEVO PEDIDO MAYORISTA #${orderIdToUse} - KAMALUSO SUBLIMACIÓN*\n\n`;
 
@@ -448,6 +514,20 @@ export function CartDrawer() {
     } catch (orderErr) {
       console.warn("Aviso al guardar pedido:", orderErr);
     }
+
+    // Registrar o actualizar cliente en la base de datos
+    registerOrUpdateCustomer({
+      name: customerName.trim(),
+      phone: customerPhone.trim(),
+      email: customerEmail.trim(),
+      department: isPickup ? "San José" : customerDepartment,
+      city: isPickup ? "San José de Mayo" : customerCity.trim(),
+      address: isPickup ? "Retiro en Local (San José)" : customerAddress.trim(),
+      deliveryType,
+      shippingCompany,
+      incrementOrder: true,
+      orderAmount: finalTotal,
+    });
 
     // 2. Disparar email informativo en background
     try {
@@ -885,6 +965,45 @@ export function CartDrawer() {
                             <AlertCircle className="w-3 h-3" />
                             <span>{fieldErrors.email}</span>
                           </p>
+                        )}
+
+                        {isSearchingCustomer && (
+                          <p className="text-[10px] text-pink-600 font-bold mt-1 flex items-center gap-1 animate-pulse">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span>Buscando datos de cliente registrado...</span>
+                          </p>
+                        )}
+
+                        {customerDataLoaded && (
+                          <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-[11px] font-bold flex items-center gap-1.5 mt-1.5 animate-in fade-in">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                            <span>¡Datos del cliente cargados con éxito!</span>
+                          </div>
+                        )}
+
+                        {detectedCustomer && !customerDataLoaded && (
+                          <div className="p-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-300 rounded-xl text-xs space-y-2 mt-2 shadow-sm animate-in fade-in slide-in-from-top-1">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="font-extrabold text-emerald-900 flex items-center gap-1 text-[11px]">
+                                <Sparkles className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0 animate-pulse" />
+                                <span>¡Hola {detectedCustomer.name}!</span>
+                              </span>
+                              <span className="text-[9px] bg-emerald-200/80 text-emerald-900 font-black px-1.5 py-0.5 rounded-full uppercase">
+                                Cliente Registrado
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-emerald-800 leading-tight">
+                              Encontramos tus datos habituales: <strong>{detectedCustomer.phone || "Teléfono registrado"}</strong> • {detectedCustomer.city}, {detectedCustomer.department}.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={handleApplyCustomerData}
+                              className="w-full py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold rounded-lg text-[11px] shadow-sm flex items-center justify-center gap-1.5 transition-all"
+                            >
+                              <span>Cargar mis datos guardados</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>

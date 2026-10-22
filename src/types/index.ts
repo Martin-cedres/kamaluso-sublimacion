@@ -59,3 +59,20 @@ export interface Order {
   observations?: string;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  department: string;
+  city: string;
+  address: string;
+  deliveryType?: "domicilio" | "agencia";
+  shippingCompany?: string;
+  totalOrders: number;
+  totalSpent: number;
+  lastOrderAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+

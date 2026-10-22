@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Product, Order, OrderStatus } from "@/types";
+import { Product, Order, OrderStatus, Customer } from "@/types";
 import { getAllProducts, deleteProduct, saveProduct, saveProductsOrder, CATEGORIES } from "@/lib/products";
 import { ResourceItem, getAllResources, deleteResource } from "@/lib/resources";
 import { getAllOrders, updateOrderStatus, deleteOrder } from "@/lib/orders";
+import { getAllCustomers, deleteCustomer } from "@/lib/customers";
 import { getLocalAdminUser, removeLocalAdminUser, isAllowedAdminEmail, AdminUser } from "@/lib/auth";
 import ProductModal from "@/components/admin/ProductModal";
 import ResourceModal from "@/components/admin/ResourceModal";
@@ -45,14 +46,16 @@ import {
   ArrowUp,
   ArrowDown,
   Sparkles,
+  Users,
+  UserCheck,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   
-  // Tab Activa: "products" | "resources" | "orders"
-  const [activeTab, setActiveTab] = useState<"products" | "resources" | "orders">("products");
+  // Tab Activa: "products" | "resources" | "orders" | "customers"
+  const [activeTab, setActiveTab] = useState<"products" | "resources" | "orders" | "customers">("products");
 
   // State Etiquetas de Envío & Resumen de Pedido A4
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
@@ -84,6 +87,11 @@ export default function AdminDashboardPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState("todos");
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [selectedOrderModal, setSelectedOrderModal] = useState<Order | null>(null);
+
+  // State Clientes Registrados
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customerSearchQuery, setCustomerSearchQuery] = useState("");
+  const [isLoadingCustomers, setIsLoadingCustomers] = useState(true);
 
   // State Reordenamiento de Productos
   const [isSavingOrder, setIsSavingOrder] = useState(false);
@@ -198,6 +206,13 @@ export default function AdminDashboardPage() {
     setIsLoadingOrders(false);
   };
 
+  const loadCustomersData = async () => {
+    setIsLoadingCustomers(true);
+    const data = await getAllCustomers();
+    setCustomers(data);
+    setIsLoadingCustomers(false);
+  };
+
   useEffect(() => {
     const user = getLocalAdminUser();
     if (!user || !isAllowedAdminEmail(user.email)) {
@@ -208,6 +223,7 @@ export default function AdminDashboardPage() {
     loadData();
     loadResourcesData();
     loadOrdersData();
+    loadCustomersData();
   }, [router]);
 
   const handleLogout = () => {
@@ -245,6 +261,14 @@ export default function AdminDashboardPage() {
       if (selectedOrderModal?.id === orderId) {
         setSelectedOrderModal(null);
       }
+    }
+  };
+
+  // Acciones Clientes
+  const handleDeleteCustomer = async (id: string, name: string) => {
+    if (confirm(`¿Estás seguro de eliminar a "${name}" de la base de clientes registrados?`)) {
+      await deleteCustomer(id);
+      loadCustomersData();
     }
   };
 
@@ -303,6 +327,20 @@ export default function AdminDashboardPage() {
 
   const totalOrdersAmount = orders.reduce((sum, o) => sum + o.finalTotal, 0);
   const pendingOrdersCount = orders.filter((o) => o.status === "pendiente").length;
+
+  // Filtrado de clientes registrados
+  const filteredCustomers = customers.filter((c) => {
+    if (!c) return false;
+    const q = customerSearchQuery.toLowerCase();
+    return (
+      (c.name && c.name.toLowerCase().includes(q)) ||
+      (c.email && c.email.toLowerCase().includes(q)) ||
+      (c.phone && c.phone.toLowerCase().includes(q)) ||
+      (c.city && c.city.toLowerCase().includes(q)) ||
+      (c.department && c.department.toLowerCase().includes(q)) ||
+      (c.address && c.address.toLowerCase().includes(q))
+    );
+  });
 
   if (!adminUser) return null;
 
@@ -428,6 +466,27 @@ export default function AdminDashboardPage() {
               }`}
             >
               {orders.length}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("customers")}
+            className={`px-4 py-2.5 text-xs sm:text-sm font-extrabold rounded-xl transition-all flex items-center gap-2.5 shadow-sm active:scale-95 ${
+              activeTab === "customers"
+                ? "bg-sky-600 text-white shadow-lg shadow-sky-600/30 border-2 border-sky-400 scale-[1.02]"
+                : "bg-slate-800 text-white border-2 border-slate-700 hover:border-sky-500/80 hover:bg-slate-750"
+            }`}
+          >
+            <Users className={`w-4 h-4 ${activeTab === "customers" ? "text-white" : "text-sky-400"}`} />
+            <span>Clientes Registrados</span>
+            <span
+              className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-black ${
+                activeTab === "customers"
+                  ? "bg-white/20 text-white"
+                  : "bg-slate-700 text-sky-300 border border-slate-600"
+              }`}
+            >
+              {customers.length}
             </span>
           </button>
         </div>
@@ -1056,6 +1115,221 @@ export default function AdminDashboardPage() {
                           </td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* TAB 4: CLIENTES REGISTRADOS */}
+        {activeTab === "customers" && (
+          <>
+            {/* Stat Cards Clientes */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Clientes</p>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1">{customers.length}</h3>
+                </div>
+                <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center">
+                  <Users className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Con Email</p>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1">
+                    {customers.filter((c) => c.email && c.email.trim()).length}
+                  </h3>
+                </div>
+                <div className="w-12 h-12 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center">
+                  <Mail className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recurrentes (2+)</p>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1">
+                    {customers.filter((c) => (c.totalOrders || 0) > 1).length}
+                  </h3>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Facturado</p>
+                  <h3 className="text-2xl font-black text-emerald-600 mt-1">
+                    ${customers.reduce((sum, c) => sum + (c.totalSpent || 0), 0).toLocaleString("es-UY")} UYU
+                  </h3>
+                </div>
+                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+              </div>
+            </div>
+
+            {/* Barra de Búsqueda de Clientes */}
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <div className="relative flex-1 w-full">
+                <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Buscar cliente por nombre, email, teléfono, ciudad o departamento..."
+                  value={customerSearchQuery}
+                  onChange={(e) => setCustomerSearchQuery(e.target.value)}
+                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium"
+                />
+              </div>
+              <button
+                onClick={loadCustomersData}
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-xl text-xs flex items-center gap-2 transition"
+                title="Actualizar listado de clientes"
+              >
+                <span>Actualizar Clientes</span>
+              </button>
+            </div>
+
+            {/* Tabla de Clientes */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              {isLoadingCustomers ? (
+                <div className="p-12 text-center text-slate-400 text-sm font-bold animate-pulse">
+                  Cargando base de clientes registrados...
+                </div>
+              ) : filteredCustomers.length === 0 ? (
+                <div className="p-12 text-center text-slate-500 space-y-2">
+                  <Users className="w-12 h-12 mx-auto text-slate-300" />
+                  <p className="font-bold text-base">No se encontraron clientes registrados</p>
+                  <p className="text-xs text-slate-400">Los clientes se registrarán automáticamente al realizar pedidos o ingresar su email.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-black uppercase text-slate-500 tracking-wider">
+                        <th className="py-3.5 px-4">Cliente / Empresa</th>
+                        <th className="py-3.5 px-4">Contacto (WhatsApp & Email)</th>
+                        <th className="py-3.5 px-4">Ubicación Habitual</th>
+                        <th className="py-3.5 px-4 text-center">Compras</th>
+                        <th className="py-3.5 px-4 text-right">Total Invertido</th>
+                        <th className="py-3.5 px-4 text-right">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {filteredCustomers.map((cust) => {
+                        const cleanPhone = (cust.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "");
+                        const waUrl = cleanPhone ? `https://wa.me/598${cleanPhone}` : null;
+                        const isFrequent = (cust.totalOrders || 0) > 1;
+
+                        return (
+                          <tr key={cust.id} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-3.5 px-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-700 font-black flex items-center justify-center flex-shrink-0 text-xs">
+                                  {cust.name ? cust.name.charAt(0).toUpperCase() : "C"}
+                                </div>
+                                <div>
+                                  <p className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                                    <span>{cust.name || "Cliente Sin Nombre"}</span>
+                                    {isFrequent && (
+                                      <span className="text-[9px] bg-purple-100 text-purple-700 font-extrabold px-1.5 py-0.5 rounded-full border border-purple-200">
+                                        Frecuente
+                                      </span>
+                                    )}
+                                  </p>
+                                  <span className="text-[10px] text-slate-400 font-mono">{cust.id}</span>
+                                </div>
+                              </div>
+                            </td>
+
+                            <td className="py-3.5 px-4">
+                              <div className="space-y-0.5">
+                                {cust.phone ? (
+                                  waUrl ? (
+                                    <a
+                                      href={waUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 hover:underline"
+                                    >
+                                      <span>💬 {cust.phone}</span>
+                                    </a>
+                                  ) : (
+                                    <span className="font-medium text-slate-700">{cust.phone}</span>
+                                  )
+                                ) : (
+                                  <span className="text-slate-400 text-[11px]">Sin teléfono</span>
+                                )}
+
+                                {cust.email ? (
+                                  <a
+                                    href={`mailto:${cust.email}`}
+                                    className="text-[11px] text-slate-500 hover:text-sky-600 block hover:underline truncate max-w-xs"
+                                  >
+                                    ✉️ {cust.email}
+                                  </a>
+                                ) : (
+                                  <span className="text-slate-400 text-[10px] block">Sin email</span>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="py-3.5 px-4">
+                              <div className="space-y-0.5">
+                                <p className="font-bold text-slate-800 flex items-center gap-1">
+                                  <MapPin className="w-3 h-3 text-slate-400" />
+                                  <span>{cust.city || "Ciudad no especificada"}, {cust.department || "Uruguay"}</span>
+                                </p>
+                                {cust.address && (
+                                  <p className="text-[11px] text-slate-500 truncate max-w-xs">{cust.address}</p>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="py-3.5 px-4 text-center">
+                              <span className="inline-block px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full font-black text-xs">
+                                {cust.totalOrders || 1} {cust.totalOrders === 1 ? "pedido" : "pedidos"}
+                              </span>
+                            </td>
+
+                            <td className="py-3.5 px-4 text-right">
+                              <p className="font-black text-slate-900 text-sm">
+                                ${(cust.totalSpent || 0).toLocaleString("es-UY")}
+                              </p>
+                              <span className="text-[10px] text-slate-400">UYU</span>
+                            </td>
+
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                {waUrl && (
+                                  <a
+                                    href={waUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+                                    title="Escribir por WhatsApp a este cliente"
+                                  >
+                                    <Phone className="w-4 h-4" />
+                                  </a>
+                                )}
+                                <button
+                                  onClick={() => handleDeleteCustomer(cust.id, cust.name)}
+                                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                  title="Eliminar cliente de la base"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
