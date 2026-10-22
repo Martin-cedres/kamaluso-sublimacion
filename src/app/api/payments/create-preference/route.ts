@@ -66,9 +66,9 @@ export async function POST(req: Request) {
         },
       },
       back_urls: {
-        success: `${baseUrl}/?payment=success&orderId=${validOrderId}`,
-        failure: `${baseUrl}/?payment=failure&orderId=${validOrderId}`,
-        pending: `${baseUrl}/?payment=pending&orderId=${validOrderId}`,
+        success: `${baseUrl}/checkout/success?orderId=${validOrderId}&payment=approved`,
+        failure: `${baseUrl}/checkout?payment=failure&orderId=${validOrderId}`,
+        pending: `${baseUrl}/checkout/success?orderId=${validOrderId}&payment=pending`,
       },
       auto_return: "approved",
       external_reference: validOrderId,

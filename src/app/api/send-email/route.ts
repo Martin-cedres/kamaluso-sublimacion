@@ -298,11 +298,18 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const isPickup = (shippingMethodName || "").toLowerCase().includes("retiro") || (customer?.address || "").toLowerCase().includes("retiro");
+    const isPickup = (shippingMethodName || "").toLowerCase().includes("local") || (customer?.address || "").toLowerCase().includes("local");
 
     const shippingClarification = isPickup
-      ? `📍 <strong>Retiro Presencial:</strong> Te avisaremos por WhatsApp en cuanto tu pedido esté listo para retirar en nuestro local de San José de Mayo sin costo alguno.`
-      : `🚚 <strong>Flete de Encomienda:</strong> El costo del envío por agencia (${shippingMethodName || "DAC / Correo"}) se abona directamente en destino al recibir o retirar tu paquete.`;
+      ? `📍 <strong>Retiro Presencial:</strong> Te avisaremos por correo o WhatsApp en cuanto tu paquete esté armado y listo para retirar en nuestro local de San José de Mayo sin costo alguno.<br/><br/>⚡ <strong>Tiempo de taller:</strong> Despacho/entrega coordinada en 48h hábiles para pedidos de hasta $2.000 UYU (mayores a consultar según volumen).`
+      : `🚚 <strong>Flete de Encomienda:</strong> El costo del envío por agencia (${shippingMethodName || "DAC / Correo / COTMI"}) se abona directamente en destino al recibir o retirar tu paquete.<br/><br/>⚡ <strong>Despacho coordinado:</strong> 48h hábiles desde San José de Mayo para pedidos de hasta $2.000 UYU (mayores a consultar según volumen de taller).`;
+
+    const cityDept =
+      customer?.city && customer?.department && customer.city.toLowerCase() === customer.department.toLowerCase()
+        ? customer.department
+        : [customer?.city, customer?.department].filter(Boolean).join(", ");
+
+    const formattedAddressSummary = [customer?.address, cityDept].filter(Boolean).join(" — ");
 
     const paymentInstructionsHTML = getPaymentInstructionsHTML(paymentMethodId || "", displayOrderId);
 
@@ -435,7 +442,7 @@ export async function POST(request: NextRequest) {
                         </tr>
                         <tr${customer?.observations && customer.observations.trim() ? ' style="border-bottom: 1px dashed #fecdd3;"' : ''}>
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Dirección / Destino:</td>
-                          <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 600; color: #0f172a; vertical-align: top; word-break: break-word;">${customer?.address || "-"}, ${customer?.city || "-"}, ${customer?.department || "-"}</td>
+                          <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 600; color: #0f172a; vertical-align: top; word-break: break-word;">${formattedAddressSummary || "-"}</td>
                         </tr>
                         ${
                           customer?.observations && customer.observations.trim()
@@ -664,7 +671,7 @@ export async function POST(request: NextRequest) {
                         </tr>
                         <tr style="border-bottom: 1px dashed #fecdd3;">
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Dirección / Destino:</td>
-                          <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 700; color: #0f172a; vertical-align: top; word-break: break-word;">${customer?.address || "-"}, ${customer?.city || "-"}, ${customer?.department || "-"}</td>
+                          <td class="value-col" style="padding: 6px 0 6px 4px; width: 64%; font-weight: 700; color: #0f172a; vertical-align: top; word-break: break-word;">${formattedAddressSummary || "-"}</td>
                         </tr>
                         <tr${customer?.observations && customer.observations.trim() ? ' style="border-bottom: 1px dashed #fecdd3;"' : ''}>
                           <td class="label-col" style="padding: 6px 4px 6px 0; width: 36%; font-weight: bold; color: #9f1239; vertical-align: top; word-break: break-word;">Método de Pago:</td>

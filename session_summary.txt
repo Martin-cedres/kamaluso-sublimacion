@@ -1082,3 +1082,50 @@ SIMPLIFICACIÓN DEL BOTÓN FLOTANTE DE WHATSAPP (BOTÓN LIMPIO SIN DESPLEGABLE)
   * Mantenido como enlace flotante directo (`<a>`) a `https://wa.me/59898615074` con icono oficial de WhatsApp, micro-interacción hover sutil (expansión del número de teléfono 098 615 074) y ocultamiento automático cuando el carrito está abierto (`isCartOpen`).
 - Verificación: `npx tsc --noEmit` y `npm run build` ejecutados con éxito (50/50 páginas compiladas, 0 errores).
 ================================================================================
+
+
+================================================================================
+REESTRUCTURACIÓN INTEGRAL DE CHECKOUT: PÁGINA COMPLETA, FINALIZACIÓN POR EMAIL, MERCADO PAGO Y ETIQUETAS LIMPIAS
+================================================================================
+- Tarea: Mudar el proceso de compra fuera del drawer lateral a una página completa dedicada (/checkout), completar la compra en la web y por correo electrónico (sin forzar WhatsApp), separar estrictamente retiro en agencia vs domicilio, integrar Mercado Pago y optimizar etiquetas de envío tradicionales.
+
+- Acciones y componentes implementados:
+  1. Página de Checkout Completa (`src/app/checkout/page.tsx`):
+     * Arquitectura moderna en 2 columnas (Formulario de cliente y entrega + Resumen de pedido sticky).
+     * Autocompletado inteligente por correo electrónico conectado a la base de datos CRM (`customers.json`).
+     * Modalidades de entrega estrictamente delimitadas:
+       - Retiro en Sucursal / Agencia (DAC, Correo Uruguayo, COTMI): pide Departamento, Localidad y Sucursal/Terminal obligatoria, eliminando campos innecesarios de calle/domicilio.
+       - Envío a Domicilio: exige Calle, Número y Apto.
+       - Retiro en Local Kamaluso (San José de Mayo): costo $0, sin campos de envío.
+     * Regla comercial de despacho: Banner y recordatorios de despacho coordinado en 48h hábiles desde San José de Mayo para pedidos de hasta $2.000 UYU (mayores a consultar según volumen del taller).
+     * Soporte de Mercado Pago (+10% recargo con redirección transparente) y pagos por transferencia/giro/efectivo.
+     * Al confirmar: guarda el pedido en base de datos, registra el cliente en el CRM, envía comprobante por correo electrónico y redirige a la pantalla de éxito.
+
+  2. Página de Confirmación y Éxito (`src/app/checkout/success/page.tsx`):
+     * Número de pedido en grande (#KAM-XXXXXX) con botón de copia rápida.
+     * Aviso de confirmación de envío de comprobante al correo del comprador.
+     * Recordatorio del despacho en 48h hábiles desde San José de Mayo.
+     * Tarjetas de datos bancarios para transferencia (BROU, Prex, OCA Blue, Abitab y Red Pagos) con copia rápida en 1 clic.
+     * Detección de pago acreditado por Mercado Pago (`payment=approved`).
+     * Botón secundario opcional de WhatsApp para enviar el comprobante de transferencia si el cliente lo desea.
+
+  3. Simplificación del Drawer de Carrito (`src/components/cart/CartDrawer.tsx`):
+     * Eliminado el paso 2 que congestionaba el panel lateral.
+     * Ahora funciona como vista previa rápida con listado de insumos, selector de cantidades, subtotal y botón principal hacia `/checkout`.
+
+  4. Preferencias de Mercado Pago (`src/app/api/payments/create-preference/route.ts`):
+     * Actualizadas las URLs de retorno (`back_urls`) hacia `/checkout/success?orderId=...&payment=approved`.
+
+  5. Etiquetas de Envío Tradicionales y No Redundantes (`src/components/admin/ShippingLabelModal.tsx`):
+     * Selector y detección automática de Modalidad de Entrega (Agencia vs Domicilio vs Local).
+     * Si retira en sucursal: la etiqueta impresa destaca con badge `RETIRO EN SUCURSAL`, indica la sucursal/terminal y la localidad, omitiendo campos de domicilio para evitar redundancia.
+     * Formato tradicional 10x15cm (4x6"), soporte para impresión térmica B/N y color, y botón de copia rápida de datos.
+
+  6. Notificaciones por Correo (`src/app/api/send-email/route.ts`):
+     * Incorporada la regla de despacho en 48h hábiles desde San José de Mayo.
+     * Visualización limpia de destino sin duplicar ciudad y departamento.
+
+- Verificación técnica:
+  * `npx tsc --noEmit` completado con 0 errores de TypeScript.
+  * `npm run build` completado con éxito (52/52 rutas compiladas y optimizadas, incluyendo /checkout y /checkout/success).
+================================================================================

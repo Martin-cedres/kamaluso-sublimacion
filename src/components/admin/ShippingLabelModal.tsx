@@ -69,7 +69,7 @@ export default function ShippingLabelModal({
 
   // Logística y Paquete - 100% Editable
   const [shippingAgency, setShippingAgency] = useState("DAC (Agencia Central)");
-  const [deliveryType, setDeliveryType] = useState("");
+  const [deliveryType, setDeliveryType] = useState<"agencia" | "domicilio" | "local">("agencia");
   const [packageCount, setPackageCount] = useState("1 Bulto");
   const [freightCondition, setFreightCondition] = useState<"destino" | "pago">("destino");
   const [orderNumber, setOrderNumber] = useState("");
@@ -93,6 +93,15 @@ export default function ShippingLabelModal({
     if (city.toLowerCase() === dept.toLowerCase()) return dept;
     return `${city}, ${dept}`;
   }, [recipientCity, recipientDept]);
+
+  // Limpieza inteligente de la sucursal o dirección para evitar redundancia
+  const cleanDestinationDisplay = React.useMemo(() => {
+    let clean = (recipientAddress || "").trim();
+    clean = clean.replace(/^Retiro en Sucursal:\s*/i, "");
+    clean = clean.replace(/^Retiro en Agencia:\s*/i, "");
+    clean = clean.replace(/^Sucursal:\s*/i, "");
+    return clean;
+  }, [recipientAddress]);
 
   useEffect(() => {
     QRCode.toDataURL("https://www.kamaluso.com", {
@@ -118,23 +127,43 @@ export default function ShippingLabelModal({
       setObservations(order.customer.observations || order.observations || (order as any).notes || "");
       setOrderNumber(order.id || `KAM-${Date.now().toString().slice(-6)}`);
 
-      // Determinar agencia a partir del método de envío del pedido
-      const shipName = order.shippingMethodName || "";
-      if (shipName.toLowerCase().includes("dac")) {
-        setShippingAgency("DAC (Agencia Central)");
-        setDeliveryType(shipName.toLowerCase().includes("agencia") || shipName.toLowerCase().includes("sucursal") ? "Retiro en Agencia" : "");
-      } else if (shipName.toLowerCase().includes("correo")) {
-        setShippingAgency("Correo Uruguayo");
-        setDeliveryType(shipName.toLowerCase().includes("domicilio") ? "Envío a Domicilio" : "Retiro en Sucursal");
-      } else if (shipName.toLowerCase().includes("cotmi")) {
-        setShippingAgency("Agencia COTMI");
-        setDeliveryType(shipName.toLowerCase().includes("agencia") || shipName.toLowerCase().includes("sucursal") ? "Retiro en Agencia" : (shipName.toLowerCase().includes("domicilio") ? "Envío a Domicilio" : "Retiro en Agencia"));
-      } else if (shipName.toLowerCase().includes("retiro") || shipName.toLowerCase().includes("local")) {
+      // Determinar agencia y modalidad a partir del método de envío del pedido
+      const shipName = (order.shippingMethodName || "").toLowerCase();
+      const rawAddress = (order.customer.address || "").trim();
+      const isLocal =
+        shipName.includes("local") || rawAddress.toLowerCase().includes("local");
+      const isAgency =
+        shipName.includes("agencia") ||
+        shipName.includes("sucursal") ||
+        rawAddress.toLowerCase().includes("sucursal");
+
+      if (isLocal) {
         setShippingAgency("Retiro en Local (San José)");
-        setDeliveryType("Retiro Presencial");
+        setDeliveryType("local");
+        setRecipientAddress("Retiro en Local Kamaluso (San José de Mayo)");
+      } else if (isAgency) {
+        if (shipName.includes("correo")) {
+          setShippingAgency("Correo Uruguayo");
+        } else if (shipName.includes("cotmi")) {
+          setShippingAgency("Agencia COTMI");
+        } else {
+          setShippingAgency("DAC (Agencia Central)");
+        }
+        setDeliveryType("agencia");
+        const branchClean = rawAddress
+          .replace(/^Retiro en Sucursal:\s*/i, "")
+          .replace(/^Retiro en Agencia:\s*/i, "");
+        setRecipientAddress(branchClean);
       } else {
-        setShippingAgency(shipName || "DAC (Agencia Central)");
-        setDeliveryType("");
+        if (shipName.includes("correo")) {
+          setShippingAgency("Correo Uruguayo");
+        } else if (shipName.includes("cotmi")) {
+          setShippingAgency("Agencia COTMI");
+        } else {
+          setShippingAgency("DAC (Agencia Central)");
+        }
+        setDeliveryType("domicilio");
+        setRecipientAddress(rawAddress);
       }
 
       // Resumen de productos
@@ -149,13 +178,29 @@ export default function ShippingLabelModal({
         setPackageCount("1 Bulto");
       }
 
-      setFreightCondition(shipName.toLowerCase().includes("retiro") ? "pago" : "destino");
+      setFreightCondition(shipName.includes("retiro") ? "pago" : "destino");
     } else if (initialData) {
       setRecipientName(initialData.recipientName || "");
       setRecipientPhone(initialData.recipientPhone || "");
       setRecipientDept(initialData.recipientDept || "Montevideo");
       setRecipientCity(initialData.recipientCity || "");
-      setRecipientAddress(initialData.recipientAddress || "");
+      const rawAddr = (initialData.recipientAddress || "").trim();
+      const isAgencyInit =
+        rawAddr.toLowerCase().includes("sucursal") ||
+        rawAddr.toLowerCase().includes("agencia") ||
+        (initialData.shippingAgency || "").toLowerCase().includes("agencia");
+      const isLocalInit =
+        rawAddr.toLowerCase().includes("local") ||
+        (initialData.shippingAgency || "").toLowerCase().includes("local");
+
+      if (isLocalInit) {
+        setDeliveryType("local");
+      } else if (isAgencyInit) {
+        setDeliveryType("agencia");
+      } else {
+        setDeliveryType("domicilio");
+      }
+      setRecipientAddress(rawAddr);
       setObservations(initialData.observations || "");
       setShippingAgency(initialData.shippingAgency || "DAC (Agencia Central)");
       setItemsSummary(initialData.itemsSummary || "Insumos de Papelería Sublimable");
@@ -173,7 +218,7 @@ export default function ShippingLabelModal({
       setRecipientAddress("");
       setObservations("");
       setShippingAgency("DAC (Agencia Central)");
-      setDeliveryType("A Domicilio");
+      setDeliveryType("agencia");
       setItemsSummary("Insumos de Papelería Sublimable / Agendas");
       setRutInfo("");
       setNotes("⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE");
@@ -204,12 +249,23 @@ export default function ShippingLabelModal({
   const handleCopyText = () => {
     const text = `*DATOS PARA ENVÍO - KAMALUSO*\n` +
       `📦 *N° Pedido:* ${orderNumber}\n` +
-      `🚚 *Agencia:* ${shippingAgency}${deliveryType ? ` (${deliveryType})` : ""}\n\n` +
+      `🚚 *Agencia:* ${shippingAgency}\n` +
+      `📍 *Modalidad:* ${
+        deliveryType === "agencia"
+          ? "Retiro en Sucursal / Agencia"
+          : deliveryType === "local"
+          ? "Retiro en Local Kamaluso"
+          : "Envío a Domicilio"
+      }\n\n` +
       `👤 *DESTINATARIO:*\n` +
       `• *Nombre:* ${recipientName}\n` +
       `• *Teléfono:* ${recipientPhone}\n` +
-      `• *Ciudad/Depto:* ${recipientCity ? `${recipientCity}, ` : ""}${recipientDept}\n` +
-      `• *Dirección / Sucursal:* ${recipientAddress}\n` +
+      `• *Ciudad/Depto:* ${cityDeptDisplay}\n` +
+      (deliveryType === "agencia"
+        ? `• *Sucursal de Retiro:* ${cleanDestinationDisplay}\n`
+        : deliveryType === "local"
+        ? `• *Retiro:* Local Kamaluso (San José de Mayo)\n`
+        : `• *Dirección de Entrega:* ${recipientAddress}\n`) +
       (observations ? `• *Observaciones:* ${observations}\n` : "") +
       (rutInfo ? `• *RUT/CI:* ${rutInfo}\n` : "") +
       `• *Cuidado:* ${notes}`;
@@ -372,17 +428,94 @@ export default function ShippingLabelModal({
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Dirección de Domicilio o Sucursal de Retiro *
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Modalidad de Entrega *
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ej. Av. 18 de Julio 1234 Apto 201 o Agencia DAC Centro"
-                  value={recipientAddress}
-                  onChange={(e) => setRecipientAddress(e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-slate-400 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white shadow-sm"
-                />
+                <div className="grid grid-cols-3 gap-1 p-1 bg-slate-200/80 rounded-xl text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeliveryType("agencia");
+                      if (shippingAgency.toLowerCase().includes("local")) {
+                        setShippingAgency("DAC (Agencia Central)");
+                      }
+                    }}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      deliveryType === "agencia"
+                        ? "bg-white text-pink-600 shadow-sm font-extrabold"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    🏢 Agencia
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeliveryType("domicilio");
+                      if (shippingAgency.toLowerCase().includes("local")) {
+                        setShippingAgency("DAC (Agencia Central)");
+                      }
+                    }}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      deliveryType === "domicilio"
+                        ? "bg-white text-pink-600 shadow-sm font-extrabold"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    🏠 Domicilio
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeliveryType("local");
+                      setShippingAgency("Retiro en Local (San José)");
+                      setRecipientAddress("Retiro en Local Kamaluso (San José de Mayo)");
+                    }}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      deliveryType === "local"
+                        ? "bg-white text-pink-600 shadow-sm font-extrabold"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    📍 Local
+                  </button>
+                </div>
               </div>
+
+              {deliveryType === "agencia" ? (
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                    Sucursal o Terminal de Retiro *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Terminal Tres Cruces, Salto Shopping, Agencia Central..."
+                    value={cleanDestinationDisplay}
+                    onChange={(e) => setRecipientAddress(e.target.value)}
+                    className="w-full px-3 py-2 border-2 border-slate-400 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white shadow-sm"
+                  />
+                  <p className="text-[10.5px] text-emerald-700 font-bold mt-1">
+                    ✓ La etiqueta indicará Retiro en Sucursal y omitirá campos de domicilio particular.
+                  </p>
+                </div>
+              ) : deliveryType === "local" ? (
+                <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold">
+                  📍 Retiro presencial en taller Kamaluso (San José de Mayo).
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                    Dirección de Domicilio (Calle, N° y Apto) *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Av. 18 de Julio 1234 Apto 201"
+                    value={recipientAddress}
+                    onChange={(e) => setRecipientAddress(e.target.value)}
+                    className="w-full px-3 py-2 border-2 border-slate-400 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white shadow-sm"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
@@ -645,12 +778,47 @@ export default function ShippingLabelModal({
 
                 {/* 2. Dirección de Entrega / Sucursal de Retiro en el mismo contenedor */}
                 <div className="border-t-2 border-black pt-1.5">
-                  <span className="text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider text-black block thermal-text-black mb-0.5">
-                    📍 DIRECCIÓN DE ENTREGA / SUCURSAL DE RETIRO:
-                  </span>
-                  <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
-                    {recipientAddress || "[DIRECCIÓN DE ENTREGA O SUCURSAL DE RETIRO]"}
-                  </p>
+                  {deliveryType === "agencia" ? (
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1">
+                        <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded thermal-black-badge">
+                          🏢 RETIRO EN SUCURSAL
+                        </span>
+                        <span className="text-[8.5px] font-black text-red-600 uppercase thermal-text-black">
+                          NO LLEVAR A DOMICILIO
+                        </span>
+                      </div>
+                      <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-black block thermal-text-black mb-0.5">
+                        SUCURSAL / TERMINAL DE RETIRO:
+                      </span>
+                      <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
+                        {cleanDestinationDisplay || "[INDICAR SUCURSAL O TERMINAL]"}
+                      </p>
+                    </div>
+                  ) : deliveryType === "local" ? (
+                    <div>
+                      <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded thermal-black-badge inline-block mb-1">
+                        📍 RETIRO PRESENCIAL EN TALLER
+                      </span>
+                      <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
+                        LOCAL KAMALUSO (SAN JOSÉ DE MAYO)
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1">
+                        <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded thermal-black-badge">
+                          🏠 ENTREGA A DOMICILIO
+                        </span>
+                      </div>
+                      <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-black block thermal-text-black mb-0.5">
+                        DIRECCIÓN DE ENTREGA (CALLE, N° Y APTO):
+                      </span>
+                      <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
+                        {recipientAddress || "[CALLE, N° DE PUERTA Y APTO]"}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Observaciones dentro del mismo contenedor si existen */}
                   {observations && (
