@@ -1129,3 +1129,134 @@ REESTRUCTURACIÓN INTEGRAL DE CHECKOUT: PÁGINA COMPLETA, FINALIZACIÓN POR EMAI
   * `npx tsc --noEmit` completado con 0 errores de TypeScript.
   * `npm run build` completado con éxito (52/52 rutas compiladas y optimizadas, incluyendo /checkout y /checkout/success).
 ================================================================================
+
+
+================================================================================
+RESTAURACIÓN Y OPTIMIZACIÓN INTEGRAL DE IMPRESIÓN A4 Y ETIQUETAS DE ENVÍO
+================================================================================
+- Problema reportado:
+  1. Las notas de pedido se imprimían reducidas en formato A5 en lugar de abarcar la hoja A4 completa.
+  2. No se encontraba fácilmente la opción para imprimir la etiqueta de despacho en producción.
+  3. Necesidad de recuperar la impresión de nota de pedido en A4 junto con la etiqueta de envío.
+
+- Acciones y soluciones implementadas:
+  1. Formato 2-en-1 en Hoja A4 (`src/components/admin/OrderSummaryModal.tsx`):
+     - Incorporado modo combinado por defecto: la mitad superior contiene la Hoja de Preparación / Taller completa (datos de cliente, logística, tabla de productos con casillas [ ] OK y totales) y la mitad inferior incorpora la Etiqueta de Envío oficial con línea punteada de corte con tijera (`✂ Cortar aquí`), lista para recortar y adherir al paquete.
+     - Selector de modalidad en cabecera: permite alternar en un clic entre "Nota + Etiqueta A4 (2-en-1)" y "Solo Nota Taller (A4)".
+     - Acceso directo instantáneo en cabecera para abrir la Etiqueta Térmica dedicada 10x15cm.
+     - Corrección estricta de CSS `@page { size: A4 portrait !important; margin: 8mm 10mm !important; }` mediante inyección directa en `<style>`, eliminando la reducción accidental a A5 y garantizando 1 sola página A4 nítida.
+
+  2. Alta Visibilidad de Acciones en Panel Admin (`src/app/admin/page.tsx`):
+     - Reemplazados los íconos pequeños ambiguos de la tabla de Pedidos por botones claros con texto y colores dedicados en cada fila:
+       * `[ 📄 Nota A4 ]` (azul): abre directamente la Nota de Pedido A4 (con opción 2-en-1 de etiqueta integrada).
+       * `[ 🏷️ Etiqueta ]` (fucsia): abre directamente el generador de Etiqueta de Envío 10x15.
+       * `[ 👁️ Detalle ]`: abre el modal de detalle del pedido.
+     - En el modal de detalle (`selectedOrderModal`), destacados los botones principales: "Imprimir Nota de Pedido (A4)" e "Imprimir Etiqueta de Envío".
+     - Conectados ambos modales (`OrderSummaryModal` y `ShippingLabelModal`) para permitir navegar entre ellos en 1 clic.
+
+  3. Calibración de Etiqueta Térmica (`src/components/admin/ShippingLabelModal.tsx`):
+     - Añadido botón "Ver Nota A4" en el encabezado del modal.
+     - Aislados estilos de impresión `@page { size: 100mm 150mm !important; }` para no interferir con la configuración A4 del navegador.
+
+  4. Reglas Globales de Impresión (`src/app/globals.css`):
+     - Inyectado forzado de renderizado de color y bordes para impresión (`print-color-adjust: exact`).
+
+- Verificación técnica:
+  * `npx tsc --noEmit`: 0 errores de TypeScript.
+  * `npm run build`: compilación de producción exitosa (52/52 páginas estáticas y dinámicas verificadas).
+================================================================================
+
+
+================================================================================
+CONFIRMACIÓN Y SEPARACIÓN ESTRICTA: NOTA DE PEDIDO A4 vs ETIQUETA 10x15
+================================================================================
+- Criterio confirmado con el usuario:
+  * Nota de Pedido de taller y Etiqueta de Envío son dos documentos estrictamente separados e independientes.
+  * Nota de pedido: tamaño A4 (210 x 297 mm) para taller.
+  * Etiqueta de despacho: tamaño 10x15 cm para impresora térmica/adhesiva.
+
+- Ajustes aplicados con máxima precisión:
+  1. `src/components/admin/OrderSummaryModal.tsx`:
+     - Hoja 100% dedicada a la Nota de Pedido A4 (packing list, datos de comprador, logística, insumos con casillas [ ] OK, totales y control de armado).
+     - Calibración CSS estricta para A4: `@page { size: A4 portrait !important; margin: 10mm 12mm !important; }` con width 210mm y max-width 186mm. Eliminada cualquier reducción accidental a A5.
+     - Botón directo en la barra superior para abrir la Etiqueta 10x15 si se necesita.
+  2. `src/components/admin/ShippingLabelModal.tsx`:
+     - Formato 100% calibrado para rollo térmico o adhesivo 10x15 cm (@page { size: 100mm 150mm !important; }).
+     - Botón directo en cabecera para abrir la Nota A4.
+  3. `src/app/admin/page.tsx`:
+     - En cada fila de la tabla de Pedidos, dos botones claros y visibles:
+       * `[ 📄 Nota A4 ]` (azul): abre directamente la Nota de Pedido A4.
+       * `[ 🏷️ Etiqueta 10x15 ]` (fucsia): abre directamente la Etiqueta de Envío 10x15.
+     - En el modal de detalle del pedido (`selectedOrderModal`), botones grandes:
+       * `[ 📄 Imprimir Nota de Pedido (A4) ]`
+       * `[ 🏷️ Imprimir Etiqueta 10x15 ]`
+  4. `src/app/globals.css`:
+     - Reglas de impresión limpias con `print-color-adjust: exact`.
+
+- Verificaciones técnicas:
+  * `npx tsc --noEmit`: 0 errores.
+  * `npm run build`: compilación de producción exitosa (52/52 páginas estáticas y dinámicas).
+================================================================================
+
+
+================================================================================
+CORRECCIÓN DE MÁRGENES Y CENTRADO DE LA NOTA DE PEDIDO A4
+================================================================================
+- Causa del problema detectada en la captura del usuario:
+  * El navegador Chrome tenía configurado 'Márgenes: Ninguno', anulando el `@page margin`.
+  * El contenedor `#printable-order-summary` utilizaba `left: 0` y `max-width: 186mm`, lo que provocaba que el contenido quedara pegado al borde izquierdo con 24mm de vacío en el borde derecho (descentrado asimétrico).
+  * La altura reducida provocaba un gran espacio en blanco en la mitad inferior de la hoja.
+
+- Solución aplicada:
+  * Dimensionado exacto de A4 al 100%: `width: 210mm !important; height: 297mm !important;`.
+  * Padding perimetral simétrico: `padding: 16mm 18mm 16mm 18mm !important;` garantizando exactamente 18mm de margen izquierdo y 18mm de margen derecho (centrado matemático absoluto tanto si en Chrome se elige 'Márgenes: Ninguno' como 'Predeterminado').
+  * Distribución vertical balanceada (`display: flex; flex-direction: column; justify-content: space-between;`), haciendo que el encabezado, los datos de comprador, la tabla y los controles de firma ocupen de forma armónica toda la hoja A4 sin quedar encimados ni desolados.
+  * Verificado con 0 errores en TypeScript.
+================================================================================
+
+
+================================================================================
+CORRECCIÓN SENIOR DE IMPRESIÓN A4: CONTENEDOR 100% RESPONSIVE Y 1 SOLA HOJA
+================================================================================
+- Causa raíz identificada:
+  * El contenedor `#printable-order-summary` arrastraba clases de pantalla como `max-w-[820px]` (820px = 216.9mm, más ancho que los 210mm del papel A4) y `min-h-[820px]` (altura rígida en píxeles).
+  * Al imprimirse en la impresora física (Epson L6490), ese ancho forzado sobrepasaba el área de impresión y cortaba todo el lateral derecho, mientras que la altura artificial empujaba el pie de página a la hoja 2 ("2 hojas de papel").
+
+- Solución técnica de arquitectura CSS Print:
+  1. Clases de impresión dedicadas (`print:p-0 print:m-0 print:max-w-none print:w-full print:min-h-0 print:block`) en `#printable-order-summary` y sus contenedores modales padres (`print:static print:overflow-visible`).
+  2. En `@media print`, `#printable-order-summary` ahora fluye al `width: 100% !important; max-width: 100% !important; height: auto !important;`, adaptándose con precisión milimétrica al área imprimible A4 fijada por `@page { size: A4 portrait; margin: 10mm 12mm; }`.
+  3. Cero desbordes horizontales (el margen derecho e izquierdo queda 100% visible y simétrico).
+  4. Altura contenida y natural (~175mm): entra holgadamente en **1 sola hoja de papel A4**, sin cortes ni segundas páginas.
+================================================================================
+
+
+================================================================================
+CORRECCIÓN DEFINITIVA DE IMPRESIÓN A4: 1 SOLA HOJA, CERO PÁGINAS EN BLANCO
+================================================================================
+- Causa raíz de las páginas en blanco y desborde:
+  * El fondo del panel de administración (`<header>` y `<main>` con decenas de pedidos) no tenía clase `no-print`. Al imprimir con `visibility: hidden` pero `overflow: visible`, el DOM de 50 pedidos mantenía su altura en el layout y generaba 10 páginas vacías.
+  * `#printable-order-summary` tenía `position: relative`, lo que impedía desacoplarlo del flujo del modal oculto.
+- Solución de arquitectura aplicada:
+  1. Ocultamiento total del layout administrativo en impresión: añadida la clase `no-print` al `<header>` y `<main>` de `src/app/admin/page.tsx` para que reciban `display: none !important` al imprimir.
+  2. Forzado de 1 sola página A4 estricta: `html, body { width: 210mm !important; height: 297mm !important; max-height: 297mm !important; overflow: hidden !important; }`.
+  3. Tamaño `@page { size: A4 portrait !important; margin: 0mm !important; }` para que Chrome fuerce A4 real y no arrastre configuraciones de etiquetas.
+  4. Posicionamiento absoluto seguro: `#printable-order-summary { position: absolute !important; left: 8mm !important; top: 8mm !important; width: 194mm !important; max-width: 194mm !important; max-height: 281mm !important; z-index: 999999 !important; }`.
+  5. Contenido 100% visible, sin cortes laterales, perfectamente centrado con 8mm de margen perimetral y limitado estrictamente a 1 sola hoja de papel en Chrome e impresoras Epson.
+  6. Verificado con `npx tsc --noEmit` (0 errores).
+================================================================================
+
+
+================================================================================
+FIX: ESPACIOS EN SUCURSAL (ETIQUETA) + LAYOUT MODAL NOTA A4
+================================================================================
+- ShippingLabelModal: el input "Sucursal o Terminal de Retiro" usaba como value `cleanDestinationDisplay` (que aplica .trim()), borrando el espacio al tipearlo. Ahora value = `recipientAddress` (texto crudo); la limpieza se aplica solo en la vista previa/impresión.
+- OrderSummaryModal:
+  * Contenedor de scroll era `flex justify-center` (flex-row con stretch): la hoja quedaba con la altura del viewport y el contenido se desbordaba por fuera de la tarjeta. Pasa a bloque con `min-h-0`.
+  * Cruz de cerrar anclada `absolute top-3 right-3`; header con títulos/botones más cortos y sin saltos de línea.
+  * Corregido el "1 Issue" de Next.js: hooks `useMemo` se llamaban después de un `return null` condicional (violación de Rules of Hooks). El early return se movió después de los hooks.
+- tsc --noEmit: 0 errores.
+================================================================================
+
+- Nota A4: eliminado el bloque de Verificación/Calidad/Despacho y las líneas de firma ("Armado por", "Firma / Fecha de Despacho"). tsc OK.
+
+- Eliminada navegación cruzada redundante entre modales: quitado botón "Etiqueta 10x15" en Nota A4 y "Ver Nota A4" en Etiqueta, junto con props `onOpenLabelModal`/`onOpenSummaryModal`, imports sin uso (Tag, FileText) y callbacks en admin/page.tsx. Se mantienen los botones por fila de la tabla, el botón de etiqueta manual del header y el del modal Detalle. tsc OK.

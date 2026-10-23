@@ -299,13 +299,15 @@ export default function ShippingLabelModal({
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
-            aria-label="Cerrar modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              aria-label="Cerrar modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Content Split: Form vs Printable Label */}
@@ -490,7 +492,7 @@ export default function ShippingLabelModal({
                   <input
                     type="text"
                     placeholder="Ej. Terminal Tres Cruces, Salto Shopping, Agencia Central..."
-                    value={cleanDestinationDisplay}
+                    value={recipientAddress}
                     onChange={(e) => setRecipientAddress(e.target.value)}
                     className="w-full px-3 py-2 border-2 border-slate-400 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white shadow-sm"
                   />
@@ -881,97 +883,101 @@ export default function ShippingLabelModal({
       </div>
 
       {/* ESTILOS CSS PARA IMPRESIÓN PRECISA EN IMPRESORA TÉRMICA (10x15cm / 100x150mm / 4x6") */}
-      <style jsx global>{`
-        @page {
-          size: 100mm 150mm;
-          margin: 0mm !important;
-        }
-        @media print {
-          html,
-          body {
-            width: 100mm !important;
-            height: 150mm !important;
-            max-width: 100mm !important;
-            max-height: 150mm !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            background: #ffffff !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          body * {
-            visibility: hidden !important;
-          }
-          .no-print {
-            display: none !important;
-          }
-          #printable-shipping-label,
-          #printable-shipping-label * {
-            visibility: visible !important;
-          }
-          #printable-shipping-label {
-            position: absolute !important;
-            left: 2mm !important;
-            top: 2mm !important;
-            width: 96mm !important;
-            height: 146mm !important;
-            max-width: 96mm !important;
-            max-height: 146mm !important;
-            min-height: 0 !important;
-            box-sizing: border-box !important;
-            border: 2.5px solid #000000 !important;
-            border-radius: 4.5mm !important;
-            box-shadow: none !important;
-            padding: 3.5mm 4mm !important;
-            margin: 0 !important;
-            overflow: hidden !important;
-            page-break-inside: avoid !important;
-            page-break-after: avoid !important;
-            page-break-before: avoid !important;
-            break-inside: avoid !important;
-            break-after: avoid !important;
-            break-before: avoid !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            gap: 1.5mm !important;
-            z-index: 999999 !important;
-            background: #ffffff !important;
-            color: #000000 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          #printable-shipping-label > * + * {
-            margin-top: 0 !important;
-          }
-          /* Calibración Térmica Monocromática (solo activa si se selecciona modo Térmica B/N) */
-          #printable-shipping-label.is-bw-mode .thermal-box {
-            background-color: #ffffff !important;
-            border-color: #000000 !important;
-          }
-          #printable-shipping-label.is-bw-mode .thermal-black-badge {
-            background-color: #000000 !important;
-            color: #ffffff !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          #printable-shipping-label.is-bw-mode .thermal-text-black {
-            color: #000000 !important;
-          }
-          #printable-shipping-label.is-bw-mode .thermal-logo {
-            filter: grayscale(100%) contrast(140%) !important;
-          }
-          /* Modo Color (activo por defecto para impresoras de tinta / láser / papel fotográfico o adhesivo) */
-          #printable-shipping-label.is-color-mode {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          #printable-shipping-label.is-color-mode .thermal-logo {
-            filter: none !important;
-          }
-        }
-      `}</style>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            @page {
+              size: 100mm 150mm !important;
+              margin: 0mm !important;
+            }
+            @media print {
+              html,
+              body {
+                width: 100mm !important;
+                height: 150mm !important;
+                max-width: 100mm !important;
+                max-height: 150mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                background: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              body * {
+                visibility: hidden !important;
+              }
+              .no-print, .no-print * {
+                display: none !important;
+              }
+              #printable-shipping-label,
+              #printable-shipping-label * {
+                visibility: visible !important;
+              }
+              #printable-shipping-label {
+                position: absolute !important;
+                left: 2mm !important;
+                top: 2mm !important;
+                width: 96mm !important;
+                height: 146mm !important;
+                max-width: 96mm !important;
+                max-height: 146mm !important;
+                min-height: 0 !important;
+                box-sizing: border-box !important;
+                border: 2.5px solid #000000 !important;
+                border-radius: 4.5mm !important;
+                box-shadow: none !important;
+                padding: 3.5mm 4mm !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+                break-inside: avoid !important;
+                break-after: avoid !important;
+                break-before: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                gap: 1.5mm !important;
+                z-index: 999999 !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              #printable-shipping-label > * + * {
+                margin-top: 0 !important;
+              }
+              /* Calibración Térmica Monocromática */
+              #printable-shipping-label.is-bw-mode .thermal-box {
+                background-color: #ffffff !important;
+                border-color: #000000 !important;
+              }
+              #printable-shipping-label.is-bw-mode .thermal-black-badge {
+                background-color: #000000 !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              #printable-shipping-label.is-bw-mode .thermal-text-black {
+                color: #000000 !important;
+              }
+              #printable-shipping-label.is-bw-mode .thermal-logo {
+                filter: grayscale(100%) contrast(140%) !important;
+              }
+              /* Modo Color */
+              #printable-shipping-label.is-color-mode {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              #printable-shipping-label.is-color-mode .thermal-logo {
+                filter: none !important;
+              }
+            }
+          `,
+        }}
+      />
     </div>
   );
 }

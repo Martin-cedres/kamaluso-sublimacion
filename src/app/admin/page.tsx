@@ -351,7 +351,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800">
       {/* Top Header Navbar */}
-      <header className="bg-slate-900 text-white sticky top-0 z-40 shadow-lg">
+      <header className="bg-slate-900 text-white sticky top-0 z-40 shadow-lg no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-pink-600 rounded-xl flex items-center justify-center font-bold text-white shadow">
@@ -493,7 +493,7 @@ export default function AdminDashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 no-print">
         {/* TAB 1: PRODUCTOS */}
         {activeTab === "products" && (
           <>
@@ -1076,37 +1076,39 @@ export default function AdminDashboardPage() {
                             </select>
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1">
+                            <div className="flex items-center justify-end gap-1.5 flex-wrap">
                               <button
                                 onClick={() => {
                                   setSelectedOrderForSummary(order);
                                   setIsSummaryModalOpen(true);
                                 }}
-                                className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                                title="Imprimir resumen de pedido (A4 para taller)"
+                                className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 border border-blue-300 rounded-lg font-black text-[11px] flex items-center gap-1.5 transition shadow-xs active:scale-95"
+                                title="Imprimir Nota de Pedido para Taller en hoja A4"
                               >
-                                <FileText className="w-4 h-4 text-blue-600" />
+                                <FileText className="w-3.5 h-3.5" />
+                                <span>Nota A4</span>
                               </button>
                               <button
                                 onClick={() => {
                                   setSelectedOrderForLabel(order);
                                   setIsLabelModalOpen(true);
                                 }}
-                                className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition"
-                                title="Generar e imprimir etiqueta de envío (10x15cm)"
+                                className="px-2.5 py-1.5 bg-pink-50 hover:bg-pink-600 hover:text-white text-pink-700 border border-pink-300 rounded-lg font-black text-[11px] flex items-center gap-1.5 transition shadow-xs active:scale-95"
+                                title="Generar e imprimir Etiqueta de Envío en formato 10x15cm"
                               >
-                                <Printer className="w-4 h-4 text-pink-600" />
+                                <Printer className="w-3.5 h-3.5" />
+                                <span>Etiqueta 10x15</span>
                               </button>
                               <button
                                 onClick={() => setSelectedOrderModal(order)}
-                                className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition"
-                                title="Ver detalle del pedido"
+                                className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
+                                title="Ver detalle completo del pedido"
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteOrder(order.id)}
-                                className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                                 title="Eliminar pedido"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -1457,11 +1459,11 @@ export default function AdminDashboardPage() {
                       setSelectedOrderForSummary(selectedOrderModal);
                       setIsSummaryModalOpen(true);
                     }}
-                    className="px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl shadow-md flex items-center gap-2 transition active:scale-95 text-xs"
+                    className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-md flex items-center gap-2 transition active:scale-95 text-xs"
                     title="Imprimir hoja de taller / Packing slip en hoja A4"
                   >
-                    <FileText className="w-4 h-4 text-blue-400" />
-                    <span>Imprimir Resumen A4</span>
+                    <FileText className="w-4 h-4 text-blue-200" />
+                    <span>Imprimir Nota de Pedido (A4)</span>
                   </button>
 
                   <button
@@ -1470,8 +1472,8 @@ export default function AdminDashboardPage() {
                       setSelectedOrderForLabel(selectedOrderModal);
                       setIsLabelModalOpen(true);
                     }}
-                    className="px-3.5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl shadow-md shadow-pink-600/20 flex items-center gap-2 transition active:scale-95 text-xs"
-                    title="Generar e imprimir etiqueta de envío 10x15cm"
+                    className="px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-black rounded-xl shadow-md shadow-pink-600/20 flex items-center gap-2 transition active:scale-95 text-xs"
+                    title="Generar e imprimir Etiqueta de Envío en formato 10x15cm"
                   >
                     <Printer className="w-4 h-4" />
                     <span>Imprimir Etiqueta 10x15</span>
