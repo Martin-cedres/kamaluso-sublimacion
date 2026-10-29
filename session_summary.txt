@@ -1333,3 +1333,5 @@ RECUPERACIÓN Y REUBICACIÓN CRONOLÓGICA DE PEDIDO MERCADO PAGO #KAM-047963
   4. Sincronizado en `data/orders.json` y desplegado en vivo a la API y Vercel Blob de producción (`https://www.kamaluso.com/api/orders`).
   5. Ahora ambos pedidos de hoy (`#KAM-MAN-354514` y `#KAM-047963`) figuran al tope de la lista en el panel de administración.
 ================================================================================
+
+- Verificación de entrega de correos automáticos: Credenciales SMTP de Gmail (kamalusosanjose@gmail.com) verificadas con éxito (`verify: true`). El circuito de correos para pagos de Mercado Pago se encuentra 100% operativo mediante el Webhook y la pantalla de éxito con notificación cruzada a cliente y administración.
