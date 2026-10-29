@@ -271,7 +271,7 @@ export default function CheckoutPage() {
   };
 
   const getShippingAgencyName = () => {
-    if (shippingAgency === "dac") return "DAC (Agencia Central)";
+    if (shippingAgency === "dac") return "DAC";
     if (shippingAgency === "correo") return "Correo Uruguayo";
     return "Agencia COTMI";
   };
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
         ? "Retiro en Local Kamaluso (San José de Mayo)"
         : deliveryMode === "agencia"
         ? `Retiro en Sucursal: ${agencyBranch.trim()}`
-        : `${homeAddress.trim()}${homeNotes.trim() ? ` [Observaciones: ${homeNotes.trim()}]` : ""}`;
+        : homeAddress.trim();
 
     const observationsCombined = [
       hasRut && customerRut.trim() ? `RUT: ${customerRut.trim()}` : "",
@@ -318,11 +318,12 @@ export default function CheckoutPage() {
       city: deliveryMode === "local" ? "San José de Mayo" : customerCity.trim(),
       address: formattedAddress,
       observations: observationsCombined,
+      deliveryType: deliveryMode,
     };
 
     const orderPayload = {
       id: orderId,
-      customer: fullCustomer,
+      customer: { ...fullCustomer, deliveryType: deliveryMode },
       items: cart,
       totalPrice,
       finalTotal,
@@ -331,6 +332,7 @@ export default function CheckoutPage() {
       shippingMethodName: shippingName,
       status: "pendiente" as const,
       observations: observationsCombined,
+      deliveryType: deliveryMode,
     };
 
     // 1. Guardar Pedido localmente y en Vercel Blob

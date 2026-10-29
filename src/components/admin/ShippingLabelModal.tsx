@@ -68,7 +68,7 @@ export default function ShippingLabelModal({
   const [rutInfo, setRutInfo] = useState("");
 
   // Logística y Paquete - 100% Editable
-  const [shippingAgency, setShippingAgency] = useState("DAC (Agencia Central)");
+  const [shippingAgency, setShippingAgency] = useState("DAC");
   const [deliveryType, setDeliveryType] = useState<"agencia" | "domicilio" | "local">("agencia");
   const [packageCount, setPackageCount] = useState("1 Bulto");
   const [freightCondition, setFreightCondition] = useState<"destino" | "pago">("destino");
@@ -85,6 +85,23 @@ export default function ShippingLabelModal({
   // Código QR Web Real (kamaluso.com)
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
+  // Función para detectar si una nota es técnica / interna de pago (Mercado Pago, pasarela, etc.)
+  const isSystemOrPaymentNote = (text: string): boolean => {
+    if (!text) return false;
+    const lower = text.trim().toLowerCase();
+    return (
+      lower.startsWith("[pago") ||
+      lower.startsWith("[pedido manual") ||
+      lower.startsWith("[pedido cargado") ||
+      lower.includes("pago mp #") ||
+      lower.includes("(approved)") ||
+      lower.includes("(pending)") ||
+      lower.includes("(rejected)") ||
+      lower.includes("mercadopago") ||
+      lower.includes("mercado pago")
+    );
+  };
+
   // Visualización limpia de Ciudad y Departamento sin duplicados (evita "Montevideo, Montevideo")
   const cityDeptDisplay = React.useMemo(() => {
     const city = (recipientCity || "").trim();
@@ -94,14 +111,67 @@ export default function ShippingLabelModal({
     return `${city}, ${dept}`;
   }, [recipientCity, recipientDept]);
 
-  // Limpieza inteligente de la sucursal o dirección para evitar redundancia
-  const cleanDestinationDisplay = React.useMemo(() => {
+  // Nombre de agencia estandarizado y limpio (DAC, CORREO URUGUAYO, COTMI, etc.)
+  const cleanAgencyName = React.useMemo(() => {
+    const ag = (shippingAgency || "").trim();
+    const lower = ag.toLowerCase();
+    if (lower.includes("correo")) return "CORREO URUGUAYO";
+    if (lower.includes("cotmi")) return "COTMI";
+    if (lower.includes("dac")) return "DAC";
+    if (lower.includes("local") || lower.includes("taller")) return "LOCAL";
+    return ag.toUpperCase() || "DAC";
+  }, [shippingAgency]);
+
+  // Limpieza inteligente del texto de destino (dirección o sucursal)
+  const cleanAddressDisplay = React.useMemo(() => {
     let clean = (recipientAddress || "").trim();
+    // Eliminar notas incrustadas en corchetes ej: [Observaciones: ...] o [Notas: ...]
+    clean = clean.replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "").trim();
+    // Eliminar prefijos repetitivos si el usuario los escribió
     clean = clean.replace(/^Retiro en Sucursal:\s*/i, "");
     clean = clean.replace(/^Retiro en Agencia:\s*/i, "");
     clean = clean.replace(/^Sucursal:\s*/i, "");
+    clean = clean.replace(/^Agencia:\s*/i, "");
+    // Eliminar coletillas de "Notas domicilio: ..."
+    clean = clean.replace(/(?:notas?\s*domicilio|observaciones?|indicaciones?):\s*.*$/gi, "").trim();
     return clean;
   }, [recipientAddress]);
+
+  // Sanitización de observaciones para mostrar indicaciones limpias y sin prefijos
+  const cleanObservations = React.useMemo(() => {
+    if (!observations) return "";
+    let obs = observations.trim();
+    if (isSystemOrPaymentNote(obs)) return "";
+    // Eliminar prefijos comunes
+    obs = obs.replace(/^(?:notas?\s*(?:de\s*)?domicilio|observaciones?|indicaciones?):\s*/i, "").trim();
+    if (isSystemOrPaymentNote(obs)) return "";
+    return obs;
+  }, [observations]);
+
+  // Escala tipográfica adaptativa para la dirección: se auto-ajusta si el texto es extenso o si hay notas
+  const addressFontSizeClass = React.useMemo(() => {
+    const len = (cleanAddressDisplay || "").length;
+    const hasObs = Boolean(cleanObservations);
+    if (hasObs) {
+      if (len > 55) return "text-sm sm:text-base font-black leading-snug";
+      if (len > 35) return "text-base sm:text-lg font-black leading-snug";
+      if (len > 22) return "text-lg sm:text-xl font-black leading-snug";
+      return "text-xl sm:text-2xl font-black leading-snug";
+    }
+    // Sin observaciones (mayor espacio vertical disponible)
+    if (len > 60) return "text-base sm:text-lg font-black leading-snug";
+    if (len > 40) return "text-lg sm:text-xl font-black leading-snug";
+    if (len > 24) return "text-xl sm:text-2xl font-black leading-snug";
+    return "text-2xl sm:text-[26px] font-black leading-snug";
+  }, [cleanAddressDisplay, cleanObservations]);
+
+  // Escala tipográfica adaptativa para el nombre del destinatario
+  const nameFontSizeClass = React.useMemo(() => {
+    const len = (recipientName || "").length;
+    if (len > 35) return "text-lg sm:text-xl font-black leading-tight";
+    if (len > 22) return "text-xl sm:text-2xl font-black leading-tight";
+    return "text-2xl sm:text-[25px] font-black leading-tight";
+  }, [recipientName]);
 
   useEffect(() => {
     QRCode.toDataURL("https://www.kamaluso.com", {
@@ -123,19 +193,62 @@ export default function ShippingLabelModal({
       setRecipientPhone(order.customer.phone || "");
       setRecipientDept(order.customer.department || "Montevideo");
       setRecipientCity(order.customer.city || "");
-      setRecipientAddress(order.customer.address || "");
-      setObservations(order.customer.observations || order.observations || (order as any).notes || "");
+      
+      const rawAddress = (order.customer.address || "").trim();
+      let initialObs =
+        order.customer.observations ||
+        order.observations ||
+        order.customer.notes ||
+        order.notes ||
+        "";
+      if (isSystemOrPaymentNote(initialObs)) {
+        initialObs = "";
+      } else if (!initialObs && rawAddress.includes("[")) {
+        const obsMatch = rawAddress.match(/\[(?:Observaciones|Notas?):\s*([^\]]+)\]/i);
+        if (obsMatch && obsMatch[1] && !isSystemOrPaymentNote(obsMatch[1])) {
+          initialObs = obsMatch[1].trim();
+        }
+      }
+      setObservations(initialObs);
       setOrderNumber(order.id || `KAM-${Date.now().toString().slice(-6)}`);
 
       // Determinar agencia y modalidad a partir del método de envío del pedido
+      const explicitDeliveryType = order.deliveryType || order.customer?.deliveryType;
       const shipName = (order.shippingMethodName || "").toLowerCase();
-      const rawAddress = (order.customer.address || "").trim();
+
+      // 1. Detección explícita o inferida de Domicilio (prioridad si el método indica domicilio)
+      const isDomicilio =
+        explicitDeliveryType === "domicilio" ||
+        (!explicitDeliveryType && (
+          shipName.includes("domicilio") ||
+          rawAddress.toLowerCase().includes("envío a domicilio") ||
+          rawAddress.toLowerCase().includes("envio a domicilio")
+        ));
+
+      // 2. Detección de Retiro en Local (solo si no es domicilio y coincide con local o taller)
       const isLocal =
-        shipName.includes("local") || rawAddress.toLowerCase().includes("local");
+        !isDomicilio &&
+        (explicitDeliveryType === "local" ||
+          (!explicitDeliveryType && (
+            shipName.includes("retiro en local") ||
+            shipName.includes("retiro local") ||
+            shipName.includes("taller") ||
+            rawAddress.toLowerCase().includes("retiro en local") ||
+            rawAddress.toLowerCase().includes("retiro local") ||
+            rawAddress.toLowerCase().includes("retiro en taller")
+          )));
+
+      // 3. Detección de Agencia (solo si NO es local ni domicilio)
       const isAgency =
-        shipName.includes("agencia") ||
-        shipName.includes("sucursal") ||
-        rawAddress.toLowerCase().includes("sucursal");
+        !isLocal &&
+        !isDomicilio &&
+        (explicitDeliveryType === "agencia" ||
+          shipName.includes("retiro en agencia") ||
+          shipName.includes("retiro en sucursal") ||
+          shipName.includes("sucursal") ||
+          rawAddress.toLowerCase().includes("sucursal") ||
+          rawAddress.toLowerCase().includes("retiro en agencia") ||
+          (shipName.includes("agencia") && !shipName.includes("domicilio")));
 
       if (isLocal) {
         setShippingAgency("Retiro en Local (San José)");
@@ -145,25 +258,32 @@ export default function ShippingLabelModal({
         if (shipName.includes("correo")) {
           setShippingAgency("Correo Uruguayo");
         } else if (shipName.includes("cotmi")) {
-          setShippingAgency("Agencia COTMI");
+          setShippingAgency("COTMI");
         } else {
-          setShippingAgency("DAC (Agencia Central)");
+          setShippingAgency("DAC");
         }
         setDeliveryType("agencia");
         const branchClean = rawAddress
           .replace(/^Retiro en Sucursal:\s*/i, "")
-          .replace(/^Retiro en Agencia:\s*/i, "");
+          .replace(/^Retiro en Agencia:\s*/i, "")
+          .replace(/^Sucursal:\s*/i, "")
+          .replace(/^Agencia:\s*/i, "")
+          .replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "")
+          .trim();
         setRecipientAddress(branchClean);
       } else {
         if (shipName.includes("correo")) {
           setShippingAgency("Correo Uruguayo");
         } else if (shipName.includes("cotmi")) {
-          setShippingAgency("Agencia COTMI");
+          setShippingAgency("COTMI");
         } else {
-          setShippingAgency("DAC (Agencia Central)");
+          setShippingAgency("DAC");
         }
         setDeliveryType("domicilio");
-        setRecipientAddress(rawAddress);
+        const addrClean = rawAddress
+          .replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "")
+          .trim();
+        setRecipientAddress(addrClean);
       }
 
       // Resumen de productos
@@ -185,13 +305,25 @@ export default function ShippingLabelModal({
       setRecipientDept(initialData.recipientDept || "Montevideo");
       setRecipientCity(initialData.recipientCity || "");
       const rawAddr = (initialData.recipientAddress || "").trim();
-      const isAgencyInit =
-        rawAddr.toLowerCase().includes("sucursal") ||
-        rawAddr.toLowerCase().includes("agencia") ||
-        (initialData.shippingAgency || "").toLowerCase().includes("agencia");
+      const rawAgency = (initialData.shippingAgency || "").toLowerCase();
+      const isDomicilioInit =
+        rawAgency.includes("domicilio") ||
+        rawAddr.toLowerCase().includes("envío a domicilio") ||
+        rawAddr.toLowerCase().includes("envio a domicilio");
       const isLocalInit =
-        rawAddr.toLowerCase().includes("local") ||
-        (initialData.shippingAgency || "").toLowerCase().includes("local");
+        !isDomicilioInit && (
+          rawAddr.toLowerCase().includes("retiro en local") ||
+          rawAddr.toLowerCase().includes("retiro local") ||
+          rawAddr.toLowerCase().includes("taller") ||
+          rawAgency.includes("local")
+        );
+      const isAgencyInit =
+        !isLocalInit &&
+        !isDomicilioInit && (
+          rawAddr.toLowerCase().includes("sucursal") ||
+          rawAddr.toLowerCase().includes("retiro en agencia") ||
+          (rawAgency.includes("agencia") && !rawAgency.includes("domicilio"))
+        );
 
       if (isLocalInit) {
         setDeliveryType("local");
@@ -202,7 +334,7 @@ export default function ShippingLabelModal({
       }
       setRecipientAddress(rawAddr);
       setObservations(initialData.observations || "");
-      setShippingAgency(initialData.shippingAgency || "DAC (Agencia Central)");
+      setShippingAgency(initialData.shippingAgency || "DAC");
       setItemsSummary(initialData.itemsSummary || "Insumos de Papelería Sublimable");
       setRutInfo(initialData.rutInfo || "");
       setNotes(initialData.notes || "⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE");
@@ -217,7 +349,7 @@ export default function ShippingLabelModal({
       setRecipientCity("");
       setRecipientAddress("");
       setObservations("");
-      setShippingAgency("DAC (Agencia Central)");
+      setShippingAgency("DAC");
       setDeliveryType("agencia");
       setItemsSummary("Insumos de Papelería Sublimable / Agendas");
       setRutInfo("");
@@ -240,8 +372,11 @@ export default function ShippingLabelModal({
       setRecipientPhone(order.customer.phone || "");
       setRecipientDept(order.customer.department || "Montevideo");
       setRecipientCity(order.customer.city || "");
-      setRecipientAddress(order.customer.address || "");
-      setObservations(order.customer.observations || order.observations || (order as any).notes || "");
+      const rawAddr = (order.customer.address || "").trim();
+      setRecipientAddress(rawAddr.replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "").trim());
+      let obs = order.customer.observations || order.observations || order.customer.notes || order.notes || "";
+      if (isSystemOrPaymentNote(obs)) obs = "";
+      setObservations(obs);
       setOrderNumber(order.id);
     }
   };
@@ -249,10 +384,10 @@ export default function ShippingLabelModal({
   const handleCopyText = () => {
     const text = `*DATOS PARA ENVÍO - KAMALUSO*\n` +
       `📦 *N° Pedido:* ${orderNumber}\n` +
-      `🚚 *Agencia:* ${shippingAgency}\n` +
+      `🚚 *Agencia:* ${cleanAgencyName}\n` +
       `📍 *Modalidad:* ${
         deliveryType === "agencia"
-          ? "Retiro en Sucursal / Agencia"
+          ? "Retiro en Agencia"
           : deliveryType === "local"
           ? "Retiro en Local Kamaluso"
           : "Envío a Domicilio"
@@ -262,11 +397,11 @@ export default function ShippingLabelModal({
       `• *Teléfono:* ${recipientPhone}\n` +
       `• *Ciudad/Depto:* ${cityDeptDisplay}\n` +
       (deliveryType === "agencia"
-        ? `• *Sucursal de Retiro:* ${cleanDestinationDisplay}\n`
+        ? `• *Sucursal de Retiro:* ${cleanAddressDisplay}\n`
         : deliveryType === "local"
         ? `• *Retiro:* Local Kamaluso (San José de Mayo)\n`
-        : `• *Dirección de Entrega:* ${recipientAddress}\n`) +
-      (observations ? `• *Observaciones:* ${observations}\n` : "") +
+        : `• *Dirección de Entrega:* ${cleanAddressDisplay}\n`) +
+      (cleanObservations ? `• *Observaciones:* ${cleanObservations}\n` : "") +
       (rutInfo ? `• *RUT/CI:* ${rutInfo}\n` : "") +
       `• *Cuidado:* ${notes}`;
 
@@ -439,7 +574,7 @@ export default function ShippingLabelModal({
                     onClick={() => {
                       setDeliveryType("agencia");
                       if (shippingAgency.toLowerCase().includes("local")) {
-                        setShippingAgency("DAC (Agencia Central)");
+                        setShippingAgency("DAC");
                       }
                     }}
                     className={`py-1.5 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
@@ -455,7 +590,7 @@ export default function ShippingLabelModal({
                     onClick={() => {
                       setDeliveryType("domicilio");
                       if (shippingAgency.toLowerCase().includes("local")) {
-                        setShippingAgency("DAC (Agencia Central)");
+                        setShippingAgency("DAC");
                       }
                     }}
                     className={`py-1.5 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
@@ -649,15 +784,14 @@ export default function ShippingLabelModal({
           </div>
 
           {/* Printable Label Preview Side */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center bg-slate-100/70 p-3 sm:p-4 rounded-3xl border border-slate-200">
-            <div className="flex items-center justify-between w-full max-w-[340px] mb-2.5 no-print">
-              <span className="text-xs font-bold text-slate-500">Vista previa (10x15cm):</span>
+          <div className="lg:col-span-6 flex flex-col items-center justify-start bg-slate-100/70 p-3 sm:p-4 rounded-3xl border border-slate-200 self-start lg:sticky lg:top-0">
+            <div className="flex items-center justify-between w-full max-w-[340px] mb-2.5 no-print gap-2">
               {/* Selector Color vs Térmica B/N */}
               <div className="inline-flex items-center bg-white p-0.5 rounded-xl border border-slate-300 shadow-2xs">
                 <button
                   type="button"
                   onClick={() => setPrintColorMode("color")}
-                  className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                  className={`px-2 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
                     printColorMode === "color"
                       ? "bg-pink-600 text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -669,16 +803,27 @@ export default function ShippingLabelModal({
                 <button
                   type="button"
                   onClick={() => setPrintColorMode("bw")}
-                  className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                  className={`px-2 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
                     printColorMode === "bw"
                       ? "bg-slate-900 text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                   title="Impresión Térmica B/N (Alto contraste para impresoras térmicas de bobina)"
                 >
-                  <span>⬛ Térmica B/N</span>
+                  <span>⬛ Térmica</span>
                 </button>
               </div>
+
+              {/* Botón de Impresión Rápido (1 Clic arriba sin scroll) */}
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="px-3.5 py-1.5 bg-pink-600 hover:bg-pink-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-md shadow-pink-600/25 flex items-center gap-1.5 transition cursor-pointer"
+                title="Imprimir etiqueta inmediatamente (1 Clic)"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Imprimir</span>
+              </button>
             </div>
 
             {/* THE PRINTABLE LABEL (Targeted by @media print) */}
@@ -711,10 +856,13 @@ export default function ShippingLabelModal({
                   </div>
                 </div>
 
-                <div className="text-right flex-shrink-0 max-w-[155px]">
-                  <span className="inline-block bg-black text-white font-black text-[9.5px] sm:text-[10.5px] px-2 py-0.5 rounded uppercase tracking-normal leading-tight thermal-black-badge">
-                    {shippingAgency || "DAC"}
-                  </span>
+                <div className="border-2 border-black rounded-lg overflow-hidden flex flex-col text-center min-w-[105px] flex-shrink-0 shadow-2xs">
+                  <div className="bg-black text-white px-2 py-0.5 text-[9.5px] sm:text-[10px] font-black uppercase tracking-wide whitespace-nowrap thermal-black-badge">
+                    {cleanAgencyName}
+                  </div>
+                  <div className="bg-white text-black px-2 py-0.5 text-xs sm:text-[13px] font-black uppercase tracking-widest border-t-2 border-black leading-tight thermal-box">
+                    {deliveryType === "agencia" ? "AGENCIA" : deliveryType === "local" ? "LOCAL" : "DOMICILIO"}
+                  </div>
                 </div>
               </div>
 
@@ -744,92 +892,66 @@ export default function ShippingLabelModal({
               </div>
 
               {/* CONTENEDOR UNIFICADO: DESTINATARIO Y DIRECCIÓN DE ENTREGA */}
-              <div className="p-2 sm:p-2.5 bg-white rounded-xl border-2 border-black flex-shrink-0 shadow-xs thermal-box space-y-1.5">
-                {/* Cabecera Destinatario */}
-                <div className="flex justify-between items-center border-b border-black pb-1">
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-pink-600 thermal-text-black">
-                    DESTINATARIO:
-                  </span>
-                  <span className="text-xs font-black bg-black text-white px-2.5 py-0.5 rounded uppercase thermal-black-badge">
-                    {recipientDept || "URUGUAY"}
-                  </span>
-                </div>
+              <div className="p-2.5 sm:p-3 bg-white rounded-xl border-2 sm:border-[2.5px] border-black flex-1 flex flex-col justify-between shadow-xs thermal-box min-h-0">
+                {/* 1. Destinatario */}
+                <div className="space-y-1">
+                  {/* Cabecera Destinatario */}
+                  <div className="flex justify-between items-center border-b-2 border-black pb-1 mb-1">
+                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-pink-600 thermal-text-black">
+                      DESTINATARIO:
+                    </span>
+                    <span className="text-xs sm:text-sm font-black bg-black text-white px-2.5 py-0.5 rounded uppercase tracking-wider thermal-black-badge">
+                      {recipientDept || "URUGUAY"}
+                    </span>
+                  </div>
 
-                {/* 1. Nombre y Teléfono del Destinatario */}
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-black leading-tight uppercase break-words">
+                  {/* Nombre del Destinatario con auto-escalado dinámico según longitud */}
+                  <h3 className={`${nameFontSizeClass} text-black uppercase break-words tracking-tight`}>
                     {recipientName || "[NOMBRE O EMPRESA]"}
                   </h3>
 
-                  <div className="flex items-center justify-between gap-2 pt-1">
-                    <p className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5 thermal-text-black">
-                      <Phone className="w-3.5 h-3.5 text-slate-700 thermal-text-black flex-shrink-0" />
-                      <span>{recipientPhone || "[TELÉFONO DE CONTACTO]"}</span>
+                  {/* Teléfono y Ciudad en tipografía grande y clara */}
+                  <div className="space-y-1 pt-0.5">
+                    <p className="text-lg sm:text-xl font-black text-black flex items-center gap-2 thermal-text-black leading-tight whitespace-nowrap">
+                      <Phone className="w-5 h-5 text-black thermal-text-black flex-shrink-0" />
+                      <span className="tracking-wide">TEL: {recipientPhone || "—"}</span>
                     </p>
-                    <p className="text-[11px] font-black text-black uppercase text-right truncate">
-                      📍 {cityDeptDisplay}
+                    <p className="text-sm sm:text-base font-black text-slate-800 flex items-center gap-1.5 thermal-text-black uppercase leading-tight break-words">
+                      <MapPin className="w-4 h-4 text-slate-700 thermal-text-black flex-shrink-0" />
+                      <span>{cityDeptDisplay}</span>
                     </p>
+                    {rutInfo && (
+                      <p className="text-[9px] sm:text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 thermal-box thermal-text-black inline-block mt-0.5">
+                        RUT / CI: {rutInfo}
+                      </p>
+                    )}
                   </div>
-
-                  {rutInfo && (
-                    <p className="text-[8.5px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 thermal-box thermal-text-black mt-1 inline-block">
-                      📝 RUT: {rutInfo}
-                    </p>
-                  )}
                 </div>
 
-                {/* 2. Dirección de Entrega / Sucursal de Retiro en el mismo contenedor */}
-                <div className="border-t-2 border-black pt-1.5">
-                  {deliveryType === "agencia" ? (
-                    <div>
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded thermal-black-badge">
-                          🏢 RETIRO EN SUCURSAL
-                        </span>
-                        <span className="text-[8.5px] font-black text-red-600 uppercase thermal-text-black">
-                          NO LLEVAR A DOMICILIO
-                        </span>
-                      </div>
-                      <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-black block thermal-text-black mb-0.5">
-                        SUCURSAL / TERMINAL DE RETIRO:
-                      </span>
-                      <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
-                        {cleanDestinationDisplay || "[INDICAR SUCURSAL O TERMINAL]"}
-                      </p>
-                    </div>
-                  ) : deliveryType === "local" ? (
-                    <div>
-                      <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded thermal-black-badge inline-block mb-1">
-                        📍 RETIRO PRESENCIAL EN TALLER
-                      </span>
-                      <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
-                        LOCAL KAMALUSO (SAN JOSÉ DE MAYO)
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded thermal-black-badge">
-                          🏠 ENTREGA A DOMICILIO
-                        </span>
-                      </div>
-                      <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-black block thermal-text-black mb-0.5">
-                        DIRECCIÓN DE ENTREGA (CALLE, N° Y APTO):
-                      </span>
-                      <p className="text-base sm:text-lg font-black text-black uppercase leading-tight tracking-wide break-words">
-                        {recipientAddress || "[CALLE, N° DE PUERTA Y APTO]"}
-                      </p>
-                    </div>
-                  )}
+                {/* 2. Dirección de Entrega / Sucursal de Retiro con auto-escalado según longitud */}
+                <div className="border-t-2 sm:border-t-[2.5px] border-black pt-1.5 mt-1.5">
+                  <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase text-slate-600 block thermal-text-black tracking-wider leading-none mb-1">
+                    {deliveryType === "agencia"
+                      ? "SUCURSAL DE RETIRO:"
+                      : deliveryType === "local"
+                      ? "PUNTO DE RETIRO:"
+                      : "DIRECCIÓN DE ENTREGA:"}
+                  </span>
+                  <p className={`${addressFontSizeClass} text-black uppercase tracking-wide break-words`}>
+                    {deliveryType === "local"
+                      ? "LOCAL KAMALUSO (SAN JOSÉ DE MAYO)"
+                      : cleanAddressDisplay ||
+                        (deliveryType === "agencia" ? "[INDICAR SUCURSAL]" : "[CALLE Y N°]")}
+                  </p>
 
-                  {/* Observaciones dentro del mismo contenedor si existen */}
-                  {observations && (
-                    <div className="mt-1.5 pt-1 border-t border-dashed border-slate-300">
-                      <span className="text-[7.5px] font-black uppercase text-slate-600 block thermal-text-black">
-                        💬 OBSERVACIONES:
+                  {/* Observaciones (solo si hay indicaciones reales y no notas de pago) */}
+                  {cleanObservations && (
+                    <div className="mt-1.5 p-1.5 bg-slate-50 border border-black rounded-lg thermal-box">
+                      <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase text-slate-700 block thermal-text-black leading-none mb-0.5">
+                        💬 INDICACIONES:
                       </span>
-                      <p className="text-[10px] font-bold text-black leading-tight break-words">
-                        {observations}
+                      <p className="text-xs sm:text-sm font-bold text-black leading-tight break-words">
+                        {cleanObservations}
                       </p>
                     </div>
                   )}

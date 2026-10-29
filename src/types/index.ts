@@ -42,6 +42,7 @@ export interface OrderCustomer {
   address: string;
   notes?: string;
   observations?: string;
+  deliveryType?: "agencia" | "domicilio" | "local";
 }
 
 export interface Order {
@@ -57,6 +58,7 @@ export interface Order {
   status: OrderStatus;
   notes?: string;
   observations?: string;
+  deliveryType?: "agencia" | "domicilio" | "local";
   mpPaymentId?: string;
   mpPayerEmail?: string;
   mpPayerName?: string;
@@ -72,7 +74,7 @@ export interface Customer {
   department: string;
   city: string;
   address: string;
-  deliveryType?: "domicilio" | "agencia";
+  deliveryType?: "domicilio" | "agencia" | "local";
   shippingCompany?: string;
   totalOrders: number;
   totalSpent: number;

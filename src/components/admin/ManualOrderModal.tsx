@@ -171,6 +171,16 @@ export default function ManualOrderModal({
         PAYMENT_METHODS.find((p) => p.id === paymentMethodId)?.name ||
         "Transferencia Bancaria BROU";
 
+      const lowerShip = shippingMethodName.toLowerCase();
+      let deliveryType: "agencia" | "domicilio" | "local" = "agencia";
+      if (lowerShip.includes("local")) {
+        deliveryType = "local";
+      } else if (lowerShip.includes("domicilio")) {
+        deliveryType = "domicilio";
+      } else if (lowerShip.includes("agencia") || lowerShip.includes("sucursal")) {
+        deliveryType = "agencia";
+      }
+
       const finalOrder = await saveOrder({
         id: `KAM-MAN-${Date.now().toString().slice(-6)}`,
         createdAt: new Date().toISOString(),
@@ -182,6 +192,7 @@ export default function ManualOrderModal({
           city: customerCity.trim(),
           address: customerAddress.trim() || shippingMethodName,
           observations: customerObservations.trim(),
+          deliveryType,
         },
         items,
         totalPrice: effectiveTotal,
@@ -191,6 +202,7 @@ export default function ManualOrderModal({
         shippingMethodName,
         status: orderStatus,
         observations: customerObservations.trim(),
+        deliveryType,
       });
 
       onOrderCreated(finalOrder);

@@ -75,12 +75,20 @@ function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null
         if (!existing) {
           orderMap.set(ro.id, ro);
         } else {
+          const resolvedDeliveryType =
+            ro.deliveryType ||
+            existing.deliveryType ||
+            ro.customer?.deliveryType ||
+            existing.customer?.deliveryType;
+
           orderMap.set(ro.id, {
             ...existing,
             ...ro,
+            deliveryType: resolvedDeliveryType,
             customer: {
               ...existing.customer,
               ...ro.customer,
+              deliveryType: resolvedDeliveryType,
             },
             items: ro.items && ro.items.length > 0 ? ro.items : existing.items,
           });
@@ -149,6 +157,8 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     orderData.customer?.notes ||
     "";
 
+  const deliveryType = orderData.deliveryType || orderData.customer?.deliveryType;
+
   const fullOrder: Order = {
     id,
     createdAt,
@@ -161,6 +171,7 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
       address: orderData.customer?.address || "",
       observations,
       notes: observations,
+      deliveryType,
     },
     items: orderData.items || [],
     totalPrice: orderData.totalPrice || 0,
@@ -171,6 +182,7 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     status: orderData.status || "pendiente",
     observations,
     notes: observations,
+    deliveryType,
   };
 
   // 1. Guardar localmente de inmediato (optimista y no destructivo)

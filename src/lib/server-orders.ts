@@ -76,13 +76,21 @@ export function mergeOrderLists(
             const incomingPrio = statusPriority[order.status] || 0;
             const resolvedStatus = incomingPrio >= existingPrio ? order.status : existing.status;
 
+            const resolvedDeliveryType =
+              order.deliveryType ||
+              existing.deliveryType ||
+              order.customer?.deliveryType ||
+              existing.customer?.deliveryType;
+
             orderMap.set(order.id, {
               ...existing,
               ...order,
+              deliveryType: resolvedDeliveryType,
               status: resolvedStatus,
               customer: {
                 ...existing.customer,
                 ...order.customer,
+                deliveryType: resolvedDeliveryType,
               },
               items: order.items && order.items.length > 0 ? order.items : existing.items,
               mpPaymentId: order.mpPaymentId || existing.mpPaymentId,
@@ -194,17 +202,22 @@ export async function upsertServerOrder(
   const existingOrders = await getLatestServerOrders();
   const idx = existingOrders.findIndex((o) => o.id === orderInput.id);
 
+  const deliveryType = orderInput.deliveryType || orderInput.customer?.deliveryType;
+
   let savedOrder: Order;
   let updatedOrders: Order[];
 
   if (idx >= 0) {
     const current = existingOrders[idx];
+    const resolvedDeliveryType = deliveryType || current.deliveryType || current.customer?.deliveryType;
     savedOrder = {
       ...current,
       ...orderInput,
+      deliveryType: resolvedDeliveryType,
       customer: {
         ...current.customer,
         ...(orderInput.customer || {}),
+        deliveryType: resolvedDeliveryType,
       },
       items: orderInput.items && orderInput.items.length > 0 ? orderInput.items : current.items,
       mpPaymentId: orderInput.mpPaymentId || current.mpPaymentId,
@@ -234,6 +247,7 @@ export async function upsertServerOrder(
         address: orderInput.customer?.address || "",
         observations,
         notes: observations,
+        deliveryType,
       },
       items: orderInput.items || [],
       totalPrice: Number(orderInput.totalPrice || 0),
@@ -244,6 +258,7 @@ export async function upsertServerOrder(
       status: orderInput.status || "pendiente",
       observations,
       notes: observations,
+      deliveryType,
       mpPaymentId: orderInput.mpPaymentId,
       mpPayerEmail: orderInput.mpPayerEmail,
       mpPayerName: orderInput.mpPayerName,
@@ -256,6 +271,8 @@ export async function upsertServerOrder(
   const { blobUrl, orders } = await persistServerOrders(updatedOrders);
   return { order: savedOrder, orders, blobUrl };
 }
+
+export const saveServerOrder = upsertServerOrder;
 
 export async function deleteServerOrder(id: string): Promise<Order[]> {
   const cache = globalThis.__kamaluso_orders_cache__!;

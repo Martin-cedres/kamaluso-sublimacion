@@ -1,71 +1,5 @@
 [
   {
-    "id": "KAM-MAN-354514",
-    "createdAt": "2026-10-28T22:42:34.514Z",
-    "customer": {
-      "name": "MARIA TAPIA",
-      "phone": "099081528",
-      "email": "marielatapia1997@hotmail.com",
-      "department": "Canelones",
-      "city": "SOLYMAR",
-      "address": "DAC SHANGRILÁ",
-      "observations": "[Pedido manual cargado previamente]",
-      "notes": "[Pedido manual cargado previamente]"
-    },
-    "items": [
-      {
-        "product": {
-          "id": "1789422073861",
-          "name": "Semanal Vertical (unisex)",
-          "slug": "semanal-vertical-comun",
-          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. \n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
-          "price": 175,
-          "currency": "UYU",
-          "category": "agendas",
-          "badge": "NUEVO 2027",
-          "hasPromoKit": false,
-          "inStock": true,
-          "images": [
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-zO6AZWlurouBQyKnW4Hj6GVyUByOxD.webp",
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-a3KhNZzYigk0M27SNpLOayoD122ucy.webp",
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-3J74CxGvaExDWxEE3wIFxS9YFIWU61.webp",
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-Xj8bDrEws0aH5LaG9CYzBfSK0T9NN7.webp",
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-9Y9OUz6H2DWCwnWqTf819SJWOW1L1y.webp",
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XFOu0kGf60Ofopg5ociI4WgEfszyXs.webp",
-            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-jNeHKIPZGeMzXL3RnSS0cIFuuAb4HP.webp"
-          ]
-        },
-        "quantity": 3
-      },
-      {
-        "product": {
-          "id": "200000931",
-          "name": "Cuaderno 17x22",
-          "slug": "cuaderno",
-          "description": "Cuaderno sublimable formato 17x22 cm. El kit incluye hojas interiores impresas, tapa y contratapa sublimables de 350gr y espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
-          "price": 160,
-          "comparativePrice": 180,
-          "currency": "UYU",
-          "category": "libretas",
-          "hasPromoKit": false,
-          "inStock": true,
-          "images": [
-            "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000357-6cb706cb71/700/IMG-20231118-WA0014.webp?ph=904ccf23c3"
-          ]
-        },
-        "quantity": 3
-      }
-    ],
-    "totalPrice": 1005,
-    "finalTotal": 1005,
-    "paymentMethodId": "mercado_pago_online",
-    "paymentMethodName": "Tarjeta de Crédito / Mercado Pago",
-    "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "pago_confirmado",
-    "observations": "[Pedido manual cargado previamente]",
-    "notes": "[Pedido manual cargado previamente]"
-  },
-  {
     "id": "KAM-047963",
     "createdAt": "2026-10-28T17:37:52.000Z",
     "customer": {
@@ -129,12 +63,12 @@
     "shippingMethodName": "DAC (Agencia Central) - Retiro en Sucursal",
     "status": "pago_confirmado",
     "observations": "[Pago MP #186539005034 (approved) por María Tapia <marielatapia1997@hotmail.com>]",
-    "notes": "[Pago MP #186539005034 (approved) por María Tapia <marielatapia1997@hotmail.com>]",
     "mpPaymentId": "186539005034",
     "mpPayerEmail": "marielatapia1997@hotmail.com",
     "mpPayerName": "María Tapia",
     "emailSent": true,
-    "emailSentAt": "2026-10-28T17:37:55.000Z"
+    "emailSentAt": "2026-10-28T17:37:55.000Z",
+    "notes": "[Pago MP #186539005034 (approved) por María Tapia <marielatapia1997@hotmail.com>]"
   },
   {
     "id": "KAM-372443",
@@ -313,7 +247,8 @@
     "shippingMethodName": "DAC (Agencia Central) - Envío a Domicilio",
     "status": "pago_confirmado",
     "observations": "Notas domicilio: Petrovolpe",
-    "notes": "Notas domicilio: Petrovolpe"
+    "notes": "Notas domicilio: Petrovolpe",
+    "emailSent": false
   },
   {
     "id": "KAM-964318",
@@ -364,7 +299,8 @@
     "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-382294",
@@ -448,7 +384,8 @@
     "shippingMethodName": "DAC (Agencia Central) - Retiro en Sucursal",
     "status": "despachado",
     "observations": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera",
-    "notes": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera"
+    "notes": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-093803",
@@ -517,7 +454,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-164218",
@@ -564,7 +502,8 @@
     "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
     "status": "despachado",
     "observations": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC",
-    "notes": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC"
+    "notes": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-025791",
@@ -607,7 +546,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-269522",
@@ -697,7 +637,8 @@
     "shippingMethodName": "DAC - Envío a Domicilio",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-918663",
@@ -744,7 +685,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-263137",
@@ -793,7 +735,8 @@
     "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-763687",
@@ -840,7 +783,8 @@
     "shippingMethodName": "DAC - Envío a Domicilio",
     "status": "despachado",
     "observations": "Apartamento sobre agroveterinaria",
-    "notes": "Apartamento sobre agroveterinaria"
+    "notes": "Apartamento sobre agroveterinaria",
+    "emailSent": false
   },
   {
     "id": "KAM-481802",
@@ -918,7 +862,8 @@
     "shippingMethodName": "Agencia COTMI - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-081711",
@@ -960,7 +905,8 @@
     "shippingMethodName": "DAC - Envío a Domicilio",
     "status": "despachado",
     "observations": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico",
-    "notes": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico"
+    "notes": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico",
+    "emailSent": false
   },
   {
     "id": "KAM-301326",
@@ -1007,7 +953,8 @@
     "shippingMethodName": "DAC - Envío a Domicilio",
     "status": "despachado",
     "observations": "dejar en taller de motos delgado",
-    "notes": "dejar en taller de motos delgado"
+    "notes": "dejar en taller de motos delgado",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-845731",
@@ -1075,7 +1022,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-504583",
@@ -1125,7 +1073,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-877910",
@@ -1175,7 +1124,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-666263",
@@ -1269,7 +1219,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "Agencia Mercado Modelo",
-    "notes": "Agencia Mercado Modelo"
+    "notes": "Agencia Mercado Modelo",
+    "emailSent": false
   },
   {
     "id": "KAM-935619",
@@ -1371,7 +1322,8 @@
     "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-198772",
@@ -1446,7 +1398,8 @@
     "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
     "status": "despachado",
     "observations": "Complejo de apartamentos Betania 1",
-    "notes": "Complejo de apartamentos Betania 1"
+    "notes": "Complejo de apartamentos Betania 1",
+    "emailSent": false
   },
   {
     "id": "KAM-147676",
@@ -1496,7 +1449,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-368016",
@@ -1609,7 +1563,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-197621",
@@ -1651,7 +1606,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-025417",
@@ -1734,7 +1690,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-689803",
@@ -1777,7 +1734,8 @@
     "shippingMethodName": "Agencia COTMI - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-552875",
@@ -1949,7 +1907,8 @@
     "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-191346",
@@ -1996,7 +1955,8 @@
     "shippingMethodName": "DAC - Retiro en Agencia",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   },
   {
     "id": "KAM-MAN-185079",
@@ -2064,6 +2024,7 @@
     "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
     "status": "despachado",
     "observations": "",
-    "notes": ""
+    "notes": "",
+    "emailSent": false
   }
 ]

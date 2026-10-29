@@ -73,9 +73,14 @@ export async function POST(request: Request) {
                 department: order.customer.department || "Montevideo",
                 city: order.customer.city || "",
                 address: order.customer.address || "",
-                deliveryType: (order.shippingMethodName || "").toLowerCase().includes("agencia")
-                  ? "agencia"
-                  : "domicilio",
+                deliveryType:
+                  order.deliveryType ||
+                  order.customer.deliveryType ||
+                  ((order.shippingMethodName || "").toLowerCase().includes("local")
+                    ? "local"
+                    : (order.shippingMethodName || "").toLowerCase().includes("agencia")
+                    ? "agencia"
+                    : "domicilio"),
                 shippingCompany: "dac",
                 totalOrders: 1,
                 totalSpent: spent,

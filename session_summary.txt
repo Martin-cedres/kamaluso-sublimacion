@@ -1346,3 +1346,170 @@ BUILD Y DESPLIEGUE A PRODUCCIÓN (VERCEL & GITHUB)
   * Todos los cambios confirmados y enviados a la rama `main` en `origin/main`.
   * Despliegue automático iniciado en Vercel para producción (`https://www.kamaluso.com`).
 ================================================================================
+
+================================================================================
+ESTANDARIZACIÓN DE DATOS DE ENVÍO Y DELIVERY TYPE EN PEDIDOS Y ETIQUETAS
+================================================================================
+- Objetivos y Reglas Aplicadas:
+  1. `src/types/index.ts`:
+     - Agregado `deliveryType?: "agencia" | "domicilio" | "local";` a `OrderCustomer` y `Order`.
+     - Actualizado `Customer` para soportar `"local"` además de `"domicilio" | "agencia"`.
+  2. `src/app/checkout/page.tsx`:
+     - `getShippingAgencyName()`: Normalizado a "DAC" (eliminada la ambigüedad de "DAC (Agencia Central)").
+     - `formattedAddress`: La dirección se mantiene limpia como `homeAddress.trim()` sin concatenar `[Observaciones: ...]`, preservando observaciones aisladas en su propio campo.
+     - `orderPayload` y `fullCustomer`: `deliveryType: deliveryMode` incluido a nivel raíz de la orden y en el objeto `customer`.
+  3. `src/lib/server-orders.ts` y `src/lib/orders.ts`:
+     - `upsertServerOrder` / `saveServerOrder`: Se garantiza el guardado de `deliveryType: orderInput.deliveryType || orderInput.customer?.deliveryType` tanto en `savedOrder` como en `savedOrder.customer`.
+     - Preservación de `deliveryType` en la función de combinación `mergeOrderLists` y `mergeOrdersWithLocal`.
+     - Exportado alias `saveServerOrder` para compatibilidad completa.
+  4. `src/components/admin/ManualOrderModal.tsx`:
+     - Determinación automática de `deliveryType` ("local", "domicilio" o "agencia") según el método de envío seleccionado y guardado en `customer` y en la orden.
+  5. `src/components/admin/ShippingLabelModal.tsx`:
+     - Priorización inmediata de `explicitDeliveryType = order.deliveryType || order.customer?.deliveryType` eliminando conjeturas o heurísticas ambiguas al generar etiquetas de despacho.
+  6. Verificación:
+     - Ejecutado `npx tsc --noEmit`: 0 errores, TypeScript estricto de producción.
+===============================================================================
+
+
+================================================================================
+🚀 RESUMEN: REDISEÑO UX Y LAYOUT TÉRMICO (10x15CM) DE ETIQUETA DE ENVÍO
+================================================================================
+1. ESQUINA SUPERIOR DERECHA (OPCIÓN A - APILADOS):
+   - Arriba: Badge compacto de alto contraste con nombre limpio de agencia (DAC, CORREO URUGUAYO, COTMI, LOCAL).
+   - Abajo: En tipografía destacada y visible (`font-black text-xs sm:text-sm`), exclusivamente la palabra `AGENCIA`, `DOMICILIO` o `LOCAL`.
+
+2. DETECCIÓN ROBUSTA DE MODALIDAD (DOMICILIO VS AGENCIA):
+   - Si `order.shippingMethodName` o `deliveryType` contiene 'domicilio', NUNCA se clasifica como agencia (incluso en órdenes con agencias históricas nombradas 'DAC (Agencia Central)').
+   - Limpieza automática de agencias: 'DAC (Agencia Central)' normalizado a 'DAC'. 'Correo Uruguayo' y 'COTMI' normalizados sin textos redundantes.
+
+3. REMITENTE Y DESTINATARIO DE ALTO IMPACTO LOGÍSTICO:
+   - Remitente: Katherine Silva, teléfono 098 615 074 y web kamaluso.com en jerarquía balanceada.
+   - Destinatario: Nombre en `text-base sm:text-lg font-black uppercase`. Teléfono aumentado al mismo tamaño (`text-base sm:text-lg font-black`) con prefijo e icono `TEL:`, visible a distancia por transportistas y cadetes.
+   - Ciudad y Departamento: Ubicación destacada (`text-xs sm:text-sm font-black uppercase`).
+
+4. CAMPO DE DIRECCIÓN / SUCURSAL:
+   - Tamaño de fuente idéntico al nombre (`text-base sm:text-lg font-black uppercase leading-snug break-words`).
+   - Domicilio: Encabezado `🏠 ENTREGA A DOMICILIO` y sanitización completa de etiquetas residuales (`[Observaciones: ...]`).
+   - Agencia: Encabezado `🏢 RETIRO EN SUCURSAL`. Eliminado el texto de 'NO LLEVAR A DOMICILIO' y 'SUCURSAL / TERMINAL DE RETIRO'. Muestra exclusivamente la sucursal limpia sin revelar dirección particular.
+
+5. INDICACIONES Y OBSERVACIONES:
+   - Sanitización de prefijos (`Notas domicilio:`, `Observaciones:`, etc.).
+   - Recuadro definido con borde negro, fondo tenue y tipografía legible (`text-xs sm:text-sm font-black break-words`).
+
+6. PREVENCIÓN DE DESBORDES (ZERO OVERFLOW EN 100x150MM):
+   - Márgenes, paddings y `gap` milimétricamente ajustados en `@media print` para garantizar salida de 1 sola página sin desbordes.
+   - Verificación estricta de TypeScript (`npx tsc --noEmit`: 0 errores, sin `any`).
+================================================================================
+
+
+================================================================================
+🧪 RESUMEN QA: VERIFICACIÓN DEL SISTEMA DE ETIQUETAS DE ENVÍO Y BUILD
+================================================================================
+1. VERIFICACIÓN DE TIPOS CON TYPESCRIPT:
+   - Ejecutado `npx tsc --noEmit`.
+   - Resultado: 0 errores de tipos en todo el proyecto Next.js / TypeScript.
+
+2. PRUEBAS DE DETECCIÓN Y SANITIZACIÓN EN SHIPPINGLABELMODAL:
+   - Caso A (Envío a Domicilio con notas incrustadas en dirección):
+     * Input: `shippingMethodName: "DAC (Agencia Central) - Envío a Domicilio"`, `address: "Charrúas 1113 [Observaciones: Petrovolpe]"`, `observations: "Notas domicilio: Petrovolpe"`.
+     * Modalidad detectada: `domicilio` (CORRECTO).
+     * Agencia: `DAC` (CORRECTO).
+     * Dirección limpia: `"Charrúas 1113"` (CORRECTO, corchetes eliminados).
+     * Observaciones limpias: `"Petrovolpe"` (CORRECTO, prefijo "Notas domicilio:" sanitizado).
+   - Caso B (Retiro en Agencia / Sucursal):
+     * Input: `shippingMethodName: "DAC - Retiro en Agencia"`, `address: "Retiro en Sucursal: DAC SHANGRILÁ"`.
+     * Modalidad detectada: `agencia` (CORRECTO).
+     * Agencia: `DAC` (CORRECTO).
+     * Sucursal limpia: `"DAC SHANGRILÁ"` (CORRECTO, prefijo "Retiro en Sucursal:" sanitizado).
+   - Caso Borde Detectado y Solucionado Proactivamente:
+     * Detección de `isDomicilio` vs `isLocal`: se corrigió un falso positivo en pedidos a domicilio con palabras como "local comercial" en la dirección (ej: KAM-164218 "12 de octubre 282 casi lecueder [Observaciones: planta baja LOCAL COMERCIAL ROGRÁFIC]"). Ahora la modalidad prioriza explícitamente "domicilio" y sólo clasifica como local si es explícito o describe retiro presencial en taller.
+   - Validación Masiva con `data/orders.json`:
+     * 29 pedidos históricos procesados sin fallas, sin corchetes residuales en direcciones y sin prefijos en observaciones.
+
+3. BUILD DE PRODUCCIÓN:
+   - Ejecutado `npm run build`.
+   - Resultado: Compilación exitosa (Exit code 0). 65/65 páginas estáticas/dinámicas generadas con optimización completa de Next.js 15.5.22.
+================================================================================
+
+
+================================================================================
+🎨 RESUMEN: CORRECCIÓN VISUAL INTEGRAL Y ANTI-DESBORDES EN ETIQUETA TÉRMICA
+================================================================================
+1. ELIMINACIÓN DE REPETICIÓN ("DOMICILIO" / "AGENCIA"):
+   - Se removió el badge negro repetitivo de "ENTREGA A DOMICILIO" / "RETIRO EN SUCURSAL" en el centro de la etiqueta.
+   - En su lugar, se utilizan etiquetas sobrias y elegantes: "DIRECCIÓN DE ENTREGA:" o "SUCURSAL DE RETIRO:", dejando que la modalidad principal quede claramente expresada en la placa superior derecha.
+
+2. CERO CORTES Y CERO DESBORDES DE TEXTO (ZERO OVERFLOW):
+   - Teléfono en renglón propio con `whitespace-nowrap`: nunca más se quiebra en dos líneas (ej. "099 081 \n 528").
+   - Ciudad y Departamento en renglón propio con `break-words` y sin `truncate`: eliminado el corte que provocaba "SOLYMAR, CANE...". Ahora muestra "Solymar, Canelones" o cualquier localidad extensa de forma íntegra.
+   - La dirección del destinatario y la sucursal de retiro ocupan el ancho completo con tamaño de alto impacto (`text-lg sm:text-xl font-black break-words leading-snug`).
+
+3. FILTRADO ESTRICTO DE NOTAS DE PAGO TÉCNICAS (MERCADO PAGO):
+   - Se detectan y filtran cadenas de auditoría de pasarelas (`[Pago MP #... (approved) ...]`) para que nunca aparezcan en la etiqueta física de envío. Solo se muestran indicaciones reales de entrega escritas por el cliente.
+   - Si no existen indicaciones reales, la caja de notas no se renderiza, evitando saturación visual innecesaria.
+
+4. DISEÑO UNIFICADO Y ELEGANTE DE LA PLACA SUPERIOR DERECHA:
+   - Se unificaron los badges separados en un único contenedor con borde definido (arriba cabecera negra con nombre de agencia, abajo bloque blanco con "AGENCIA" o "DOMICILIO"), con proporciones equilibradas.
+   - El contenedor central ahora usa `flex-1`, distribuyendo el espacio de forma armoniosa y eliminando huecos blancos muertos.
+
+5. VERIFICACIÓN Y COMPILACIÓN:
+   - TypeScript `npx tsc --noEmit`: 0 errores.
+   - Next.js `npm run build`: 65/65 páginas compiladas exitosamente.
+================================================================================
+
+
+================================================================================
+🚀 REINICIO DE SERVIDOR Y BUILD COMPLETADO EN PUERTO 3000
+================================================================================
+1. COMPILACIÓN DE PRODUCCIÓN (`npm run build`):
+   - 65/65 páginas compiladas exitosamente sin errores de TypeScript ni sintaxis.
+2. REINICIO DE SERVICIO:
+   - Se liberó el puerto 3000 finalizando procesos previos.
+   - Servidor Next.js iniciado con éxito en http://localhost:3000 (HTTP 200 OK verificado).
+================================================================================
+
+
+================================================================================
+📈 ESCALADO TIPOGRÁFICO DE ALTO IMPACTO EN ETIQUETA TÉRMICA (10x15CM)
+================================================================================
+1. AUMENTO SIGNIFICATIVO DE ESCALA TIPOGRÁFICA:
+   - Nombre del Destinatario: Elevado a `text-xl sm:text-2xl font-black` con tracking compacto y negrita extrema, visible a distancia.
+   - Teléfono del Destinatario: Elevado a `text-lg sm:text-xl font-black` con icono de 20px, en renglón propio sin cortes.
+   - Ciudad y Departamento: Elevado a `text-sm sm:text-base font-black`.
+   - Sucursal de Retiro / Dirección de Entrega: Elevado a `text-xl sm:text-2xl font-black leading-snug`, llenando el contenedor principal con jerarquía y legibilidad para el transportista.
+2. BALANCE ESPACIAL:
+   - Se eliminaron los vacíos muertos intermedios con espaciado equilibrado (`space-y-1.5` / `pt-2`).
+   - Verificado con `npx tsc --noEmit` (0 errores) y recarga en caliente en el servidor dev (puerto 3000).
+================================================================================
+
+
+================================================================================
+📌 ALINEACIÓN Y FIJACIÓN SUPERIOR DE VISTA PREVIA DE ETIQUETA
+================================================================================
+- Se corrigió el centrado vertical excesivo (`justify-center`) en la columna de vista previa del modal.
+- Ahora utiliza `justify-start self-start lg:sticky lg:top-0`:
+  * La etiqueta se ubica inmediatamente arriba al abrir la ventana, visible en su totalidad sin necesidad de desplazarse hacia abajo.
+  * Se mantiene fija y visible (sticky) mientras se editan los campos del formulario en pantallas grandes.
+================================================================================
+
+
+================================================================================
+🔠 AUTO-ESCALADO ADAPTATIVO DE TIPOGRAFÍA (DIRECCIÓN, NOMBRE Y AGENCIA)
+================================================================================
+1. ESCALA DINÁMICA DE DIRECCIÓN SEGÚN LONGITUD Y NOTAS:
+   - Direcciones cortas (ej. "Charrúas 1113", "DAC Shangrilá"): Tamaño máximo `text-2xl sm:text-[26px] font-black`.
+   - Direcciones medianas (ej. "Lago espejo esquina lago polkahue, barrio 4H"): Se adaptan automáticamente a `text-lg sm:text-xl font-black` para entrar enteras en 2 renglones con holgura.
+   - Direcciones muy largas (> 60 caracteres) o con notas: Se auto-ajustan a `text-base sm:text-lg font-black` asegurando que nunca se corten ni empujen el pie de la etiqueta.
+2. AUTO-ESCALADO DEL NOMBRE:
+   - Nombres extensos se ajustan dinámicamente (`text-xl` a `text-2xl`), manteniendo armonía visual.
+3. NORMALIZACIÓN DE AGENCIA EN CABECERA:
+   - Se removió el `truncate` en la placa de "CORREO URUGUAYO" para que el texto figure completo y sin puntos suspensivos ("CORREO URUGU...").
+================================================================================
+
+
+================================================================================
+⚡ BOTÓN DE IMPRESIÓN RÁPIDA (1 CLIC) EN BARRA SUPERIOR DE VISTA PREVIA
+================================================================================
+- Se integró un botón de acción principal "Imprimir" directamente en la barra superior de la vista previa de la etiqueta, al lado de los selectores Color / Térmica.
+- Flujo de trabajo acelerado: Al abrir la etiqueta desde el panel de administración, el usuario puede pulsar "Imprimir" al instante con 1 solo clic y sin necesidad de deslizar la barra de desplazamiento.
+================================================================================
