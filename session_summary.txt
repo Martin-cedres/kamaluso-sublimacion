@@ -1260,3 +1260,53 @@ FIX: ESPACIOS EN SUCURSAL (ETIQUETA) + LAYOUT MODAL NOTA A4
 - Nota A4: eliminado el bloque de Verificación/Calidad/Despacho y las líneas de firma ("Armado por", "Firma / Fecha de Despacho"). tsc OK.
 
 - Eliminada navegación cruzada redundante entre modales: quitado botón "Etiqueta 10x15" en Nota A4 y "Ver Nota A4" en Etiqueta, junto con props `onOpenLabelModal`/`onOpenSummaryModal`, imports sin uso (Tag, FileText) y callbacks en admin/page.tsx. Se mantienen los botones por fila de la tabla, el botón de etiqueta manual del header y el del modal Detalle. tsc OK.
+
+- Build de producción OK. Commit 49097ff pusheado a origin/main (deploy automático en Vercel). Excluidos data/orders.json y data/customers.json (datos locales de prueba).
+
+================================================================================
+IMPLEMENTACIÓN DE ARQUITECTURA AGENT-NATIVE / AGENT-READY (CLOUDFLARE SCAN)
+================================================================================
+- Link Response Headers (RFC 8288 / RFC 9727): Inyectadas cabeceras Link en `next.config.js` y `src/middleware.ts` para descubrimiento automático de APIs y recursos de agentes (`api-catalog`, `service-desc`, `service-meta`, `service-doc`).
+- Content Signals en robots.txt: Implementadas directivas `Content-Signal: ai-train=no, search=yes, ai-input=yes` y `Agentmap: https://www.kamaluso.com/.well-known/ai-catalog.json` en `public/robots.txt`.
+- Negociación de Contenido Markdown: Middleware en `src/middleware.ts` detectando peticiones con `Accept: text/markdown` para devolver representación Markdown nativa con `Content-Type: text/markdown; charset=utf-8` y cabecera de tokens `x-markdown-tokens`.
+- API Catalog (RFC 9727): Servido en `/.well-known/api-catalog` con `application/linkset+json`.
+- OAuth / Auth.md / OIDC Discovery: Metadatos publicados en `/.well-known/oauth-authorization-server` (con bloque `agent_auth`), `/.well-known/oauth-protected-resource` (RFC 9728), `/.well-known/openid-configuration`, `/.well-known/jwks.json` y `/auth.md`. Endpoints de registro de agentes en `/api/agent/register`, `/api/agent/claim` y `/api/agent/token`.
+- MCP Server Card (SEP-1649) & Servidor MCP: Servidor MCP implementado en `/api/mcp` con herramientas `search_products`, `get_product_details`, `get_sublimation_parameters`, `calculate_shipping_and_payment` y recursos. Ficha MCP en `/.well-known/mcp/server-card.json`.
+- Agent Skills Discovery Index (RFC v0.2.0): Publicado en `/.well-known/agent-skills/index.json` con 3 habilidades (`catalog-search`, `sublimation-guide`, `order-and-shipping`) con sus respectivos `SKILL.md` y digests SHA-256 calculados.
+- WebMCP: Componente `src/components/agent/WebMcpProvider.tsx` para registro en el navegador vía `document.modelContext.registerTool(...)` y atributos declarativos (`toolname`, `tooldescription`, `toolparamdescription`) en el buscador de `Header.tsx`.
+- ARD (Agentic Resource Discovery) & A2A & Poppy: Manifiestos publicados en `/.well-known/ai-catalog.json` (specVersion 1.0, CORS *, representativeQueries), `/.well-known/agent-card.json` y `/.well-known/poppy.json`.
+- Especificación OpenAPI 3.1 & Health: Publicados en `/openapi.json` y `/api/health`.
+- Guía de Registros DNS-AID para Cloudflare/DNS provista para el usuario.
+- Verificación: `npm run build` exitoso (65 páginas estáticas/dinámicas, 0 errores de TypeScript y lint) y validación de respuestas HTTP 200 completada.
+================================================================================
+
+
+================================================================================
+SOLUCIÓN INTEGRAL DE PAGOS MERCADO PAGO, WEBHOOK Y NOTIFICACIONES DE CORREO
+================================================================================
+- Diagnóstico forense realizado:
+  1. Caso real analizado (Pedido `#KAM-047963`, Pago MP `#186539005034` por $1.105,50 UYU): El formulario de checkout fue completado a nombre de "Sebastián López" (`marieysebas2025@gmail.com`, Solymar, DAC Shangrilá) y abonado 2 minutos después desde la cuenta de Mercado Pago de "María Tapia" (`marielatapia1997@hotmail.com`).
+  2. Pérdida de pedidos en Vercel Blob: `@vercel/blob` `put()` utilizaba por defecto `cacheControlMaxAge: 2592000` (30 días de caché CDN) y `/api/orders` sobreescribía la memoria del servidor con la respuesta cacheada del CDN pasados 10 segundos sin fusionar, borrando pedidos recién creados.
+  3. Ausencia de Webhook de Mercado Pago: No existía `/api/payments/webhook` ni `notification_url` en la preferencia, por lo que al acreditarse el pago en Mercado Pago nunca se actualizaba el pedido a `pago_confirmado`, no se vinculaban los datos del titular de Mercado Pago (nombre, email y N° de operación) con el pedido de la web, ni se enviaba comprobante al correo de la cuenta pagadora de Mercado Pago.
+- Solución implementada:
+  1. `src/types/index.ts`:
+     - Añadidos campos `mpPaymentId`, `mpPayerEmail`, `mpPayerName`, `emailSent` y `emailSentAt` a la interfaz `Order`.
+  2. `src/lib/server-orders.ts` y `src/app/api/orders/route.ts`:
+     - Centralizada la persistencia de pedidos en el servidor con `cacheControlMaxAge: 60` en Vercel Blob y fusión inteligente (`mergeOrderLists`) entre memoria, disco y Blob para que el lag de caché CDN jamás borre pedidos recientes ni retroceda estados (`pago_confirmado` prevalece sobre `pendiente`).
+     - Restaurado el pedido `#KAM-047963` (Sebastián López / María Tapia) con estado `pago_confirmado` y sus 3 ítems.
+  3. `src/app/api/customers/route.ts`:
+     - Añadido `cacheControlMaxAge: 60` en las escrituras de `customers.json` en Vercel Blob.
+  4. `src/lib/mailer.ts` y `src/app/api/send-email/route.ts`:
+     - Extraído y mejorado el motor de correos en `sendOrderEmails`:
+       * Cuando el pago es por Mercado Pago, envía el comprobante tanto al email ingresado en el checkout como al email de la cuenta de Mercado Pago (si son distintos).
+       * Incluye en el correo del administrador y en el asunto el N° de operación de Mercado Pago (`#mpPaymentId`), estado y nombre/correo del titular que realizó el pago para identificar de inmediato pagos hechos desde cuentas de familiares o terceros.
+       * Marca `emailSent: true` y `emailSentAt` en la orden para evitar envíos duplicados.
+  5. `src/app/api/payments/create-preference/route.ts`:
+     - Añadido `notification_url` apuntando a `/api/payments/webhook` y `metadata` completa del pedido (cliente, dirección, método de envío, totales e ítems compactados) para reconstrucción automática ante cualquier eventualidad.
+  6. `src/app/api/payments/webhook/route.ts`:
+     - Nuevo endpoint Webhook (POST y GET) que verifica pagos directamente contra la API oficial de Mercado Pago (`Payment.get` y `Payment.search` por `external_reference`), actualiza el pedido a `pago_confirmado`, reconstruye el pedido desde `metadata` si no existiera en `orders.json`, y dispara los correos de confirmación una única vez (`emailSent` idempotente).
+  7. `src/app/checkout/page.tsx` y `src/app/checkout/success/page.tsx`:
+     - En pagos con Mercado Pago, el checkout aguarda la confirmación de pago para disparar el correo con los datos reales de la transacción, y `/checkout/success` ejecuta una verificación automática de respaldo contra `/api/payments/webhook` al regresar de la pasarela.
+- Verificación:
+  * Compilación TypeScript limpia (`npx tsc --noEmit`: 0 errores).
+================================================================================

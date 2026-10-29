@@ -342,7 +342,7 @@ export default function CheckoutPage() {
 
     // 2. Registrar o actualizar cliente en base de datos CRM
     try {
-      registerOrUpdateCustomer({
+      await registerOrUpdateCustomer({
         name: customerName.trim(),
         phone: customerPhone.trim(),
         email: customerEmail.trim(),
@@ -358,28 +358,8 @@ export default function CheckoutPage() {
       console.warn("Aviso al registrar cliente:", err);
     }
 
-    // 3. Enviar Correo Electrónico con comprobante y datos de pago
-    try {
-      await fetch("/api/send-email", {
-        method: "POST",
-        keepalive: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId,
-          cart,
-          totalPrice,
-          finalTotal,
-          paymentMethodId: paymentMethod,
-          paymentMethodName: selectedPayName,
-          shippingMethodName: shippingName,
-          customer: fullCustomer,
-        }),
-      });
-    } catch (err) {
-      console.warn("Aviso al enviar email:", err);
-    }
-
-    // 4. Si es Mercado Pago: conectar pasarela y redirigir
+    // 3. Si es Mercado Pago: crear preferencia con respaldo completo de datos y redirigir
+    // El correo de confirmación se enviará automáticamente vía Webhook / Success al acreditarse el pago
     if (isMp) {
       try {
         const mpRes = await fetch("/api/payments/create-preference", {
@@ -388,14 +368,13 @@ export default function CheckoutPage() {
           body: JSON.stringify({
             orderId,
             items: cart,
+            totalPrice,
+            finalTotal,
             paymentMethod,
+            paymentMethodName: selectedPayName,
             shippingMethod: deliveryMode,
-            customer: {
-              name: customerName.trim(),
-              email: customerEmail.trim() || "cliente@kamaluso.com",
-              phone: customerPhone.trim(),
-              address: formattedAddress,
-            },
+            shippingMethodName: shippingName,
+            customer: fullCustomer,
           }),
         });
 
@@ -416,7 +395,28 @@ export default function CheckoutPage() {
       }
     }
 
-    // 5. Si es Transferencia u otro: Redirigir a página de éxito
+    // 4. Si es Transferencia u otro medio directo: Enviar correo con instrucciones de pago y redirigir
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        keepalive: true,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          cart,
+          totalPrice,
+          finalTotal,
+          paymentMethodId: paymentMethod,
+          paymentMethodName: selectedPayName,
+          shippingMethodName: shippingName,
+          customer: fullCustomer,
+        }),
+      });
+    } catch (err) {
+      console.warn("Aviso al enviar email:", err);
+    }
+
+    // 5. Redirigir a página de éxito
     clearCart();
     router.push(`/checkout/success?orderId=${orderId}&email=${encodeURIComponent(customerEmail.trim())}`);
   };

@@ -217,6 +217,7 @@ export async function POST(request: Request) {
         access: "public",
         addRandomSuffix: false,
         allowOverwrite: true,
+        cacheControlMaxAge: 60,
         contentType: "application/json",
       });
       blobUrl = blob.url;
@@ -257,6 +258,7 @@ export async function DELETE(request: Request) {
         access: "public",
         addRandomSuffix: false,
         allowOverwrite: true,
+        cacheControlMaxAge: 60,
         contentType: "application/json",
       });
       blobUrl = blob.url;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -25,15 +25,24 @@ const LOGO_URL =
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId") || "KAM-000000";
+  const orderId =
+    searchParams.get("orderId") ||
+    searchParams.get("external_reference") ||
+    "KAM-000000";
   const email = searchParams.get("email") || "";
-  const paymentStatus = searchParams.get("payment"); // "approved" | "pending" | "failure" | null
+  const paymentStatus =
+    searchParams.get("payment") ||
+    searchParams.get("collection_status") ||
+    searchParams.get("status"); // "approved" | "pending" | "failure" | null
+  const mpPaymentId =
+    searchParams.get("payment_id") || searchParams.get("collection_id") || "";
 
   const [copiedId, setCopiedId] = useState(false);
   const [copiedBrou, setCopiedBrou] = useState(false);
   const [copiedPrex, setCopiedPrex] = useState(false);
   const [copiedOca, setCopiedOca] = useState(false);
   const [copiedCi, setCopiedCi] = useState(false);
+  const verifiedRef = useRef(false);
 
   const copyToClipboard = (text: string, setter: (val: boolean) => void) => {
     navigator.clipboard.writeText(text);
@@ -42,7 +51,26 @@ function CheckoutSuccessContent() {
   };
 
   const isMpApproved = paymentStatus === "approved";
-  const isMpPending = paymentStatus === "pending";
+  const isMpPending = paymentStatus === "pending" || paymentStatus === "in_process";
+
+  // Verificación automática de respaldo al volver desde Mercado Pago
+  useEffect(() => {
+    if (verifiedRef.current) return;
+    if (!isMpApproved && !isMpPending && !mpPaymentId) return;
+    if (!orderId || orderId === "KAM-000000") return;
+
+    verifiedRef.current = true;
+    fetch("/api/payments/webhook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderId,
+        paymentId: mpPaymentId || undefined,
+      }),
+    }).catch((err) => {
+      console.warn("Aviso al verificar estado de pago MP:", err);
+    });
+  }, [isMpApproved, isMpPending, mpPaymentId, orderId]);
 
   const waText = encodeURIComponent(
     `¡Hola Kamaluso! Realicé el pedido #${orderId} a través de la web.${

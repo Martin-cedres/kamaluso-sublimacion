@@ -57,6 +57,11 @@ export interface Order {
   status: OrderStatus;
   notes?: string;
   observations?: string;
+  mpPaymentId?: string;
+  mpPayerEmail?: string;
+  mpPayerName?: string;
+  emailSent?: boolean;
+  emailSentAt?: string;
 }
 
 export interface Customer {

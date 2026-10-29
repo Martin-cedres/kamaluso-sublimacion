@@ -1,5 +1,1131 @@
 [
   {
+    "id": "KAM-047963",
+    "createdAt": "2026-04-17T20:37:27.000Z",
+    "customer": {
+      "name": "Sebasti?n L?pez",
+      "phone": "099 081 528",
+      "email": "marieysebas2025@gmail.com",
+      "department": "Canelones",
+      "city": "Solymar",
+      "address": "Retiro en Sucursal: DAC SHANGRIL?",
+      "observations": "[Pago MP #186539005034 (approved) por Mar?a Tapia <marielatapia1997@hotmail.com>]"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "libreta-tapa-blanda-a6-rayada",
+          "slug": "libreta-tapa-blanda-a6-rayada",
+          "name": "Libreta tapa blanda A6 rayada",
+          "description": "Insumo de sublimaci?n",
+          "price": 45,
+          "currency": "UYU",
+          "category": "libreta",
+          "images": [],
+          "inStock": true
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "tapas-a5-de-350-grs",
+          "slug": "tapas-a5-de-350-grs",
+          "name": "TAPAS A5 DE 350 GRS (con laminado para sublimar)",
+          "description": "Insumo de sublimaci?n",
+          "price": 90,
+          "currency": "UYU",
+          "category": "insumo",
+          "images": [],
+          "inStock": true
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "pack-x-3-agendas-semanales-con-horarios",
+          "slug": "pack-x-3-agendas-semanales-con-horarios",
+          "name": "Pack x 3 Agendas semanales con horarios",
+          "description": "Insumo de sublimaci?n",
+          "price": 735,
+          "currency": "UYU",
+          "category": "promo",
+          "images": [],
+          "inStock": true
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 1005,
+    "finalTotal": 1105.5,
+    "paymentMethodId": "mercado_pago_online",
+    "paymentMethodName": "Tarjeta de Cr?dito / D?bito (Mercado Pago)",
+    "shippingMethodName": "DAC (Agencia Central) - Retiro en Sucursal",
+    "status": "pago_confirmado",
+    "observations": "[Pago MP #186539005034 (approved) por Mar?a Tapia <marielatapia1997@hotmail.com>]",
+    "mpPaymentId": "186539005034",
+    "mpPayerEmail": "marielatapia1997@hotmail.com",
+    "mpPayerName": "Mar?a Tapia",
+    "emailSent": true,
+    "emailSentAt": "2026-04-17T20:37:30.000Z"
+  },
+  {
+    "id": "KAM-MAN-354514",
+    "createdAt": "2026-10-28T22:42:34.514Z",
+    "customer": {
+      "name": "MARIA TAPIA",
+      "phone": "099081528",
+      "email": "",
+      "department": "Canelones",
+      "city": "SOLYMAR",
+      "address": "DAC SHANGRILÁ",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1789422073861",
+          "name": "Semanal Vertical (unisex)",
+          "slug": "semanal-vertical-comun",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. \n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-zO6AZWlurouBQyKnW4Hj6GVyUByOxD.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-a3KhNZzYigk0M27SNpLOayoD122ucy.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-3J74CxGvaExDWxEE3wIFxS9YFIWU61.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-Xj8bDrEws0aH5LaG9CYzBfSK0T9NN7.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-9Y9OUz6H2DWCwnWqTf819SJWOW1L1y.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XFOu0kGf60Ofopg5ociI4WgEfszyXs.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-jNeHKIPZGeMzXL3RnSS0cIFuuAb4HP.webp"
+          ]
+        },
+        "quantity": 3
+      },
+      {
+        "product": {
+          "id": "200000931",
+          "name": "Cuaderno 17x22",
+          "slug": "cuaderno",
+          "description": "Cuaderno sublimable formato 17x22 cm. El kit incluye hojas interiores impresas, tapa y contratapa sublimables de 350gr y espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 160,
+          "comparativePrice": 180,
+          "currency": "UYU",
+          "category": "libretas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000357-6cb706cb71/700/IMG-20231118-WA0014.webp?ph=904ccf23c3"
+          ]
+        },
+        "quantity": 3
+      }
+    ],
+    "totalPrice": 1005,
+    "finalTotal": 1005,
+    "paymentMethodId": "mercado_pago_online",
+    "paymentMethodName": "Tarjeta de Crédito / Mercado Pago",
+    "shippingMethodName": "DAC - Retiro en Agencia",
+    "status": "pago_confirmado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-372443",
+    "createdAt": "2026-10-27T02:16:12.443Z",
+    "customer": {
+      "name": "Antonella Walpert",
+      "phone": "099729163",
+      "email": "antonellawalpert@hotmail.com",
+      "department": "Paysandú",
+      "city": "Paysandú",
+      "address": "Charrúas 1113 [Observaciones: Petrovolpe]",
+      "observations": "Notas domicilio: Petrovolpe",
+      "notes": "Notas domicilio: Petrovolpe"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "200000800",
+          "name": "Dos días a la vista (unisex)",
+          "slug": "agenda-2-dias-a-la-vista",
+          "description": "Agenda 2 días por hoja sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación dos días por página, Agenda telefónica, Hojas para notas. 280 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 240,
+          "comparativePrice": 260,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-dos-dias-por-pagina-kamaluso-3-QzHGJVpS4drXwBLcXzaZsVWL86eDoz.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-8SFaWTIrUMrhyDTfpWueICiGOfuh80.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-HRLd7J5j0JUgObCh4vpD9bTGvPOhkx.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-z8zVRoxfbwojPfgKr1gUwCKE8Cw0bk.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-jFY583DUwbnPAMOYGqW39yEo8gDQq0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-Ux0On36e0uSadRUye5fYLy99wVRnso.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-BGoyPU1d8wYh81HErlxmIrp6qupcQ3.webp"
+          ]
+        },
+        "quantity": 3
+      },
+      {
+        "product": {
+          "id": "200000801",
+          "name": "1 día a la vista (unisex)",
+          "slug": "agenda-1-dia-a-la-vista",
+          "description": "Agenda 1 día por página sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación un día por página, Agenda telefónica, Hojas para notas. 420 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 320,
+          "comparativePrice": 350,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-2-ANsjdldjQ1zmCAr2iEhARHLkkVSIoq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-3-j2UH5UJxOrPJ1zqte3OMQSy3qls7qe.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-1-mUIiZC2mgihpOPN2rjDCUZjukNOmZP.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-gtXl5dPXp4VuJLvpPgtfKP4egozDEy.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-gopgayav4iZEbAkLRlh9HsW8dJYwAt.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-zodDNmq65aeenEFnlLjvxzR82CuSF2.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-UFldKLyJgbXd6h0v3Saboqv0bOpbOo.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-EMVJDcBVNHPP1q5Vc7MGcyg388MtdW.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-lcVqWPxKYpltZshkt8OPnkPktm9Qx1.webp"
+          ]
+        },
+        "quantity": 3
+      },
+      {
+        "product": {
+          "id": "1789422916129",
+          "name": "Semanal (sin horarios)",
+          "slug": "semanal-sh-horizontal",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país.\n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-HS3a1iAE6iJhIM4pg5kuDj1wk5xVwQ.webp"
+          ]
+        },
+        "quantity": 1
+      },
+      {
+        "product": {
+          "id": "1789422872854",
+          "name": "Semanal Vertical (flor)",
+          "slug": "semanal-vertical-flor",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país.\n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-pPjp91AbzBAeot0xcgPU0zq1wO5Gob.webp"
+          ]
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "200001488",
+          "name": "Semanal Horizontal (unisex)",
+          "slug": "agenda-sublimable-semanal",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "comparativePrice": 190,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": true,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-2-YMB2tFHi2efaJqtmHoC9R2ArNwcfcm.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-dHEgyw4MO6vf9qc7t54LR7FZHhaZXw.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-1-w489iwmkcFYBh0tyDAuANBwDubHaEI.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-NJLocFXomszEcY1GilhNErgFoNONTM.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-tswoMSuvRZMui0BMTJr9PqXwFJQnL0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-h2OCPmIu0GsOZaoQpVbAzbFKsdkI2j.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-F2AK3bLP9sM7Wc39ibvXAiifwjDB7p.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XRMPlfZTzeS7XcpxjpJo6h3P8STVUD.webp"
+          ]
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "1789422073861",
+          "name": "Semanal Vertical (unisex)",
+          "slug": "semanal-vertical-comun",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. \n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-zO6AZWlurouBQyKnW4Hj6GVyUByOxD.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-a3KhNZzYigk0M27SNpLOayoD122ucy.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-3J74CxGvaExDWxEE3wIFxS9YFIWU61.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-Xj8bDrEws0aH5LaG9CYzBfSK0T9NN7.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-9Y9OUz6H2DWCwnWqTf819SJWOW1L1y.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XFOu0kGf60Ofopg5ociI4WgEfszyXs.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-jNeHKIPZGeMzXL3RnSS0cIFuuAb4HP.webp"
+          ]
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "200001111",
+          "name": "Planner Verde",
+          "slug": "planner-verde",
+          "description": "Organizador / Planner perpetuo sublimable. Tamaño 15x21 cm. Incluye hojas interiores organizadoras sin fecha fija, tapa y contratapa sublimables de 350gr y espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 240,
+          "currency": "UYU",
+          "category": "blocks-planners",
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/planner-verde-0SR8KoFXM6ny6Sev9sblnxLxAfAHXW.webp",
+            "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000362-81e4381e45/450/Planner%20verde.jpeg?ph=904ccf23c3"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 3145,
+    "finalTotal": 3145,
+    "paymentMethodId": "prex",
+    "paymentMethodName": "Transferencia Prex a Prex",
+    "shippingMethodName": "DAC (Agencia Central) - Envío a Domicilio",
+    "status": "pago_confirmado",
+    "observations": "Notas domicilio: Petrovolpe",
+    "notes": "Notas domicilio: Petrovolpe"
+  },
+  {
+    "id": "KAM-964318",
+    "createdAt": "2026-10-26T15:02:44.318Z",
+    "customer": {
+      "name": "Johana Cabrera",
+      "phone": "091680672",
+      "email": "johanamicaela@hotmail.com",
+      "department": "Maldonado",
+      "city": "Maldonado",
+      "address": "Lago espejo esquina lago polkahue, barrio 4H",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "200000801",
+          "name": "1 día a la vista (unisex)",
+          "slug": "agenda-1-dia-a-la-vista",
+          "description": "Agenda 1 día por página sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación un día por página, Agenda telefónica, Hojas para notas. 420 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 320,
+          "comparativePrice": 350,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-2-ANsjdldjQ1zmCAr2iEhARHLkkVSIoq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-3-j2UH5UJxOrPJ1zqte3OMQSy3qls7qe.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-1-mUIiZC2mgihpOPN2rjDCUZjukNOmZP.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-gtXl5dPXp4VuJLvpPgtfKP4egozDEy.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-gopgayav4iZEbAkLRlh9HsW8dJYwAt.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-zodDNmq65aeenEFnlLjvxzR82CuSF2.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-UFldKLyJgbXd6h0v3Saboqv0bOpbOo.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-EMVJDcBVNHPP1q5Vc7MGcyg388MtdW.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-lcVqWPxKYpltZshkt8OPnkPktm9Qx1.webp"
+          ]
+        },
+        "quantity": 3
+      }
+    ],
+    "totalPrice": 960,
+    "finalTotal": 960,
+    "paymentMethodId": "prex",
+    "paymentMethodName": "Transferencia Prex a Prex",
+    "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-382294",
+    "createdAt": "2026-10-25T23:53:02.295Z",
+    "customer": {
+      "name": "urbana",
+      "phone": "092117135",
+      "email": "lindaestampatbo@gmail.com",
+      "department": "Tacuarembó",
+      "city": "tacuarembo",
+      "address": "Retiro en Sucursal: Deposito DAC, ruta 5, Tacuarembo",
+      "observations": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera",
+      "notes": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1789422073861",
+          "name": "Semanal Vertical (unisex)",
+          "slug": "semanal-vertical-comun",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. \n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-zO6AZWlurouBQyKnW4Hj6GVyUByOxD.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-a3KhNZzYigk0M27SNpLOayoD122ucy.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-3J74CxGvaExDWxEE3wIFxS9YFIWU61.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-Xj8bDrEws0aH5LaG9CYzBfSK0T9NN7.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-9Y9OUz6H2DWCwnWqTf819SJWOW1L1y.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XFOu0kGf60Ofopg5ociI4WgEfszyXs.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-jNeHKIPZGeMzXL3RnSS0cIFuuAb4HP.webp"
+          ]
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "1789423787179",
+          "name": "Pack 2 tapas",
+          "slug": "pack-2-tapas",
+          "description": "Pack de 2 tapas sublimables, delantera y trasera, perforadas. Tamaño 15x21cm.\n\nSOLO BLANCO",
+          "price": 20,
+          "comparativePrice": 30,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "REPUESTO",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-2022-tapa-2-MsDSaiR9C1sv6F0o4ZhK7b78xUD8zB.webp"
+          ]
+        },
+        "quantity": 3
+      },
+      {
+        "product": {
+          "id": "200000052",
+          "name": "Block 10x15cm liso",
+          "slug": "block-sublimable-10x15cm-sin-renglones",
+          "description": "Block 10x15cm liso sublimable para personalizar. El kit incluye hojas interiores lisas, tapa y contratapa sublimables de 350gr y espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en San José, hacemos envíos a todo el país.",
+          "price": 60,
+          "currency": "UYU",
+          "category": "blocks-planners",
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---1-2-QCeHmX4c8j7MrjOraMBvpqQZTxhfQF.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---6-1-gIpJPQxgFIyDWz7bPzQkNQyoNFRX7b.webp"
+          ]
+        },
+        "quantity": 4
+      }
+    ],
+    "totalPrice": 650,
+    "finalTotal": 650,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC (Agencia Central) - Retiro en Sucursal",
+    "status": "despachado",
+    "observations": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera",
+    "notes": "RUT: 190313430014 • Empresa: Carla Rafaela Sanchez Viera"
+  },
+  {
+    "id": "KAM-MAN-093803",
+    "createdAt": "2026-10-22T23:51:33.803Z",
+    "customer": {
+      "name": "Micaela Gómez",
+      "phone": "096223309",
+      "email": "",
+      "department": "Montevideo",
+      "city": "Paso Molino",
+      "address": "Retira en Agencia",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "200001488",
+          "name": "Semanal Horizontal (unisex)",
+          "slug": "agenda-sublimable-semanal",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "comparativePrice": 190,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": true,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-2-YMB2tFHi2efaJqtmHoC9R2ArNwcfcm.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-dHEgyw4MO6vf9qc7t54LR7FZHhaZXw.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-1-w489iwmkcFYBh0tyDAuANBwDubHaEI.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-NJLocFXomszEcY1GilhNErgFoNONTM.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-tswoMSuvRZMui0BMTJr9PqXwFJQnL0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-h2OCPmIu0GsOZaoQpVbAzbFKsdkI2j.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-F2AK3bLP9sM7Wc39ibvXAiifwjDB7p.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XRMPlfZTzeS7XcpxjpJo6h3P8STVUD.webp"
+          ]
+        },
+        "quantity": 2
+      },
+      {
+        "product": {
+          "id": "1789423787179",
+          "name": "Pack 2 tapas",
+          "slug": "pack-2-tapas",
+          "description": "Pack de 2 tapas sublimables, delantera y trasera, perforadas. Tamaño 15x21cm.\n\nSOLO BLANCO",
+          "price": 20,
+          "comparativePrice": 30,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "REPUESTO",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-2022-tapa-2-MsDSaiR9C1sv6F0o4ZhK7b78xUD8zB.webp"
+          ]
+        },
+        "quantity": 2
+      }
+    ],
+    "totalPrice": 390,
+    "finalTotal": 390,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC - Retiro en Agencia",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-164218",
+    "createdAt": "2026-10-22T19:09:24.219Z",
+    "customer": {
+      "name": "ROGRÁFIC",
+      "phone": "098488084",
+      "email": "rominadarosah@gmail.com",
+      "department": "Montevideo",
+      "city": "ARTIGAS",
+      "address": "12 de octubre 282 casi lecueder [Observaciones: planta baja LOCAL COMERCIAL ROGRÁFIC]",
+      "observations": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC",
+      "notes": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1788710173894",
+          "name": "Kit x10",
+          "slug": "kit-x10",
+          "description": "Kit de 10 unidades de agendas semanales. Interiores a elección.",
+          "price": 1600,
+          "comparativePrice": 1750,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/kit-agendas-sublimacion-RAJbvVcUeH4I7aJ8acS7psGR1prpfC.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-TlhGlpPkEzwdRLDQAMvvoQRwz6FNXh.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-5qVLRsa9MoU5gK5g6sM5dkOYAJYkiV.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-stnMNLNFYrppCKdXqHUB2Ye9SoBZ68.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-zRRENR8dO08rma0bnS7QpU9GqYqdMq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-DuE2bH6Lx6QnXmbSw0F3nAiaAxNV2o.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 1600,
+    "finalTotal": 1600,
+    "paymentMethodId": "abitab",
+    "paymentMethodName": "Giro ABITAB",
+    "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
+    "status": "despachado",
+    "observations": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC",
+    "notes": "Notas domicilio: planta baja LOCAL COMERCIAL ROGRÁFIC"
+  },
+  {
+    "id": "KAM-MAN-025791",
+    "createdAt": "2026-10-22T13:33:45.791Z",
+    "customer": {
+      "name": "Florencia Irázabal",
+      "phone": "097693605",
+      "email": "",
+      "department": "Montevideo",
+      "city": "Montevideo",
+      "address": "Retira en agencia",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "200000116",
+          "name": "Libreta tamaño 15x21 cm (A5)",
+          "slug": "libreta-sublimable-tamano-15x21-cm",
+          "description": "Libreta sublimable A5. Tamaño 15x21 cm. Incluye hojas interiores impresas, tapa y contratapa sublimables de 350gr, espiral para enrular. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 140,
+          "comparativePrice": 170,
+          "currency": "UYU",
+          "category": "libretas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/libreta-a5-sublimable-dW6xRzjvjB6lwBn0eI9eg7s31Idb8o.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/libreta-a5-sublimable-tapa-s8wZbMP7jiFBQfoBnLZHtcXWXFQUF5.webp"
+          ]
+        },
+        "quantity": 35
+      }
+    ],
+    "totalPrice": 4900,
+    "finalTotal": 4900,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC - Retiro en Agencia",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-269522",
+    "createdAt": "2026-10-22T00:17:49.525Z",
+    "customer": {
+      "name": "Eliana Machado",
+      "phone": "099600679",
+      "email": "elianamachado05@gmail.com",
+      "department": "Treinta y Tres",
+      "city": "Vergara",
+      "address": "Bernardo Berro 1808",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1788710173894",
+          "name": "Kit x10",
+          "slug": "kit-x10",
+          "description": "Kit de 10 unidades de agendas semanales. Interiores a elección.",
+          "price": 1600,
+          "comparativePrice": 1750,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/kit-agendas-sublimacion-RAJbvVcUeH4I7aJ8acS7psGR1prpfC.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-TlhGlpPkEzwdRLDQAMvvoQRwz6FNXh.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-5qVLRsa9MoU5gK5g6sM5dkOYAJYkiV.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-stnMNLNFYrppCKdXqHUB2Ye9SoBZ68.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-zRRENR8dO08rma0bnS7QpU9GqYqdMq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-DuE2bH6Lx6QnXmbSw0F3nAiaAxNV2o.webp"
+          ]
+        },
+        "quantity": 1
+      },
+      {
+        "product": {
+          "id": "1788885321695",
+          "name": "Agenda Perpetua",
+          "slug": "agenda-perpetua",
+          "description": "Agenda Perpetua, con horarios.  Incluye tapas sublimables de 350g y espiral plástico.\n\nContenido:\n- Hoja de datos\n- Organizador anual \n- Hoja de contraseñas\n- Diagramación semana a la vista\n- Agenda telefónica\n- Hojas para notas",
+          "price": 155,
+          "comparativePrice": 165,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/perp-ROFeWbv2ob4QY4GNJja0OterOAyP4K.webp"
+          ]
+        },
+        "quantity": 3
+      },
+      {
+        "product": {
+          "id": "200000800",
+          "name": "Dos días a la vista (unisex)",
+          "slug": "agenda-2-dias-a-la-vista",
+          "description": "Agenda 2 días por hoja sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación dos días por página, Agenda telefónica, Hojas para notas. 280 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 240,
+          "comparativePrice": 260,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-dos-dias-por-pagina-kamaluso-3-QzHGJVpS4drXwBLcXzaZsVWL86eDoz.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-8SFaWTIrUMrhyDTfpWueICiGOfuh80.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-HRLd7J5j0JUgObCh4vpD9bTGvPOhkx.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-z8zVRoxfbwojPfgKr1gUwCKE8Cw0bk.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-jFY583DUwbnPAMOYGqW39yEo8gDQq0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-Ux0On36e0uSadRUye5fYLy99wVRnso.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-BGoyPU1d8wYh81HErlxmIrp6qupcQ3.webp"
+          ]
+        },
+        "quantity": 2
+      }
+    ],
+    "totalPrice": 2545,
+    "finalTotal": 2545,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC - Envío a Domicilio",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-MAN-918663",
+    "createdAt": "2026-10-21T18:05:18.663Z",
+    "customer": {
+      "name": "Ana Mieres",
+      "phone": "098295460",
+      "email": "",
+      "department": "Canelones",
+      "city": "Las Piedras",
+      "address": "Retira en Agencia",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1788710173894",
+          "name": "Kit x10",
+          "slug": "kit-x10",
+          "description": "Kit de 10 unidades de agendas semanales. Interiores a elección.",
+          "price": 1600,
+          "comparativePrice": 1750,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/kit-agendas-sublimacion-RAJbvVcUeH4I7aJ8acS7psGR1prpfC.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-TlhGlpPkEzwdRLDQAMvvoQRwz6FNXh.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-5qVLRsa9MoU5gK5g6sM5dkOYAJYkiV.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-stnMNLNFYrppCKdXqHUB2Ye9SoBZ68.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-zRRENR8dO08rma0bnS7QpU9GqYqdMq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-DuE2bH6Lx6QnXmbSw0F3nAiaAxNV2o.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 1600,
+    "finalTotal": 1600,
+    "paymentMethodId": "prex",
+    "paymentMethodName": "Transferencia Prex",
+    "shippingMethodName": "DAC - Retiro en Agencia",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-263137",
+    "createdAt": "2026-10-21T13:44:23.137Z",
+    "customer": {
+      "name": "Enrique Blanco",
+      "phone": "099367095",
+      "email": "impredos@gmail.com",
+      "department": "Durazno",
+      "city": "Sarandi Del Yi",
+      "address": "Cleto M Ruiz 1432",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "200000800",
+          "name": "Dos días a la vista (unisex)",
+          "slug": "agenda-2-dias-a-la-vista",
+          "description": "Agenda 2 días por hoja sublimable. Tamaño 15x21 cm. El kit incluye las hojas interiores impresas, tapa y contratapa sublimables de 350gr y el espiral para enrular. El interior contiene: Hoja de datos, Calendario anual, Organizador anual, Hoja de contraseñas, Planilla de gastos, Portadas mes a mes, Diagramación dos días por página, Agenda telefónica, Hojas para notas. 280 PAGINAS EN TOTAL. Parámetros para sublimar: 170ºC durante 120 segundos. Estamos en el departamento de San José, hacemos envíos a todo el país.",
+          "price": 240,
+          "comparativePrice": 260,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-dos-dias-por-pagina-kamaluso-3-QzHGJVpS4drXwBLcXzaZsVWL86eDoz.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-8SFaWTIrUMrhyDTfpWueICiGOfuh80.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-HRLd7J5j0JUgObCh4vpD9bTGvPOhkx.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-z8zVRoxfbwojPfgKr1gUwCKE8Cw0bk.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-jFY583DUwbnPAMOYGqW39yEo8gDQq0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-Ux0On36e0uSadRUye5fYLy99wVRnso.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-BGoyPU1d8wYh81HErlxmIrp6qupcQ3.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 240,
+    "finalTotal": 240,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-763687",
+    "createdAt": "2026-10-20T18:26:03.688Z",
+    "customer": {
+      "name": "Jhoana Ocampo",
+      "phone": "091274705",
+      "email": "jhoana.ocampo@docente.ceibal.edu.uy",
+      "department": "Tacuarembó",
+      "city": "Tacuarembó",
+      "address": "César Ortiz y Ayala 66",
+      "observations": "Apartamento sobre agroveterinaria",
+      "notes": "Apartamento sobre agroveterinaria"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1788710173894",
+          "name": "Kit x10",
+          "slug": "kit-x10",
+          "description": "Kit de 10 unidades de agendas semanales. Interiores a elección.",
+          "price": 1600,
+          "comparativePrice": 1750,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/kit-agendas-sublimacion-RAJbvVcUeH4I7aJ8acS7psGR1prpfC.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-TlhGlpPkEzwdRLDQAMvvoQRwz6FNXh.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-5qVLRsa9MoU5gK5g6sM5dkOYAJYkiV.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-stnMNLNFYrppCKdXqHUB2Ye9SoBZ68.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-zRRENR8dO08rma0bnS7QpU9GqYqdMq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-DuE2bH6Lx6QnXmbSw0F3nAiaAxNV2o.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 1600,
+    "finalTotal": 1600,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC - Envío a Domicilio",
+    "status": "despachado",
+    "observations": "Apartamento sobre agroveterinaria",
+    "notes": "Apartamento sobre agroveterinaria"
+  },
+  {
+    "id": "KAM-481802",
+    "createdAt": "2026-10-20T16:24:41.808Z",
+    "customer": {
+      "name": "Beatriz fleitas",
+      "phone": "094913779",
+      "email": "beatrizfleitas403@gmail.com",
+      "department": "San José",
+      "city": "Libertad",
+      "address": "Agencia cotmi libertad",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1788885321695",
+          "name": "Agenda Perpetua",
+          "slug": "agenda-perpetua",
+          "description": "Agenda Perpetua, con horarios.  Incluye tapas sublimables de 350g y espiral plástico.\n\nContenido:\n- Hoja de datos\n- Organizador anual \n- Hoja de contraseñas\n- Diagramación semana a la vista\n- Agenda telefónica\n- Hojas para notas",
+          "price": 155,
+          "comparativePrice": 165,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/perp-ROFeWbv2ob4QY4GNJja0OterOAyP4K.webp"
+          ]
+        },
+        "quantity": 1
+      },
+      {
+        "product": {
+          "id": "1789423161567",
+          "name": "Semanal Horizontal (flor)",
+          "slug": "semanal-horizontal-flor",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país.\n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-nk9KuW18EpyB4a726X5i4fAOHWVk6x.webp"
+          ]
+        },
+        "quantity": 1
+      },
+      {
+        "product": {
+          "id": "1789422916129",
+          "name": "Semanal (sin horarios)",
+          "slug": "semanal-sh-horizontal",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país.\n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-HS3a1iAE6iJhIM4pg5kuDj1wk5xVwQ.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 505,
+    "finalTotal": 505,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "Agencia COTMI - Retiro en Agencia",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-081711",
+    "createdAt": "2026-10-19T22:14:41.713Z",
+    "customer": {
+      "name": "Natalia López",
+      "phone": "092317741",
+      "email": "nataliaglopez2717@gmail.com",
+      "department": "Canelones",
+      "city": "Cuidad de la costa El pinar",
+      "address": "Francisco Acuña De Figueroa manz 22 solar 07",
+      "observations": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico",
+      "notes": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1789570285423",
+          "name": "Cartulina Sublimable x10",
+          "slug": "cartulina-sublimable-x10",
+          "description": "Cartulina Sublimable 350g Tamaño A4\n\nParámetros sugeridos 170°/ 120 seg",
+          "price": 145,
+          "comparativePrice": 150,
+          "currency": "UYU",
+          "category": "especiales",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/whatsapp-image-2026-09-16-at-11-43-56-am2-bG8pZad9I3ozcgKFsi9EaLTrSl8JSO.webp"
+          ]
+        },
+        "quantity": 6
+      }
+    ],
+    "totalPrice": 870,
+    "finalTotal": 870,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC - Envío a Domicilio",
+    "status": "despachado",
+    "observations": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico",
+    "notes": "Casa blanca frente a calle yacuy y en.la casa van a ver un taller mecánico"
+  },
+  {
+    "id": "KAM-301326",
+    "createdAt": "2026-10-14T12:51:41.327Z",
+    "customer": {
+      "name": "Jenifer Corujo",
+      "phone": "098930592",
+      "email": "jenifercorujo12@gmail.com",
+      "department": "Canelones",
+      "city": "San Bautista",
+      "address": "Calle 33 Orientales S/N",
+      "observations": "dejar en taller de motos delgado",
+      "notes": "dejar en taller de motos delgado"
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1788710173894",
+          "name": "Kit x10",
+          "slug": "kit-x10",
+          "description": "Kit de 10 unidades de agendas semanales. Interiores a elección.",
+          "price": 1600,
+          "comparativePrice": 1750,
+          "currency": "UYU",
+          "category": "agendas",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/kit-agendas-sublimacion-RAJbvVcUeH4I7aJ8acS7psGR1prpfC.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-TlhGlpPkEzwdRLDQAMvvoQRwz6FNXh.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-5qVLRsa9MoU5gK5g6sM5dkOYAJYkiV.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-stnMNLNFYrppCKdXqHUB2Ye9SoBZ68.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-zRRENR8dO08rma0bnS7QpU9GqYqdMq.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-DuE2bH6Lx6QnXmbSw0F3nAiaAxNV2o.webp"
+          ]
+        },
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 1600,
+    "finalTotal": 1760,
+    "paymentMethodId": "mercado_pago_online",
+    "paymentMethodName": "Tarjeta de Crédito / Débito (Mercado Pago) (+10% recargo)",
+    "shippingMethodName": "DAC - Envío a Domicilio",
+    "status": "despachado",
+    "observations": "dejar en taller de motos delgado",
+    "notes": "dejar en taller de motos delgado"
+  },
+  {
+    "id": "KAM-MAN-845731",
+    "createdAt": "2026-10-13T15:37:25.731Z",
+    "customer": {
+      "name": "Sofía Ibero",
+      "phone": "095713484",
+      "email": "",
+      "department": "Canelones",
+      "city": "Santa Lucía",
+      "address": "Retira en Agencia",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "1789423161567",
+          "name": "Semanal Horizontal (flor)",
+          "slug": "semanal-horizontal-flor",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país.\n\n180 PAGINAS\n\nParámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": false,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-nk9KuW18EpyB4a726X5i4fAOHWVk6x.webp"
+          ]
+        },
+        "quantity": 20
+      },
+      {
+        "product": {
+          "id": "200001488",
+          "name": "Semanal Horizontal (unisex)",
+          "slug": "agenda-sublimable-semanal",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "comparativePrice": 190,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": true,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-2-YMB2tFHi2efaJqtmHoC9R2ArNwcfcm.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-dHEgyw4MO6vf9qc7t54LR7FZHhaZXw.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-1-w489iwmkcFYBh0tyDAuANBwDubHaEI.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-NJLocFXomszEcY1GilhNErgFoNONTM.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-tswoMSuvRZMui0BMTJr9PqXwFJQnL0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-h2OCPmIu0GsOZaoQpVbAzbFKsdkI2j.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-F2AK3bLP9sM7Wc39ibvXAiifwjDB7p.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XRMPlfZTzeS7XcpxjpJo6h3P8STVUD.webp"
+          ]
+        },
+        "quantity": 4
+      }
+    ],
+    "totalPrice": 4200,
+    "finalTotal": 4200,
+    "paymentMethodId": "brou",
+    "paymentMethodName": "Transferencia Bancaria BROU",
+    "shippingMethodName": "DAC - Retiro en Agencia",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
+    "id": "KAM-504583",
+    "createdAt": "2026-10-12T16:11:44.588Z",
+    "customer": {
+      "name": "Karen Figueroa",
+      "phone": "098184239",
+      "email": "figueroapercivale@hotmail.com",
+      "department": "Canelones",
+      "city": "Tala",
+      "address": "Agencia CITA TALA",
+      "observations": "",
+      "notes": ""
+    },
+    "items": [
+      {
+        "product": {
+          "id": "200001488",
+          "name": "Semanal Horizontal (unisex)",
+          "slug": "agenda-sublimable-semanal",
+          "description": "Agenda semanal sublimable para personalizar. Tamaño 15x21cm. Incluye tapa y contratapa sublimables de 350gr, espiral para enrular, interior impreso. Estamos en el departamento de San José, hacemos envíos a todo el país. 180 PAGINAS. Parámetros para sublimar: 170ºC durante 120 segundos.",
+          "price": 175,
+          "comparativePrice": 190,
+          "currency": "UYU",
+          "category": "agendas",
+          "badge": "NUEVO 2027",
+          "hasPromoKit": true,
+          "inStock": true,
+          "images": [
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-2-YMB2tFHi2efaJqtmHoC9R2ArNwcfcm.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-dHEgyw4MO6vf9qc7t54LR7FZHhaZXw.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-1-w489iwmkcFYBh0tyDAuANBwDubHaEI.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-NJLocFXomszEcY1GilhNErgFoNONTM.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-tswoMSuvRZMui0BMTJr9PqXwFJQnL0.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-h2OCPmIu0GsOZaoQpVbAzbFKsdkI2j.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-F2AK3bLP9sM7Wc39ibvXAiifwjDB7p.webp",
+            "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XRMPlfZTzeS7XcpxjpJo6h3P8STVUD.webp"
+          ]
+        },
+        "quantity": 4
+      }
+    ],
+    "totalPrice": 700,
+    "finalTotal": 700,
+    "paymentMethodId": "red_pagos",
+    "paymentMethodName": "Giro RED PAGOS",
+    "shippingMethodName": "DAC - Retiro en Agencia",
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
+  },
+  {
     "id": "KAM-877910",
     "createdAt": "2026-10-08T21:27:57.913Z",
     "customer": {
@@ -45,7 +1171,7 @@
     "paymentMethodId": "red_pagos",
     "paymentMethodName": "Giro RED PAGOS",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "pendiente",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -139,7 +1265,7 @@
     "paymentMethodId": "prex",
     "paymentMethodName": "Prex",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "pago_confirmado",
+    "status": "despachado",
     "observations": "Agencia Mercado Modelo",
     "notes": "Agencia Mercado Modelo"
   },
@@ -241,7 +1367,7 @@
     "paymentMethodId": "brou",
     "paymentMethodName": "Transferencia Bancaria BROU",
     "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
-    "status": "pago_confirmado",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -316,7 +1442,7 @@
     "paymentMethodId": "prex",
     "paymentMethodName": "Prex",
     "shippingMethodName": "Correo Uruguayo - Envío a Domicilio",
-    "status": "pago_confirmado",
+    "status": "despachado",
     "observations": "Complejo de apartamentos Betania 1",
     "notes": "Complejo de apartamentos Betania 1"
   },
@@ -366,7 +1492,7 @@
     "paymentMethodId": "brou",
     "paymentMethodName": "Transferencia Bancaria BROU",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "en_preparacion",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -479,7 +1605,7 @@
     "paymentMethodId": "mercado_pago_online",
     "paymentMethodName": "Tarjeta de Crédito / Débito (Mercado Pago) (+10% recargo)",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "en_preparacion",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -521,7 +1647,7 @@
     "paymentMethodId": "brou",
     "paymentMethodName": "Transferencia Bancaria BROU",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "en_preparacion",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -604,7 +1730,7 @@
     "paymentMethodId": "prex",
     "paymentMethodName": "Prex",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "en_preparacion",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -819,7 +1945,7 @@
     "paymentMethodId": "otro",
     "paymentMethodName": "Otro / A Convenir",
     "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
-    "status": "pago_confirmado",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -866,7 +1992,7 @@
     "paymentMethodId": "oca_blue",
     "paymentMethodName": "Depósito OCA Blue",
     "shippingMethodName": "DAC - Retiro en Agencia",
-    "status": "pago_confirmado",
+    "status": "despachado",
     "observations": "",
     "notes": ""
   },
@@ -879,7 +2005,9 @@
       "email": "",
       "department": "Colonia",
       "city": "Carmelo",
-      "address": "Retira en Agencia"
+      "address": "Retira en Agencia",
+      "observations": "",
+      "notes": ""
     },
     "items": [
       {
@@ -932,6 +2060,8 @@
     "paymentMethodId": "brou",
     "paymentMethodName": "Transferencia Bancaria BROU",
     "shippingMethodName": "Correo Uruguayo - Retiro en Sucursal",
-    "status": "pago_confirmado"
+    "status": "despachado",
+    "observations": "",
+    "notes": ""
   }
 ]
