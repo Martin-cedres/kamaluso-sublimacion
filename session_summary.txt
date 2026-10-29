@@ -1310,3 +1310,26 @@ SOLUCIÓN INTEGRAL DE PAGOS MERCADO PAGO, WEBHOOK Y NOTIFICACIONES DE CORREO
 - Verificación:
   * Compilación TypeScript limpia (`npx tsc --noEmit`: 0 errores).
 ================================================================================
+- Build y Deploy a Producción:
+  * `npm run build` completado con éxito (65/65 páginas y rutas dinámicas generadas, incluyendo `/api/payments/webhook`).
+  * Commit `8f0dc81` subido a `origin/main` en GitHub (`https://github.com/Martin-cedres/kamaluso-sublimacion.git`), activando el despliegue automático en Vercel.
+================================================================================
+
+
+================================================================================
+RECUPERACIÓN Y REUBICACIÓN CRONOLÓGICA DE PEDIDO MERCADO PAGO #KAM-047963
+================================================================================
+- Diagnóstico del motivo por el cual no se encontraba el pedido:
+  1. Fecha errónea en la restauración anterior: Se había fijado erróneamente `createdAt` en `"2026-04-17"` (17 de abril) en lugar del 28 de octubre (`2026-10-28`). Al ordenar el panel de administración de más reciente a más antiguo, el pedido quedaba relegado al último lugar de la lista (hace 6 meses).
+  2. Ítems de prueba: La entrada anterior tenía productos de prueba (libretas A6 y tapas A5) en vez de los ítems reales abonados en la pasarela.
+  3. Duplicado manual desfasado: Se encontraba además el pedido manual `#KAM-MAN-354514` (creado a las 19:42 para "MARIA TAPIA") sin sincronizar en el Blob de producción.
+- Corrección aplicada:
+  1. Corregido el pedido `#KAM-047963` con la fecha real del pago: `2026-10-28T17:37:52.000Z` (28/10/2026 14:37 hs Uruguay).
+  2. Asignados los productos exactos adquiridos:
+     * 3x Semanal Vertical (unisex) ($175 c/u = $525)
+     * 3x Cuaderno 17x22 ($160 c/u = $480)
+     * Total insumos: $1.005 UYU + 10% recargo MP = $1.105,50 UYU.
+  3. Vinculación completa de datos: Destinatario Sebastián López (`marieysebas2025@gmail.com`, 099 081 528, Retiro en DAC Shangrilá, Solymar) y pagador de Mercado Pago María Tapia (`marielatapia1997@hotmail.com`, Pago #186539005034, CI 49116630).
+  4. Sincronizado en `data/orders.json` y desplegado en vivo a la API y Vercel Blob de producción (`https://www.kamaluso.com/api/orders`).
+  5. Ahora ambos pedidos de hoy (`#KAM-MAN-354514` y `#KAM-047963`) figuran al tope de la lista en el panel de administración.
+================================================================================
