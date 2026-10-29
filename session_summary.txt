@@ -1335,3 +1335,14 @@ RECUPERACIÓN Y REUBICACIÓN CRONOLÓGICA DE PEDIDO MERCADO PAGO #KAM-047963
 ================================================================================
 
 - Verificación de entrega de correos automáticos: Credenciales SMTP de Gmail (kamalusosanjose@gmail.com) verificadas con éxito (`verify: true`). El circuito de correos para pagos de Mercado Pago se encuentra 100% operativo mediante el Webhook y la pantalla de éxito con notificación cruzada a cliente y administración.
+
+================================================================================
+BUILD Y DESPLIEGUE A PRODUCCIÓN (VERCEL & GITHUB)
+================================================================================
+- Build de Producción (`npm run build`):
+  * 65/65 páginas y rutas dinámicas compiladas exitosamente sin errores de TypeScript ni de linting.
+  * Incluye rutas de pagos, webhooks, administración, catálogo y endpoints MCP/AI.
+- Despliegue en GitHub & Vercel:
+  * Todos los cambios confirmados y enviados a la rama `main` en `origin/main`.
+  * Despliegue automático iniciado en Vercel para producción (`https://www.kamaluso.com`).
+================================================================================

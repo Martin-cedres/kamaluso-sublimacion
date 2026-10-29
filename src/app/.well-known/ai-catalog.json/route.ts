@@ -1,0 +1,68 @@
+import { NextResponse } from "next/server";
+
+export const dynamic = "force-static";
+
+export async function GET() {
+  const catalog = {
+    specVersion: "1.0",
+    host: {
+      displayName: "Kamaluso Sublimación Uruguay",
+      identifier: "did:web:kamaluso.com",
+    },
+    entries: [
+      {
+        identifier: "urn:air:kamaluso.com:mcp:server-card",
+        displayName: "Kamaluso MCP Server",
+        type: "application/mcp-server-card+json",
+        url: "https://www.kamaluso.com/.well-known/mcp/server-card.json",
+        representativeQueries: [
+          "comprar interiores de agendas para sublimar uruguay",
+          "precio por mayor tapas sublimables 350g",
+          "tiempos y temperatura para sublimar libretas",
+          "envios de insumos para sublimacion por dac",
+        ],
+      },
+      {
+        identifier: "urn:air:kamaluso.com:api:openapi",
+        displayName: "Kamaluso REST API",
+        type: "application/vnd.oai.openapi+json",
+        url: "https://www.kamaluso.com/openapi.json",
+        representativeQueries: [
+          "buscar productos insumos papeleria sublimable",
+          "consultar stock y precios en pesos uruguayos",
+          "cotizar pedido mayorista papeleria sublimacion",
+        ],
+      },
+      {
+        identifier: "urn:air:kamaluso.com:skills:agent-skills",
+        displayName: "Kamaluso Agent Skills Index",
+        type: "application/json",
+        url: "https://www.kamaluso.com/.well-known/agent-skills/index.json",
+        representativeQueries: [
+          "habilidades de agente para papeleria sublimable",
+          "ficha tecnica parametros de taller estampacion",
+          "catalogo de insumos uruguay b2b",
+        ],
+      },
+      {
+        identifier: "urn:air:kamaluso.com:agent:agent-card",
+        displayName: "Kamaluso A2A Agent Card",
+        type: "application/json",
+        url: "https://www.kamaluso.com/.well-known/agent-card.json",
+        representativeQueries: [
+          "agente de atencion y cotizaciones kamaluso",
+          "comunicacion agente a agente para compras b2b",
+        ],
+      },
+    ],
+  };
+
+  return new NextResponse(JSON.stringify(catalog, null, 2), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
+}

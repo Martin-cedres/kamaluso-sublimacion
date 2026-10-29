@@ -1,0 +1,119 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Kamaluso Sublimación API",
+    "version": "1.0.0",
+    "description": "API REST oficial de Kamaluso Papelería Sublimable para consulta de productos, stock, precios en UYU y pedidos."
+  },
+  "servers": [
+    {
+      "url": "https://www.kamaluso.com",
+      "description": "Servidor de Producción"
+    }
+  ],
+  "paths": {
+    "/api/products": {
+      "get": {
+        "summary": "Obtener catálogo de insumos y productos",
+        "description": "Retorna la lista completa de productos para sublimar con precios, categorías y disponibilidad.",
+        "responses": {
+          "200": {
+            "description": "Lista de productos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "summary": "Crear pedido o solicitud de cotización",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido registrado exitosamente"
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Estado del servicio",
+        "responses": {
+          "200": {
+            "description": "Servicio operativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "timestamp": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp": {
+      "post": {
+        "summary": "MCP Streamable HTTP / JSON-RPC endpoint",
+        "description": "Protocolo Model Context Protocol para ejecución remota de herramientas de agente.",
+        "responses": {
+          "200": {
+            "description": "Respuesta JSON-RPC 2.0"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "price": { "type": "number" },
+          "category": { "type": "string" },
+          "stock": { "type": "boolean" },
+          "description": { "type": "string" },
+          "dimensions": { "type": "string" },
+          "pages": { "type": "string" }
+        }
+      },
+      "OrderInput": {
+        "type": "object",
+        "required": ["customerName", "phone", "items"],
+        "properties": {
+          "customerName": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" },
+          "items": { "type": "array" },
+          "paymentMethod": { "type": "string" },
+          "shippingMethod": { "type": "string" }
+        }
+      }
+    }
+  }
+}

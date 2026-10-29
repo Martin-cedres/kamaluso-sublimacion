@@ -118,7 +118,14 @@ function HeaderSearchInput() {
 
   return (
     <div ref={dropdownRef} className="relative w-full">
-      <form onSubmit={handleSearchSubmit} className="relative w-full">
+      <form
+        onSubmit={handleSearchSubmit}
+        className="relative w-full"
+        {...({
+          toolname: "searchProducts",
+          tooldescription: "Buscar insumos de papelería sublimable en Kamaluso Uruguay",
+        } as Record<string, string>)}
+      >
         <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
           type="text"
@@ -126,6 +133,9 @@ function HeaderSearchInput() {
           onFocus={() => setIsOpen(true)}
           onChange={handleSearchChange}
           placeholder="Buscar agendas, cuadernos, insumos..."
+          {...({
+            toolparamdescription: "Término de búsqueda de productos e insumos",
+          } as Record<string, string>)}
           className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm bg-slate-100/90 hover:bg-slate-100 focus:bg-white border border-slate-200/80 focus:border-brand-500 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all text-slate-800 placeholder:text-slate-400 shadow-inner"
         />
         {query && (

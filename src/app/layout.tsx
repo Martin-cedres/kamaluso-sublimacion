@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WhatsAppFloating } from "@/components/ui/WhatsAppFloating";
+import { WebMcpProvider } from "@/components/agent/WebMcpProvider";
 import { KAMALUSO_ORGANIZATION_SCHEMA } from "@/lib/schema";
 
 const raleway = Raleway({
@@ -92,6 +93,14 @@ export default function RootLayout({
       <head>
         <link rel="icon" href={KAMALUSO_LOGO_URL} />
         <link rel="apple-touch-icon" href={KAMALUSO_LOGO_URL} />
+        {/* Enlaces de descubrimiento de agentes IA (RFC 8288, RFC 9727, ARD) */}
+        <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
+        <link rel="api-catalog" href="/.well-known/api-catalog" />
+        <link rel="service-desc" href="/.well-known/mcp/server-card.json" />
+        <link rel="service-desc" href="/.well-known/agent-card.json" />
+        <link rel="service-meta" href="/.well-known/agent-skills/index.json" />
+        <link rel="service-doc" href="/llms.txt" />
+        <link rel="author" href="/auth.md" />
         {/* Marcado de Entidad Local & SEO/GEO global */}
         <script
           type="application/ld+json"
@@ -102,6 +111,7 @@ export default function RootLayout({
       </head>
 
       <body className="font-sans antialiased bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+        <WebMcpProvider />
         <CartProvider>
           <Header />
           <main id="main-content" className="flex-grow">{children}</main>
