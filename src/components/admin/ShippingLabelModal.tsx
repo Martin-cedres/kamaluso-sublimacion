@@ -153,25 +153,33 @@ export default function ShippingLabelModal({
     const len = (cleanAddressDisplay || "").length;
     const hasObs = Boolean(cleanObservations);
     if (hasObs) {
-      if (len > 55) return "text-sm sm:text-base font-black leading-snug";
-      if (len > 35) return "text-base sm:text-lg font-black leading-snug";
-      if (len > 22) return "text-lg sm:text-xl font-black leading-snug";
-      return "text-xl sm:text-2xl font-black leading-snug";
+      if (len > 55) return "text-sm font-black leading-snug";
+      if (len > 35) return "text-base font-black leading-snug";
+      if (len > 22) return "text-lg font-black leading-snug";
+      return "text-xl font-black leading-snug";
     }
     // Sin observaciones (mayor espacio vertical disponible)
-    if (len > 60) return "text-base sm:text-lg font-black leading-snug";
-    if (len > 40) return "text-lg sm:text-xl font-black leading-snug";
-    if (len > 24) return "text-xl sm:text-2xl font-black leading-snug";
-    return "text-2xl sm:text-[26px] font-black leading-snug";
+    if (len > 60) return "text-base font-black leading-snug";
+    if (len > 40) return "text-lg font-black leading-snug";
+    if (len > 24) return "text-xl font-black leading-snug";
+    return "text-[23px] font-black leading-snug";
   }, [cleanAddressDisplay, cleanObservations]);
 
-  // Escala tipográfica adaptativa para el nombre del destinatario
+  // Escala tipográfica adaptativa para el nombre del destinatario (paridad 1:1 en pantalla e impresión)
   const nameFontSizeClass = React.useMemo(() => {
     const len = (recipientName || "").length;
-    if (len > 35) return "text-lg sm:text-xl font-black leading-tight";
-    if (len > 22) return "text-xl sm:text-2xl font-black leading-tight";
-    return "text-2xl sm:text-[25px] font-black leading-tight";
+    if (len > 35) return "text-xl font-black leading-tight";
+    if (len > 22) return "text-2xl font-black leading-tight";
+    return "text-[27px] font-black leading-tight";
   }, [recipientName]);
+
+  // Escala tipográfica adaptativa para el teléfono del destinatario (prioridad alta y máxima legibilidad para repartidores)
+  const phoneFontSizeClass = React.useMemo(() => {
+    const len = (recipientPhone || "").length;
+    if (len > 22) return "text-lg font-black leading-tight";
+    if (len > 16) return "text-xl font-black leading-tight";
+    return "text-[22px] font-black leading-tight";
+  }, [recipientPhone]);
 
   useEffect(() => {
     QRCode.toDataURL("https://www.kamaluso.com", {
@@ -829,7 +837,7 @@ export default function ShippingLabelModal({
             {/* THE PRINTABLE LABEL (Targeted by @media print) */}
             <div
               id="printable-shipping-label"
-              className={`printable-label-box bg-white text-slate-900 border-2 sm:border-[2.5px] border-black rounded-2xl p-3 sm:p-3.5 shadow-xl font-sans relative flex flex-col justify-between overflow-hidden ${
+              className={`printable-label-box bg-white text-slate-900 border-[2.5px] border-black rounded-2xl p-3.5 shadow-xl font-sans relative flex flex-col justify-between overflow-hidden ${
                 printColorMode === "bw" ? "is-bw-mode" : "is-color-mode"
               }`}
               style={{ width: "100%", maxWidth: "340px", height: "510px" }}
@@ -837,7 +845,7 @@ export default function ShippingLabelModal({
               {/* Header Etiqueta con Logo Kamaluso y Agencia */}
               <div className="flex items-center justify-between gap-2 border-b-2 border-black pb-1.5 flex-shrink-0">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 relative flex-shrink-0">
+                  <div className="w-9 h-9 relative flex-shrink-0">
                     <Image
                       src={LOGO_URL}
                       alt="Kamaluso"
@@ -847,60 +855,60 @@ export default function ShippingLabelModal({
                     />
                   </div>
                   <div className="min-w-0">
-                    <h2 className="font-black text-sm sm:text-base tracking-tight leading-none text-black uppercase">
+                    <h2 className="font-black text-base tracking-tight leading-none text-black uppercase">
                       KAMALUSO
                     </h2>
-                    <p className="text-[8px] sm:text-[8.5px] font-bold text-slate-700 uppercase tracking-wider leading-tight mt-0.5 thermal-text-black">
+                    <p className="text-[8.5px] font-bold text-slate-700 uppercase tracking-wider leading-tight mt-0.5 thermal-text-black">
                       Papelería Sublimable
                     </p>
                   </div>
                 </div>
 
                 <div className="border-2 border-black rounded-lg overflow-hidden flex flex-col text-center min-w-[105px] flex-shrink-0 shadow-2xs">
-                  <div className="bg-black text-white px-2 py-0.5 text-[9.5px] sm:text-[10px] font-black uppercase tracking-wide whitespace-nowrap thermal-black-badge">
+                  <div className="bg-black text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wide whitespace-nowrap thermal-black-badge">
                     {cleanAgencyName}
                   </div>
-                  <div className="bg-white text-black px-2 py-0.5 text-xs sm:text-[13px] font-black uppercase tracking-widest border-t-2 border-black leading-tight thermal-box">
+                  <div className="bg-white text-black px-2 py-0.5 text-[13px] font-black uppercase tracking-widest border-t-2 border-black leading-tight thermal-box">
                     {deliveryType === "agencia" ? "AGENCIA" : deliveryType === "local" ? "LOCAL" : "DOMICILIO"}
                   </div>
                 </div>
               </div>
 
               {/* Remitente Box - Mayor tamaño y jerarquía */}
-              <div className="bg-slate-50 p-2 sm:p-2.5 rounded-xl border border-slate-300 text-xs flex-shrink-0 thermal-box">
+              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-300 text-xs flex-shrink-0 thermal-box">
                 <div className="flex justify-between items-center leading-none mb-0.5">
-                  <span className="text-[8px] sm:text-[8.5px] font-black uppercase text-slate-600 tracking-wider thermal-text-black">
+                  <span className="text-[8.5px] font-black uppercase text-slate-600 tracking-wider thermal-text-black">
                     REMITENTE:
                   </span>
-                  {senderRut && <span className="text-[8px] sm:text-[8.5px] font-bold text-slate-600 thermal-text-black">{senderRut}</span>}
+                  {senderRut && <span className="text-[8.5px] font-bold text-slate-600 thermal-text-black">{senderRut}</span>}
                 </div>
 
-                {/* Renglón principal: Nombre y Teléfono con tipografía más grande (sobre todo el teléfono) */}
+                {/* Renglón principal: Nombre y Teléfono con tipografía limpia */}
                 <div className="flex items-baseline justify-between gap-2 mt-0.5">
-                  <p className="font-black text-black text-sm sm:text-base leading-tight uppercase">
+                  <p className="font-black text-black text-sm leading-tight uppercase">
                     {senderName}
                   </p>
-                  <p className="font-black text-black text-xs sm:text-sm leading-tight thermal-text-black whitespace-nowrap">
-                    Tel: <span className="text-sm sm:text-base font-black tracking-wide">{senderPhone}</span>
+                  <p className="font-black text-black text-xs leading-tight thermal-text-black whitespace-nowrap">
+                    Tel: <span className="text-sm font-black tracking-wide">{senderPhone}</span>
                   </p>
                 </div>
 
                 {/* Renglón secundario: Origen y web en UN SOLO renglón sin partirse */}
-                <p className="text-[8.5px] sm:text-[9px] font-bold text-slate-700 leading-none mt-1 thermal-text-black whitespace-nowrap truncate">
+                <p className="text-[9px] font-bold text-slate-700 leading-none mt-1 thermal-text-black whitespace-nowrap truncate">
                   {senderAddress} {senderWebsite ? `| ${senderWebsite}` : ""}
                 </p>
               </div>
 
               {/* CONTENEDOR UNIFICADO: DESTINATARIO Y DIRECCIÓN DE ENTREGA */}
-              <div className="p-2.5 sm:p-3 bg-white rounded-xl border-2 sm:border-[2.5px] border-black flex-1 flex flex-col justify-between shadow-xs thermal-box min-h-0">
+              <div className="p-3 bg-white rounded-xl border-[2.5px] border-black flex-1 flex flex-col justify-between shadow-xs thermal-box min-h-0">
                 {/* 1. Destinatario */}
                 <div className="space-y-1">
                   {/* Cabecera Destinatario */}
                   <div className="flex justify-between items-center border-b-2 border-black pb-1 mb-1">
-                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-pink-600 thermal-text-black">
+                    <span className="text-xs font-black uppercase tracking-wider text-pink-600 thermal-text-black">
                       DESTINATARIO:
                     </span>
-                    <span className="text-xs sm:text-sm font-black bg-black text-white px-2.5 py-0.5 rounded uppercase tracking-wider thermal-black-badge">
+                    <span className="text-xs font-black bg-black text-white px-2.5 py-0.5 rounded uppercase tracking-wider thermal-black-badge">
                       {recipientDept || "URUGUAY"}
                     </span>
                   </div>
@@ -912,16 +920,16 @@ export default function ShippingLabelModal({
 
                   {/* Teléfono y Ciudad en tipografía grande y clara */}
                   <div className="space-y-1 pt-0.5">
-                    <p className="text-lg sm:text-xl font-black text-black flex items-center gap-2 thermal-text-black leading-tight whitespace-nowrap">
-                      <Phone className="w-5 h-5 text-black thermal-text-black flex-shrink-0" />
+                    <p className={`${phoneFontSizeClass} text-black flex items-center gap-2 thermal-text-black leading-tight whitespace-nowrap`}>
+                      <Phone className="w-5.5 h-5.5 text-black thermal-text-black flex-shrink-0" />
                       <span className="tracking-wide">TEL: {recipientPhone || "—"}</span>
                     </p>
-                    <p className="text-sm sm:text-base font-black text-slate-800 flex items-center gap-1.5 thermal-text-black uppercase leading-tight break-words">
+                    <p className="text-sm font-black text-slate-800 flex items-center gap-1.5 thermal-text-black uppercase leading-tight break-words">
                       <MapPin className="w-4 h-4 text-slate-700 thermal-text-black flex-shrink-0" />
                       <span>{cityDeptDisplay}</span>
                     </p>
                     {rutInfo && (
-                      <p className="text-[9px] sm:text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 thermal-box thermal-text-black inline-block mt-0.5">
+                      <p className="text-[9.5px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 thermal-box thermal-text-black inline-block mt-0.5">
                         RUT / CI: {rutInfo}
                       </p>
                     )}
@@ -929,8 +937,8 @@ export default function ShippingLabelModal({
                 </div>
 
                 {/* 2. Dirección de Entrega / Sucursal de Retiro con auto-escalado según longitud */}
-                <div className="border-t-2 sm:border-t-[2.5px] border-black pt-1.5 mt-1.5">
-                  <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase text-slate-600 block thermal-text-black tracking-wider leading-none mb-1">
+                <div className="border-t-[2.5px] border-black pt-1.5 mt-1.5">
+                  <span className="text-[10px] font-black uppercase text-slate-600 block thermal-text-black tracking-wider leading-none mb-1">
                     {deliveryType === "agencia"
                       ? "SUCURSAL DE RETIRO:"
                       : deliveryType === "local"
@@ -947,10 +955,10 @@ export default function ShippingLabelModal({
                   {/* Observaciones (solo si hay indicaciones reales y no notas de pago) */}
                   {cleanObservations && (
                     <div className="mt-1.5 p-1.5 bg-slate-50 border border-black rounded-lg thermal-box">
-                      <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase text-slate-700 block thermal-text-black leading-none mb-0.5">
+                      <span className="text-[9px] font-black uppercase text-slate-700 block thermal-text-black leading-none mb-0.5">
                         💬 INDICACIONES:
                       </span>
-                      <p className="text-xs sm:text-sm font-bold text-black leading-tight break-words">
+                      <p className="text-xs font-bold text-black leading-tight break-words">
                         {cleanObservations}
                       </p>
                     </div>
@@ -971,7 +979,7 @@ export default function ShippingLabelModal({
                   <span className="font-bold text-[8.5px] text-slate-500 uppercase tracking-wider block leading-none thermal-text-black">
                     N° de Pedido:
                   </span>
-                  <span className="font-mono font-black text-xs sm:text-sm text-black block leading-tight mt-0.5">
+                  <span className="font-mono font-black text-sm text-black block leading-tight mt-0.5">
                     #{orderNumber || "KAM-000000"}
                   </span>
                 </div>
@@ -1067,6 +1075,8 @@ export default function ShippingLabelModal({
                 color: #000000 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
+                -webkit-text-size-adjust: 100% !important;
+                text-size-adjust: 100% !important;
               }
               #printable-shipping-label > * + * {
                 margin-top: 0 !important;

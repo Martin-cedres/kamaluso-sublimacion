@@ -1513,3 +1513,30 @@ ESTANDARIZACIÓN DE DATOS DE ENVÍO Y DELIVERY TYPE EN PEDIDOS Y ETIQUETAS
 - Se integró un botón de acción principal "Imprimir" directamente en la barra superior de la vista previa de la etiqueta, al lado de los selectores Color / Térmica.
 - Flujo de trabajo acelerado: Al abrir la etiqueta desde el panel de administración, el usuario puede pulsar "Imprimir" al instante con 1 solo clic y sin necesidad de deslizar la barra de desplazamiento.
 ================================================================================
+
+
+================================================================================
+🚀 COMPILACIÓN, COMMIT Y DESPLIEGUE A PRODUCCIÓN (GITHUB & VERCEL)
+================================================================================
+1. COMPILACIÓN DE PRODUCCIÓN (`npm run build`):
+   - 65/65 páginas compiladas exitosamente sin errores de TypeScript ni sintaxis.
+2. CONTROL DE VERSIONES (GITHUB):
+   - Commit: `0aec123` ("feat(logistica): rediseño profesional de etiquetas térmicas 10x15, autoescalado de dirección, botón de impresión rápida y eliminación de errores de modalidad").
+   - Subido a rama `main` en `origin/main` (`https://github.com/Martin-cedres/kamaluso-sublimacion.git`).
+3. DESPLIEGUE EN VERCEL:
+   - Despliegue automático de producción activado a través de GitHub en Vercel (`https://www.kamaluso.com`).
+================================================================================
+
+
+================================================================================
+🎯 CORRECCIÓN TIPOGRÁFICA Y PARIDAD EXACTA EN IMPRESIÓN DE ETIQUETAS TÉRMICAS
+================================================================================
+1. DIAGNÓSTICO DEL PROBLEMA:
+   - En la vista previa del navegador (pantalla de PC > 640px), las clases responsive de Tailwind con prefijo `sm:` estaban activas (ej. `sm:text-xl`, `sm:text-[25px]`).
+   - Al ejecutar la impresión física (`@media print`), la página térmica tiene un ancho de 100mm (~378px), haciendo que Tailwind descartara silenciosamente todas las clases `sm:`, provocando que el nombre y el teléfono del destinatario se redujeran a tamaños móviles diminutos (de 25px a 20px/18px y de 20px a 18px).
+2. SOLUCIÓN IMPLEMENTADA:
+   - Eliminación de prefijos responsivos `sm:` en todo el contenedor `#printable-shipping-label` para asegurar paridad visual idéntica 1:1 entre vista previa e impresión física.
+   - Creación de `phoneFontSizeClass`: escala adaptativa dedicada para el teléfono (`text-[22px]` font-black para teléfonos estándar, reduciendo limpiamente solo si excede los 16/22 caracteres).
+   - Optimización de `nameFontSizeClass`: tamaño de alto impacto `text-[27px]` para nombres habituales, escalando a `text-2xl` y `text-xl` para nombres compuestos extensos.
+   - Protección contra reescalado de texto en motores de impresión (`-webkit-text-size-adjust: 100%`, `text-size-adjust: 100%`).
+================================================================================
