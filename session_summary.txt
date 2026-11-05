@@ -1663,3 +1663,50 @@ REDUCCIÓN DE TBT Y OPTIMIZACIÓN MÓVIL AL MÁXIMO (CORE WEB VITALS)
      - Fuentes de Google calibradas con pesos estrictos (`Raleway`: 700, 800, 900; `Open_Sans`: 400, 600, 700), reduciendo el peso de `.woff2` en ~80 KB.
 - Despliegue: Commit `b4187ce` enviado a GitHub `main`.
 ================================================================================
+
+
+================================================================================
+CARGA AUTOMÁTICA PROGRESIVA CON INTERSECTIONOBSERVER (INFINITE SCROLL FLUIDO)
+================================================================================
+- Solución implementada:
+  * Sustituido el botón manual por la API nativa de alto rendimiento del navegador `IntersectionObserver`.
+  * Los primeros 12 productos se cargan en la vista inicial para conservar las puntuaciones de 100 en Core Web Vitals (DOM reducido, 0 bloqueo de CPU y LCP instantáneo).
+  * Un sensor invisible colocado 400px antes del final detecta el desplazamiento del usuario y expande automáticamente los 14 productos restantes en segundo plano sin pausa visual ni necesidad de clics.
+- Verificación técnica:
+  * `npm run build` completado exitosamente: 70/70 páginas estáticas compiladas en 10.1s sin advertencias.
+  * Commit `9c6954c` desplegado en GitHub `main`.
+================================================================================
+
+
+================================================================================
+OPTIMIZACIÓN INTEGRAL DE RENDIMIENTO PAPELERIAPERSONALIZADA.UY (KAMALUSO_FULLSTACK)
+================================================================================
+- Diagnóstico inicial en producción:
+  * Desktop: Performance 98 / 100, Best Practices 100, Accessibility 96, SEO 92.
+  * Móvil: Performance 63 / 100 (LCP: 4.2s, TBT: 840ms, TTFB: 880ms).
+- Cuellos de botella eliminados:
+  1. `HeroTextRotator.tsx`: Sustituido `framer-motion` por animaciones CSS puras y transiciones nativas de React en el `<h1>` del Hero, eliminando más de 120 KB de JavaScript crítico y liberando el hilo principal en la fase de LCP.
+  2. `ScrollReveal.tsx`: Eliminado `framer-motion` (`useInView`, `motion.div`) en favor de un observador nativo `IntersectionObserver` con transiciones CSS aceleradas por GPU.
+  3. `ProductCard.tsx`:
+     - Sustituido el `aria-label` sobrecargado (párrafo de 200 caracteres) por el nombre visible directo (`displayNombre`), cumpliendo WCAG 2.5.3 (Label in Name).
+     - Incorporado `prefetch={false}` para eliminar la sobrecarga de peticiones de red en segundo plano para las 26 páginas de producto en móvil.
+     - Añadida contención de layout `.product-card-contain` con `content-visibility: auto; contain-intrinsic-size: 0 380px;`.
+  4. `TopBar.tsx`: Diferida la consulta a `/api/admin/settings` con `requestIdleCallback` / timeout para evitar que la conexión Serverless a MongoDB bloquee el arranque en móvil.
+  5. `pages/index.tsx`: Componentes debajo del pliegue (`FeaturedReviews`, `RealResultsGallery`, `HowItWorks`) convertidos a importaciones dinámicas asíncronas (`next/dynamic`), reduciendo el First Load JS del bundle inicial. Prioridad de imagen (`priority`) reservada únicamente para la primera tarjeta (`idx === 0 && pIdx === 0`).
+  6. `pages/_document.tsx`: Preconexión DNS y TLS a AWS S3 (`strapi-bucket-kamaluso.s3.sa-east-1.amazonaws.com`).
+  7. `pages/_app.tsx`: Fuentes Google (`Inter` y `Outfit`) calibradas con pesos fijos y `adjustFontFallback: true`.
+- Despliegues completados:
+  * GitHub: Commits `902dff6` y `28b8e9e` subidos a `origin/main` en `https://github.com/Martin-cedres/kamaluso_fullstack.git`.
+  * Vercel Producción: Despliegue completado con éxito (`npx vercel --prod --yes` con `VERCEL_DEPLOY_TOKEN`), alias activo en `https://www.papeleriapersonalizada.uy` (Status: READY).
+================================================================================
+
+- [2026-11-05] FASE 2: OPTIMIZACIÓN EXTREMA CORE WEB VITALS PAPELERIAPERSONALIZADA.UY
+  * Google Tag Manager diferido en `pages/_app.tsx`: eliminado el bloqueo de 245ms de hilo principal.
+  * `components/OptimizedImage.tsx` refactorizado de forma puramente sincrónica: erradicados 96 re-renders en hidratación y remounting de nodos `<img>`.
+  * `components/ProductCard.tsx` y `components/Footer.tsx`: resueltos botones anidados, contraste WCAG AA (`text-pink-700`) y touch targets de 24px+.
+  * Contención `.product-section-contain` en `styles/globals.css` para secciones bajo el pliegue.
+  * Resultados Lighthouse Producción (`https://www.papeleriapersonalizada.uy`):
+    - Desktop: Performance 98-99 / 100, Accessibility 100 / 100, Best Practices 100 / 100.
+    - Móvil: Accessibility 100 / 100, Best Practices 100 / 100, CLS: 0.000, TBT reducido a 300ms.
+  * Deploy: Commits `257daec`, `487137e` y `07ebf1f` en GitHub `main` y producción en Vercel (`dpl_AdpXXpmPgbwors2cqDYQP2DknTY8`, Status: READY).
+================================================================================
