@@ -5,22 +5,24 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartContext";
-import { WhatsAppFloating } from "@/components/ui/WhatsAppFloating";
 import { KAMALUSO_ORGANIZATION_SCHEMA } from "@/lib/schema";
 
 const CartDrawer = dynamic(() => import("@/components/cart/CartDrawer").then((mod) => mod.CartDrawer));
 const WebMcpProvider = dynamic(() => import("@/components/agent/WebMcpProvider").then((mod) => mod.WebMcpProvider));
+const WhatsAppFloating = dynamic(() => import("@/components/ui/WhatsAppFloating").then((mod) => mod.WhatsAppFloating));
 
 const raleway = Raleway({
   subsets: ["latin"],
   variable: "--font-raleway",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const openSans = Open_Sans({
   subsets: ["latin"],
   variable: "--font-open-sans",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const KAMALUSO_LOGO_URL = "/logo.png";

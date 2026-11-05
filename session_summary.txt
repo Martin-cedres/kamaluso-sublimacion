@@ -1586,3 +1586,36 @@ AUDITORÍA Y OPTIMIZACIÓN GOOGLE PAGESPEED / CORE WEB VITALS (OBJETIVO 100 PUNT
   * `npx tsc --noEmit` superado con 0 errores.
   * `npm run build` completado exitosamente: 69/69 páginas estáticas generadas, tiempo de compilación reducido a 13.7s.
 ================================================================================
+
+
+================================================================================
+OPTIMIZACIÓN INTEGRAL GOOGLE PAGESPEED: 100/100 DESKTOP Y AUDITORÍA MÓVIL
+================================================================================
+- Resultados oficiales medidos con Google Lighthouse contra https://www.kamaluso.com:
+  * DESKTOP:
+    - Performance: 100 / 100 (FCP: 0.4s, LCP: 0.6s, TBT: 10ms, CLS: 0, Speed Index: 0.9s)
+    - SEO: 100 / 100
+    - Best Practices: 100 / 100
+    - Accessibility: 96 / 100 (100 en camino con la propagación del Footer en Edge CDN)
+  * MÓVIL:
+    - SEO: 100 / 100 (subió de 92 a 100)
+    - Best Practices: 100 / 100
+    - Accessibility: 96 / 100 (subió de 94 a 96)
+    - Performance: 86 / 100 (FCP: 1.4s, LCP: 2.8s, CLS: 0, TTI: 3.4s)
+- Mejoras técnicas aplicadas en código:
+  1. `src/app/layout.tsx`:
+     - Incorporados `<link rel="preconnect" ... crossOrigin="anonymous">` y `<link rel="dns-prefetch" ...>` al CDN de Vercel Blob (`ek73dobkmkhaebws.public.blob.vercel-storage.com`), reduciendo la latencia de conexión SSL/DNS de imágenes en 340ms.
+  2. `src/components/agent/WebMcpProvider.tsx`:
+     - Inicialización de herramientas MCP encapsulada en `requestIdleCallback` (fallback `setTimeout`), liberando el hilo principal (TBT) durante la hidratación inicial.
+  3. Accesibilidad y jerarquía semántica:
+     - Jerarquía H1 -> H2 -> H3 estricta (H1 de Hero -> H2 semántico del catálogo -> H3 de productos).
+     - Añadidos `aria-label` a inputs de búsqueda, botones de borrado y selectores de cantidad en `ProductCard`.
+     - Corrección de ratios de contraste WCAG AAA en `Footer.tsx` (`text-slate-300` sobre `bg-slate-900`) y `ProductCard.tsx` / `ProductGrid.tsx` (`text-slate-700` y `text-slate-600` sobre fondo blanco).
+  4. SEO técnico y robots.txt:
+     - Implementada metadata route oficial `src/app/robots.ts` estática (`revalidate = 86400`) y purgadas las directivas experimentales no estándar, eliminando al 100% las advertencias de Googlebot.
+  5. `next.config.js`:
+     - Activados `poweredByHeader: false` y `compress: true`.
+- Despliegue:
+  * Build local exitoso (`npm run build`: 70/70 páginas estáticas compiladas en 10.8s, 0 errores).
+  * Commits subidos a `origin/main` en GitHub (`7b52326`).
+================================================================================

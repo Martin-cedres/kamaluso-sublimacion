@@ -39,7 +39,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <Link
       href={`/p/${product.slug}`}
-      className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-brand-300 transition-all duration-300 flex flex-col h-full cursor-pointer relative select-none"
+      className="group product-card-contain bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-brand-300 transition-all duration-300 flex flex-col h-full cursor-pointer relative select-none"
     >
       {/* Container de Imagen: Superficie blanca unificada sin bloques de color gris */}
       <div className="relative aspect-square bg-white p-4 border-b border-slate-100 overflow-hidden flex items-center justify-center">
@@ -141,7 +141,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
                   ? "bg-slate-900 hover:bg-brand-600 text-white shadow-slate-900/10 hover:shadow-brand-600/20"
                   : "bg-slate-200 text-slate-700 cursor-not-allowed shadow-none"
               }`}
-              aria-label={product.inStock ? `Agregar ${product.name} al carrito` : `${product.name} agotado`}
+              aria-label={product.inStock ? `Agregar al Carrito: ${product.name}` : `Agotado: ${product.name}`}
               title={product.inStock ? "Agregar al carrito" : "Producto agotado"}
             >
               <ShoppingCart className="w-4 h-4 text-white" />

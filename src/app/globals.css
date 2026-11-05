@@ -22,6 +22,12 @@
   }
 }
 
+/* Optimización de rendimiento para catálogo (Core Web Vitals - Reducción drástica de Style & Layout) */
+.product-card-contain {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 420px;
+}
+
 /* Formato de párrafos de descripción de productos al estilo Webnode */
 .product-description-text {
   font-family: var(--font-open-sans), system-ui, sans-serif;
