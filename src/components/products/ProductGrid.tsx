@@ -19,6 +19,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   const [selectedCategory, setSelectedCategory] = useState("todos");
   const [searchTerm, setSearchTerm] = useState(urlQuery);
   const [sortBy, setSortBy] = useState<"destacados" | "precio-asc" | "precio-desc" | "nombre-asc">("destacados");
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     setSearchTerm(urlQuery);
@@ -68,7 +69,10 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             return (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.slug)}
+                onClick={() => {
+                  setSelectedCategory(cat.slug);
+                  setVisibleCount(12);
+                }}
                 className={`px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all shadow-sm ${
                   isActive
                     ? "bg-brand-600 text-white shadow-brand-600/30 scale-105"
@@ -165,11 +169,33 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {sortedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} priority={false} />
-              ))}
-            </div>
+            {(() => {
+              const shouldPaginate = !searchTerm && selectedCategory === "todos";
+              const displayed = shouldPaginate ? sortedProducts.slice(0, visibleCount) : sortedProducts;
+
+              return (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {displayed.map((product) => (
+                      <ProductCard key={product.id} product={product} priority={false} />
+                    ))}
+                  </div>
+
+                  {shouldPaginate && visibleCount < sortedProducts.length && (
+                    <div className="pt-8 text-center animate-fadeIn">
+                      <button
+                        type="button"
+                        onClick={() => setVisibleCount(sortedProducts.length)}
+                        className="inline-flex items-center gap-2 bg-slate-900 hover:bg-brand-600 active:scale-95 text-white font-extrabold text-xs sm:text-sm px-8 py-3.5 rounded-2xl transition-all shadow-md shadow-slate-900/10 hover:shadow-brand-600/20"
+                      >
+                        <span>Ver catálogo completo ({sortedProducts.length} productos)</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
       </section>

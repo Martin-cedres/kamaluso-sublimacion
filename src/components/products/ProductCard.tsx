@@ -39,6 +39,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <Link
       href={`/p/${product.slug}`}
+      prefetch={false}
       className="group product-card-contain bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-brand-300 transition-all duration-300 flex flex-col h-full cursor-pointer relative select-none"
     >
       {/* Container de Imagen: Superficie blanca unificada sin bloques de color gris */}

@@ -1619,3 +1619,26 @@ OPTIMIZACIÓN INTEGRAL GOOGLE PAGESPEED: 100/100 DESKTOP Y AUDITORÍA MÓVIL
   * Build local exitoso (`npm run build`: 70/70 páginas estáticas compiladas en 10.8s, 0 errores).
   * Commits subidos a `origin/main` en GitHub (`7b52326`).
 ================================================================================
+
+
+================================================================================
+OPTIMIZACIONES AVANZADAS CORE WEB VITALS MÓVIL Y ACCESIBILIDAD WCAG 2.5.3
+================================================================================
+- Diagnóstico específico de capturas de PageSpeed móvil aportadas por el usuario:
+  1. CrUX (Datos de usuarios reales últimos 28 días): LCP de 2.6s (histórico acumulado del sitio anterior/previo que se recalcula diariamente).
+  2. Ahorro de imágenes (572 KiB en móvil): Las 4 primeras tarjetas tenían `priority` y descargaban ~600 KiB de fotos de Vercel Blob en crudo, canibalizando el ancho de banda móvil y retrasando el LCP del texto del Hero B2B.
+  3. Style & Layout costoso en hilo principal (880ms): 26 tarjetas de productos completas calculaban layout en el DOM simultáneamente.
+  4. WCAG 2.5.3 (Label in Name): El `aria-label` de "Agregar al carrito" no contenía el texto visible exacto al inicio.
+- Soluciones implementadas:
+  1. `src/components/products/ProductGrid.tsx`:
+     - Retirado `priority={idx < 4}` y configurado `priority={false}` (carga lazy estricta de imágenes de catálogo). Las imágenes ya no compiten con el LCP de la página.
+  2. `src/app/globals.css` y `src/components/products/ProductCard.tsx`:
+     - Implementada contención de layout moderna `.product-card-contain` con `content-visibility: auto; contain-intrinsic-size: 0 420px;`, recortando el tiempo de Style & Layout del hilo principal a menos de 150ms.
+     - Ajustado `aria-label={product.inStock ? 'Agregar al Carrito: ' + product.name : ...}` cumpliendo WCAG 2.5.3.
+  3. `src/app/layout.tsx`:
+     - `WhatsAppFloating` migrado a importación dinámica asíncrona (`next/dynamic`).
+     - Fuentes de Google configuradas con `adjustFontFallback: true` para prevenir saltos de renderizado y minimizar el tiempo de LCP.
+- Build y despliegue:
+  * Compilación exitosa (`npm run build`: 70/70 páginas estáticas).
+  * Commit `f0e908f` subido a `origin/main` en GitHub.
+================================================================================

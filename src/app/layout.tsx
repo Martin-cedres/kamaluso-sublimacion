@@ -15,6 +15,7 @@ const raleway = Raleway({
   subsets: ["latin"],
   variable: "--font-raleway",
   display: "swap",
+  weight: ["700", "800", "900"],
   adjustFontFallback: true,
 });
 
@@ -22,6 +23,7 @@ const openSans = Open_Sans({
   subsets: ["latin"],
   variable: "--font-open-sans",
   display: "swap",
+  weight: ["400", "600", "700"],
   adjustFontFallback: true,
 });
 
