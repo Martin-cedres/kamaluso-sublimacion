@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Content-Signal: ai-train=no, search=yes, ai-input=yes
+# Content-Signal: ai-train=no, search=yes, ai-input=yes
 
 User-agent: Googlebot
 User-agent: Google-Extended
@@ -13,8 +13,8 @@ User-agent: ClaudeBot
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Content-Signal: ai-train=no, search=yes, ai-input=yes
+# Content-Signal: ai-train=no, search=yes, ai-input=yes
 
 Sitemap: https://www.kamaluso.com/sitemap.xml
 Sitemap: https://www.kamaluso.com/llms.txt
-Agentmap: https://www.kamaluso.com/.well-known/ai-catalog.json
+# Agentmap: https://www.kamaluso.com/.well-known/ai-catalog.json

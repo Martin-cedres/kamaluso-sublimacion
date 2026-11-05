@@ -15,7 +15,7 @@ interface ProductGridProps {
 export function ProductGrid({ initialProducts }: ProductGridProps) {
   const searchParams = useSearchParams();
   const urlQuery = searchParams.get("q") || "";
-  const [productsList, setProductsList] = useState<Product[]>(initialProducts);
+  const [productsList, setProductsList] = useState<Product[]>(initialProducts || []);
   const [selectedCategory, setSelectedCategory] = useState("todos");
   const [searchTerm, setSearchTerm] = useState(urlQuery);
   const [sortBy, setSortBy] = useState<"destacados" | "precio-asc" | "precio-desc" | "nombre-asc">("destacados");
@@ -24,46 +24,39 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
     setSearchTerm(urlQuery);
   }, [urlQuery]);
 
-  React.useEffect(() => {
-    if (initialProducts && initialProducts.length > 0) {
-      setProductsList(initialProducts);
-      return;
-    }
-    async function loadCloudProducts() {
-      try {
-        const data = await getAllProducts();
+  useEffect(() => {
+    if (!initialProducts || initialProducts.length === 0) {
+      getAllProducts().then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setProductsList(data);
         }
-      } catch (e) {
-        console.error("Error al obtener productos", e);
-      }
+      }).catch(() => {});
     }
-    loadCloudProducts();
   }, [initialProducts]);
 
-  const filteredProducts = productsList.filter((product) => {
-    const matchesCategory =
-      selectedCategory === "todos" || product.category === selectedCategory;
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProducts = React.useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return productsList.filter((product) => {
+      const matchesCategory =
+        selectedCategory === "todos" || product.category === selectedCategory;
+      const matchesSearch =
+        !term ||
+        product.name.toLowerCase().includes(term) ||
+        product.description.toLowerCase().includes(term);
 
-    return matchesCategory && matchesSearch;
-  });
+      return matchesCategory && matchesSearch;
+    });
+  }, [productsList, selectedCategory, searchTerm]);
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === "precio-asc") {
-      return a.price - b.price;
-    }
-    if (sortBy === "precio-desc") {
-      return b.price - a.price;
-    }
-    if (sortBy === "nombre-asc") {
-      return a.name.localeCompare(b.name);
-    }
-    return 0;
-  });
+  const sortedProducts = React.useMemo(() => {
+    if (sortBy === "destacados") return filteredProducts;
+    return [...filteredProducts].sort((a, b) => {
+      if (sortBy === "precio-asc") return a.price - b.price;
+      if (sortBy === "precio-desc") return b.price - a.price;
+      if (sortBy === "nombre-asc") return a.name.localeCompare(b.name);
+      return 0;
+    });
+  }, [filteredProducts, sortBy]);
 
   return (
     <div className="space-y-6">
@@ -148,9 +141,9 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
           <div className="space-y-6">
             {/* Barra de Ordenamiento y Conteo */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/70">
-              <span className="text-xs sm:text-sm font-semibold text-slate-500">
-                Mostrando <strong className="text-slate-900 font-black">{sortedProducts.length}</strong> {sortedProducts.length === 1 ? "producto" : "productos"}
-              </span>
+              <h2 className="text-xs sm:text-sm font-semibold text-slate-700 m-0">
+                Catálogo de Insumos: Mostrando <strong className="text-slate-900 font-black">{sortedProducts.length}</strong> {sortedProducts.length === 1 ? "producto" : "productos"}
+              </h2>
 
               <div className="flex items-center gap-2 self-end sm:self-auto">
                 <label htmlFor="sort-price-select" className="text-xs font-bold text-slate-600 flex items-center gap-1.5 cursor-pointer">

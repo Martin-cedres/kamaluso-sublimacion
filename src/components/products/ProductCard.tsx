@@ -78,7 +78,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           <h3 className="font-extrabold text-slate-900 text-base leading-snug group-hover:text-brand-600 transition-colors line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
         </div>
@@ -86,17 +86,17 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         {/* Pricing & Full-Width Action Button */}
         <div className="pt-3 border-t border-slate-100 mt-auto space-y-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-xs font-bold uppercase text-slate-400">Precio:</span>
+            <span className="text-xs font-bold uppercase text-slate-600">Precio:</span>
             <div className="flex items-baseline gap-1 text-right">
               {product.comparativePrice ? (
-                <span className="text-xs text-slate-400 line-through mr-1">
+                <span className="text-xs text-slate-500 line-through mr-1">
                   ${product.comparativePrice}
                 </span>
               ) : null}
               <span className="text-xl sm:text-2xl font-black text-slate-900 leading-none">
                 ${product.price}
               </span>
-              <span className="text-[10px] font-bold text-slate-400">UYU</span>
+              <span className="text-[10px] font-bold text-slate-600">UYU</span>
             </div>
           </div>
 
@@ -137,7 +137,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               className={`w-full py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center gap-2 active:scale-98 ${
                 product.inStock
                   ? "bg-slate-900 hover:bg-brand-600 text-white shadow-slate-900/10 hover:shadow-brand-600/20"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                  : "bg-slate-200 text-slate-700 cursor-not-allowed shadow-none"
               }`}
               title={product.inStock ? "Agregar al carrito" : "Producto agotado"}
             >

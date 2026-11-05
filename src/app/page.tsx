@@ -83,7 +83,7 @@ export default async function HomePage() {
             Fábrica de Insumos de Papelería <span className="text-brand-600">Sublimable</span> en Uruguay
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto font-normal leading-relaxed">
             En <strong>Kamaluso</strong> somos fabricantes directos en San José de Mayo, Uruguay, de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de cartón cristal de 350gr con polímero virgen e interiores impresos listos para encuadernar. Venta mayorista y minorista sin mínimo de compra con envíos a Montevideo y los 19 departamentos.
           </p>
         </div>
