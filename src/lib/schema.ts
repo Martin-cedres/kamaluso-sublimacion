@@ -10,7 +10,7 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
     "Insumos Kamaluso San José"
   ],
   "url": "https://www.kamaluso.com",
-  "logo": "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000163-7555a7555c/LOGO.png?ph=904ccf23c3",
+  "logo": "https://www.kamaluso.com/logo.png",
   "image": "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
   "description":
     "Kamaluso (www.kamaluso.com) es la división fabricante y mayorista B2B en Uruguay de kits completos e insumos de papelería sublimable en blanco (tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027/perpetuas, libretas, cuadernos y espirales). Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",

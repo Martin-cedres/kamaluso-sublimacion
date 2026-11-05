@@ -1540,3 +1540,19 @@ ESTANDARIZACIÓN DE DATOS DE ENVÍO Y DELIVERY TYPE EN PEDIDOS Y ETIQUETAS
    - Optimización de `nameFontSizeClass`: tamaño de alto impacto `text-[27px]` para nombres habituales, escalando a `text-2xl` y `text-xl` para nombres compuestos extensos.
    - Protección contra reescalado de texto en motores de impresión (`-webkit-text-size-adjust: 100%`, `text-size-adjust: 100%`).
 ================================================================================
+
+
+================================================================================
+RESTAURACIÓN DE CATÁLOGO COMPLETO (26 PRODUCTOS), BLINDAJE DE API Y FAVICON LOCAL
+================================================================================
+- Diagnóstico de causa raíz (1 solo producto en la web):
+  * Al editar el precio de "1 día a la vista (unisex)" ($350) en `/admin`, `POST /api/products` se ejecutó en una instancia Serverless de Vercel recién iniciada (cold start) donde `globalThis.__kamaluso_products_cache__.products` estaba vacío (`[]`).
+  * `POST /api/products` no cargaba previamente el catálogo desde Vercel Blob / `INITIAL_PRODUCTS` cuando la memoria estaba vacía, por lo que sobrescribió `data/products.json` en Vercel Blob con un arreglo de 1 solo producto (`[body]`).
+- Solución implementada para el catálogo:
+  1. `src/app/api/products/route.ts`: Creada función `loadServerProducts(forceFresh)` que carga siempre el catálogo vigente desde Vercel Blob / `INITIAL_PRODUCTS` antes de aplicar cualquier edición (`POST`) o eliminación (`DELETE`) individual, e integra `ensureCompleteCatalog()` para impedir sobreescrituras parciales por cold-starts.
+  2. `src/lib/products.ts`: Añadida función de autorreparación `ensureCompleteCatalog()` y actualizado `CURRENT_CATALOG_VERSION = 5` para limpiar instantáneamente cualquier `localStorage` que haya guardado la lista truncada de 1 producto.
+  3. `data/products.json` y Vercel Blob en vivo: Restaurados los 26 productos oficiales conservando el nuevo precio actualizado de "1 día a la vista (unisex)" ($350 UYU / antes $380 UYU).
+- Diagnóstico y solución del Favicon:
+  * El favicon apuntaba a una imagen externa de Webnode de 1980x1697px (no cuadrada, 334 KB) y `/favicon.ico` devolvía 404 Not Found.
+  * Generados y alojados localmente en el mismo dominio (`public/` y `src/app/`): `favicon.ico` (48x48), `favicon-32.png` (32x32), `favicon-48.png` (48x48), `icon-192.png` (192x192), `icon-512.png` (512x512), `apple-touch-icon.png` (180x180) y `logo.png` (512x512), actualizando `src/app/layout.tsx`, `public/manifest.json`, `Header.tsx` y `schema.ts`.
+================================================================================

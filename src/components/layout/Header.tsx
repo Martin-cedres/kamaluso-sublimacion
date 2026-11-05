@@ -8,8 +8,7 @@ import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink, Instagram } fr
 import { useCart } from "@/components/cart/CartContext";
 import { Product } from "@/types";
 
-const LOGO_URL =
-  "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000163-7555a7555c/LOGO.png?ph=904ccf23c3";
+const LOGO_URL = "/logo.png";
 
 let clientProductsCache: Product[] | null = null;
 

@@ -21,8 +21,7 @@ const openSans = Open_Sans({
   display: "swap",
 });
 
-const KAMALUSO_LOGO_URL =
-  "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000163-7555a7555c/LOGO.png?ph=904ccf23c3";
+const KAMALUSO_LOGO_URL = "/logo.png";
 
 export const metadata: Metadata = {
   title: {
@@ -32,6 +31,7 @@ export const metadata: Metadata = {
   description:
     "Fabricantes directos en San José, Uruguay de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de 350gr con espiral. Venta por mayor y menor sin mínimo. Envíos a todo el país.",
   metadataBase: new URL("https://www.kamaluso.com"),
+  manifest: "/manifest.json",
   keywords: [
     "interiores de agendas para sublimar",
     "papeleria sublimable uruguay",
@@ -42,11 +42,16 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: KAMALUSO_LOGO_URL },
-      { url: KAMALUSO_LOGO_URL, type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
-    shortcut: KAMALUSO_LOGO_URL,
-    apple: KAMALUSO_LOGO_URL,
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
   openGraph: {
     title: "Kamaluso | Insumos y Papelería Sublimable en Uruguay",
@@ -64,9 +69,9 @@ export const metadata: Metadata = {
         alt: "Kamaluso Insumos y Papelería Sublimable Uruguay",
       },
       {
-        url: KAMALUSO_LOGO_URL,
-        width: 800,
-        height: 800,
+        url: "https://www.kamaluso.com/logo.png",
+        width: 512,
+        height: 512,
         alt: "Kamaluso Papelería Sublimable Logo",
       },
     ],
@@ -91,8 +96,6 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${raleway.variable} ${openSans.variable}`}>
       <head>
-        <link rel="icon" href={KAMALUSO_LOGO_URL} />
-        <link rel="apple-touch-icon" href={KAMALUSO_LOGO_URL} />
         {/* Enlaces de descubrimiento de agentes IA (RFC 8288, RFC 9727, ARD) */}
         <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
         <link rel="api-catalog" href="/.well-known/api-catalog" />

@@ -2,7 +2,7 @@ import { Product, Category } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 import localProductsData from "../../data/products.json";
 
-export const CURRENT_CATALOG_VERSION = 4;
+export const CURRENT_CATALOG_VERSION = 5;
 export const DIRECT_BLOB_PRODUCTS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json";
 
 export const CATEGORIES: Category[] = [
@@ -95,12 +95,35 @@ function removeDeletedProductId(id: string): void {
   localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(list));
 }
 
+export function ensureCompleteCatalog(remoteProducts: Product[]): Product[] {
+  if (!Array.isArray(remoteProducts) || remoteProducts.length === 0) {
+    return [...INITIAL_PRODUCTS];
+  }
+  // Si el catálogo remoto quedó truncado accidentalmente (ej. 1 solo producto por cold-start),
+  // reconstruir sobre INITIAL_PRODUCTS preservando los cambios de los productos presentes en remoteProducts
+  if (remoteProducts.length <= 1 && INITIAL_PRODUCTS.length > 1) {
+    const remoteMap = new Map<string, Product>();
+    remoteProducts.forEach((p) => {
+      if (p && p.id) remoteMap.set(p.id, sanitizeProduct(p));
+    });
+    const merged = INITIAL_PRODUCTS.map((base) => remoteMap.get(base.id) || sanitizeProduct(base));
+    remoteProducts.forEach((p) => {
+      if (p && p.id && !INITIAL_PRODUCTS.some((base) => base.id === p.id)) {
+        merged.unshift(sanitizeProduct(p));
+      }
+    });
+    return merged;
+  }
+  return remoteProducts.map(sanitizeProduct);
+}
+
 function mergeWithLocal(remoteProducts: Product[], localProducts: Product[] | null): Product[] {
   const deletedIds = getDeletedProductIds();
   const productMap = new Map<string, Product>();
+  const completeRemote = ensureCompleteCatalog(remoteProducts);
 
-  if (Array.isArray(remoteProducts)) {
-    remoteProducts.forEach((p) => {
+  if (Array.isArray(completeRemote)) {
+    completeRemote.forEach((p) => {
       if (p && p.id && !deletedIds.includes(p.id)) {
         const sp = sanitizeProduct(p); productMap.set(sp.id, sp);
       }
@@ -125,7 +148,7 @@ export async function getAllProducts(): Promise<Product[]> {
   if (typeof window === "undefined") {
     try {
       const memoryCache = (globalThis as any).__kamaluso_products_cache__;
-      if (memoryCache && Array.isArray(memoryCache.products) && memoryCache.products.length > 0) {
+      if (memoryCache && Array.isArray(memoryCache.products) && memoryCache.products.length > 1) {
         return mergeWithLocal(memoryCache.products, localStored);
       }
 
@@ -133,8 +156,9 @@ export async function getAllProducts(): Promise<Product[]> {
       const targetBlobUrl = memoryCache?.blobUrl || DIRECT_BLOB_PRODUCTS_URL;
       const res = await fetch(targetBlobUrl, { next: { revalidate: 60, tags: ["products"] } });
       if (res.ok) {
-        const cloudProducts = await res.json();
-        if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+        const rawCloudProducts = await res.json();
+        if (Array.isArray(rawCloudProducts) && rawCloudProducts.length > 0) {
+          const cloudProducts = ensureCompleteCatalog(rawCloudProducts);
           if (!(globalThis as any).__kamaluso_products_cache__) {
             (globalThis as any).__kamaluso_products_cache__ = {
               products: cloudProducts,
