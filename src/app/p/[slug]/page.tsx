@@ -8,9 +8,8 @@ import { AddToCartDetail } from "./AddToCartDetail";
 import { ProductGallery } from "./ProductGallery";
 import { Product } from "@/types";
 
-export const dynamic = "force-dynamic";
 export const dynamicParams = true;
-export const revalidate = 0;
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const products = await getAllProducts();

@@ -5,9 +5,8 @@ import { getAllProducts, CATEGORIES } from "@/lib/products";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ChevronRight, Layers, Sparkles } from "lucide-react";
 
-export const dynamic = "force-dynamic";
 export const dynamicParams = true;
-export const revalidate = 0;
+export const revalidate = 300;
 
 const CATEGORY_SEO: Record<
   string,

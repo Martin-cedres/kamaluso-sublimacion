@@ -8,7 +8,7 @@ import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink, Instagram } fr
 import { useCart } from "@/components/cart/CartContext";
 import { Product } from "@/types";
 
-const LOGO_URL = "/logo.png";
+const LOGO_URL = "/logo-header.png";
 
 let clientProductsCache: Product[] | null = null;
 
@@ -26,10 +26,10 @@ function HeaderSearchInput() {
     setQuery(searchParams.get("q") || "");
   }, [searchParams]);
 
-  // Cargar lista de productos con memoria en cliente
-  useEffect(() => {
+  // Cargar lista de productos solo bajo demanda (al interactuar con el buscador para no penalizar PageSpeed/TBT)
+  const ensureProductsLoaded = React.useCallback(() => {
     if (clientProductsCache && clientProductsCache.length > 0) {
-      setProducts(clientProductsCache);
+      if (products.length === 0) setProducts(clientProductsCache);
       return;
     }
 
@@ -42,7 +42,7 @@ function HeaderSearchInput() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [products.length]);
 
   // Cerrar desplegable si se hace clic fuera
   useEffect(() => {
@@ -129,8 +129,15 @@ function HeaderSearchInput() {
         <input
           type="text"
           value={query}
-          onFocus={() => setIsOpen(true)}
-          onChange={handleSearchChange}
+          onFocus={() => {
+            ensureProductsLoaded();
+            setIsOpen(true);
+          }}
+          onMouseEnter={ensureProductsLoaded}
+          onChange={(e) => {
+            ensureProductsLoaded();
+            handleSearchChange(e);
+          }}
           placeholder="Buscar agendas, cuadernos, insumos..."
           {...({
             toolparamdescription: "Término de búsqueda de productos e insumos",
@@ -254,6 +261,7 @@ export function Header() {
                 src={LOGO_URL}
                 alt="Kamaluso Sublimación Logo"
                 fill
+                sizes="(max-width: 640px) 36px, 44px"
                 className="object-contain"
                 priority
               />

@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Raleway, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartContext";
-import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WhatsAppFloating } from "@/components/ui/WhatsAppFloating";
-import { WebMcpProvider } from "@/components/agent/WebMcpProvider";
 import { KAMALUSO_ORGANIZATION_SCHEMA } from "@/lib/schema";
+
+const CartDrawer = dynamic(() => import("@/components/cart/CartDrawer").then((mod) => mod.CartDrawer));
+const WebMcpProvider = dynamic(() => import("@/components/agent/WebMcpProvider").then((mod) => mod.WebMcpProvider));
 
 const raleway = Raleway({
   subsets: ["latin"],

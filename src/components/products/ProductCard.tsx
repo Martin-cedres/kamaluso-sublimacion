@@ -9,9 +9,10 @@ import { useCart } from "@/components/cart/CartContext";
 
 interface ProductCardProps {
   product: Product;
+  priority?: boolean;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   const { cart, addToCart, updateQuantity } = useCart();
 
   const cartItem = cart.find((item) => item.product.id === product.id);
@@ -61,6 +62,8 @@ export function ProductCard({ product }: ProductCardProps) {
             fill
             className="object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
             unoptimized
           />
         </div>
