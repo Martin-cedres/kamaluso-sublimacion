@@ -125,10 +125,11 @@ function HeaderSearchInput() {
           tooldescription: "Buscar insumos de papelería sublimable en Kamaluso Uruguay",
         } as Record<string, string>)}
       >
-        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
         <input
           type="text"
           value={query}
+          aria-label="Buscar productos e insumos"
           onFocus={() => {
             ensureProductsLoaded();
             setIsOpen(true);
@@ -147,6 +148,7 @@ function HeaderSearchInput() {
         {query && (
           <button
             type="button"
+            aria-label="Limpiar búsqueda"
             onClick={() => {
               setQuery("");
               setIsOpen(false);

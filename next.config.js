@@ -4,6 +4,8 @@ const redirects = require("./data/redirects.json");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
   outputFileTracingRoot: path.join(__dirname),
   experimental: {
     optimizePackageImports: ["lucide-react"],

@@ -14,10 +14,10 @@ export function Footer() {
           <h3 className="text-white text-xl font-black tracking-wider">
             KAMALUSO
           </h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-300 leading-relaxed">
             Fabricantes de interiores para papelería sublimable en San José de Mayo: agendas 2026/27, libretas, blocks y cuadernos listos con tapas sublimables de 350gr para sublimadores y revendedores en Uruguay.
           </p>
-          <div className="space-y-1 text-xs text-slate-400">
+          <div className="space-y-1 text-xs text-slate-300">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-brand-500 flex-shrink-0" />
               <span>Ramón Massini 136, San José de Mayo, Uruguay</span>
@@ -110,7 +110,7 @@ export function Footer() {
             </li>
             <li>
               <div className="pt-3 border-t border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-500 block uppercase font-bold tracking-wider">
+                <span className="text-[10px] text-slate-300 block uppercase font-bold tracking-wider">
                   ¿Buscas regalos ya personalizados?
                 </span>
                 <a
@@ -122,7 +122,7 @@ export function Footer() {
                   <span>www.papeleriapersonalizada.uy</span>
                   <ExternalLink className="w-3.5 h-3.5 text-pink-400" />
                 </a>
-                <p className="text-[10px] text-slate-500 leading-tight">
+                <p className="text-[10px] text-slate-300 leading-tight">
                   Tienda minorista de productos terminados para consumidor final.
                 </p>
               </div>
@@ -160,14 +160,14 @@ export function Footer() {
               <Mail className="w-4 h-4 text-brand-500 flex-shrink-0" />
               <span>kamalusosanjose@gmail.com</span>
             </div>
-            <p className="text-[11px] text-slate-500 pt-2 leading-relaxed">
+            <p className="text-[11px] text-slate-300 pt-2 leading-relaxed">
               Sin mínimo de compra. Envíos a todo el Uruguay desde San José de Mayo vía DAC, Correo Uruguayo o Agencia COTMI.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4" data-nosnippet>
+      <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-300 flex flex-col sm:flex-row justify-between items-center gap-4" data-nosnippet>
         <p>© {new Date().getFullYear()} Kamaluso Sublimación (www.kamaluso.com). San José de Mayo, Uruguay.</p>
         <p className="flex items-center gap-1">
           Hecho con <Heart className="w-3.5 h-3.5 text-brand-500 fill-brand-500" /> para sublimadores de Uruguay.

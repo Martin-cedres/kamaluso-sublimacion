@@ -86,17 +86,17 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         {/* Pricing & Full-Width Action Button */}
         <div className="pt-3 border-t border-slate-100 mt-auto space-y-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-xs font-bold uppercase text-slate-600">Precio:</span>
+            <span className="text-xs font-bold uppercase text-slate-700">Precio:</span>
             <div className="flex items-baseline gap-1 text-right">
               {product.comparativePrice ? (
-                <span className="text-xs text-slate-500 line-through mr-1">
+                <span className="text-xs text-slate-600 line-through mr-1 font-medium">
                   ${product.comparativePrice}
                 </span>
               ) : null}
               <span className="text-xl sm:text-2xl font-black text-slate-900 leading-none">
                 ${product.price}
               </span>
-              <span className="text-[10px] font-bold text-slate-600">UYU</span>
+              <span className="text-[10px] font-bold text-slate-700">UYU</span>
             </div>
           </div>
 
@@ -112,6 +112,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               <button
                 onClick={handleDecrement}
                 className="w-10 h-9 bg-brand-100 hover:bg-brand-200 text-brand-700 rounded-xl transition-colors font-black flex items-center justify-center active:scale-95 flex-shrink-0"
+                aria-label="Restar una unidad"
                 title="Restar unidad"
               >
                 <Minus className="w-4 h-4" />
@@ -124,6 +125,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               <button
                 onClick={handleIncrement}
                 className="w-10 h-9 bg-brand-600 hover:bg-brand-700 text-white rounded-xl transition-colors font-black flex items-center justify-center active:scale-95 flex-shrink-0 shadow"
+                aria-label="Sumar una unidad"
                 title="Sumar unidad"
               >
                 <Plus className="w-4 h-4" />
@@ -139,6 +141,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
                   ? "bg-slate-900 hover:bg-brand-600 text-white shadow-slate-900/10 hover:shadow-brand-600/20"
                   : "bg-slate-200 text-slate-700 cursor-not-allowed shadow-none"
               }`}
+              aria-label={product.inStock ? `Agregar ${product.name} al carrito` : `${product.name} agotado`}
               title={product.inStock ? "Agregar al carrito" : "Producto agotado"}
             >
               <ShoppingCart className="w-4 h-4 text-white" />

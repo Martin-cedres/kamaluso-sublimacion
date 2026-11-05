@@ -19,21 +19,22 @@ export function WebMcpProvider() {
 
     const controller = new AbortController();
 
-    // Detección compatible de ModelContext (document.modelContext o navigator.modelContext o window.modelContext)
-    const docWithContext = document as unknown as { modelContext?: ModelContextTarget };
-    const navWithContext = navigator as unknown as { modelContext?: ModelContextTarget };
-    const winWithContext = window as unknown as { modelContext?: ModelContextTarget };
+    const registerToolsIfAvailable = () => {
+      // Detección compatible de ModelContext (document.modelContext o navigator.modelContext o window.modelContext)
+      const docWithContext = document as unknown as { modelContext?: ModelContextTarget };
+      const navWithContext = navigator as unknown as { modelContext?: ModelContextTarget };
+      const winWithContext = window as unknown as { modelContext?: ModelContextTarget };
 
-    const ctx: ModelContextTarget | undefined =
-      docWithContext.modelContext ||
-      navWithContext.modelContext ||
-      winWithContext.modelContext;
+      const ctx: ModelContextTarget | undefined =
+        docWithContext.modelContext ||
+        navWithContext.modelContext ||
+        winWithContext.modelContext;
 
-    if (!ctx || typeof ctx.registerTool !== "function") {
-      return;
-    }
+      if (!ctx || typeof ctx.registerTool !== "function") {
+        return;
+      }
 
-    const tools: ModelContextTool[] = [
+      const tools: ModelContextTool[] = [
       {
         name: "searchProducts",
         description: "Busca insumos de papelería sublimable (agendas, libretas, tapas 350g, espirales) en Kamaluso Uruguay.",
@@ -113,6 +114,13 @@ export function WebMcpProvider() {
         // Silently catch older implementations
       }
     });
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(registerToolsIfAvailable);
+    } else {
+      setTimeout(registerToolsIfAvailable, 1000);
+    }
 
     return () => {
       controller.abort();

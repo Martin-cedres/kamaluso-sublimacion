@@ -184,7 +184,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-800">Envíos a todo Uruguay</h4>
-              <p className="text-xs text-slate-500">DAC, Correo Uruguayo y COTMI desde San José. Sin mínimo.</p>
+              <p className="text-xs text-slate-600">DAC, Correo Uruguayo y COTMI desde San José. Sin mínimo.</p>
             </div>
           </div>
 
@@ -194,7 +194,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-800">Elaboración ágil</h4>
-              <p className="text-xs text-slate-500">Iniciamos al recibir comprobante de pago.</p>
+              <p className="text-xs text-slate-600">Iniciamos al recibir comprobante de pago.</p>
             </div>
           </div>
 
@@ -204,7 +204,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-800">Venta por mayor y menor</h4>
-              <p className="text-xs text-slate-500">Precios directos de fábrica para revendedores y talleres.</p>
+              <p className="text-xs text-slate-600">Precios directos de fábrica para revendedores y talleres.</p>
             </div>
           </div>
         </div>

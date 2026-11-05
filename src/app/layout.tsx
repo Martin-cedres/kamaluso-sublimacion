@@ -98,6 +98,9 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${raleway.variable} ${openSans.variable}`}>
       <head>
+        {/* Preconexión al CDN de Vercel Blob para carga ultra rápida de imágenes de productos */}
+        <link rel="preconnect" href="https://ek73dobkmkhaebws.public.blob.vercel-storage.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ek73dobkmkhaebws.public.blob.vercel-storage.com" />
         {/* Enlaces de descubrimiento de agentes IA (RFC 8288, RFC 9727, ARD) */}
         <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
         <link rel="api-catalog" href="/.well-known/api-catalog" />
