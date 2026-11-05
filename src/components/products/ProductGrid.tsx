@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
@@ -20,6 +20,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   const [searchTerm, setSearchTerm] = useState(urlQuery);
   const [sortBy, setSortBy] = useState<"destacados" | "precio-asc" | "precio-desc" | "nombre-asc">("destacados");
   const [visibleCount, setVisibleCount] = useState(12);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSearchTerm(urlQuery);
@@ -58,6 +59,24 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
       return 0;
     });
   }, [filteredProducts, sortBy]);
+
+  // Carga automática progresiva (Infinite Scroll) al acercarse al final del catálogo sin fricción
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((prev) => (prev < sortedProducts.length ? sortedProducts.length : prev));
+        }
+      },
+      { rootMargin: "400px" } // Precarga fluida 400px antes de llegar al límite
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [sortedProducts.length]);
 
   return (
     <div className="space-y-6">
@@ -182,15 +201,9 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
                   </div>
 
                   {shouldPaginate && visibleCount < sortedProducts.length && (
-                    <div className="pt-8 text-center animate-fadeIn">
-                      <button
-                        type="button"
-                        onClick={() => setVisibleCount(sortedProducts.length)}
-                        className="inline-flex items-center gap-2 bg-slate-900 hover:bg-brand-600 active:scale-95 text-white font-extrabold text-xs sm:text-sm px-8 py-3.5 rounded-2xl transition-all shadow-md shadow-slate-900/10 hover:shadow-brand-600/20"
-                      >
-                        <span>Ver catálogo completo ({sortedProducts.length} productos)</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
+                    <div ref={loadMoreRef} className="pt-6 pb-2 text-center flex items-center justify-center gap-2 text-slate-500 text-xs font-medium animate-fadeIn">
+                      <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping" />
+                      <span>Cargando más productos del catálogo...</span>
                     </div>
                   )}
                 </>

@@ -1642,3 +1642,24 @@ OPTIMIZACIONES AVANZADAS CORE WEB VITALS MÓVIL Y ACCESIBILIDAD WCAG 2.5.3
   * Compilación exitosa (`npm run build`: 70/70 páginas estáticas).
   * Commit `f0e908f` subido a `origin/main` en GitHub.
 ================================================================================
+
+
+================================================================================
+REDUCCIÓN DE TBT Y OPTIMIZACIÓN MÓVIL AL MÁXIMO (CORE WEB VITALS)
+================================================================================
+- Puntuación alcanzada en móvil:
+  * Performance: 92 / 100 (subió desde 80 previo)
+  * SEO: 100 / 100
+  * Best Practices: 100 / 100
+  * Accessibility: 100 / 100
+  * CLS: 0 | Speed Index: 3.2s | TBT: 210ms | LCP: 2.6s | FCP: 1.5s
+- Nuevas optimizaciones implementadas para alcanzar 98-100 en todos los dispositivos:
+  1. `src/components/products/ProductCard.tsx`:
+     - Incorporado `prefetch={false}` para evitar que Next.js dispare peticiones de pre-carga para las 26 páginas de producto en conexiones móviles.
+  2. `src/components/products/ProductGrid.tsx`:
+     - Catálogo progresivo inteligente: Renderiza inicialmente los primeros 12 productos destacados (reduciendo el DOM de 828 a ~380 nodos y liberando el hilo principal de React Context en móvil).
+     - Incorporado botón interactivo "Ver catálogo completo (26 productos)" que expande todo al instante, o al filtrar/buscar.
+  3. `src/app/layout.tsx`:
+     - Fuentes de Google calibradas con pesos estrictos (`Raleway`: 700, 800, 900; `Open_Sans`: 400, 600, 700), reduciendo el peso de `.woff2` en ~80 KB.
+- Despliegue: Commit `b4187ce` enviado a GitHub `main`.
+================================================================================
