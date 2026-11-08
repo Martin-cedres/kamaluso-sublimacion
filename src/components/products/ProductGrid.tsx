@@ -195,8 +195,8 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
               return (
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {displayed.map((product) => (
-                      <ProductCard key={product.id} product={product} priority={false} />
+                    {displayed.map((product, idx) => (
+                      <ProductCard key={product.id} product={product} priority={idx < 2} />
                     ))}
                   </div>
 

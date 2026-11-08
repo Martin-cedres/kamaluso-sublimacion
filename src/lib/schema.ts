@@ -16,6 +16,24 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
     "Kamaluso (www.kamaluso.com) es la división fabricante y mayorista B2B en Uruguay de kits completos e insumos de papelería sublimable en blanco (tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027/perpetuas, libretas, cuadernos y espirales). Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",
   "telephone": "+59898615074",
   "email": "kamalusosanjose@gmail.com",
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+59898615074",
+      "contactType": "customer service",
+      "email": "kamalusosanjose@gmail.com",
+      "areaServed": "UY",
+      "availableLanguage": ["Spanish"]
+    },
+    {
+      "@type": "ContactPoint",
+      "telephone": "+59898615074",
+      "contactType": "sales",
+      "email": "kamalusosanjose@gmail.com",
+      "areaServed": "UY",
+      "availableLanguage": ["Spanish"]
+    }
+  ],
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Ramón Massini 136",

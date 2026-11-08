@@ -11,7 +11,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/perp-ROFeWbv2ob4QY4GNJja0OterOAyP4K.webp"
+      "/products/agenda-perpetua-0-96872a.webp"
     ]
   },
   {
@@ -27,14 +27,14 @@
     "hasPromoKit": true,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-2-YMB2tFHi2efaJqtmHoC9R2ArNwcfcm.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-dHEgyw4MO6vf9qc7t54LR7FZHhaZXw.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-semana-a-la-vista-kamaluso-1-w489iwmkcFYBh0tyDAuANBwDubHaEI.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-NJLocFXomszEcY1GilhNErgFoNONTM.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-tswoMSuvRZMui0BMTJr9PqXwFJQnL0.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-h2OCPmIu0GsOZaoQpVbAzbFKsdkI2j.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-F2AK3bLP9sM7Wc39ibvXAiifwjDB7p.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XRMPlfZTzeS7XcpxjpJo6h3P8STVUD.webp"
+      "/products/agenda-sublimable-semanal-0-106602.webp",
+      "/products/agenda-sublimable-semanal-1-269aa0.webp",
+      "/products/agenda-sublimable-semanal-2-1e28a1.webp",
+      "/products/agenda-sublimable-semanal-3-a6dc70.webp",
+      "/products/agenda-sublimable-semanal-4-9b13d0.webp",
+      "/products/agenda-sublimable-semanal-5-cb02ad.webp",
+      "/products/agenda-sublimable-semanal-6-512d10.webp",
+      "/products/agenda-sublimable-semanal-7-6ed9a8.webp"
     ]
   },
   {
@@ -49,13 +49,13 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-zO6AZWlurouBQyKnW4Hj6GVyUByOxD.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-a3KhNZzYigk0M27SNpLOayoD122ucy.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-3J74CxGvaExDWxEE3wIFxS9YFIWU61.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-Xj8bDrEws0aH5LaG9CYzBfSK0T9NN7.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-9Y9OUz6H2DWCwnWqTf819SJWOW1L1y.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-XFOu0kGf60Ofopg5ociI4WgEfszyXs.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-jNeHKIPZGeMzXL3RnSS0cIFuuAb4HP.webp"
+      "/products/semanal-vertical-comun-0-2fdce5.webp",
+      "/products/semanal-vertical-comun-1-a457d9.webp",
+      "/products/semanal-vertical-comun-2-5925d1.webp",
+      "/products/semanal-vertical-comun-3-3d287c.webp",
+      "/products/semanal-vertical-comun-4-6861c2.webp",
+      "/products/semanal-vertical-comun-5-1aaf38.webp",
+      "/products/semanal-vertical-comun-6-29a823.webp"
     ]
   },
   {
@@ -70,7 +70,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-nk9KuW18EpyB4a726X5i4fAOHWVk6x.webp"
+      "/products/semanal-horizontal-flor-0-829191.webp"
     ]
   },
   {
@@ -85,7 +85,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-pPjp91AbzBAeot0xcgPU0zq1wO5Gob.webp"
+      "/products/semanal-vertical-flor-0-5c30c3.webp"
     ]
   },
   {
@@ -100,7 +100,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-HS3a1iAE6iJhIM4pg5kuDj1wk5xVwQ.webp"
+      "/products/semanal-sh-horizontal-0-7fe5ad.webp"
     ]
   },
   {
@@ -116,13 +116,13 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-dos-dias-por-pagina-kamaluso-3-QzHGJVpS4drXwBLcXzaZsVWL86eDoz.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-8SFaWTIrUMrhyDTfpWueICiGOfuh80.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-HRLd7J5j0JUgObCh4vpD9bTGvPOhkx.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-z8zVRoxfbwojPfgKr1gUwCKE8Cw0bk.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-jFY583DUwbnPAMOYGqW39yEo8gDQq0.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-Ux0On36e0uSadRUye5fYLy99wVRnso.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-BGoyPU1d8wYh81HErlxmIrp6qupcQ3.webp"
+      "/products/agenda-2-dias-a-la-vista-0-3ebc83.webp",
+      "/products/agenda-2-dias-a-la-vista-1-a5348d.webp",
+      "/products/agenda-2-dias-a-la-vista-2-331185.webp",
+      "/products/agenda-2-dias-a-la-vista-3-d9fe7d.webp",
+      "/products/agenda-2-dias-a-la-vista-4-6d69b2.webp",
+      "/products/agenda-2-dias-a-la-vista-5-88ef2f.webp",
+      "/products/agenda-2-dias-a-la-vista-6-e2e796.webp"
     ]
   },
   {
@@ -138,15 +138,15 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-2-ANsjdldjQ1zmCAr2iEhARHLkkVSIoq.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-3-j2UH5UJxOrPJ1zqte3OMQSy3qls7qe.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-un-dia-por-pagina-sublimable-1-mUIiZC2mgihpOPN2rjDCUZjukNOmZP.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-6-gtXl5dPXp4VuJLvpPgtfKP4egozDEy.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-1-gopgayav4iZEbAkLRlh9HsW8dJYwAt.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-2-zodDNmq65aeenEFnlLjvxzR82CuSF2.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-3-UFldKLyJgbXd6h0v3Saboqv0bOpbOo.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-4-EMVJDcBVNHPP1q5Vc7MGcyg388MtdW.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-kamaluso-5-lcVqWPxKYpltZshkt8OPnkPktm9Qx1.webp"
+      "/products/agenda-1-dia-a-la-vista-0-ed8416.webp",
+      "/products/agenda-1-dia-a-la-vista-1-e01f75.webp",
+      "/products/agenda-1-dia-a-la-vista-2-e33241.webp",
+      "/products/agenda-1-dia-a-la-vista-3-54567c.webp",
+      "/products/agenda-1-dia-a-la-vista-4-05f974.webp",
+      "/products/agenda-1-dia-a-la-vista-5-3168bb.webp",
+      "/products/agenda-1-dia-a-la-vista-6-c3a06c.webp",
+      "/products/agenda-1-dia-a-la-vista-7-ee645f.webp",
+      "/products/agenda-1-dia-a-la-vista-8-a1b5c1.webp"
     ]
   },
   {
@@ -161,12 +161,12 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/kit-agendas-sublimacion-RAJbvVcUeH4I7aJ8acS7psGR1prpfC.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-v-TlhGlpPkEzwdRLDQAMvvoQRwz6FNXh.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/comun-5qVLRsa9MoU5gK5g6sM5dkOYAJYkiV.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-h-stnMNLNFYrppCKdXqHUB2Ye9SoBZ68.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/flor-v-zRRENR8dO08rma0bnS7QpU9GqYqdMq.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/sin-hora-DuE2bH6Lx6QnXmbSw0F3nAiaAxNV2o.webp"
+      "/products/kit-x10-0-a7fbe3.webp",
+      "/products/kit-x10-1-8dfe80.webp",
+      "/products/kit-x10-2-1a005f.webp",
+      "/products/kit-x10-3-8d365e.webp",
+      "/products/kit-x10-4-86c326.webp",
+      "/products/kit-x10-5-9a0b33.webp"
     ]
   },
   {
@@ -180,9 +180,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/1-IAycYAZxX0ThMKQYbLjjGoxQK1qOQe.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/2-WQactnKjX1bZS1XXNfBZqvLdGBZIMY.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/3-iw4lJgKZWdP2OOzFLsLsGILXK23pOQ.webp"
+      "/products/planner-rombos-0-f3e67c.webp",
+      "/products/planner-rombos-1-28a475.webp",
+      "/products/planner-rombos-2-cbfe27.webp"
     ]
   },
   {
@@ -196,9 +196,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/1-s8eulPEdcAYYhQoZaxYNeC67L4RgZP.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/2-o0PLw5xWFHkBiZL8BzCekoELLeG6DH.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/3-wI6WTAHpvimO5Q4YxQhJE5YNk1iWsY.webp"
+      "/products/agenda-profesor-perpetua-0-340b5b.webp",
+      "/products/agenda-profesor-perpetua-1-e861a7.webp",
+      "/products/agenda-profesor-perpetua-2-32914d.webp"
     ]
   },
   {
@@ -212,9 +212,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/1-oZ0D5FuACOswk0Vu3RvdZVgk0zs2yz.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/2-Nx6HMHT0lvZNl4QG6fSIBxXaapv7TB.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/3-AhXtZN0CdfgqXm8Vj1y5hTpvPOocl8.webp"
+      "/products/lashista-perpetua-0-e2b015.webp",
+      "/products/lashista-perpetua-1-6e8a7d.webp",
+      "/products/lashista-perpetua-2-1f18e2.webp"
     ]
   },
   {
@@ -228,9 +228,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/1-mr2pDrLlzPxGB1xakmSVqHXR2kxICH.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/2-E5Lmr6vRZsrHMR55ZVNy3IFFDgbFsK.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/3-QB4Vo0XQL6idwb1BynElDMxkduQ5N8.webp"
+      "/products/control-de-embarazo-0-0e42b6.webp",
+      "/products/control-de-embarazo-1-7fddc2.webp",
+      "/products/control-de-embarazo-2-0ffba5.webp"
     ]
   },
   {
@@ -244,11 +244,11 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/mani0-KOdnNYp6SplqlsKexBCB5kPHhAxT30.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/mani1-5NBN3Gm0hpeDw7xXMsZ742KjgdJVD2.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/mani2-6QrARE8QHyBHfW0f1tC7rYjrUJVsVl.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/mani3-XAyLPDJkGbEQxXQtWctDIXWEUemPOY.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/mani4-QpZj9jJrrFNKSLLNxDcwr93yQNAyUD.webp"
+      "/products/manicurista-perpetua-0-989f24.webp",
+      "/products/manicurista-perpetua-1-993bf7.webp",
+      "/products/manicurista-perpetua-2-57cc59.webp",
+      "/products/manicurista-perpetua-3-535df5.webp",
+      "/products/manicurista-perpetua-4-f1ce33.webp"
     ]
   },
   {
@@ -263,7 +263,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/whatsapp-image-2026-09-16-at-11-43-56-am2-bG8pZad9I3ozcgKFsi9EaLTrSl8JSO.webp"
+      "/products/cartulina-sublimable-x10-0-6b474d.webp"
     ]
   },
   {
@@ -279,7 +279,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-2022-tapa-2-MsDSaiR9C1sv6F0o4ZhK7b78xUD8zB.webp"
+      "/products/pack-2-tapas-0-c30ee8.webp"
     ]
   },
   {
@@ -294,9 +294,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-color-kamaluso-100-p-ginas-1-bUErOluETM4x8jqg3Qlaw652uAiDdN.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-color-kamaluso-100-p-ginas-0-56nnZa19Ekvon3hSSmg0Z8JkfnP6br.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-color-kamaluso-100-p-ginas-38LpIOqR07cusvERxOvDaahJSd1Quo.webp"
+      "/products/recetario-color-0-85a1e8.webp",
+      "/products/recetario-color-1-d17e75.webp",
+      "/products/recetario-color-2-655bc5.webp"
     ]
   },
   {
@@ -311,9 +311,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-sublimable-2-yyzjpT4QxIl6GS57v3nRP26QPRZknu.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-sublimable-1-j3MHFVqTI6nKwsGAeVpAWqTes49ZDk.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-2022-tapa-2-CFYAyz50ajjhaVFCHAk6oYSVcyCiuB.webp"
+      "/products/recetario-negro-0-c86bf7.webp",
+      "/products/recetario-negro-1-68daf4.webp",
+      "/products/recetario-negro-2-6c92ce.webp"
     ]
   },
   {
@@ -327,9 +327,9 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-infantil-sublimable-4VYcg0HGfZwxvuM6JLLYfYLTMGa6AE.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/recetario-infantil-sublimable1-AMDxttI6VabIuxTiq2eSueP9M3r3uc.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/agenda-sublimable-2022-tapa-20-vlF9DMiXngKjgDNHKvUheRlbUmHU8o.webp"
+      "/products/recetario-infantil-0-e0d9f9.webp",
+      "/products/recetario-infantil-1-6e61df.webp",
+      "/products/recetario-infantil-2-79ddaf.webp"
     ]
   },
   {
@@ -343,7 +343,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000401-cc2cccc2ce/700/100%20citas%20tapa.webp?ph=904ccf23c3"
+      "/products/citas-juntos-100-0-b9548e.webp"
     ]
   },
   {
@@ -356,8 +356,8 @@
     "category": "blocks-planners",
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/planner-verde-0SR8KoFXM6ny6Sev9sblnxLxAfAHXW.webp",
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000362-81e4381e45/450/Planner%20verde.jpeg?ph=904ccf23c3"
+      "/products/planner-verde-0-2b67b7.webp",
+      "/products/planner-verde-1-959967.webp"
     ]
   },
   {
@@ -372,8 +372,8 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/libreta-a5-sublimable-dW6xRzjvjB6lwBn0eI9eg7s31Idb8o.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/libreta-a5-sublimable-tapa-s8wZbMP7jiFBQfoBnLZHtcXWXFQUF5.webp"
+      "/products/libreta-sublimable-tamano-15x21-cm-0-4827dd.webp",
+      "/products/libreta-sublimable-tamano-15x21-cm-1-3b24bf.webp"
     ]
   },
   {
@@ -388,7 +388,7 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000357-6cb706cb71/700/IMG-20231118-WA0014.webp?ph=904ccf23c3"
+      "/products/cuaderno-0-5b7b84.webp"
     ]
   },
   {
@@ -402,8 +402,8 @@
     "hasPromoKit": false,
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---2-4-gB1YBdxVM5OTya2cEXzicq64uwoBEn.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---4-7-mHw7QL6IWnIHUL1EulF9nkb1Ocu5LF.webp"
+      "/products/block-sublimable-10x15cm-con-renglones-0-82c698.webp",
+      "/products/block-sublimable-10x15cm-con-renglones-1-478240.webp"
     ]
   },
   {
@@ -416,8 +416,8 @@
     "category": "blocks-planners",
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---1-2-QCeHmX4c8j7MrjOraMBvpqQZTxhfQF.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/block-sublimable-kamaluso-san-jos---6-1-gIpJPQxgFIyDWz7bPzQkNQyoNFRX7b.webp"
+      "/products/block-sublimable-10x15cm-sin-renglones-0-f37487.webp",
+      "/products/block-sublimable-10x15cm-sin-renglones-1-05f4f4.webp"
     ]
   },
   {
@@ -430,8 +430,8 @@
     "category": "libretas",
     "inStock": true,
     "images": [
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/cuadernola-21x30cm-sublimable-7E7IyTM0QhzmNEj6XnkSw5ei6zzJk3.webp",
-      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/cuadernola-sublimable-9T8uQU1ngw67f9xz6AEKVHGEkhQpjK.webp"
+      "/products/cuadernola-21x30-sublimable-0-d756bb.webp",
+      "/products/cuadernola-21x30-sublimable-1-cb4eaa.webp"
     ]
   }
 ]

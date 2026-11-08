@@ -2,7 +2,7 @@ import { Product, Category } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 import localProductsData from "../../data/products.json";
 
-export const CURRENT_CATALOG_VERSION = 5;
+export const CURRENT_CATALOG_VERSION = 6;
 export const DIRECT_BLOB_PRODUCTS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json";
 
 export const CATEGORIES: Category[] = [

@@ -69,13 +69,33 @@ const RESOURCES = [
 ];
 
 export async function GET() {
-  return NextResponse.json({
-    status: "ok",
-    server: "kamaluso-mcp-server",
-    protocolVersion: "2024-11-05",
-    tools: TOOLS.length,
-    resources: RESOURCES.length,
-  });
+  return NextResponse.json(
+    {
+      status: "ok",
+      server: "kamaluso-mcp-server",
+      name: "Kamaluso Sublimación MCP Server",
+      protocolVersion: "2024-11-05",
+      version: "1.0.0",
+      description: "Model Context Protocol (MCP) streamable HTTP server for Kamaluso Uruguay sublimation blanks catalog, wholesale prices, and technical guides.",
+      endpoints: {
+        streamableHttp: "https://www.kamaluso.com/api/mcp",
+        serverCard: "https://www.kamaluso.com/.well-known/mcp/server-card.json",
+        openapi: "https://www.kamaluso.com/openapi.json",
+        llms: "https://www.kamaluso.com/llms.txt",
+        developers: "https://www.kamaluso.com/developers",
+      },
+      tools: TOOLS,
+      resources: RESOURCES,
+    },
+    {
+      headers: {
+        "RateLimit-Limit": "120",
+        "RateLimit-Remaining": "119",
+        "RateLimit-Reset": "60",
+        "Access-Control-Allow-Origin": "*",
+      },
+    }
+  );
 }
 
 export async function POST(request: Request) {

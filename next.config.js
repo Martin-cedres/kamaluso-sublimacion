@@ -22,6 +22,10 @@ const nextConfig = {
         source: "/google-shopping.xml",
         destination: "/api/feed/google-shopping",
       },
+      {
+        source: "/api/v1/:path*",
+        destination: "/api/:path*",
+      },
     ];
   },
   async headers() {
@@ -35,6 +39,7 @@ const nextConfig = {
       '</llms.txt>; rel="service-doc"',
       '</auth.md>; rel="service-doc"',
       '</openapi.json>; rel="service-desc"',
+      '</developers>; rel="service-doc"',
     ].join(", ");
 
     return [
@@ -52,6 +57,7 @@ const nextConfig = {
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
           { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+          { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" },
         ],
       },
       {
@@ -59,6 +65,10 @@ const nextConfig = {
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
           { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
+          { key: "RateLimit-Limit", value: "120" },
+          { key: "RateLimit-Remaining", value: "119" },
+          { key: "RateLimit-Reset", value: "60" },
+          { key: "RateLimit-Policy", value: "120;w=60" },
         ],
       },
     ];

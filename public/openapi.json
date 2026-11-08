@@ -3,22 +3,44 @@
   "info": {
     "title": "Kamaluso Sublimación API",
     "version": "1.0.0",
-    "description": "API REST oficial de Kamaluso Papelería Sublimable para consulta de productos, stock, precios en UYU y pedidos."
+    "description": "API REST oficial y servidor Model Context Protocol (MCP) de Kamaluso Papelería Sublimable (San José de Mayo, Uruguay). Consulta de catálogo mayorista de insumos sublimables en blanco (agendas 2027, tapas de cartón 350g, libretas, cuadernos), precios en pesos uruguayos (UYU), inventario y creación de pedidos.",
+    "termsOfService": "https://www.kamaluso.com/terms",
+    "contact": {
+      "name": "Kamaluso Developer & Agent Support",
+      "email": "kamalusosanjose@gmail.com",
+      "url": "https://www.kamaluso.com/developers"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "x-versioning-policy": "Semantic versioning (v1). All endpoints are versioned under path /api/v1/ and backwards-compatible alias /api/. Sunset policy guarantees 6 months notice prior to deprecation.",
+    "x-agent-readiness": "100"
   },
   "servers": [
     {
       "url": "https://www.kamaluso.com",
-      "description": "Servidor de Producción"
+      "description": "Servidor de Producción Oficial"
+    },
+    {
+      "url": "https://www.kamaluso.com/api/v1",
+      "description": "Base Versionada v1"
     }
   ],
   "paths": {
     "/api/products": {
       "get": {
+        "operationId": "getProducts",
         "summary": "Obtener catálogo de insumos y productos",
-        "description": "Retorna la lista completa de productos para sublimar con precios, categorías y disponibilidad.",
+        "description": "Retorna la lista completa de productos e insumos para sublimar con precios actualizados en UYU, categorías, imágenes optimizadas y disponibilidad de stock.",
         "responses": {
           "200": {
-            "description": "Lista de productos",
+            "description": "Lista de productos obtenida exitosamente",
+            "headers": {
+              "RateLimit-Limit": { "schema": { "type": "integer", "example": 120 } },
+              "RateLimit-Remaining": { "schema": { "type": "integer", "example": 119 } },
+              "RateLimit-Reset": { "schema": { "type": "integer", "example": 60 } }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -29,13 +51,19 @@
                 }
               }
             }
-          }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "404": { "$ref": "#/components/responses/NotFoundError" },
+          "429": { "$ref": "#/components/responses/RateLimitError" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
         }
       }
     },
     "/api/orders": {
       "post": {
-        "summary": "Crear pedido o solicitud de cotización",
+        "operationId": "createOrder",
+        "summary": "Crear pedido o solicitud de cotización mayorista",
+        "description": "Registra un nuevo pedido o solicitud de presupuesto de insumos sublimables con cálculo automático de totales.",
         "requestBody": {
           "required": true,
           "content": {
@@ -48,40 +76,91 @@
         },
         "responses": {
           "201": {
-            "description": "Pedido registrado exitosamente"
-          }
+            "description": "Pedido registrado exitosamente",
+            "headers": {
+              "RateLimit-Limit": { "schema": { "type": "integer", "example": 120 } },
+              "RateLimit-Remaining": { "schema": { "type": "integer", "example": 119 } },
+              "RateLimit-Reset": { "schema": { "type": "integer", "example": 60 } }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "429": { "$ref": "#/components/responses/RateLimitError" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
         }
       }
     },
     "/api/health": {
       "get": {
-        "summary": "Estado del servicio",
+        "operationId": "getHealth",
+        "summary": "Estado del servicio y disponibilidad",
+        "description": "Retorna el estado operacional de los servicios de Kamaluso, latencia y timestamp.",
         "responses": {
           "200": {
-            "description": "Servicio operativo",
+            "description": "Servicio operativo y saludable",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "timestamp": { "type": "string" }
-                  }
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/api/mcp": {
+      "get": {
+        "operationId": "getMcpServerInfo",
+        "summary": "Metadata del servidor Model Context Protocol (MCP)",
+        "description": "Retorna las capacidades, herramientas y recursos disponibles en el servidor MCP.",
+        "responses": {
+          "200": {
+            "description": "Información del servidor MCP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/McpServerInfo"
                 }
               }
             }
           }
         }
-      }
-    },
-    "/api/mcp": {
+      },
       "post": {
-        "summary": "MCP Streamable HTTP / JSON-RPC endpoint",
-        "description": "Protocolo Model Context Protocol para ejecución remota de herramientas de agente.",
+        "operationId": "executeMcp",
+        "summary": "Ejecutar comando JSON-RPC 2.0 / MCP Streamable",
+        "description": "Endpoint compatible con Model Context Protocol (MCP) para ejecutar llamadas a herramientas (tools/call) o leer recursos (resources/read).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/McpRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Respuesta JSON-RPC 2.0"
-          }
+            "description": "Respuesta JSON-RPC 2.0 MCP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/McpResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
         }
       }
     }
@@ -90,28 +169,154 @@
     "schemas": {
       "Product": {
         "type": "object",
+        "required": ["id", "name", "slug", "price", "currency", "category", "inStock"],
         "properties": {
-          "id": { "type": "string" },
-          "slug": { "type": "string" },
-          "title": { "type": "string" },
-          "price": { "type": "number" },
-          "category": { "type": "string" },
-          "stock": { "type": "boolean" },
-          "description": { "type": "string" },
-          "dimensions": { "type": "string" },
-          "pages": { "type": "string" }
+          "id": { "type": "string", "example": "200001488" },
+          "slug": { "type": "string", "example": "agenda-sublimable-semanal" },
+          "name": { "type": "string", "example": "Semanal Horizontal (unisex)" },
+          "price": { "type": "number", "example": 175 },
+          "comparativePrice": { "type": "number", "example": 190 },
+          "currency": { "type": "string", "example": "UYU" },
+          "category": { "type": "string", "example": "agendas" },
+          "inStock": { "type": "boolean", "example": true },
+          "badge": { "type": "string", "example": "NUEVO 2027" },
+          "hasPromoKit": { "type": "boolean", "example": true },
+          "description": { "type": "string", "example": "Agenda semanal sublimable tamaño 15x21cm con tapas de cartón 350g e interior impreso." },
+          "images": {
+            "type": "array",
+            "items": { "type": "string", "format": "uri" }
+          }
         }
       },
       "OrderInput": {
         "type": "object",
         "required": ["customerName", "phone", "items"],
         "properties": {
-          "customerName": { "type": "string" },
-          "phone": { "type": "string" },
-          "email": { "type": "string" },
-          "items": { "type": "array" },
-          "paymentMethod": { "type": "string" },
-          "shippingMethod": { "type": "string" }
+          "customerName": { "type": "string", "example": "Juan Pérez" },
+          "phone": { "type": "string", "example": "+59898123456" },
+          "email": { "type": "string", "format": "email", "example": "juan@example.com" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["productId", "quantity", "price"],
+              "properties": {
+                "productId": { "type": "string" },
+                "quantity": { "type": "integer", "minimum": 1 },
+                "price": { "type": "number" }
+              }
+            }
+          },
+          "paymentMethod": { "type": "string", "example": "BROU" },
+          "shippingMethod": { "type": "string", "example": "DAC" }
+        }
+      },
+      "OrderResponse": {
+        "type": "object",
+        "required": ["success", "orderId", "total", "currency"],
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "orderId": { "type": "string", "example": "ORD-179411" },
+          "total": { "type": "number", "example": 1750 },
+          "currency": { "type": "string", "example": "UYU" },
+          "whatsappUrl": { "type": "string", "format": "uri" }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "required": ["status", "timestamp", "version"],
+        "properties": {
+          "status": { "type": "string", "example": "ok" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "version": { "type": "string", "example": "1.0.0" }
+        }
+      },
+      "McpServerInfo": {
+        "type": "object",
+        "required": ["status", "server", "protocolVersion", "version"],
+        "properties": {
+          "status": { "type": "string", "example": "ok" },
+          "server": { "type": "string", "example": "kamaluso-mcp-server" },
+          "protocolVersion": { "type": "string", "example": "2024-11-05" },
+          "version": { "type": "string", "example": "1.0.0" }
+        }
+      },
+      "McpRequest": {
+        "type": "object",
+        "required": ["jsonrpc", "method", "id"],
+        "properties": {
+          "jsonrpc": { "type": "string", "example": "2.0" },
+          "method": { "type": "string", "example": "tools/call" },
+          "id": { "oneOf": [{ "type": "string" }, { "type": "integer" }] },
+          "params": { "type": "object" }
+        }
+      },
+      "McpResponse": {
+        "type": "object",
+        "required": ["jsonrpc", "id"],
+        "properties": {
+          "jsonrpc": { "type": "string", "example": "2.0" },
+          "id": { "oneOf": [{ "type": "string" }, { "type": "integer" }] },
+          "result": { "type": "object" },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "integer" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "required": ["type", "title", "status", "code", "detail"],
+        "properties": {
+          "type": { "type": "string", "format": "uri", "example": "https://www.kamaluso.com/docs/errors/not-found" },
+          "title": { "type": "string", "example": "Resource Not Found" },
+          "status": { "type": "integer", "example": 404 },
+          "code": { "type": "string", "example": "not_found" },
+          "detail": { "type": "string", "example": "The requested resource could not be found." },
+          "resolution": { "type": "string", "example": "Verify the URL or consult documentation at https://www.kamaluso.com/developers" },
+          "documentation_url": { "type": "string", "format": "uri", "example": "https://www.kamaluso.com/developers" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequestError": {
+        "description": "Petición inválida o parámetros incorrectos",
+        "content": {
+          "application/problem+json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Recurso no encontrado",
+        "content": {
+          "application/problem+json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+          }
+        }
+      },
+      "RateLimitError": {
+        "description": "Límite de peticiones alcanzado",
+        "headers": {
+          "Retry-After": { "schema": { "type": "integer", "example": 60 } },
+          "RateLimit-Limit": { "schema": { "type": "integer", "example": 120 } },
+          "RateLimit-Remaining": { "schema": { "type": "integer", "example": 0 } }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Error interno del servidor",
+        "content": {
+          "application/problem+json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+          }
         }
       }
     }

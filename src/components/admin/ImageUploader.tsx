@@ -38,7 +38,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
       if (!file.type.startsWith("image/")) continue;
 
       try {
-        const webpFile = await convertToWebP(file, 1200, 1200, 0.85);
+        const webpFile = await convertToWebP(file, 600, 600, 0.80);
         let finalUrl = "";
 
         try {

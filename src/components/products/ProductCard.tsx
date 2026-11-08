@@ -40,7 +40,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
     <Link
       href={`/p/${product.slug}`}
       prefetch={false}
-      className="group product-card-contain bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-brand-300 transition-all duration-300 flex flex-col h-full cursor-pointer relative select-none"
+      className="group product-card-contain bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-brand-300 transition-[transform,box-shadow,border-color] duration-300 flex flex-col h-full cursor-pointer relative select-none"
     >
       {/* Container de Imagen: Superficie blanca unificada sin bloques de color gris */}
       <div className="relative aspect-square bg-white p-4 border-b border-slate-100 overflow-hidden flex items-center justify-center">
@@ -64,7 +64,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             className="object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             priority={priority}
-            loading={priority ? undefined : "lazy"}
+            loading={priority ? "eager" : "lazy"}
+            decoding={priority ? "sync" : "async"}
+            fetchPriority={priority ? "high" : "auto"}
             unoptimized
           />
         </div>

@@ -7,8 +7,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/api/", "/admin/"],
+        allow: ["/", "/api/feed/google-shopping", "/google-shopping.xml"],
+        disallow: ["/admin/"],
       },
       {
         userAgent: [
@@ -19,8 +19,16 @@ export default function robots(): MetadataRoute.Robots {
           "PerplexityBot",
           "ClaudeBot",
         ],
-        allow: "/",
-        disallow: ["/api/", "/admin/"],
+        allow: [
+          "/",
+          "/google-shopping.xml",
+          "/api/feed/google-shopping",
+          "/api/products",
+          "/api/mcp",
+          "/api/health",
+          "/.well-known/",
+        ],
+        disallow: ["/admin/"],
       },
     ],
     sitemap: [

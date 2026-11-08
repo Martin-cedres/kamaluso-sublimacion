@@ -29,6 +29,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# lighthouse audits
+*-lh.json
+*-audit.json
+temp-*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

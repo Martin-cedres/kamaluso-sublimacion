@@ -150,12 +150,18 @@ export default async function ProductDetailPage({
   const productUrl = `https://www.kamaluso.com/p/${product.slug}`;
   const productDesc = getProductMetaDescription(product);
 
+  const absoluteImages = (product.images || []).map((img) =>
+    img.startsWith("http")
+      ? img
+      : `https://www.kamaluso.com${img.startsWith("/") ? img : `/${img}`}`
+  );
+
   // Schema.org JSON-LD para Google Shopping y Rich Snippets GEO B2B
   const jsonLdProduct = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: displayName,
-    image: product.images,
+    image: absoluteImages.length > 0 ? absoluteImages : ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
     description: product.description || productDesc,
     sku: product.id,
     material: "Cartón cristal sublimable de 350gr con polímero virgen y papel obra impreso",
@@ -168,6 +174,7 @@ export default async function ProductDetailPage({
       url: productUrl,
       priceCurrency: product.currency || "UYU",
       price: product.price,
+      priceValidUntil: "2027-12-31",
       itemCondition: "https://schema.org/NewCondition",
       availability: product.inStock
         ? "https://schema.org/InStock"
@@ -175,6 +182,14 @@ export default async function ProductDetailPage({
       seller: {
         "@type": "Organization",
         name: "Kamaluso",
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "UY",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",

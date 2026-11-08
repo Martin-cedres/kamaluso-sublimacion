@@ -4,9 +4,9 @@
  */
 export async function convertToWebP(
   file: File,
-  maxWidth = 1200,
-  maxHeight = 1200,
-  quality = 0.82
+  maxWidth = 600,
+  maxHeight = 600,
+  quality = 0.80
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

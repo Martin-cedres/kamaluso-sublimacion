@@ -127,6 +127,10 @@ export function ProductGallery({
             fill
             className="object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
             priority
+            loading="eager"
+            decoding="sync"
+            fetchPriority="high"
+            sizes="(max-width: 768px) 100vw, 50vw"
             unoptimized
           />
         </div>
