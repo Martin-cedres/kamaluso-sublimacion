@@ -58,8 +58,8 @@ const PAYMENT_METHODS = [
 
 const SHIPPING_OPTIONS = [
   "Retiro en Local (San José de Mayo)",
-  "DAC - Envío a Domicilio",
   "DAC - Retiro en Agencia",
+  "DAC - Envío a Domicilio",
   "Correo Uruguayo - Retiro en Sucursal",
   "Correo Uruguayo - Envío a Domicilio",
   "Agencia COTMI - Retiro en Agencia",
@@ -109,9 +109,20 @@ export default function ManualOrderModal({
     0
   );
 
-  // El total final es el monto manual si se escribió, o el calculado de los ítems
+  const lowerShip = shippingMethodName.toLowerCase();
+  const shippingCost =
+    (lowerShip.includes("correo") || lowerShip.includes("cotmi")) &&
+    lowerShip.includes("domicilio")
+      ? 200
+      : 0;
+
+  const isMp = paymentMethodId === "mercado_pago_online";
+  const mpSurcharge = isMp
+    ? parseFloat(((computedItemsTotal + shippingCost) * 0.1).toFixed(2))
+    : 0;
+  const autoCalculatedTotal = computedItemsTotal + shippingCost + mpSurcharge;
   const effectiveTotal =
-    customTotalPrice !== "" ? Number(customTotalPrice) : computedItemsTotal;
+    customTotalPrice !== "" ? Number(customTotalPrice) : autoCalculatedTotal;
 
   // Agregar ítem desde catálogo
   const handleAddCatalogProduct = () => {
@@ -195,7 +206,8 @@ export default function ManualOrderModal({
           deliveryType,
         },
         items,
-        totalPrice: effectiveTotal,
+        totalPrice: computedItemsTotal > 0 ? computedItemsTotal : effectiveTotal,
+        shippingCost,
         finalTotal: effectiveTotal,
         paymentMethodId,
         paymentMethodName: paymentName,
@@ -502,28 +514,29 @@ export default function ManualOrderModal({
               <span>3. Total, Pago & Envío</span>
             </h4>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Total Manual o Calculado */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Total a Pagar ($ UYU)
-                </label>
-                <input
-                  type="number"
-                  placeholder={computedItemsTotal > 0 ? String(computedItemsTotal) : "0"}
-                  value={customTotalPrice}
-                  onChange={(e) =>
-                    setCustomTotalPrice(e.target.value === "" ? "" : Number(e.target.value))
-                  }
-                  className="w-full px-3 py-2 border border-pink-300 rounded-xl text-xs font-black text-pink-600 bg-white focus:ring-2 focus:ring-pink-500 focus:outline-none shadow-sm"
-                />
-                <span className="text-[10px] text-slate-400 mt-0.5 block">
-                  {customTotalPrice !== ""
-                    ? "✏️ Monto manual sobreescrito"
-                    : `Suma ítems: $${computedItemsTotal} UYU`}
-                </span>
-              </div>
+            {/* Empresa / Opción de Envío */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                Empresa / Forma de Envío
+              </label>
+              <select
+                value={shippingMethodName}
+                onChange={(e) => setShippingMethodName(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
+              >
+                {SHIPPING_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              {/* Leyenda informativa clara */}
+              <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                ℹ️ <strong>Reglas de envío:</strong> Correo Uruguayo y COTMI a domicilio suman <strong>+$200 UYU</strong>; retiros en agencia (DAC, Correo, COTMI) y envíos por DAC son a cargo del comprador en destino ($0 aquí); retiro en taller sin costo ($0). Despacho en agencia en San José siempre sin cargo.
+              </p>
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Medio de Pago */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
@@ -560,36 +573,78 @@ export default function ManualOrderModal({
               </div>
             </div>
 
-            {/* Empresa / Opción de Envío */}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                Empresa / Forma de Envío
-              </label>
-              <select
-                value={shippingMethodName}
-                onChange={(e) => setShippingMethodName(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-              >
-                {SHIPPING_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
+            {/* Total y Desglose Detallado */}
+            <div className="pt-2 border-t border-slate-200">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="w-full sm:w-52">
+                  <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
+                    Total a Pagar ($ UYU)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder={String(autoCalculatedTotal)}
+                    value={customTotalPrice}
+                    onChange={(e) =>
+                      setCustomTotalPrice(e.target.value === "" ? "" : Number(e.target.value))
+                    }
+                    className="w-full px-3 py-2 border border-pink-300 rounded-xl text-xs font-black text-pink-600 bg-white focus:ring-2 focus:ring-pink-500 focus:outline-none shadow-sm"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                    {customTotalPrice !== ""
+                      ? "✏️ Monto manual sobreescrito"
+                      : `Sugerido automático: $${autoCalculatedTotal} UYU`}
+                  </span>
+                </div>
+
+                {/* Desglose */}
+                <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs space-y-1 flex-1 sm:max-w-xs">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Ítems:</span>
+                    <span className="font-mono font-bold">${computedItemsTotal.toLocaleString("es-UY")} UYU</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Envío:</span>
+                    <span className="font-mono font-bold">
+                      {shippingCost > 0
+                        ? "+$200 UYU (Domicilio Correo/COTMI)"
+                        : lowerShip.includes("local")
+                        ? "$0 (Retiro en taller)"
+                        : "$0 (Pago en destino por comprador)"}
+                    </span>
+                  </div>
+                  {isMp && (
+                    <div className="flex justify-between text-pink-600 font-semibold">
+                      <span>Recargo MP (+10%):</span>
+                      <span className="font-mono font-bold">+${mpSurcharge.toLocaleString("es-UY")} UYU</span>
+                    </div>
+                  )}
+                  <div className="border-t border-slate-200 pt-1 flex justify-between font-bold text-slate-900">
+                    <span>Total Sugerido:</span>
+                    <span className="font-mono text-pink-600 font-black">
+                      ${autoCalculatedTotal.toLocaleString("es-UY")} UYU
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3">
+        <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div>
             <span className="text-[10px] font-bold text-slate-400 uppercase block leading-none">
               Total Registrado
             </span>
-            <span className="text-xl font-black text-pink-600">
-              ${effectiveTotal.toLocaleString("es-UY")}{" "}
-              <span className="text-xs font-bold text-slate-500">UYU</span>
-            </span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-black text-pink-600">
+                ${effectiveTotal.toLocaleString("es-UY")}{" "}
+                <span className="text-xs font-bold text-slate-500">UYU</span>
+              </span>
+              <span className="text-[11px] text-slate-500 font-medium">
+                (Ítems: ${computedItemsTotal} UYU • Envío: {shippingCost > 0 ? "+$200 UYU" : lowerShip.includes("local") ? "$0 (Taller)" : "$0 (Destino)"}{isMp ? ` • Recargo MP: +$${mpSurcharge} UYU` : ""})
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">

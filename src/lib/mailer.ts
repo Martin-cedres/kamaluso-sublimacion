@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
+import { resolveOrderShippingCost } from "@/types";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -22,6 +23,7 @@ export interface SendOrderEmailsInput {
   orderId?: string;
   cart: any[];
   totalPrice: number;
+  shippingCost?: number;
   finalTotal?: number;
   paymentMethodId?: string;
   paymentMethodName?: string;
@@ -259,6 +261,7 @@ export async function sendOrderEmails(input: SendOrderEmailsInput) {
     orderId,
     cart,
     totalPrice,
+    shippingCost,
     finalTotal,
     paymentMethodId,
     paymentMethodName,
@@ -287,9 +290,17 @@ export async function sendOrderEmails(input: SendOrderEmailsInput) {
   }).format(new Date());
 
   const safeTotalPrice = Number(totalPrice ?? 0);
+  const resolvedShippingCost =
+    typeof shippingCost === "number" && !Number.isNaN(shippingCost)
+      ? shippingCost
+      : resolveOrderShippingCost({ shippingMethodName });
   const isMp = paymentMethodId === "mercado_pago_online";
-  const mpSurcharge = isMp ? parseFloat((safeTotalPrice * 0.1).toFixed(2)) : 0;
-  const computedTotal = Number(finalTotal || safeTotalPrice + mpSurcharge);
+  const mpSurcharge = isMp
+    ? parseFloat(((safeTotalPrice + resolvedShippingCost) * 0.1).toFixed(2))
+    : 0;
+  const computedTotal = Number(
+    finalTotal || safeTotalPrice + resolvedShippingCost + mpSurcharge
+  );
 
   let itemsRows = "";
   let adminItemsRows = "";
@@ -337,13 +348,18 @@ export async function sendOrderEmails(input: SendOrderEmailsInput) {
 
   const isPickup =
     (shippingMethodName || "").toLowerCase().includes("local") ||
+    (shippingMethodName || "").toLowerCase().includes("taller") ||
     (customer?.address || "").toLowerCase().includes("local");
 
   const shippingClarification = isPickup
     ? `📍 <strong>Retiro Presencial:</strong> Te avisaremos por correo o WhatsApp en cuanto tu paquete esté armado y listo para retirar en nuestro local de San José de Mayo sin costo alguno.<br/><br/>⚡ <strong>Tiempo de taller:</strong> Despacho/entrega coordinada en 48h hábiles para pedidos de hasta $2.000 UYU (mayores a consultar según volumen).`
-    : `🚚 <strong>Flete de Encomienda:</strong> El costo del envío por agencia (${
+    : resolvedShippingCost > 0
+    ? `🚚 <strong>Envío a Domicilio Incluido (+$${resolvedShippingCost} UYU):</strong> El costo de envío a domicilio por <strong>${
+        shippingMethodName || "Envío a Domicilio"
+      }</strong> ($${resolvedShippingCost} UYU) ya está sumado e incluido en el total de tu pedido. El traslado desde nuestro taller hasta la agencia no tiene costo.<br/><br/>⚡ <strong>Tiempo de taller:</strong> Despacho coordinado en 48h hábiles desde San José de Mayo para pedidos de hasta $2.000 UYU (mayores a consultar según volumen).`
+    : `🚚 <strong>Flete de Encomienda:</strong> El traslado desde nuestro taller hasta la agencia no tiene costo. El flete de <strong>${
         shippingMethodName || "DAC / Correo / COTMI"
-      }) se abona directamente en destino al recibir o retirar tu paquete.<br/><br/>⚡ <strong>Despacho coordinado:</strong> 48h hábiles desde San José de Mayo para pedidos de hasta $2.000 UYU (mayores a consultar según volumen de taller).`;
+      }</strong> no suma en la web y queda a cargo del comprador (se abona en agencia al retirar o al recibir).<br/><br/>⚡ <strong>Tiempo de taller:</strong> Despacho coordinado en 48h hábiles desde San José de Mayo para pedidos de hasta $2.000 UYU (mayores a consultar según volumen).`;
 
   const cityDept =
     customer?.city &&
@@ -492,6 +508,20 @@ export async function sendOrderEmails(input: SendOrderEmailsInput) {
                         </td>
                         <td style="padding: 14px 16px 4px 16px; font-size: 13px; font-weight: 700; color: #1e293b; vertical-align: middle;" align="right">
                           $${safeTotalPrice.toLocaleString("es-UY")} UYU
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 4px 16px 4px 16px; font-size: 13px; color: #64748b; vertical-align: middle;" align="left">
+                          Costo de Envío (${shippingMethodName || "Envío"}):
+                        </td>
+                        <td style="padding: 4px 16px 4px 16px; font-size: 13px; font-weight: 700; color: ${resolvedShippingCost > 0 ? "#be123c" : "#166534"}; vertical-align: middle;" align="right">
+                          ${
+                            resolvedShippingCost > 0
+                              ? `+$${resolvedShippingCost.toLocaleString("es-UY")} UYU (Incluido)`
+                              : isPickup
+                              ? "$0 UYU (Retiro gratis en taller)"
+                              : "A pagar en destino (a cargo del comprador)"
+                          }
                         </td>
                       </tr>
                       ${
@@ -722,11 +752,53 @@ export async function sendOrderEmails(input: SendOrderEmailsInput) {
 
                     <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #0f172a; border-top: 2px solid #334155; width: 100%; margin: 0;">
                       <tr>
-                        <td style="padding: 14px 16px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #ffffff; vertical-align: middle;" align="left">
-                          Total del Pedido:
+                        <td style="padding: 12px 16px 4px 16px; font-size: 13px; color: #94a3b8; vertical-align: middle;" align="left">
+                          Subtotal Insumos:
                         </td>
-                        <td style="padding: 14px 16px; vertical-align: middle;" align="right">
-                          <span style="font-size: 21px; font-weight: 900; color: #f472b6;">$${computedTotal.toLocaleString("es-UY")} UYU</span>
+                        <td style="padding: 12px 16px 4px 16px; font-size: 13px; font-weight: 700; color: #ffffff; vertical-align: middle;" align="right">
+                          $${safeTotalPrice.toLocaleString("es-UY")} UYU
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 4px 16px 4px 16px; font-size: 13px; color: #94a3b8; vertical-align: middle;" align="left">
+                          Costo de Envío (${shippingMethodName || "Envío"}):
+                        </td>
+                        <td style="padding: 4px 16px 4px 16px; font-size: 13px; font-weight: 700; color: ${resolvedShippingCost > 0 ? "#f472b6" : "#4ade80"}; vertical-align: middle;" align="right">
+                          ${
+                            resolvedShippingCost > 0
+                              ? `+$${resolvedShippingCost.toLocaleString("es-UY")} UYU (Incluido)`
+                              : isPickup
+                              ? "$0 UYU (Retiro gratis en taller)"
+                              : "A pagar en destino (a cargo del comprador)"
+                          }
+                        </td>
+                      </tr>
+                      ${
+                        isMp
+                          ? `
+                        <tr>
+                          <td style="padding: 4px 16px 6px 16px; font-size: 13px; color: #f472b6; vertical-align: middle;" align="left">
+                            Comisión Mercado Pago (+10%):
+                          </td>
+                          <td style="padding: 4px 16px 6px 16px; font-size: 13px; font-weight: 700; color: #f472b6; vertical-align: middle;" align="right">
+                            +$${mpSurcharge.toLocaleString("es-UY")} UYU
+                          </td>
+                        </tr>
+                      `
+                          : ""
+                      }
+                      <tr>
+                        <td colspan="2" style="padding: 4px 16px;">
+                          <div style="border-top: 1px solid #334155; font-size: 0; line-height: 0; height: 1px;">&nbsp;</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px 16px 14px 16px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #ffffff; vertical-align: middle;" align="left">
+                          Total ${isMp ? "Abonado" : "a Pagar"}:
+                        </td>
+                        <td style="padding: 6px 16px 14px 16px; vertical-align: middle;" align="right">
+                          <span style="font-size: 21px; font-weight: 900; color: #f472b6;">$${computedTotal.toLocaleString("es-UY")}</span>
+                          <span style="font-size: 12px; font-weight: 800; color: #e2e8f0; margin-left: 2px;">UYU</span>
                         </td>
                       </tr>
                     </table>

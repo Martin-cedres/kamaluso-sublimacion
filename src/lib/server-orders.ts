@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { put } from "@vercel/blob";
-import { Order } from "@/types";
+import { Order, resolveOrderShippingCost } from "@/types";
 
 const BLOB_ORDERS_FILENAME = "data/orders.json";
 const DIRECT_BLOB_ORDERS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/orders.json";
@@ -62,7 +62,10 @@ export function mergeOrderLists(
         if (order && order.id && !deletedIds.has(order.id)) {
           const existing = orderMap.get(order.id);
           if (!existing) {
-            orderMap.set(order.id, order);
+            orderMap.set(order.id, {
+              ...order,
+              shippingCost: resolveOrderShippingCost(order),
+            });
           } else {
             // Priorizar estado más avanzado o datos enriquecidos (ej. pago_confirmado sobre pendiente)
             const statusPriority: Record<string, number> = {
@@ -82,9 +85,16 @@ export function mergeOrderLists(
               order.customer?.deliveryType ||
               existing.customer?.deliveryType;
 
+            const resolvedShippingCost = resolveOrderShippingCost({
+              shippingCost: typeof order.shippingCost === "number" ? order.shippingCost : existing.shippingCost,
+              shippingMethodName: order.shippingMethodName || existing.shippingMethodName,
+              deliveryType: resolvedDeliveryType,
+            });
+
             orderMap.set(order.id, {
               ...existing,
               ...order,
+              shippingCost: resolvedShippingCost,
               deliveryType: resolvedDeliveryType,
               status: resolvedStatus,
               customer: {
@@ -210,9 +220,15 @@ export async function upsertServerOrder(
   if (idx >= 0) {
     const current = existingOrders[idx];
     const resolvedDeliveryType = deliveryType || current.deliveryType || current.customer?.deliveryType;
+    const resolvedShippingCost = resolveOrderShippingCost({
+      shippingCost: typeof orderInput.shippingCost === "number" ? orderInput.shippingCost : current.shippingCost,
+      shippingMethodName: orderInput.shippingMethodName || current.shippingMethodName,
+      deliveryType: resolvedDeliveryType,
+    });
     savedOrder = {
       ...current,
       ...orderInput,
+      shippingCost: resolvedShippingCost,
       deliveryType: resolvedDeliveryType,
       customer: {
         ...current.customer,
@@ -235,6 +251,11 @@ export async function upsertServerOrder(
       orderInput.notes ||
       orderInput.customer?.notes ||
       "";
+    const resolvedShippingCost = resolveOrderShippingCost({
+      shippingCost: orderInput.shippingCost,
+      shippingMethodName: orderInput.shippingMethodName,
+      deliveryType,
+    });
     savedOrder = {
       id: orderInput.id,
       createdAt: orderInput.createdAt || new Date().toISOString(),
@@ -255,6 +276,7 @@ export async function upsertServerOrder(
       paymentMethodId: orderInput.paymentMethodId || "brou",
       paymentMethodName: orderInput.paymentMethodName || "Transferencia Bancaria BROU",
       shippingMethodName: orderInput.shippingMethodName || "DAC - Retiro en Agencia",
+      shippingCost: resolvedShippingCost,
       status: orderInput.status || "pendiente",
       observations,
       notes: observations,

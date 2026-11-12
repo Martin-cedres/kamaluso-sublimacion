@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { getLatestServerOrders, upsertServerOrder } from "@/lib/server-orders";
 import { sendOrderEmails } from "@/lib/mailer";
-import { CartItem, Order } from "@/types";
+import { CartItem, Order, resolveOrderShippingCost } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -79,11 +79,17 @@ function reconstructCartFromPayment(paymentData: any): CartItem[] {
     } catch {}
   }
 
-  // 2. Fallback: additional_info.items de Mercado Pago (excluyendo el ítem de recargo)
+  // 2. Fallback: additional_info.items de Mercado Pago (excluyendo el ítem de recargo y envío a domicilio)
   const mpItems = paymentData?.additional_info?.items;
   if (Array.isArray(mpItems) && mpItems.length > 0) {
     return mpItems
-      .filter((it: any) => it.id !== "recargo-mp" && !String(it.title || "").toLowerCase().includes("recargo comisión"))
+      .filter(
+        (it: any) =>
+          it.id !== "recargo-mp" &&
+          it.id !== "envio-domicilio" &&
+          !String(it.title || "").toLowerCase().includes("recargo comisión") &&
+          !String(it.title || "").toLowerCase().includes("costo de envío")
+      )
       .map((it: any, idx: number) => ({
         product: {
           id: String(it.id || `mp-item-${idx}`),
@@ -256,6 +262,13 @@ async function processPaymentVerification(params: {
     meta.shipping_method ||
     "A coordinar";
 
+  const shippingCost =
+    typeof existingOrder?.shippingCost === "number"
+      ? existingOrder.shippingCost
+      : meta.shipping_cost !== undefined && !Number.isNaN(Number(meta.shipping_cost))
+      ? Number(meta.shipping_cost)
+      : resolveOrderShippingCost({ shippingMethodName });
+
   const paymentMethodName =
     existingOrder?.paymentMethodName ||
     meta.payment_method_name ||
@@ -284,6 +297,7 @@ async function processPaymentVerification(params: {
         orderId: resolvedOrderId,
         cart: reconstructedItems,
         totalPrice,
+        shippingCost,
         finalTotal,
         paymentMethodId: "mercado_pago_online",
         paymentMethodName,
@@ -315,6 +329,7 @@ async function processPaymentVerification(params: {
     customer,
     items: reconstructedItems,
     totalPrice,
+    shippingCost,
     finalTotal,
     paymentMethodId: "mercado_pago_online",
     paymentMethodName,

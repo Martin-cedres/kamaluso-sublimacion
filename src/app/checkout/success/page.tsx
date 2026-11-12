@@ -29,13 +29,39 @@ function CheckoutSuccessContent() {
     searchParams.get("orderId") ||
     searchParams.get("external_reference") ||
     "KAM-000000";
-  const email = searchParams.get("email") || "";
+  const emailParam = searchParams.get("email") || "";
   const paymentStatus =
     searchParams.get("payment") ||
     searchParams.get("collection_status") ||
     searchParams.get("status"); // "approved" | "pending" | "failure" | null
   const mpPaymentId =
     searchParams.get("payment_id") || searchParams.get("collection_id") || "";
+
+  // Parámetros de importe y envío desde URL
+  const urlSubtotal = searchParams.get("subtotal");
+  const urlShippingCost = searchParams.get("shippingCost");
+  const urlShippingMethod = searchParams.get("shippingMethod");
+  const urlMpSurcharge = searchParams.get("mpSurcharge");
+  const urlTotal = searchParams.get("total");
+
+  const [email, setEmail] = useState<string>(emailParam);
+  const [subtotal, setSubtotal] = useState<number | null>(
+    urlSubtotal ? parseFloat(urlSubtotal) : null
+  );
+  const [shippingCost, setShippingCost] = useState<number | null>(
+    urlShippingCost !== null && urlShippingCost !== undefined && urlShippingCost !== ""
+      ? parseFloat(urlShippingCost)
+      : null
+  );
+  const [shippingMethod, setShippingMethod] = useState<string>(
+    urlShippingMethod ? decodeURIComponent(urlShippingMethod) : ""
+  );
+  const [mpSurcharge, setMpSurcharge] = useState<number | null>(
+    urlMpSurcharge ? parseFloat(urlMpSurcharge) : null
+  );
+  const [total, setTotal] = useState<number | null>(
+    urlTotal ? parseFloat(urlTotal) : null
+  );
 
   const [copiedId, setCopiedId] = useState(false);
   const [copiedBrou, setCopiedBrou] = useState(false);
@@ -52,6 +78,66 @@ function CheckoutSuccessContent() {
 
   const isMpApproved = paymentStatus === "approved";
   const isMpPending = paymentStatus === "pending" || paymentStatus === "in_process";
+
+  // Recuperar información de pedido desde sessionStorage o /api/orders
+  useEffect(() => {
+    // 1. Intentar leer de sessionStorage
+    try {
+      const savedStr = sessionStorage.getItem("kamaluso_last_order_summary");
+      if (savedStr) {
+        const saved = JSON.parse(savedStr);
+        if (saved && (saved.orderId === orderId || !orderId || orderId === "KAM-000000")) {
+          if (!email && saved.email) setEmail(saved.email);
+          if (subtotal === null && typeof saved.subtotal === "number") setSubtotal(saved.subtotal);
+          if (shippingCost === null && typeof saved.shippingCost === "number") setShippingCost(saved.shippingCost);
+          if (!shippingMethod && saved.shippingMethod) setShippingMethod(saved.shippingMethod);
+          if (mpSurcharge === null && typeof saved.mpSurcharge === "number") setMpSurcharge(saved.mpSurcharge);
+          if (total === null && typeof saved.total === "number") setTotal(saved.total);
+          return;
+        }
+      }
+    } catch {}
+
+    // 2. Si aún falta data y tenemos orderId válido, consultar /api/orders
+    if (orderId && orderId !== "KAM-000000" && (subtotal === null || total === null || !shippingMethod)) {
+      fetch("/api/orders")
+        .then((res) => res.json())
+        .then((orders) => {
+          if (Array.isArray(orders)) {
+            const found = orders.find((o: any) => o.id === orderId);
+            if (found) {
+              if (!email && found.customer?.email) setEmail(found.customer.email);
+              if (subtotal === null && typeof found.totalPrice === "number") {
+                setSubtotal(found.totalPrice);
+              }
+              if (shippingCost === null) {
+                if (typeof found.shippingCost === "number") {
+                  setShippingCost(found.shippingCost);
+                } else {
+                  const ship = (found.shippingMethodName || "").toLowerCase();
+                  if ((ship.includes("correo") || ship.includes("cotmi")) && ship.includes("domicilio")) {
+                    setShippingCost(200);
+                  } else {
+                    setShippingCost(0);
+                  }
+                }
+              }
+              if (!shippingMethod && found.shippingMethodName) {
+                setShippingMethod(found.shippingMethodName);
+              }
+              if (total === null && typeof found.finalTotal === "number") {
+                setTotal(found.finalTotal);
+              }
+              if (mpSurcharge === null && found.paymentMethodId === "mercado_pago_online") {
+                const sCost = typeof found.shippingCost === "number" ? found.shippingCost : 0;
+                setMpSurcharge(parseFloat(((found.totalPrice + sCost) * 0.1).toFixed(2)));
+              }
+            }
+          }
+        })
+        .catch(() => {});
+    }
+  }, [orderId, email, subtotal, shippingCost, shippingMethod, mpSurcharge, total]);
 
   // Verificación automática de respaldo al volver desde Mercado Pago
   useEffect(() => {
@@ -72,14 +158,19 @@ function CheckoutSuccessContent() {
     });
   }, [isMpApproved, isMpPending, mpPaymentId, orderId]);
 
+  const totalStr = total !== null ? ` por un total de $${total.toLocaleString("es-UY")} UYU` : "";
   const waText = encodeURIComponent(
-    `¡Hola Kamaluso! Realicé el pedido #${orderId} a través de la web.${
+    `¡Hola Kamaluso! Realicé el pedido #${orderId}${totalStr} a través de la web.${
       isMpApproved
         ? " El pago ya fue procesado con tarjeta por Mercado Pago."
         : " Aquí les adjunto el comprobante de transferencia bancaria."
     }`
   );
   const waUrl = `https://wa.me/59898615074?text=${waText}`;
+
+  const isLocalPickup =
+    (shippingMethod || "").toLowerCase().includes("local") ||
+    (shippingMethod || "").toLowerCase().includes("taller");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 pb-16">
@@ -184,6 +275,87 @@ function CheckoutSuccessContent() {
                   <span>
                     El comprobante y detalle de compra fue enviado a tu correo electrónico.
                   </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Tarjeta Resumen de Importes y Envío de tu Pedido */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-pink-600" />
+                <span>Resumen de Importes y Envío de tu Pedido</span>
+              </h3>
+              <span className="text-[11px] font-extrabold text-pink-600 bg-pink-50 px-3 py-1 rounded-full border border-pink-200 uppercase tracking-wider">
+                Detalle del Pedido
+              </span>
+            </div>
+
+            {/* Modalidad de Envío y Aclaración de Despacho Gratuito */}
+            <div className="p-4 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-2 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <span className="font-bold text-slate-600">Modalidad / Agencia de Envío:</span>
+                <span className="font-black text-slate-900 text-sm">
+                  {shippingMethod || "A coordinar"}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 leading-relaxed flex items-center gap-1.5 pt-1 border-t border-slate-200/60">
+                <Truck className="w-4 h-4 text-pink-600 flex-shrink-0" />
+                <span>
+                  {isLocalPickup
+                    ? "Retiro presencial sin costo en nuestro taller en San José de Mayo."
+                    : "El traslado desde nuestro taller en San José hasta la agencia no tiene costo ($0)."}
+                </span>
+              </p>
+            </div>
+
+            {/* Desglose de Importes */}
+            <div className="space-y-3 text-xs pt-1">
+              {subtotal !== null && (
+                <div className="flex justify-between items-center text-slate-600 font-medium">
+                  <span>Subtotal Insumos:</span>
+                  <span className="font-bold text-slate-900 text-sm">
+                    ${subtotal.toLocaleString("es-UY")} UYU
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center text-slate-600 font-medium">
+                <span>Costo de Envío:</span>
+                {isLocalPickup ? (
+                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    $0 UYU (Retiro gratis en taller)
+                  </span>
+                ) : shippingCost !== null && shippingCost > 0 ? (
+                  <span className="font-extrabold text-pink-700 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">
+                    +$200 UYU (Envío a domicilio incluido)
+                  </span>
+                ) : (
+                  <span className="font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                    $0 en web (A abonar en destino por el comprador)
+                  </span>
+                )}
+              </div>
+
+              {mpSurcharge !== null && mpSurcharge > 0 && (
+                <div className="flex justify-between items-center text-sky-700 font-medium">
+                  <span>Recargo Mercado Pago (+10%):</span>
+                  <span className="font-bold">+${mpSurcharge.toLocaleString("es-UY")} UYU</span>
+                </div>
+              )}
+
+              {total !== null && (
+                <div className="pt-3 border-t border-slate-200 flex justify-between items-baseline">
+                  <span className="text-sm sm:text-base font-black text-slate-900 uppercase">
+                    {isMpApproved ? "Total Abonado:" : "Total del Pedido a Abonar:"}
+                  </span>
+                  <div className="text-right">
+                    <span className="text-2xl sm:text-3xl font-black text-pink-600 leading-none">
+                      ${total.toLocaleString("es-UY")}
+                    </span>
+                    <span className="text-xs font-bold text-slate-500 ml-1">UYU</span>
+                  </div>
                 </div>
               )}
             </div>

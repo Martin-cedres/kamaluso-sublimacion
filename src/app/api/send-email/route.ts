@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
       orderId,
       cart,
       totalPrice,
+      shippingCost,
       finalTotal,
       paymentMethodId,
       paymentMethodName,
@@ -17,10 +18,18 @@ export async function POST(request: NextRequest) {
       mpPaymentInfo,
     } = body;
 
+    const parsedShippingCost =
+      typeof shippingCost === "number"
+        ? shippingCost
+        : shippingCost !== undefined && !Number.isNaN(Number(shippingCost))
+        ? Number(shippingCost)
+        : undefined;
+
     const result = await sendOrderEmails({
       orderId,
       cart,
       totalPrice: Number(totalPrice) || 0,
+      shippingCost: parsedShippingCost,
       finalTotal: Number(finalTotal) || Number(totalPrice) || 0,
       paymentMethodId,
       paymentMethodName,
@@ -33,6 +42,7 @@ export async function POST(request: NextRequest) {
       try {
         await upsertServerOrder({
           id: orderId,
+          ...(parsedShippingCost !== undefined ? { shippingCost: parsedShippingCost } : {}),
           emailSent: true,
           emailSentAt: new Date().toISOString(),
         });

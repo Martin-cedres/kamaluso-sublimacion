@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
+import { resolveOrderShippingCost } from "@/types";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
       customer,
       shippingMethod,
       shippingMethodName,
+      shippingCost,
       paymentMethod,
       paymentMethodName,
       orderId,
@@ -51,10 +53,33 @@ export async function POST(req: Request) {
             0
           );
 
-    // Recargo del 10% si se paga con tarjeta Mercado Pago Online
+    // Costo de envío resuelto (ej. $200 UYU si es Correo Uruguayo / COTMI a domicilio)
+    const resolvedShippingCost = resolveOrderShippingCost({
+      shippingCost:
+        typeof shippingCost === "number"
+          ? shippingCost
+          : shippingCost !== undefined && !Number.isNaN(Number(shippingCost))
+          ? Number(shippingCost)
+          : undefined,
+      shippingMethodName: shippingMethodName || shippingMethod,
+      customer,
+    });
+
+    if (resolvedShippingCost > 0) {
+      preferenceItems.push({
+        id: "envio-domicilio",
+        title: `Costo de Envío (${shippingMethodName || "Envío a Domicilio"})`,
+        description: "Envío a domicilio incluido en el pedido",
+        quantity: 1,
+        unit_price: resolvedShippingCost,
+        currency_id: "UYU",
+      });
+    }
+
+    // Recargo del 10% de Mercado Pago calculado sobre (subtotal + resolvedShippingCost)
     const surcharge =
       paymentMethod === "mercado_pago_online"
-        ? parseFloat((subtotal * 0.1).toFixed(2))
+        ? parseFloat(((subtotal + resolvedShippingCost) * 0.1).toFixed(2))
         : 0;
 
     if (paymentMethod === "mercado_pago_online" && surcharge > 0) {
@@ -71,7 +96,7 @@ export async function POST(req: Request) {
     const computedFinalTotal =
       typeof finalTotal === "number" && finalTotal > 0
         ? finalTotal
-        : parseFloat((subtotal + surcharge).toFixed(2));
+        : parseFloat((subtotal + resolvedShippingCost + surcharge).toFixed(2));
 
     const host = req.headers.get("host") || "www.kamaluso.com";
     const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
@@ -129,6 +154,7 @@ export async function POST(req: Request) {
         shipping_method: shippingMethod || "",
         shipping_method_name:
           shippingMethodName || shippingMethod || "A coordinar",
+        shipping_cost: resolvedShippingCost,
         payment_method: paymentMethod || "mercado_pago_online",
         payment_method_name:
           paymentMethodName || "Tarjeta de Crédito / Débito (Mercado Pago)",

@@ -22,6 +22,17 @@ interface OrderSummaryModalProps {
 const LOGO_URL =
   "https://904ccf23c3.clvaw-cdnwnd.com/4bd87ba30f406d392c872d4e916d45ca/200000163-7555a7555c/LOGO.png?ph=904ccf23c3";
 
+const getOrderShippingCost = (o: Order): number => {
+  if (typeof (o as any).shippingCost === "number" && !Number.isNaN((o as any).shippingCost)) {
+    return (o as any).shippingCost;
+  }
+  const ship = (o.shippingMethodName || "").toLowerCase();
+  if ((ship.includes("correo") || ship.includes("cotmi")) && ship.includes("domicilio")) {
+    return 200;
+  }
+  return 0;
+};
+
 export default function OrderSummaryModal({
   isOpen,
   onClose,
@@ -55,6 +66,16 @@ export default function OrderSummaryModal({
 
   // Early return DESPUÉS de los hooks (Rules of Hooks)
   if (!isOpen || !order) return null;
+
+  const shippingCost = getOrderShippingCost(order);
+  const itemsSubtotal =
+    order.totalPrice ||
+    order.items.reduce((acc, i) => acc + i.product.price * i.quantity, 0);
+  const paymentSurcharge = Math.max(
+    0,
+    Number((order.finalTotal - itemsSubtotal - shippingCost).toFixed(2))
+  );
+  const shipMethodLower = (order.shippingMethodName || "").toLowerCase();
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 print:p-0 print:m-0 print:bg-transparent">
@@ -303,18 +324,28 @@ export default function OrderSummaryModal({
               </div>
 
               {/* Caja de Importes */}
-              <div className="w-60 bg-slate-50 p-2.5 rounded-xl border border-slate-300 space-y-1 text-xs flex-shrink-0">
+              <div className="w-64 bg-slate-50 p-2.5 rounded-xl border border-slate-300 space-y-1 text-xs flex-shrink-0">
                 <div className="flex justify-between text-slate-600 font-semibold text-[10px]">
                   <span>Subtotal Insumos:</span>
                   <span className="font-mono font-bold">
-                    ${order.totalPrice.toLocaleString("es-UY")} UYU
+                    ${itemsSubtotal.toLocaleString("es-UY")} UYU
                   </span>
                 </div>
-                {order.finalTotal !== order.totalPrice && (
+                <div className="flex justify-between text-slate-600 font-semibold text-[10px]">
+                  <span>{shippingCost > 0 ? "Envío a Domicilio:" : "Costo de Envío:"}</span>
+                  <span className="font-mono font-bold">
+                    {shippingCost > 0
+                      ? `+$${shippingCost.toLocaleString("es-UY")} UYU`
+                      : shipMethodLower.includes("local")
+                      ? "$0 UYU (Taller)"
+                      : "En destino ($0 aquí)"}
+                  </span>
+                </div>
+                {paymentSurcharge > 0 && (
                   <div className="flex justify-between text-slate-600 font-semibold text-[10px]">
                     <span>Recargo Medio de Pago:</span>
                     <span className="font-mono font-bold">
-                      +${(order.finalTotal - order.totalPrice).toLocaleString("es-UY")} UYU
+                      +${paymentSurcharge.toLocaleString("es-UY")} UYU
                     </span>
                   </div>
                 )}

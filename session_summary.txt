@@ -1797,3 +1797,101 @@ OPTIMIZACIÓN INTEGRAL DE RENDIMIENTO PAPELERIAPERSONALIZADA.UY (KAMALUSO_FULLST
   - En `src/app/sitemap.ts`, se agregaron las nuevas rutas canónicas `/about`, `/privacy` y `/developers` con prioridades calibradas para su rastreo inmediato.
 - **Validación de Compilación:**
   - `npm run build` ejecutado con éxito total: 73 páginas estáticas generadas sin errores.
+
+
+## 2026-11-11 - Análisis de Reglas de Envío y Costos de Flete (DAC, Correo Uruguayo, COTMI)
+- **Estado actual detectado en el código:**
+  - En `src/app/checkout/page.tsx`, las únicas 3 agencias listadas son `DAC`, `Correo Uruguayo` y `COTMI` (más la opción de `Retiro en Taller` en San José).
+  - Actualmente **ninguna opción de envío suma costo al total del pedido** (`finalTotal = totalPrice + mpSurcharge`), mostrando siempre *"A pagar en destino"* para cualquier agencia y modalidad (`agencia` o `domicilio`).
+  - Lo mismo ocurre en `src/app/api/payments/create-preference/route.ts`, `src/lib/mailer.ts`, `src/components/admin/OrderSummaryModal.tsx` y `src/components/admin/ManualOrderModal.tsx`.
+- **Requerimiento relevado (sin tocar código aún, pendiente de confirmación de dudas):**
+  - Correo Uruguayo a domicilio: suma +$200 UYU al pedido.
+  - Correo Uruguayo retiro en agencia/sucursal: no suma ($0 en el pedido).
+  - COTMI a domicilio: suma +$200 UYU al pedido.
+  - COTMI retiro en agencia/sucursal: no suma ($0 en el pedido).
+  - DAC (retiro en agencia o envío a domicilio): no suma en la web ($0 en el pedido), el flete siempre va a cargo del comprador al recibir/retirar.
+  - Solo deben aparecer esas tres agencias (DAC, Correo Uruguayo, COTMI).
+
+- **Confirmación de reglas con el usuario (100% alineado, 0 dudas pendientes):**
+  1. Retiro en agencia (DAC, Correo Uruguayo, COTMI): $0 en la web, el flete se abona en agencia al retirar (a cargo del comprador). El despacho desde el taller en San José hasta la agencia no tiene costo.
+  2. Envío a domicilio por Correo Uruguayo o COTMI: suma +$200 UYU al pedido.
+  3. Envío a domicilio por DAC: $0 en la web, flete siempre a cargo del comprador al recibir.
+  4. Retiro en Taller (San José de Mayo): Gratis ($0), se mantiene.
+  5. Recargo 10% de Mercado Pago: se calcula sobre el total `(subtotalProductos + costoEnvio) * 0.10`.
+  6. Lugares donde debe figurar el costo de envío ($200 UYU): Checkout, Hoja de confirmación (`/checkout/success`), Correo de confirmación (`mailer.ts`), Nota de Pedido A4 (`OrderSummaryModal.tsx`), Detalle de pedido en Admin (`admin/page.tsx`), y Modal de Pedidos Manuales (`ManualOrderModal.tsx`). En la Etiqueta de Envío 10x15 (`ShippingLabelModal.tsx`) no va ningún precio.
+
+- Panel de Administración (Admin UI):
+  - Actualizado `OrderSummaryModal.tsx` con desglose exacto en la Nota de Pedido A4 para taller: cálculo de `shippingCost` dinámico y retrocompatible, subtotal de insumos, recargo de medio de pago y visualización precisa de costo de envío (domicilio +$200 UYU, retiro en taller $0 UYU, o a cargo del comprador en destino $0 UYU).
+  - Actualizado `ManualOrderModal.tsx` con opciones de envío estandarizadas (Retiro en local, DAC domicilio/agencia, Correo Uruguayo sucursal/domicilio, COTMI agencia/domicilio), cálculo automático de $200 para Correo/COTMI a domicilio, recargo del 10% de Mercado Pago sobre insumos + envío, leyenda explicativa clara de políticas de envío y persistencia íntegra de `totalPrice`, `shippingCost` y `finalTotal`.
+  - Actualizado `src/app/admin/page.tsx` en el modal de detalle de orden con el desglose pormenorizado: Subtotal de insumos, Costo de envío según agencia/método, Recargo de Mercado Pago (+10%) y Total del pedido.
+
+- Checkout UI (UX/Frontend de Checkout y Confirmación de Pedido):
+  - Actualizado `src/app/checkout/page.tsx`:
+    * Implementada regla estricta de cálculo de costo de envío (`shippingCost`): Correo Uruguayo o COTMI a domicilio suma +$200 UYU; retiros en sucursal y envíos DAC no suman ($0 en web); retiro en taller gratis ($0 UYU).
+    * Cálculo de recargo del 10% de Mercado Pago sobre el subtotal acumulado de productos + envío `(totalPrice + shippingCost) * 0.10`.
+    * Tarjetas de selección de agencia con badges dinámicos según `deliveryMode`: DAC ("Flete a cargo del comprador en destino"), Correo Uruguayo / COTMI ("+$200 UYU (Envío a domicilio)" o "$0 aquí • Pagas al retirar en agencia").
+    * Recuadro informativo destacado que detalla que el despacho desde el taller en San José hasta la agencia no tiene costo ($0), explicando las condiciones exactas de pago según la empresa seleccionada.
+    * Resumen sticky del pedido con desglose completo: Subtotal insumos, Costo de envío destacado ("+$200 UYU (Envío a domicilio)", "Retiro Gratis en Taller ($0)" o "A pagar en destino"), recargo de Mercado Pago y Total a pagar.
+    * Persistencia en `sessionStorage` (`kamaluso_last_order_summary`), inclusión de `shippingCost` en payload de pedido, `/api/payments/create-preference`, `/api/send-email`, y redirección enriquecida a `/checkout/success`.
+  - Actualizado `src/app/checkout/success/page.tsx`:
+    * Lectura y fallback robusto de parámetros de importe y envío desde URL, `sessionStorage` y `/api/orders` por `orderId`.
+    * Nueva tarjeta de "Resumen de Importes y Envío de tu Pedido" con desglose visual de modalidad/agencia de entrega, traslado sin costo desde el taller, subtotal de insumos, costo de envío (+200 / $0), recargo de Mercado Pago y Total final.
+    * Integración del importe en el mensaje dinámico para envío de comprobante por WhatsApp.
+
+- Backend e Integración de Pagos y Notificaciones (Mercado Pago & Mailer):
+  - `src/types/index.ts`:
+    * Incorporada la propiedad `shippingCost?: number;` a la interfaz `Order`.
+    * Implementada y exportada la función pura `resolveOrderShippingCost` para resolver el costo de flete según método y modalidad de entrega (+$200 UYU para Correo Uruguayo o COTMI a domicilio; $0 para agencias, DAC y retiro en taller).
+  - `src/lib/orders.ts` & `src/lib/server-orders.ts`:
+    * Preservación consistente de `shippingCost: resolveOrderShippingCost(...)` en `saveOrder`, `mergeOrdersWithLocal`, `mergeOrderLists` y `upsertServerOrder`, garantizando que el costo de envío nunca se pierda ni se sobreescriba en Vercel Blob o local storage.
+  - `src/app/api/payments/create-preference/route.ts`:
+    * Recepción y resolución de `shippingCost` en el endpoint de checkout de Mercado Pago.
+    * Inyección del ítem de línea `envio-domicilio` en `preferenceItems` cuando `resolvedShippingCost > 0`.
+    * Cálculo del 10% de recargo por tarjeta online estrictamente sobre `(subtotal + resolvedShippingCost)`.
+    * Registro de `shipping_cost: resolvedShippingCost` en la metadata de la preferencia.
+  - `src/app/api/payments/webhook/route.ts`:
+    * Exclusión de `it.id !== "envio-domicilio"` en `reconstructCartFromPayment` para evitar que el ítem de costo de flete de Mercado Pago se duplique como insumo del carrito.
+    * Recuperación de `shippingCost` desde la orden previa, metadata o inferencia y pase íntegro a `sendOrderEmails` y `upsertServerOrder`.
+  - `src/app/api/send-email/route.ts` & `src/lib/mailer.ts`:
+    * Añadido `shippingCost?: number;` a `SendOrderEmailsInput`.
+    * Cálculo de recargo del 10% sobre insumos + flete y total general actualizado.
+    * Fila de desglose de "Costo de Envío" agregada tanto en el correo al comprador como en el correo para la administración.
+    * Actualizado el texto de `shippingClarification` explicando retiro en taller, envío a domicilio incluido (+$200 UYU) y fletes a cobrar en destino para agencias.
+
+- Verificación Integral y QA del Enjambre (QA Engineer):
+  - Auditoría exhaustiva de código (`git status`, `git diff`) en los 12 archivos modificados de Backend, Checkout UI y Admin UI.
+  - Validación del 100% de las reglas de negocio de logística y envíos:
+    * Correo Uruguayo y COTMI a domicilio aplican estrictamente +$200 UYU de flete.
+    * Retiro en agencias/sucursales (Correo, COTMI, DAC) y envíos por DAC a domicilio computan $0 UYU en web (a cargo del comprador en destino).
+    * Solo figuran DAC, Correo Uruguayo y COTMI para envíos nacionales, más Retiro en Taller en San José de Mayo ($0 UYU).
+    * El traslado y despacho desde el taller hasta las agencias en San José se aclara en todas las vistas como bonificado y 100% sin cargo ($0).
+    * El recargo del 10% de Mercado Pago Online se calcula con precisión matemática sobre `(subtotal de productos + costo de envío)`.
+    * El desglose del costo de envío figura visible y coherente en: Checkout, confirmación de pedido (`/checkout/success`), emails transaccionales al comprador y admin (`mailer.ts`), Nota de Pedido A4 de taller (`OrderSummaryModal.tsx`), detalle de orden en Admin (`admin/page.tsx`) y modal de pedidos manuales (`ManualOrderModal.tsx`).
+    * Se confirmó que `ShippingLabelModal.tsx` permaneció intacto (sin importes para rotulado limpio de encomienda).
+  - Verificación de tipos TypeScript: `npx tsc --noEmit` completado con 0 errores.
+  - Verificación de compilación de producción: `npm run build` ejecutado exitosamente con 73/73 páginas generadas limpiamente en Next.js App Router.
+
+
+## 2026-11-11 - Implementación de Reglas y Costos de Envío (Enjambre Gemini 3.8 Flash)
+- **Ejecución multi-agente (`backend`, `checkout-ui`, `admin-ui`, `qa`) supervisada por `coordinator`:**
+  1. **Tipos y Persistencia (`src/types/index.ts`, `src/lib/orders.ts`, `src/lib/server-orders.ts`):**
+     - Incorporado `shippingCost?: number` en la interfaz `Order` y exportado el helper puro `resolveOrderShippingCost` (+$200 UYU para Correo Uruguayo y COTMI a domicilio; $0 para retiros en agencia, DAC y retiro en taller).
+     - Preservado `shippingCost` en `saveOrder`, `mergeOrdersWithLocal`, `mergeOrderLists` y `upsertServerOrder`.
+  2. **Checkout y Hoja de Confirmación (`src/app/checkout/page.tsx`, `src/app/checkout/success/page.tsx`):**
+     - Mantenidas únicamente las 3 agencias (`DAC`, `Correo Uruguayo`, `COTMI`) más `Retiro en Taller` (San José de Mayo — Gratis $0).
+     - Suma automática de **+$200 UYU** para **Correo Uruguayo a Domicilio** y **COTMI a Domicilio**; **$0 UYU** en web para retiros en agencia (Correo / COTMI) y cualquier modalidad de **DAC** (a cargo del comprador en destino).
+     - Recargo del **10% de Mercado Pago** calculado sobre el total `(totalPrice + shippingCost)`.
+     - Claridad visual con etiquetas dinámicas en cada agencia, recuadro informativo detallando las condiciones y aclarando que **el despacho desde el taller en San José hasta la agencia no tiene costo ($0)**, y fila de envío desglosada en el Resumen del Pedido.
+     - En `/checkout/success`, añadida tarjeta **"Resumen de Importes y Envío de tu Pedido"** con Subtotal de Insumos, Costo de Envío (+200 UYU o $0 en destino/taller), Recargo MP (+10%) y Total a Pagar/Transferir.
+  3. **Pasarela Mercado Pago y Correos (`src/app/api/payments/create-preference/route.ts`, `src/app/api/payments/webhook/route.ts`, `src/app/api/send-email/route.ts`, `src/lib/mailer.ts`):**
+     - En `create-preference`, cuando `shippingCost > 0`, se añade el ítem `envio-domicilio` ($200 UYU) y se calcula la comisión del 10% sobre `(subtotal + shippingCost)`, guardando `shipping_cost` en `metadata`.
+     - En `webhook`, se excluye `envio-domicilio` al reconstruir los productos del carrito y se propaga `shippingCost` a la orden y al correo.
+     - En `mailer.ts`, se incorporó la fila de **Costo de Envío** en las tablas de importes tanto del correo al cliente como del correo al administrador, y se actualizaron los textos de aclaración logística (incluyendo el traslado sin costo desde el taller a la agencia).
+  4. **Panel de Administración (`src/components/admin/OrderSummaryModal.tsx`, `src/components/admin/ManualOrderModal.tsx`, `src/app/admin/page.tsx`):**
+     - **Nota de Pedido A4 (`OrderSummaryModal.tsx`):** Desglose completo en Caja de Importes con Subtotal Insumos, Costo de Envío (+$200 UYU, $0 Taller o En destino), Recargo Medio de Pago y Total Pedido.
+     - **Pedidos Manuales (`ManualOrderModal.tsx`):** Suma automática de +$200 UYU al elegir Correo Uruguayo o COTMI a domicilio, cálculo del 10% de MP sobre `(insumos + envío)`, desglose visual y leyenda de políticas de envío.
+     - **Detalle de Pedido en Admin (`src/app/admin/page.tsx`):** Desglose completo de Subtotal, Costo de Envío, Recargo MP y Total bajo la tabla de productos.
+     - **Etiqueta de Envío 10x15 (`ShippingLabelModal.tsx`):** Intacta (sin precios).
+- **Verificación QA:**
+  - `npx tsc --noEmit`: 0 errores.
+  - `npm run build`: 73/73 páginas compiladas sin errores.

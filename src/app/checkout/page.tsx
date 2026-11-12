@@ -212,10 +212,17 @@ export default function CheckoutPage() {
     setTimeout(() => setCustomerDataLoaded(false), 4000);
   };
 
-  // Cálculos de Totales y Recargo Mercado Pago
+  // Regla de cálculo de envío según Agencia y Modalidad
+  const shippingCost =
+    deliveryMode === "domicilio" && (shippingAgency === "correo" || shippingAgency === "cotmi")
+      ? 200
+      : 0;
+
+  // Cálculos de Totales y Recargo Mercado Pago (10% sobre productos + envío)
   const isMp = paymentMethod === "mercado_pago_online";
-  const mpSurcharge = isMp ? parseFloat((totalPrice * 0.1).toFixed(2)) : 0;
-  const finalTotal = totalPrice + mpSurcharge;
+  const subtotalWithShipping = totalPrice + shippingCost;
+  const mpSurcharge = isMp ? parseFloat((subtotalWithShipping * 0.1).toFixed(2)) : 0;
+  const finalTotal = subtotalWithShipping + mpSurcharge;
 
   // Validación sin redundancias
   const validateForm = (): boolean => {
@@ -326,6 +333,7 @@ export default function CheckoutPage() {
       customer: { ...fullCustomer, deliveryType: deliveryMode },
       items: cart,
       totalPrice,
+      shippingCost,
       finalTotal,
       paymentMethodId: paymentMethod,
       paymentMethodName: selectedPayName,
@@ -335,9 +343,30 @@ export default function CheckoutPage() {
       deliveryType: deliveryMode,
     };
 
+    // Guardar resumen del pedido en sessionStorage para respaldo inmediato
+    try {
+      sessionStorage.setItem(
+        "kamaluso_last_order_summary",
+        JSON.stringify({
+          orderId,
+          email: customerEmail.trim(),
+          customerName: customerName.trim(),
+          subtotal: totalPrice,
+          shippingCost,
+          shippingMethod: shippingName,
+          deliveryMode,
+          shippingAgency,
+          mpSurcharge,
+          total: finalTotal,
+          paymentMethod,
+          paymentMethodName: selectedPayName,
+        })
+      );
+    } catch {}
+
     // 1. Guardar Pedido localmente y en Vercel Blob
     try {
-      await saveOrder(orderPayload);
+      await saveOrder(orderPayload as any);
     } catch (err) {
       console.warn("Aviso al guardar orden:", err);
     }
@@ -371,6 +400,7 @@ export default function CheckoutPage() {
             orderId,
             items: cart,
             totalPrice,
+            shippingCost,
             finalTotal,
             paymentMethod,
             paymentMethodName: selectedPayName,
@@ -407,6 +437,7 @@ export default function CheckoutPage() {
           orderId,
           cart,
           totalPrice,
+          shippingCost,
           finalTotal,
           paymentMethodId: paymentMethod,
           paymentMethodName: selectedPayName,
@@ -418,9 +449,16 @@ export default function CheckoutPage() {
       console.warn("Aviso al enviar email:", err);
     }
 
-    // 5. Redirigir a página de éxito
+    // 5. Redirigir a página de éxito con desglose completo
     clearCart();
-    router.push(`/checkout/success?orderId=${orderId}&email=${encodeURIComponent(customerEmail.trim())}`);
+    const successUrl = `/checkout/success?orderId=${encodeURIComponent(
+      orderId
+    )}&email=${encodeURIComponent(
+      customerEmail.trim()
+    )}&subtotal=${totalPrice}&shippingCost=${shippingCost}&shippingMethod=${encodeURIComponent(
+      shippingName
+    )}&mpSurcharge=${mpSurcharge}&total=${finalTotal}`;
+    router.push(successUrl);
   };
 
   // Carrito vacío
@@ -791,26 +829,57 @@ export default function CheckoutPage() {
                     <label className="block text-xs font-bold text-slate-700 mb-1.5">
                       Empresa de Encomienda <span className="text-pink-600">*</span>
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                       {[
                         { id: "dac", name: "DAC", sub: "Agencia Central" },
                         { id: "correo", name: "Correo Uruguayo", sub: "Red Nacional" },
                         { id: "cotmi", name: "COTMI", sub: "Línea Ruta 1 / San José" },
-                      ].map((ag) => (
-                        <button
-                          key={ag.id}
-                          type="button"
-                          onClick={() => setShippingAgency(ag.id as any)}
-                          className={`p-2.5 rounded-xl border text-left transition ${
-                            shippingAgency === ag.id
-                              ? "border-pink-600 bg-pink-50/60 text-slate-900 font-extrabold"
-                              : "border-slate-200 bg-white hover:border-slate-300 text-slate-600 font-medium"
-                          }`}
-                        >
-                          <span className="block text-xs font-black">{ag.name}</span>
-                          <span className="block text-[10px] text-slate-500">{ag.sub}</span>
-                        </button>
-                      ))}
+                      ].map((ag) => {
+                        const isSelected = shippingAgency === ag.id;
+                        const isDac = ag.id === "dac";
+                        const isPaidHome = !isDac && deliveryMode === "domicilio";
+                        const badgeText = isDac
+                          ? "Flete a cargo del comprador (en destino)"
+                          : deliveryMode === "domicilio"
+                          ? "+$200 UYU (Envío a domicilio)"
+                          : "$0 aquí • Pagas al retirar en agencia";
+
+                        return (
+                          <button
+                            key={ag.id}
+                            type="button"
+                            onClick={() => setShippingAgency(ag.id as any)}
+                            className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                              isSelected
+                                ? "border-pink-600 bg-pink-50/70 text-slate-900 shadow-sm ring-2 ring-pink-500/20"
+                                : "border-slate-200 bg-white hover:border-slate-300 text-slate-700"
+                            }`}
+                          >
+                            <div>
+                              <div className="flex items-center justify-between">
+                                <span className="block text-xs font-black">{ag.name}</span>
+                                {isSelected && (
+                                  <span className="w-2 h-2 rounded-full bg-pink-600" />
+                                )}
+                              </div>
+                              <span className="block text-[10px] text-slate-500 mt-0.5">
+                                {ag.sub}
+                              </span>
+                            </div>
+                            <div className="mt-2 pt-2 border-t border-slate-100">
+                              {isPaidHome ? (
+                                <span className="inline-block text-[10px] font-black text-pink-700 bg-pink-100 px-2 py-0.5 rounded-md leading-tight">
+                                  {badgeText}
+                                </span>
+                              ) : (
+                                <span className="inline-block text-[10px] font-semibold text-slate-600 leading-tight">
+                                  {badgeText}
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -938,6 +1007,54 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   )}
+
+                  {/* Recuadro informativo sobre condiciones de envío y despacho bonificado */}
+                  <div className="p-4 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-2 text-xs">
+                    <div className="flex items-center gap-2 font-black text-slate-900">
+                      <Truck className="w-4 h-4 text-pink-600 flex-shrink-0" />
+                      <span>Condiciones de Envío y Despacho</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      <strong className="text-emerald-700">✓ Despacho sin costo:</strong> El despacho desde nuestro taller en San José hasta la agencia no tiene costo para ti ($0).
+                    </p>
+
+                    {/* Explicación según modalidad y agencia */}
+                    {deliveryMode === "domicilio" && (shippingAgency === "correo" || shippingAgency === "cotmi") && (
+                      <div className="p-3 bg-pink-50 border border-pink-200 rounded-xl text-pink-950 space-y-1">
+                        <div className="flex items-center gap-1.5 font-black text-pink-700">
+                          <CheckCircle2 className="w-4 h-4 text-pink-600 flex-shrink-0" />
+                          <span>Envío a Domicilio incluido (+ $200 UYU)</span>
+                        </div>
+                        <p className="text-[11px] text-pink-900 leading-relaxed font-medium">
+                          Se suman <strong>+$200 UYU</strong> al total del pedido para dejar el envío a domicilio por <strong>{getShippingAgencyName()}</strong> ya pago. ¡No deberás abonar nada de flete al recibir tu encomienda en tu puerta!
+                        </p>
+                      </div>
+                    )}
+
+                    {deliveryMode === "agencia" && (shippingAgency === "correo" || shippingAgency === "cotmi") && (
+                      <div className="p-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-800 space-y-1">
+                        <div className="flex items-center gap-1.5 font-black text-slate-900">
+                          <Building2 className="w-4 h-4 text-slate-700 flex-shrink-0" />
+                          <span>Retiro en Sucursal ({getShippingAgencyName()}) • $0 en la web</span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 leading-relaxed">
+                          No suma costo en la web <strong>($0 UYU)</strong>. El costo de encomienda se abona directamente en la sucursal de {getShippingAgencyName()} al momento de retirar tu paquete.
+                        </p>
+                      </div>
+                    )}
+
+                    {shippingAgency === "dac" && (
+                      <div className="p-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-800 space-y-1">
+                        <div className="flex items-center gap-1.5 font-black text-slate-900">
+                          <Building2 className="w-4 h-4 text-slate-700 flex-shrink-0" />
+                          <span>Envío por DAC ({deliveryMode === "domicilio" ? "A Domicilio" : "Retiro en Sucursal"}) • $0 en la web</span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 leading-relaxed">
+                          No suma costo en la web <strong>($0 UYU)</strong>. La encomienda de DAC va siempre a cargo del comprador (se abona a DAC al retirar en sucursal o al recibir en domicilio).
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -1000,7 +1117,7 @@ export default function CheckoutPage() {
                   </p>
                   <p className="text-[11px] text-sky-700 leading-relaxed">
                     Al confirmar, serás redirigido a la pasarela segura de Mercado Pago para abonar con tarjeta de
-                    crédito o débito. Aplica un 10% de recargo por comisión financiera (${mpSurcharge.toLocaleString("es-UY")} UYU).
+                    crédito o débito. Aplica un 10% de recargo por comisión financiera (+${mpSurcharge.toLocaleString("es-UY")} UYU calculado sobre insumos y envío).
                   </p>
                 </div>
               ) : (
@@ -1065,19 +1182,29 @@ export default function CheckoutPage() {
                   <span className="font-bold text-slate-800">${totalPrice.toLocaleString("es-UY")} UYU</span>
                 </div>
 
+                <div className="flex justify-between items-center text-slate-600 font-medium">
+                  <span>Flete / Envío:</span>
+                  {deliveryMode === "local" ? (
+                    <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                      Retiro Gratis en Taller ($0)
+                    </span>
+                  ) : shippingCost > 0 ? (
+                    <span className="font-extrabold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-md">
+                      +$200 UYU (Envío a domicilio)
+                    </span>
+                  ) : (
+                    <span className="font-bold text-slate-700">
+                      A pagar en destino (a cargo del comprador)
+                    </span>
+                  )}
+                </div>
+
                 {isMp && (
                   <div className="flex justify-between text-sky-700 font-medium">
                     <span>Recargo Mercado Pago (10%):</span>
                     <span className="font-bold">+${mpSurcharge.toLocaleString("es-UY")} UYU</span>
                   </div>
                 )}
-
-                <div className="flex justify-between text-slate-600 font-medium">
-                  <span>Flete / Envío:</span>
-                  <span className="font-bold text-slate-800">
-                    {deliveryMode === "local" ? "Retiro Gratis en Local" : "A pagar en destino"}
-                  </span>
-                </div>
 
                 <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
                   <span className="text-sm font-black text-slate-900 uppercase">Total a Pagar:</span>

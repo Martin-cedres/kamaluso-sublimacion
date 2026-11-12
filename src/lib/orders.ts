@@ -1,4 +1,4 @@
-import { Order, OrderStatus } from "@/types";
+import { Order, OrderStatus, resolveOrderShippingCost } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
 const LOCAL_ORDERS_KEY = "kamaluso_orders";
@@ -64,7 +64,12 @@ function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null
 
   if (Array.isArray(localOrders)) {
     localOrders.forEach((lo) => {
-      if (lo && lo.id && !deletedIds.includes(lo.id)) orderMap.set(lo.id, lo);
+      if (lo && lo.id && !deletedIds.includes(lo.id)) {
+        orderMap.set(lo.id, {
+          ...lo,
+          shippingCost: resolveOrderShippingCost(lo),
+        });
+      }
     });
   }
 
@@ -73,7 +78,10 @@ function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null
       if (ro && ro.id && !deletedIds.includes(ro.id)) {
         const existing = orderMap.get(ro.id);
         if (!existing) {
-          orderMap.set(ro.id, ro);
+          orderMap.set(ro.id, {
+            ...ro,
+            shippingCost: resolveOrderShippingCost(ro),
+          });
         } else {
           const resolvedDeliveryType =
             ro.deliveryType ||
@@ -81,9 +89,16 @@ function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null
             ro.customer?.deliveryType ||
             existing.customer?.deliveryType;
 
+          const resolvedShippingCost = resolveOrderShippingCost({
+            shippingCost: typeof ro.shippingCost === "number" ? ro.shippingCost : existing.shippingCost,
+            shippingMethodName: ro.shippingMethodName || existing.shippingMethodName,
+            deliveryType: resolvedDeliveryType,
+          });
+
           orderMap.set(ro.id, {
             ...existing,
             ...ro,
+            shippingCost: resolvedShippingCost,
             deliveryType: resolvedDeliveryType,
             customer: {
               ...existing.customer,
@@ -158,6 +173,7 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     "";
 
   const deliveryType = orderData.deliveryType || orderData.customer?.deliveryType;
+  const shippingCost = resolveOrderShippingCost(orderData);
 
   const fullOrder: Order = {
     id,
@@ -179,6 +195,7 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     paymentMethodId: orderData.paymentMethodId || "brou",
     paymentMethodName: orderData.paymentMethodName || "Transferencia Bancaria BROU",
     shippingMethodName: orderData.shippingMethodName || "Agencia COTMI - Retiro en Agencia",
+    shippingCost,
     status: orderData.status || "pendiente",
     observations,
     notes: observations,

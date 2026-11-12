@@ -50,6 +50,17 @@ import {
   UserCheck,
 } from "lucide-react";
 
+const getOrderShippingCost = (o: Order): number => {
+  if (typeof (o as any).shippingCost === "number" && !Number.isNaN((o as any).shippingCost)) {
+    return (o as any).shippingCost;
+  }
+  const ship = (o.shippingMethodName || "").toLowerCase();
+  if ((ship.includes("correo") || ship.includes("cotmi")) && ship.includes("domicilio")) {
+    return 200;
+  }
+  return 0;
+};
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
@@ -1442,12 +1453,70 @@ export default function AdminDashboardPage() {
                     </tbody>
                   </table>
                 </div>
-                <div className="text-right pt-2">
-                  <span className="text-slate-500 font-bold uppercase text-[11px] mr-2">Total del Pedido:</span>
-                  <span className="text-xl font-black text-pink-600">
-                    ${selectedOrderModal.finalTotal.toLocaleString("es-UY")} UYU
-                  </span>
-                </div>
+                {/* Desglose de Importes y Total */}
+                {(() => {
+                  const modalShippingCost = getOrderShippingCost(selectedOrderModal);
+                  const modalItemsSubtotal =
+                    selectedOrderModal.totalPrice ||
+                    selectedOrderModal.items.reduce(
+                      (acc, i) => acc + i.product.price * i.quantity,
+                      0
+                    );
+                  const modalPaymentSurcharge = Math.max(
+                    0,
+                    Number(
+                      (
+                        selectedOrderModal.finalTotal -
+                        modalItemsSubtotal -
+                        modalShippingCost
+                      ).toFixed(2)
+                    )
+                  );
+                  const modalShipLower = (
+                    selectedOrderModal.shippingMethodName || ""
+                  ).toLowerCase();
+
+                  return (
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 max-w-md ml-auto space-y-1.5 text-xs mt-3">
+                      <div className="flex justify-between text-slate-600 font-semibold">
+                        <span>Subtotal Insumos:</span>
+                        <span className="font-mono font-bold">
+                          ${modalItemsSubtotal.toLocaleString("es-UY")} UYU
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-slate-600 font-semibold">
+                        <span>
+                          Costo de Envío (
+                          {selectedOrderModal.shippingMethodName || "Envío"}):
+                        </span>
+                        <span className="font-mono font-bold">
+                          {modalShippingCost > 0
+                            ? `+$${modalShippingCost.toLocaleString("es-UY")} UYU (Incluido en el pedido)`
+                            : modalShipLower.includes("local")
+                            ? "$0 UYU (Retiro en taller)"
+                            : "$0 en web (A cargo del comprador en destino)"}
+                        </span>
+                      </div>
+                      {modalPaymentSurcharge > 0 && (
+                        <div className="flex justify-between text-pink-600 font-semibold">
+                          <span>Recargo Mercado Pago (+10%):</span>
+                          <span className="font-mono font-bold">
+                            +${modalPaymentSurcharge.toLocaleString("es-UY")} UYU
+                          </span>
+                        </div>
+                      )}
+                      <div className="border-t border-slate-300 pt-2 flex justify-between items-center text-slate-900">
+                        <span className="font-black uppercase text-xs">
+                          Total del Pedido:
+                        </span>
+                        <span className="text-xl font-black text-pink-600 font-mono">
+                          ${selectedOrderModal.finalTotal.toLocaleString("es-UY")}{" "}
+                          UYU
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Botones Imprimir (Resumen A4 & Etiqueta 10x15) y Selector Estado */}

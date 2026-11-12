@@ -55,6 +55,7 @@ export interface Order {
   paymentMethodId: string;
   paymentMethodName: string;
   shippingMethodName: string;
+  shippingCost?: number;
   status: OrderStatus;
   notes?: string;
   observations?: string;
@@ -81,5 +82,24 @@ export interface Customer {
   lastOrderAt?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export function resolveOrderShippingCost(
+  order?: {
+    shippingCost?: number;
+    shippingMethodName?: string;
+    deliveryType?: string;
+    customer?: { deliveryType?: string };
+  } | null
+): number {
+  if (!order) return 0;
+  if (typeof order.shippingCost === "number" && !Number.isNaN(order.shippingCost)) {
+    return order.shippingCost;
+  }
+  const ship = (order.shippingMethodName || "").toLowerCase();
+  if ((ship.includes("correo") || ship.includes("cotmi")) && ship.includes("domicilio")) {
+    return 200;
+  }
+  return 0;
 }
 
