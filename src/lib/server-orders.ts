@@ -202,7 +202,7 @@ export async function persistServerOrders(orders: Order[]): Promise<{ blobUrl: s
 
 export async function upsertServerOrder(
   orderInput: Partial<Order> & { id: string }
-): Promise<{ order: Order; orders: Order[]; blobUrl: string }> {
+): Promise<{ order: Order; orders: Order[]; blobUrl: string; isNew: boolean }> {
   const cache = globalThis.__kamaluso_orders_cache__!;
   if (!cache.deletedIds) {
     cache.deletedIds = new Set<string>();
@@ -211,6 +211,7 @@ export async function upsertServerOrder(
 
   const existingOrders = await getLatestServerOrders();
   const idx = existingOrders.findIndex((o) => o.id === orderInput.id);
+  const isNew = idx === -1;
 
   const deliveryType = orderInput.deliveryType || orderInput.customer?.deliveryType;
 
@@ -225,17 +226,28 @@ export async function upsertServerOrder(
       shippingMethodName: orderInput.shippingMethodName || current.shippingMethodName,
       deliveryType: resolvedDeliveryType,
     });
+    const resolvedObservations =
+      orderInput.observations !== undefined
+        ? orderInput.observations
+        : orderInput.customer?.observations !== undefined
+        ? orderInput.customer.observations
+        : current.observations || current.customer?.observations || "";
+
     savedOrder = {
       ...current,
       ...orderInput,
       shippingCost: resolvedShippingCost,
       deliveryType: resolvedDeliveryType,
+      observations: resolvedObservations,
+      notes: resolvedObservations,
       customer: {
         ...current.customer,
         ...(orderInput.customer || {}),
+        observations: resolvedObservations,
+        notes: resolvedObservations,
         deliveryType: resolvedDeliveryType,
       },
-      items: orderInput.items && orderInput.items.length > 0 ? orderInput.items : current.items,
+      items: Array.isArray(orderInput.items) ? orderInput.items : current.items,
       mpPaymentId: orderInput.mpPaymentId || current.mpPaymentId,
       mpPayerEmail: orderInput.mpPayerEmail || current.mpPayerEmail,
       mpPayerName: orderInput.mpPayerName || current.mpPayerName,
@@ -291,7 +303,7 @@ export async function upsertServerOrder(
   }
 
   const { blobUrl, orders } = await persistServerOrders(updatedOrders);
-  return { order: savedOrder, orders, blobUrl };
+  return { order: savedOrder, orders, blobUrl, isNew };
 }
 
 export const saveServerOrder = upsertServerOrder;

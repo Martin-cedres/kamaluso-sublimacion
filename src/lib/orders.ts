@@ -105,7 +105,7 @@ function mergeOrdersWithLocal(remoteOrders: Order[], localOrders: Order[] | null
               ...ro.customer,
               deliveryType: resolvedDeliveryType,
             },
-            items: ro.items && ro.items.length > 0 ? ro.items : existing.items,
+            items: Array.isArray(ro.items) ? ro.items : existing.items,
           });
         }
       }
@@ -200,6 +200,11 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     observations,
     notes: observations,
     deliveryType,
+    mpPaymentId: orderData.mpPaymentId,
+    mpPayerEmail: orderData.mpPayerEmail,
+    mpPayerName: orderData.mpPayerName,
+    emailSent: orderData.emailSent,
+    emailSentAt: orderData.emailSentAt,
   };
 
   // 1. Guardar localmente de inmediato (optimista y no destructivo)

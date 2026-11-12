@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Product, Order, OrderStatus, CartItem } from "@/types";
 import { saveOrder } from "@/lib/orders";
 import {
   X,
   Plus,
+  Minus,
   Trash2,
   ShoppingBag,
   User,
@@ -13,12 +14,14 @@ import {
   CheckCircle2,
   Loader2,
   PackagePlus,
+  Edit2,
 } from "lucide-react";
 
 interface ManualOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
   products: Product[];
+  orderToEdit?: Order | null;
   onOrderCreated: (newOrder: Order) => void;
 }
 
@@ -70,6 +73,7 @@ export default function ManualOrderModal({
   isOpen,
   onClose,
   products,
+  orderToEdit,
   onOrderCreated,
 }: ManualOrderModalProps) {
   // Datos del Cliente (100% Opcionales)
@@ -101,7 +105,91 @@ export default function ManualOrderModal({
   // Estado de guardado
   const [isSaving, setIsSaving] = useState(false);
 
+  // Sincronizar o limpiar formulario al abrir modal
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (orderToEdit) {
+      setCustomerName(orderToEdit.customer?.name || "");
+      setCustomerPhone(orderToEdit.customer?.phone || "");
+      setCustomerEmail(orderToEdit.customer?.email || "");
+      setCustomerDepartment(orderToEdit.customer?.department || "San José");
+      setCustomerCity(orderToEdit.customer?.city || "");
+      setCustomerAddress(orderToEdit.customer?.address || "");
+      setCustomerObservations(
+        orderToEdit.customer?.observations || orderToEdit.observations || ""
+      );
+
+      const loadedItems = Array.isArray(orderToEdit.items)
+        ? orderToEdit.items.map((i) => ({
+            ...i,
+            product: { ...i.product },
+          }))
+        : [];
+      setItems(loadedItems);
+
+      const resolvedPayId =
+        orderToEdit.paymentMethodId ||
+        PAYMENT_METHODS.find((p) => p.name === orderToEdit.paymentMethodName)?.id ||
+        "brou";
+      setPaymentMethodId(resolvedPayId);
+
+      const resolvedShipName =
+        orderToEdit.shippingMethodName || "Retiro en Local (San José de Mayo)";
+      setShippingMethodName(resolvedShipName);
+      setOrderStatus(orderToEdit.status || "pago_confirmado");
+
+      // Verificar si el total guardado fue sobreescrito manualmente
+      const itemsSub = loadedItems.reduce(
+        (sum, item) => sum + item.product.price * item.quantity,
+        0
+      );
+      const lowShip = resolvedShipName.toLowerCase();
+      const shipCost =
+        (lowShip.includes("correo") || lowShip.includes("cotmi")) &&
+        lowShip.includes("domicilio")
+          ? 200
+          : 0;
+      const mpExtra =
+        resolvedPayId === "mercado_pago_online"
+          ? parseFloat(((itemsSub + shipCost) * 0.1).toFixed(2))
+          : 0;
+      const expectedAutoTotal = itemsSub + shipCost + mpExtra;
+
+      if (
+        typeof orderToEdit.finalTotal === "number" &&
+        Math.abs(orderToEdit.finalTotal - expectedAutoTotal) > 0.01
+      ) {
+        setCustomTotalPrice(orderToEdit.finalTotal);
+      } else {
+        setCustomTotalPrice("");
+      }
+    } else {
+      setCustomerName("");
+      setCustomerPhone("");
+      setCustomerEmail("");
+      setCustomerDepartment("San José");
+      setCustomerCity("");
+      setCustomerAddress("");
+      setCustomerObservations("");
+      setItems([]);
+      setCustomTotalPrice("");
+      setPaymentMethodId("brou");
+      setShippingMethodName("Retiro en Local (San José de Mayo)");
+      setOrderStatus("pago_confirmado");
+    }
+
+    setSelectedCatalogProductId("");
+    setCatalogQuantity(1);
+    setCustomItemName("");
+    setCustomItemPrice("");
+    setCustomItemQuantity(1);
+    setShowCustomItemForm(false);
+  }, [isOpen, orderToEdit]);
+
   if (!isOpen) return null;
+
+  const isEditing = Boolean(orderToEdit);
 
   // Calcular subtotal de los ítems agregados
   const computedItemsTotal = items.reduce(
@@ -134,7 +222,10 @@ export default function ManualOrderModal({
       const existingIdx = prev.findIndex((i) => i.product.id === prod.id);
       if (existingIdx >= 0) {
         const updated = [...prev];
-        updated[existingIdx].quantity += catalogQuantity;
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: updated[existingIdx].quantity + catalogQuantity,
+        };
         return updated;
       }
       return [...prev, { product: prod, quantity: catalogQuantity }];
@@ -169,17 +260,31 @@ export default function ManualOrderModal({
     setShowCustomItemForm(false);
   };
 
+  // Cambiar cantidad de un ítem en la tabla
+  const handleUpdateItemQuantity = (index: number, delta: number) => {
+    setItems((prev) => {
+      const updated = [...prev];
+      const nextQty = updated[index].quantity + delta;
+      if (nextQty <= 0) {
+        return prev.filter((_, i) => i !== index);
+      }
+      updated[index] = { ...updated[index], quantity: nextQty };
+      return updated;
+    });
+  };
+
   // Eliminar ítem
   const handleRemoveItem = (index: number) => {
     setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Guardar pedido manual (SIN RESTRICCIONES NI CAMPOS OBLIGATORIOS)
+  // Guardar pedido manual o editado (SIN RESTRICCIONES NI CAMPOS OBLIGATORIOS)
   const handleSave = async () => {
     setIsSaving(true);
     try {
       const paymentName =
         PAYMENT_METHODS.find((p) => p.id === paymentMethodId)?.name ||
+        orderToEdit?.paymentMethodName ||
         "Transferencia Bancaria BROU";
 
       const lowerShip = shippingMethodName.toLowerCase();
@@ -193,8 +298,9 @@ export default function ManualOrderModal({
       }
 
       const finalOrder = await saveOrder({
-        id: `KAM-MAN-${Date.now().toString().slice(-6)}`,
-        createdAt: new Date().toISOString(),
+        ...(orderToEdit || {}),
+        id: orderToEdit?.id || `KAM-MAN-${Date.now().toString().slice(-6)}`,
+        createdAt: orderToEdit?.createdAt || new Date().toISOString(),
         customer: {
           name: customerName.trim() || "Cliente Mostrador / WhatsApp",
           phone: customerPhone.trim(),
@@ -220,11 +326,15 @@ export default function ManualOrderModal({
       onOrderCreated(finalOrder);
       onClose();
     } catch (error) {
-      console.error("Error al registrar pedido manual:", error);
+      console.error("Error al guardar pedido:", error);
     } finally {
       setIsSaving(false);
     }
   };
+
+  const shippingOptionsList = SHIPPING_OPTIONS.includes(shippingMethodName)
+    ? SHIPPING_OPTIONS
+    : [shippingMethodName, ...SHIPPING_OPTIONS];
 
   return (
     <div className="fixed inset-0 z-[80] overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
@@ -233,17 +343,21 @@ export default function ManualOrderModal({
         <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-pink-600 rounded-xl text-white shadow-md">
-              <PackagePlus className="w-5 h-5" />
+              {isEditing ? <Edit2 className="w-5 h-5" /> : <PackagePlus className="w-5 h-5" />}
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-extrabold flex items-center gap-2">
-                <span>Ingresar Pedido Manual</span>
+                <span>
+                  {isEditing ? `Editar Pedido #${orderToEdit?.id}` : "Ingresar Pedido Manual"}
+                </span>
                 <span className="text-[10px] bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/40">
-                  Fuera de Web
+                  {isEditing ? "Modo Edición" : "Fuera de Web"}
                 </span>
               </h2>
               <p className="text-[11px] text-slate-400">
-                Ventas por WhatsApp, mostrador o taller • Ningún campo es obligatorio
+                {isEditing
+                  ? "Modifica datos del cliente, productos, envío o importe total"
+                  : "Ventas por WhatsApp, mostrador o taller • Ningún campo es obligatorio"}
               </p>
             </div>
           </div>
@@ -430,11 +544,11 @@ export default function ManualOrderModal({
             {showCustomItemForm && (
               <div className="p-3 bg-white rounded-xl border border-pink-200 space-y-2 animate-in fade-in duration-150">
                 <p className="text-[11px] font-bold text-pink-700">Nuevo ítem o trabajo a medida:</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                   <div className="sm:col-span-2">
                     <input
                       type="text"
-                      placeholder="Descripción del ítem (ej. Cuadernos tapa dura 50u)"
+                      placeholder="Descripción del ítem (ej. Cuadernos tapa dura)"
                       value={customItemName}
                       onChange={(e) => setCustomItemName(e.target.value)}
                       className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs"
@@ -443,10 +557,21 @@ export default function ManualOrderModal({
                   <div>
                     <input
                       type="number"
-                      placeholder="Precio unitario ($ UYU)"
+                      placeholder="Precio unit. ($)"
                       value={customItemPrice}
                       onChange={(e) => setCustomItemPrice(e.target.value === "" ? "" : Number(e.target.value))}
                       className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="Cant."
+                      value={customItemQuantity}
+                      onChange={(e) => setCustomItemQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs text-center"
+                      title="Cantidad"
                     />
                   </div>
                 </div>
@@ -480,7 +605,29 @@ export default function ManualOrderModal({
                     {items.map((item, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
                         <td className="py-2 px-3 font-semibold text-slate-800">{item.product.name}</td>
-                        <td className="py-2 px-2 text-center font-bold text-slate-700">x{item.quantity}</td>
+                        <td className="py-2 px-2 text-center">
+                          <div className="inline-flex items-center gap-1 bg-slate-100 rounded-lg p-0.5 border border-slate-200">
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateItemQuantity(idx, -1)}
+                              className="p-0.5 text-slate-500 hover:text-slate-900 hover:bg-white rounded transition"
+                              title="Restar 1"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="font-bold text-slate-800 px-1.5 min-w-[22px] text-center">
+                              x{item.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateItemQuantity(idx, 1)}
+                              className="p-0.5 text-slate-500 hover:text-slate-900 hover:bg-white rounded transition"
+                              title="Sumar 1"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </td>
                         <td className="py-2 px-3 text-right text-slate-600">${item.product.price}</td>
                         <td className="py-2 px-3 text-right font-black text-pink-600">
                           ${item.product.price * item.quantity}
@@ -524,7 +671,7 @@ export default function ManualOrderModal({
                 onChange={(e) => setShippingMethodName(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
               >
-                {SHIPPING_OPTIONS.map((opt) => (
+                {shippingOptionsList.map((opt) => (
                   <option key={opt} value={opt}>
                     {opt}
                   </option>
@@ -569,6 +716,7 @@ export default function ManualOrderModal({
                   <option value="pendiente">⏳ Pendiente de Pago</option>
                   <option value="en_preparacion">📦 En Preparación</option>
                   <option value="despachado">🚚 Despachado</option>
+                  <option value="cancelado">❌ Cancelado</option>
                 </select>
               </div>
             </div>
@@ -666,7 +814,7 @@ export default function ManualOrderModal({
               ) : (
                 <CheckCircle2 className="w-4 h-4" />
               )}
-              <span>Guardar Pedido</span>
+              <span>{isEditing ? "Guardar Cambios" : "Guardar Pedido"}</span>
             </button>
           </div>
         </div>

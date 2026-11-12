@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     if (body && body.id) {
-      const { order, orders, blobUrl } = await upsertServerOrder(body);
+      const { order, orders, blobUrl, isNew } = await upsertServerOrder(body);
 
       // Sincronizar automáticamente cliente registrado en data/customers.json (entorno local)
       try {
@@ -59,12 +59,16 @@ export async function POST(request: Request) {
                 department: order.customer.department || list[cIdx].department,
                 city: order.customer.city || list[cIdx].city,
                 address: order.customer.address || list[cIdx].address,
-                totalOrders: (list[cIdx].totalOrders || 0) + 1,
-                totalSpent: (list[cIdx].totalSpent || 0) + spent,
-                lastOrderAt: order.createdAt || nowStr,
+                totalOrders: isNew
+                  ? (list[cIdx].totalOrders || 0) + 1
+                  : list[cIdx].totalOrders || 1,
+                totalSpent: isNew
+                  ? (list[cIdx].totalSpent || 0) + spent
+                  : list[cIdx].totalSpent || spent,
+                lastOrderAt: isNew ? order.createdAt || nowStr : list[cIdx].lastOrderAt || order.createdAt || nowStr,
                 updatedAt: nowStr,
               };
-            } else {
+            } else if (isNew) {
               list.unshift({
                 id: `CUST-${Date.now().toString(36).toUpperCase()}`,
                 name: cName || "Cliente",

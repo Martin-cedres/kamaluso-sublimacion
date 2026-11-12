@@ -75,6 +75,7 @@ export default function AdminDashboardPage() {
   const [selectedOrderForSummary, setSelectedOrderForSummary] = useState<Order | null>(null);
   const [isVisualReorderOpen, setIsVisualReorderOpen] = useState(false);
   const [isManualOrderModalOpen, setIsManualOrderModalOpen] = useState(false);
+  const [orderToEdit, setOrderToEdit] = useState<Order | null>(null);
 
   // State Productos
   const [products, setProducts] = useState<Product[]>([]);
@@ -995,7 +996,10 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <button
                   type="button"
-                  onClick={() => setIsManualOrderModalOpen(true)}
+                  onClick={() => {
+                    setOrderToEdit(null);
+                    setIsManualOrderModalOpen(true);
+                  }}
                   className="w-full sm:w-auto py-2.5 px-4 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-pink-600/20 whitespace-nowrap active:scale-95"
                 >
                   <Plus className="w-4 h-4" />
@@ -1116,6 +1120,16 @@ export default function AdminDashboardPage() {
                                 title="Ver detalle completo del pedido"
                               >
                                 <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setOrderToEdit(order);
+                                  setIsManualOrderModalOpen(true);
+                                }}
+                                className="p-1.5 text-slate-500 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition"
+                                title="Editar pedido"
+                              >
+                                <Edit2 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteOrder(order.id)}
@@ -1547,6 +1561,19 @@ export default function AdminDashboardPage() {
                     <Printer className="w-4 h-4" />
                     <span>Imprimir Etiqueta 10x15</span>
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOrderToEdit(selectedOrderModal);
+                      setIsManualOrderModalOpen(true);
+                    }}
+                    className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-black rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 text-xs"
+                    title="Editar datos, productos o monto de este pedido"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 text-pink-400" />
+                    <span>Editar</span>
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -1601,14 +1628,28 @@ export default function AdminDashboardPage() {
         }}
       />
 
-      {/* Modal para Ingresar Pedido Manual (Mostrador / WhatsApp / Externo) */}
+      {/* Modal para Ingresar o Editar Pedido Manual (Mostrador / WhatsApp / Externo) */}
       <ManualOrderModal
         isOpen={isManualOrderModalOpen}
-        onClose={() => setIsManualOrderModalOpen(false)}
+        onClose={() => {
+          setIsManualOrderModalOpen(false);
+          setOrderToEdit(null);
+        }}
         products={products}
-        onOrderCreated={(newOrder) => {
-          setOrders((prev) => [newOrder, ...prev]);
+        orderToEdit={orderToEdit}
+        onOrderCreated={(savedOrder) => {
+          setOrders((prev) => {
+            const exists = prev.some((o) => o.id === savedOrder.id);
+            if (exists) {
+              return prev.map((o) => (o.id === savedOrder.id ? savedOrder : o));
+            }
+            return [savedOrder, ...prev];
+          });
+          if (selectedOrderModal?.id === savedOrder.id) {
+            setSelectedOrderModal(savedOrder);
+          }
           loadOrdersData();
+          loadCustomersData();
         }}
       />
     </div>

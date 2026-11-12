@@ -1907,3 +1907,34 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * Subido con éxito a GitHub: `git push origin main` -> repositorio https://github.com/Martin-cedres/kamaluso-sublimacion.git.
   * Despliegue automático de Vercel activado para https://www.kamaluso.com.
 ================================================================================
+
+
+## 2026-11-12 - Diagnóstico de Creación y Edición de Pedidos en Panel Admin
+- Revisados `ManualOrderModal.tsx`, `src/app/admin/page.tsx`, `src/lib/orders.ts`, `src/lib/server-orders.ts` y `src/app/api/orders/route.ts`.
+- Diagnóstico reportado al usuario sobre capacidades actuales de edición vs creación manual, puntos fuertes y oportunidades de mejora (soporte de edición completa en `ManualOrderModal`, reseteo de estado del modal y control de duplicación de estadísticas de cliente en actualizaciones de estado).
+
+## 2026-11-12 - Implementación de Edición Completa de Pedidos y Mejoras en Creación Manual (Panel Admin)
+- **Edición completa de pedidos (`src/components/admin/ManualOrderModal.tsx` & `src/app/admin/page.tsx`):**
+  - Añadido soporte para `orderToEdit` en `ManualOrderModal.tsx`, precargando datos del cliente, productos, método de pago, forma de envío, estado y monto total (detectando automáticamente si el total había sido sobreescrito manualmente).
+  - Incorporado limpieza automática de todos los campos al abrir el modal en modo "Nuevo Pedido", evitando que datos del pedido anterior queden residuales.
+  - Añadidos botones `-` / `+` en la tabla de ítems del modal para ajustar cantidades rápidamente y selector de cantidad en el sub-formulario de "Ítem libre / a medida".
+  - Añadido botón `Editar pedido` (`Edit2`) en la fila de acciones de cada pedido en `src/app/admin/page.tsx` y dentro del modal de vista de detalle del pedido (`selectedOrderModal`), manteniendo el diseño visual intacto e intuitivo.
+- **Correcciones de persistencia y estadísticas (`src/lib/server-orders.ts`, `src/lib/orders.ts`, `src/app/api/orders/route.ts`):**
+  - `upsertServerOrder` devuelve `isNew: boolean` y respeta `orderInput.items` (incluso si se vacían ítems) y actualizaciones de `observations`.
+  - En `POST /api/orders`, `totalOrders` y `totalSpent` de la base de clientes solo se incrementan cuando `isNew` es `true`, evitando inflación de compras al cambiar estados o editar un pedido existente.
+
+================================================================================
+🚀 DESPLIEGUE A PRODUCCIÓN: EDICIÓN COMPLETA DE PEDIDOS Y CREACIÓN MANUAL MEJORADA
+================================================================================
+- Tarea: Compilar el proyecto en modo producción y desplegar a GitHub y Vercel con la funcionalidad de edición completa de pedidos y mejoras en creación manual.
+- Proceso:
+  * Ejecutado `npm run build`: Compilación exitosa (0 errores, 73/73 páginas generadas y optimizadas limpiamente en Next.js 15 App Router).
+  * Cambios incluidos:
+    - Botón `Editar pedido` (`✏️`) en la tabla de pedidos y dentro del modal de vista de detalle de pedido en `src/app/admin/page.tsx`.
+    - Modo edición y modo creación limpia en `src/components/admin/ManualOrderModal.tsx`.
+    - Selector de cantidad en ítems libres a medida y controles `+`/`-` de ajuste de cantidad en ítems cargados.
+    - Detección y preservación de montos manuales sobreescritos.
+    - Prevención de duplicación de métricas de clientes (`totalOrders`, `totalSpent`) en ediciones y cambios de estado en `src/app/api/orders/route.ts` y `src/lib/server-orders.ts`.
+  * Commit y push ejecutados a rama `main` en GitHub -> https://github.com/Martin-cedres/kamaluso-sublimacion.git.
+  * Despliegue automático de Vercel activado para https://www.kamaluso.com.
+================================================================================
