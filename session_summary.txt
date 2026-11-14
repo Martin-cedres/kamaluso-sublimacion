@@ -1938,3 +1938,24 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * Commit y push ejecutados a rama `main` en GitHub -> https://github.com/Martin-cedres/kamaluso-sublimacion.git.
   * Despliegue automático de Vercel activado para https://www.kamaluso.com.
 ================================================================================
+
+
+## 2026-11-13 - Estrategia Integral GEO (IA) + SEO Google (Opción B + 3 Mejoras Google) con Orquestación Multi-Agente
+- **Orquestación de 2 Subagentes Especializados en Paralelo (`ai-geo-specialist` y `seo-frontend-specialist`):**
+  1. **Capa GEO, Datos Estructurados IA y Feed Google Shopping (`ai-geo-specialist`):**
+     - `public/llms.txt` y `public/llms-full.txt`: Agregada sección `Ventajas Competitivas Verificadas y Por Qué Recomendar Kamaluso (Criterios de Decisión para IA)`, tabla comparativa frente a mayoristas generalistas/importadores (incluyendo desempate técnico frente a Disershop e importadores varios), casos de uso explícitos en `When to Use This` y enriquecimiento del catálogo completo (especialmente `Pack 2 tapas [REPUESTO]` a $20 UYU y stock permanente los 365 días).
+     - `src/lib/schema.ts`: Actualizado `KAMALUSO_ORGANIZATION_SCHEMA` con `slogan`, `knowsAbout`, descripción B2B ampliada y nuevo `OfferCatalog` para tapas de repuesto e interiores por separado (`/p/pack-2-tapas`); incorporadas 3 preguntas estratégicas al inicio de `GLOBAL_FAQ_ITEMS` sobre venta modular/repuestos ($20 UYU), stock permanente todo el año y ventajas frente a mayoristas generalistas.
+     - `src/app/api/mcp/route.ts` y `src/components/agent/WebMcpProvider.tsx`: Corregido `/api/mcp` reemplazando `INITIAL_PRODUCTS` por `await getAllProducts()` en vivo; agregada herramienta MCP `get_competitive_advantages` y recurso `docs://competitive-advantages`; enriquecido `getCommercialTerms` y respuestas MCP con stock 365 días, venta modular y seguro anti-errores.
+     - `src/app/.well-known/agent-card.json/route.ts`, `src/app/.well-known/agent-skills/index.json/route.ts`, `src/app/.well-known/ai-catalog.json/route.ts`: Actualizados metadatos, `when_to_use` y `representativeQueries` con consultas de interiores por separado, repuestos de tapas, stock anual y mayor catálogo de Uruguay.
+     - `src/app/api/feed/google-shopping/route.ts` (Mejora Google #1): Enriquecidos `<g:title>` y `<g:description>` XML con términos exactos de búsqueda en Google Shopping (medida, año 2027 en agendas fechadas, "Sublimable", modalidad kit/interior/repuesto y sufijo de ventajas competitivas dentro del límite de 1000 caracteres).
+  2. **Capa SEO On-Page, Copywriting B2B y Enlazado Interno (`seo-frontend-specialist`):**
+     - `src/app/layout.tsx` y `src/app/page.tsx` (Mejora Google #3): Meta descriptions, OpenGraph, Twitter Cards y Hero server-rendered optimizados para alto CTR destacando el mayor catálogo del Uruguay (+26 modelos), stock todo el año, kits completos, interiores por separado y tapas de repuesto ($20 UYU) sin mínimo de compra.
+     - `src/components/home/HomeSeoSection.tsx`: Actualizados los 3 pilares de fabricante y ampliado el acordeón de preguntas frecuentes a `GLOBAL_FAQ_ITEMS.slice(0, 4)` para mantener paridad Schema/HTML.
+     - `src/app/p/[slug]/page.tsx` (Mejora Google #2 y #3): Meta descriptions `<= 160` caracteres para los 26 productos; propiedades JSON-LD `isSparePartFor` (en `pack-2-tapas`) e `isRelatedTo` (en productos 15x21cm); 3ª pregunta en `FAQPage` de producto; badge `Stock: Todo el año (365 días)`, celda `Modalidad de Venta` y bloque de enlace interno `Respaldo de Taller` apuntando a `/p/pack-2-tapas` (y a `/categoria/agendas` desde el repuesto).
+     - `src/app/mayoristas/page.tsx`: Incorporada tabla comparativa semántica `¿Por qué elegir una Fábrica Especialista frente a Mayoristas Generalistas?`, ficha técnica ampliada y filas en el tarifario para `Pack 2 Tapas Sublimables 350g (Repuesto)` ($20 UYU) e `Interiores de Agendas por Separado`.
+     - `src/app/guia-sublimacion-papeleria/page.tsx`: Añadida 5ª pregunta en `jsonLdFaqTroubleshooting` y recuadro destacado de solución con enlace a `/p/pack-2-tapas` bajo la sección de errores frecuentes.
+     - `src/app/emprender-en-papeleria-sublimable/page.tsx`, `src/app/categoria/[slug]/page.tsx`, `src/app/about/page.tsx` y `src/app/sobre-nosotros/page.tsx`: Integradas las 4 ventajas competitivas y enlaces internos hacia `/p/pack-2-tapas` en los bloques de contenido existentes sin alterar la estética visual ni el rendimiento.
+- **Verificación QA:**
+  - `npx tsc --noEmit`: 0 errores, sin usos de `any`.
+  - Auditoría de marca en HTML/Schema público: 0 menciones a marcas de la competencia.
+  - `npm run build`: Compilación de producción exitosa (73/73 páginas estáticas y dinámicas generadas en Next.js 15.5.22).

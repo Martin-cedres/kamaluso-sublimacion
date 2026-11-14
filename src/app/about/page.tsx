@@ -28,7 +28,7 @@ export default function AboutPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
-            <strong>Kamaluso</strong> es una fábrica uruguaya especializada y líder nacional en el diseño, producción y distribución mayorista de insumos en blanco listos para sublimar y encuadernar. Nuestra planta de producción se ubica en <strong>San José de Mayo (Departamento de San José, Uruguay)</strong>, desde donde abastecemos diariamente a imprentas, talleres de personalización, centros de copiado y miles de emprendedores independientes en todo el territorio uruguayo.
+            <strong>Kamaluso</strong> es una fábrica uruguaya especialista en el diseño, producción y distribución mayorista de insumos en blanco listos para sublimar y encuadernar, con <strong>el mayor catálogo de papelería sublimable del Uruguay (+26 modelos)</strong> y <strong>stock disponible todo el año (365 días)</strong>. Nuestra planta de producción se ubica en <strong>San José de Mayo (Departamento de San José, Uruguay)</strong>, desde donde abastecemos diariamente a imprentas, talleres de personalización, centros de copiado y miles de emprendedores independientes en todo el territorio uruguayo.
           </p>
         </div>
 
@@ -41,13 +41,17 @@ export default function AboutPage() {
 
           <div className="text-sm text-slate-700 space-y-4 leading-relaxed">
             <p>
-              Tradicionalmente, quienes deseaban comercializar agendas personalizadas, cuadernos o libretas en Uruguay debían importar costosas tapas rígidas de cartón gris desde el exterior, comprar máquinas encuadernadoras industriales y prensas pesadas, o lidiar con polímeros de baja calidad que producían desprendimientos de tinta y tapas curvadas.
+              A diferencia de mayoristas generalistas o importadores que trabajan con pocos formatos genéricos, venden solo packs cerrados o sufren quiebres de stock estacionales, quienes desean comercializar agendas personalizadas, cuadernos o libretas en Uruguay encuentran en Kamaluso una <strong>fábrica especialista</strong> con producción continua en planta propia.
             </p>
             <p>
-              En Kamaluso revolucionamos el mercado nacional al desarrollar nuestras <strong>tapas de Cartón Cristal de 350 gramos</strong>, tratadas con una formulación propia de polímero virgen termosensible de ultra alta adherencia. Este material ofrece una superficie blanca pura, brillante, que transfiere el 100% de la gama cromática de las tintas sublimáticas a 170ºC - 180ºC durante 120 segundos, garantizando un acabado fotográfico profesional que no se raya ni decolora.
+              En Kamaluso desarrollamos nuestras <strong>tapas de Cartón Cristal de 350 gramos</strong>, tratadas con una formulación propia de polímero virgen termosensible de ultra alta adherencia. Este material ofrece una superficie blanca pura, brillante, que transfiere el 100% de la gama cromática de las tintas sublimáticas a 170ºC - 180ºC durante 120 segundos, garantizando un acabado fotográfico profesional que no se raya ni decolora.
             </p>
             <p>
-              Además, eliminamos las barreras de entrada del sector: <strong>no exigimos un mínimo de compra</strong>. Un taller puede comprar desde 1 unidad para hacer una muestra a su cliente hasta cientos de kits mayoristas con descuentos por escala para zafras corporativas y escolares.
+              Además, ofrecemos <strong>venta modular y sin mínimo de compra</strong>: podés llevar kits completos listos para armar, comprar <strong>interiores de agendas por separado</strong> o reponer únicamente el{" "}
+              <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
+                Pack de 2 Tapas Sublimables de Repuesto ($20 UYU)
+              </Link>{" "}
+              si tuviste un error en la prensa térmica, asegurando cero desperdicio para tu taller desde 1 unidad hasta grandes zafras corporativas.
             </p>
           </div>
         </div>
@@ -64,7 +68,11 @@ export default function AboutPage() {
             <li className="flex items-start gap-2">
               <span className="font-bold text-brand-600 text-base">•</span>
               <span>
-                <strong>www.kamaluso.com (Este sitio):</strong> Es la división fabricante y mayorista B2B. Proveemos los insumos en blanco (tapas vírgenes sublimables de 350g, interiores impresos en hojas obra de 75g, espirales plásticos continuos y plantillas descargables) listos para que cada taller o sublimador estampe sus propios diseños y los venda a sus clientes finales.
+                <strong>www.kamaluso.com (Este sitio):</strong> Es la división fabricante especialista y mayorista B2B con stock los 365 días del año en +26 modelos. Proveemos insumos en blanco (kits completos, interiores impresos por separado, tapas sublimables de 350g y{" "}
+                <Link href="/p/pack-2-tapas" className="font-semibold text-brand-700 underline decoration-brand-300">
+                  repuestos de tapas a $20 UYU
+                </Link>
+                ) listos para que cada taller o sublimador estampe sus propios diseños.
               </span>
             </li>
             <li className="flex items-start gap-2">

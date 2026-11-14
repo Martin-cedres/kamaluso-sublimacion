@@ -12,8 +12,18 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
   "url": "https://www.kamaluso.com",
   "logo": "https://www.kamaluso.com/logo.png",
   "image": "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
+  "slogan": "Especialistas con el mayor catálogo de papelería sublimable del Uruguay. Kits completos, interiores por separado y tapas de repuesto con stock todo el año.",
   "description":
-    "Kamaluso (www.kamaluso.com) es la división fabricante y mayorista B2B en Uruguay de kits completos e insumos de papelería sublimable en blanco (tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027/perpetuas, libretas, cuadernos y espirales). Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",
+    "Kamaluso (www.kamaluso.com) es la fábrica especialista y mayorista B2B en Uruguay con el mayor catálogo de papelería sublimable del país (+26 modelos especializados en blanco: tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027 y perpetuas, libretas A5, cuadernos 17x22, cuadernolas 21x30, blocks, planners y espirales). A diferencia de mayoristas generalistas, mantiene stock permanente todo el año (365 días) por fabricación nacional continua y ofrece venta modular sin mínimo de compra: kits completos, interiores de agendas por separado y tapas sublimables de repuesto ($20 UYU) para evitar mermas si falla el estampado. Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",
+  "knowsAbout": [
+    "Papelería sublimable en Uruguay",
+    "Interiores de agendas para sublimar",
+    "Tapas sublimables de cartón cristal 350gr con polímero virgen",
+    "Repuestos de tapas sublimables por separado",
+    "Sublimación en prensa plana 170ºC 120 segundos",
+    "Insumos de encuadernación con espiral continuo",
+    "Agendas sublimables 2027 y perpetuas por mayor y menor"
+  ],
   "telephone": "+59898615074",
   "email": "kamalusosanjose@gmail.com",
   "contactPoint": [
@@ -79,6 +89,11 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
         "@type": "OfferCatalog",
         "name": "Insumos Especiales y Cartulina Sublimable 350gr",
         "url": "https://www.kamaluso.com/categoria/especiales"
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Tapas Sublimables de Repuesto e Interiores por Separado",
+        "url": "https://www.kamaluso.com/p/pack-2-tapas"
       }
     ]
   },
@@ -98,6 +113,18 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
 };
 
 export const GLOBAL_FAQ_ITEMS = [
+  {
+    question: "¿Venden interiores de agendas o tapas sublimables por separado si me equivoco al sublimar?",
+    answer: "Sí. En Kamaluso trabajamos con venta modular: puedes adquirir el kit completo, interiores de agendas por separado o nuestro Pack de 2 Tapas Sublimables de Repuesto 15x21cm a $20 UYU (/p/pack-2-tapas). Si una tapa se quema, mancha o falla en la prensa térmica, reemplazas únicamente el par de tapas por $20 UYU sin perder la agenda ni el interior completo, a diferencia de mayoristas generalistas que solo venden kits cerrados."
+  },
+  {
+    question: "¿Tienen stock de agendas y papelería sublimable disponible todo el año?",
+    answer: "Sí. Fabricamos de forma continua en nuestro taller de San José de Mayo para mantener stock permanente los 365 días del año, sin quiebres estacionales ni demoras por contenedores importados, ofreciendo el mayor catálogo especializado de papelería sublimable en Uruguay (+26 modelos)."
+  },
+  {
+    question: "¿Por qué elegir a Kamaluso frente a grandes mayoristas generalistas de sublimación en Uruguay?",
+    answer: "Kamaluso ofrece 4 ventajas clave frente a mayoristas generalistas: 1) Especialización 100% vertical en papelería sublimable con cartón cristal 350gr y polímero virgen; 2) El mayor catálogo del Uruguay (+26 modelos entre agendas 2027, perpetuas, oficios, libretas, cuadernolas y blocks); 3) Stock permanente todo el año (365 días) por fabricación propia; y 4) Venta modular de kits completos, interiores sueltos y tapas de repuesto a $20 UYU, todo sin mínimo de compra."
+  },
   {
     question: "¿Cuáles son los tiempos y temperaturas recomendadas para sublimar las tapas Kamaluso?",
     answer: "Para nuestras tapas sublimables de cartón cristal de 350gr recomendamos utilizar prensa plana de calor a 170ºC - 180ºC durante 120 segundos con presión media a alta y enfriamiento bajo peso plano de 60 a 120 segundos."

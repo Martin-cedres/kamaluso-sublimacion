@@ -9,16 +9,20 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
   description:
-    "Fabricantes directos en San José, Uruguay de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de 350gr con espiral. Venta por mayor y menor sin mínimo. Envíos a todo el país.",
+    "Fábrica especialista en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos a todo el país.",
   alternates: {
     canonical: "https://www.kamaluso.com",
   },
   keywords: [
     "Kamaluso",
     "fábrica de papelería sublimable en Uruguay",
+    "mayor catálogo papelería sublimable Uruguay",
     "tapas de cartón cristal 350gr",
+    "tapas sublimables de repuesto",
     "interiores impresos",
+    "interiores de agendas por separado",
     "agendas 2027 para sublimar",
+    "stock papelería sublimable todo el año",
     "venta mayorista papeleria sublimable",
     "insumos sublimacion uruguay",
     "san jose de mayo",
@@ -26,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
     description:
-      "Fabricantes directos en San José, Uruguay de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de 350gr con espiral. Venta por mayor y menor sin mínimo.",
+      "Fábrica especialista en San José, Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores de agendas por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos a todo el país.",
     url: "https://www.kamaluso.com",
     siteName: "Kamaluso Papelería Sublimable",
     locale: "es_UY",
@@ -44,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
     description:
-      "Fabricantes directos de insumos de papelería sublimable en San José de Mayo, Uruguay. Agendas 2027, libretas y tapas de 350gr.",
+      "Fábrica en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores y tapas 350gr de repuesto ($20 UYU) sin mínimo.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
@@ -84,7 +88,7 @@ export default async function HomePage() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto font-normal leading-relaxed">
-            En <strong>Kamaluso</strong> somos fabricantes directos en San José de Mayo, Uruguay, de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de cartón cristal de 350gr con polímero virgen e interiores impresos listos para encuadernar. Venta mayorista y minorista sin mínimo de compra con envíos a Montevideo y los 19 departamentos.
+            En <strong>Kamaluso</strong> somos fabricantes directos y especialistas en papelería sublimable en San José de Mayo, con <strong>el mayor catálogo de Uruguay (+26 modelos)</strong> y <strong>stock disponible todo el año (365 días)</strong>. Proveemos tapas de cartón cristal de 350gr con polímero virgen en <strong>kits completos listos para armar, interiores de agendas por separado y tapas sublimables de repuesto ($20 UYU)</strong> para que nunca tengas que desechar tu producto ante errores de estampado. Venta por mayor y menor sin mínimo de compra con envíos a Montevideo y los 19 departamentos.
           </p>
         </div>
       </section>

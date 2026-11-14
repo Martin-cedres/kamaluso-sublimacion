@@ -35,15 +35,19 @@ export const metadata: Metadata = {
     template: "%s | Kamaluso Papelería Sublimable",
   },
   description:
-    "Fabricantes directos en San José, Uruguay de insumos de papelería sublimable: agendas 2027 y perpetuas, libretas, cuadernos, planners y tapas de 350gr con espiral. Venta por mayor y menor sin mínimo. Envíos a todo el país.",
+    "Fábrica especialista en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos a todo el país.",
   metadataBase: new URL("https://www.kamaluso.com"),
   manifest: "/manifest.json",
   keywords: [
     "interiores de agendas para sublimar",
+    "interiores de agendas por separado",
     "papeleria sublimable uruguay",
+    "mayor catalogo papeleria sublimable uruguay",
     "tapas sublimables 350gr",
+    "tapas sublimables de repuesto",
     "agendas sublimables san jose",
     "insumos para sublimacion uruguay",
+    "stock papeleria sublimable todo el año",
     "kamaluso sublimacion",
   ],
   icons: {
@@ -62,7 +66,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kamaluso | Insumos y Papelería Sublimable en Uruguay",
     description:
-      "Interiores de agendas 2026/27, libretas y blocks con tapas sublimables de 350gr. Envíos a todo Uruguay desde San José de Mayo.",
+      "Fábrica especialista en San José, Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores de agendas por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos a todo el país.",
     url: "https://www.kamaluso.com",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -86,7 +90,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kamaluso | Papelería Sublimable Uruguay",
     description:
-      "Interiores y tapas de 350gr para sublimadores en Uruguay. San José de Mayo.",
+      "Fábrica en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores y tapas 350gr de repuesto ($20 UYU) sin mínimo.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
   verification: {

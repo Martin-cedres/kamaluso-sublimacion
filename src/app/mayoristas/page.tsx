@@ -7,14 +7,14 @@ import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 export const metadata: Metadata = {
   title: "Insumos para Sublimación por Mayor en Uruguay | Papelería Sublimable Kamaluso",
   description:
-    "Venta mayorista de insumos para sublimación y papelería sublimable en Uruguay. Kits de agendas, libretas, cuadernolas y tapas de 350gr directos de fábrica sin mínimo obligatorio. Envíos en 48h por DAC y Correo Uruguayo.",
+    "Fábrica especialista mayorista en Uruguay con el mayor catálogo (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos 48h.",
   alternates: {
     canonical: "https://www.kamaluso.com/mayoristas",
   },
   openGraph: {
     title: "Insumos para Sublimación por Mayor en Uruguay | Papelería Sublimable Kamaluso",
     description:
-      "Venta mayorista de insumos para sublimación y papelería sublimable en Uruguay. Kits de agendas, libretas, cuadernolas y tapas de 350gr directos de fábrica sin mínimo obligatorio. Envíos en 48h por DAC y Correo Uruguayo.",
+      "Fábrica especialista mayorista en Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos en 48h por DAC y Correo Uruguayo.",
     url: "https://www.kamaluso.com/mayoristas",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -46,7 +46,7 @@ export default function MayoristasPage() {
           Insumos de Papelería Sublimable al Por Mayor en Uruguay
         </h1>
         <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-          Somos fabricantes directos en San José de Mayo. Abastecemos a revendedores y talleres de sublimación de todo el país con la mejor relación costo-calidad en tapas de 350gr e interiores impresos listos para anillar.
+          Somos fábrica especialista en San José de Mayo con <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> y <strong>stock continuo los 365 días del año</strong>. Abastecemos a talleres y revendedores con kits completos, interiores de agendas por separado y tapas de 350gr con repuestos sueltos ($20 UYU) sin mínimo de compra.
         </p>
       </div>
 
@@ -69,6 +69,18 @@ export default function MayoristasPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Catálogo y especialización</td>
+                <td className="py-3 px-4 font-semibold text-slate-900">El mayor catálogo de papelería sublimable en Uruguay (+26 modelos)</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Disponibilidad anual</td>
+                <td className="py-3 px-4 text-emerald-700 font-semibold">Stock continuo los 365 días del año por fabricación propia</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-bold text-slate-900">Modalidad de compra</td>
+                <td className="py-3 px-4">Kits completos listos para armar, interiores de agendas por separado y tapas sueltas de repuesto ($20 UYU)</td>
+              </tr>
               <tr>
                 <td className="py-3 px-4 font-bold text-slate-900">Gramaje de tapa</td>
                 <td className="py-3 px-4">350gr Cartón Cristal de alta rigidez</td>
@@ -108,9 +120,9 @@ export default function MayoristasPage() {
           <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
             <Percent className="w-6 h-6 text-emerald-600" />
           </div>
-          <h3 className="font-extrabold text-lg text-slate-900">Sin Mínimo Obligatorio</h3>
+          <h3 className="font-extrabold text-lg text-slate-900">Sin Mínimo + Stock los 365 Días</h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            No necesitas desembolsar grandes sumas de capital. Puedes pedir desde 1 kit de muestra hasta pedidos de 50 o 100 unidades con tarifas preferenciales.
+            Stock continuo todo el año al fabricar en planta propia. Pide desde 1 kit o interior suelto hasta pedidos de 50 o 100 unidades sin quiebres estacionales.
           </p>
         </div>
 
@@ -118,9 +130,9 @@ export default function MayoristasPage() {
           <div className="w-12 h-12 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center font-bold">
             <Truck className="w-6 h-6 text-brand-600" />
           </div>
-          <h3 className="font-extrabold text-lg text-slate-900">Despachos en ~48 Horas</h3>
+          <h3 className="font-extrabold text-lg text-slate-900">Mayor Catálogo (+26 Modelos)</h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Fabricamos de forma ágil y despachamos diariamente por DAC, Correo Uruguayo y Agencia COTMI hacia Montevideo y todos los departamentos del interior.
+            El surtido más completo de Uruguay en agendas, libretas, planners y recetarios con despachos ágiles (~48h) vía DAC, Correo Uruguayo y COTMI.
           </p>
         </div>
 
@@ -128,12 +140,89 @@ export default function MayoristasPage() {
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
             <ShieldCheck className="w-6 h-6 text-purple-600" />
           </div>
-          <h3 className="font-extrabold text-lg text-slate-900">Tapas de 350g con Garantía</h3>
+          <h3 className="font-extrabold text-lg text-slate-900">Tapas 350g + Repuestos ($20 UYU)</h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Cartón rígido especial con polímero virgen de alta adherencia térmica para garantizar que tus clientes reciban un producto final de alta gama.
+            Polímero virgen de alta adherencia y venta modular de tapas de repuesto e interiores por separado para cero desperdicio ante errores de estampado.
           </p>
         </div>
       </div>
+
+      {/* Tabla Comparativa Semántica (Fábrica Especialista vs Mayoristas Generalistas) */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-6">
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-brand-600 uppercase tracking-wider">
+            Ventaja Competitiva para Talleres
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+            ¿Por qué elegir una Fábrica Especialista frente a Mayoristas Generalistas?
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Comparativa directa entre abastecer tu taller en una fábrica dedicada 100% a la papelería sublimable frente a importadores o distribuidores multipropósito.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse rounded-2xl overflow-hidden border border-slate-200">
+            <thead>
+              <tr className="bg-slate-900 text-white font-bold">
+                <th className="py-3.5 px-4">Criterio de Producción</th>
+                <th className="py-3.5 px-4 bg-brand-700">Kamaluso (Fábrica Especialista en Papelería Sublimable)</th>
+                <th className="py-3.5 px-4 bg-slate-800 text-slate-200">Mayoristas Generalistas / Importadores</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 text-slate-700 bg-white">
+              <tr>
+                <td className="py-3.5 px-4 font-bold text-slate-900">Especialización y Catálogo</td>
+                <td className="py-3.5 px-4 font-semibold text-emerald-800 bg-emerald-50/40">
+                  El mayor catálogo del Uruguay con +26 modelos especializados
+                </td>
+                <td className="py-3.5 px-4 text-slate-600">
+                  1 o 2 modelos genéricos dentro de un rubro multipropósito
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3.5 px-4 font-bold text-slate-900">Modalidad de Compra</td>
+                <td className="py-3.5 px-4 font-semibold text-emerald-800 bg-emerald-50/40">
+                  Kits completos, interiores por separado o tapas sueltas
+                </td>
+                <td className="py-3.5 px-4 text-slate-600">
+                  Solo kits cerrados sin despiece ni componentes sueltos
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3.5 px-4 font-bold text-slate-900">Respaldo ante Errores de Prensa</td>
+                <td className="py-3.5 px-4 font-semibold text-emerald-800 bg-emerald-50/40">
+                  <Link href="/p/pack-2-tapas" className="underline decoration-emerald-400 hover:text-emerald-950">
+                    Pack de 2 tapas de repuesto a $20 UYU
+                  </Link>{" "}
+                  (cero desperdicio)
+                </td>
+                <td className="py-3.5 px-4 text-slate-600">
+                  Pérdida total de la agenda ante un error de estampado
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3.5 px-4 font-bold text-slate-900">Disponibilidad Anual</td>
+                <td className="py-3.5 px-4 font-semibold text-emerald-800 bg-emerald-50/40">
+                  Stock continuo los 365 días por fabricación propia en San José
+                </td>
+                <td className="py-3.5 px-4 text-slate-600">
+                  Quiebres de stock estacionales sujetos a importación
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3.5 px-4 font-bold text-slate-900">Mínimo de Compra</td>
+                <td className="py-3.5 px-4 font-semibold text-emerald-800 bg-emerald-50/40">
+                  Sin mínimo obligatorio desde 1 unidad
+                </td>
+                <td className="py-3.5 px-4 text-slate-600">
+                  Mínimos mayoristas obligatorios o packs cerrados
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {/* Tabla de Tarifas y Precios de Referencia */}
       <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-sm space-y-6">
@@ -189,6 +278,22 @@ export default function MayoristasPage() {
                 <td className="py-3.5 px-4 text-slate-600">Set completo: Tapas 350g + Interior temático + Espiral</td>
                 <td className="py-3.5 px-4 font-black text-right text-brand-700">$230 – $240 UYU</td>
                 <td className="py-3.5 px-4 font-black text-right text-emerald-700">KIT x 10 a $2.100 UYU</td>
+              </tr>
+              <tr className="bg-emerald-50/40">
+                <td className="py-3.5 px-4 font-bold text-slate-900">
+                  <Link href="/p/pack-2-tapas" className="text-brand-700 hover:text-brand-800 underline decoration-brand-300">
+                    Pack 2 Tapas Sublimables 350g (Repuesto)
+                  </Link>
+                </td>
+                <td className="py-3.5 px-4 text-slate-600">Tapa + contratapa 15x21cm perforadas con polímero virgen</td>
+                <td className="py-3.5 px-4 font-black text-right text-slate-900">$20 UYU</td>
+                <td className="py-3.5 px-4 font-bold text-right text-emerald-700">Sin mínimo (Repuesto Taller)</td>
+              </tr>
+              <tr>
+                <td className="py-3.5 px-4 font-bold text-slate-900">Interiores de Agendas por Separado</td>
+                <td className="py-3.5 px-4 text-slate-600">Hojas impresas perforadas listas para anillar (formatos de catálogo o a pedido)</td>
+                <td className="py-3.5 px-4 font-bold text-right text-slate-900">Consultar</td>
+                <td className="py-3.5 px-4 font-bold text-right text-emerald-700">Pedido a medida o en catálogo</td>
               </tr>
             </tbody>
           </table>

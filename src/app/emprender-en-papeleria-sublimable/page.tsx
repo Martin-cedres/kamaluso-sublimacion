@@ -50,7 +50,7 @@ export default function EmprenderPage() {
           Cómo Iniciar un Negocio de Agendas Personalizadas y Papelería Sublimable
         </h1>
         <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-          La papelería personalizada tiene uno de los mayores márgenes de ganancia en el rubro del estampado en Uruguay. Conoce los números reales, la maquinaria básica y cómo empezar con insumos listos para armar.
+          La papelería personalizada tiene uno de los mayores márgenes de ganancia en el rubro del estampado en Uruguay. Conoce los números reales, la maquinaria básica y cómo emprender con <strong>el mayor catálogo del país (+26 modelos)</strong> y <strong>stock todo el año (365 días)</strong> desde nuestra fábrica en San José de Mayo, comprando kits completos, interiores por separado o tapas de repuesto sin mínimo.
         </p>
       </div>
 
@@ -83,6 +83,12 @@ export default function EmprenderPage() {
               <li>• Kit Kamaluso (Tapas 350g + Interior impreso + Espiral): <strong>$230 UYU</strong></li>
               <li>• 2 hojas de papel de sublimación + tinta: <strong>~$15 UYU</strong></li>
               <li>• Gasto de energía por 2 minutos de prensa: <strong>Mínimo</strong></li>
+              <li>
+                • Cero desperdicio al aprender:{" "}
+                <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
+                  Pack 2 Tapas de Repuesto a $20 UYU
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -158,7 +164,11 @@ export default function EmprenderPage() {
         <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100 flex items-center gap-3 text-xs sm:text-sm text-purple-900 font-medium">
           <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0" />
           <span>
-            <strong>¿Y el anillado?</strong> Nuestros kits incluyen las hojas perforadas y el espiral plástico continuo a medida. El ensamblado final toma menos de 2 minutos a mano.
+            <strong>¿Y el anillado o si me equivoco al estampar?</strong> Nuestros kits incluyen las hojas perforadas y el espiral plástico continuo a medida (ensamblado en menos de 2 minutos). Además, al ser fábrica directa vendemos <strong>interiores de agendas por separado</strong> y{" "}
+            <Link href="/p/pack-2-tapas" className="font-bold underline decoration-purple-400 hover:text-purple-950">
+              tapas sublimables de repuesto ($20 UYU)
+            </Link>{" "}
+            para que nunca tengas que desechar una agenda completa por un error de prensa.
           </span>
         </div>
       </section>
@@ -173,6 +183,9 @@ export default function EmprenderPage() {
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Las 4 temporadas pico para vender papelería en Uruguay
           </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Gracias a nuestra fabricación propia en San José de Mayo, contamos con <strong>stock continuo los 365 días del año</strong> en +26 modelos para que tu taller no sufra quiebres de mercadería en plena zafra.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

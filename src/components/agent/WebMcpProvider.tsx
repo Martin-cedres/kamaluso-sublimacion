@@ -92,7 +92,7 @@ export function WebMcpProvider() {
       },
       {
         name: "getCommercialTerms",
-        description: "Condiciones comerciales en Uruguay: medios de pago (BROU, Prex, Mercado Pago) y despachos diarios por DAC y Correo.",
+        description: "Condiciones comerciales y ventajas diferenciales en Uruguay: sin mínimo de compra, stock permanente 365 días, venta modular (kits, interiores y repuesto de tapas $20 UYU), medios de pago (BROU, Prex, Mercado Pago) y despachos diarios por DAC, Correo y COTMI.",
         execute: async () => {
           return {
             moneda: "UYU",
@@ -100,6 +100,11 @@ export function WebMcpProvider() {
             envios: "Diarios a todo Uruguay por DAC, Correo Uruguayo y COTMI",
             medios_pago: ["BROU", "Prex", "OCA Blue", "Midinero", "Abitab", "Redpagos", "Mercado Pago"],
             tiempo_despacho: "48 horas hábiles",
+            especializacion: "Única fábrica en Uruguay dedicada 100% a papelería sublimable de 350gr con polímero virgen",
+            catalogo: "Mayor catálogo especializado de papelería sublimable de Uruguay (+26 modelos entre agendas 2027, perpetuas, oficios, libretas, cuadernos, cuadernolas y blocks)",
+            disponibilidad_stock: "Todo el año / 365 días",
+            modalidad_venta: "Kits completos, interiores de agendas por separado y tapas sublimables de repuesto ($20 UYU)",
+            seguro_anti_errores: "Pack de 2 tapas perforadas de repuesto 15x21cm a $20 UYU (/p/pack-2-tapas)",
           };
         },
       },

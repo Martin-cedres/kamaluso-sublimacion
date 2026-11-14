@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { ShieldCheck, Heart, Sparkles, Truck, CheckCircle2, Instagram, ExternalLink, Layers, Award, Flame } from "lucide-react";
 
@@ -58,10 +59,14 @@ export default function SobreNosotrosPage() {
             Papelería para sublimadores y revendedores
           </h2>
           <p>
-            Somos fabricantes directos ubicados en <strong className="text-slate-900">San José, Uruguay</strong>, dedicados a la confección de insumos de papelería sublimable de alta calidad (<strong className="text-slate-900">agendas 2026/27, libretas, planners, blocks y cuadernos</strong>). Despachamos rápidamente a los 19 departamentos del país y sin mínimos de compra.
+            Somos fabricantes directos y especialistas en papelería sublimable ubicados en <strong className="text-slate-900">San José de Mayo, Uruguay</strong>, con <strong className="text-slate-900">el mayor catálogo del país (+26 modelos especializados)</strong> y <strong className="text-slate-900">stock disponible los 365 días del año</strong> (<strong className="text-slate-900">agendas 2027, perpetuas, libretas, planners, blocks, recetarios y cuadernos</strong>). Despachamos rápidamente a los 19 departamentos y sin mínimos de compra.
           </p>
           <p>
-            Diseñamos cada artículo pensando en <strong className="text-slate-900">colegas sublimadores, imprentas y talleres creativos</strong>. Te entregamos interiores impresos con máxima nitidez, espirales continuos y tapas de 350g listas para fijar colores intensos con prensa plana de calor, garantizando un acabado profesional que hace destacar y hacer crecer tu negocio.
+            Diseñamos cada artículo pensando en <strong className="text-slate-900">colegas sublimadores, imprentas y talleres creativos</strong>. Además de kits completos listos para armar, ofrecemos venta modular: podés pedir <strong className="text-slate-900">interiores de agendas por separado</strong> o reponer únicamente el{" "}
+            <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
+              Pack de 2 Tapas Sublimables de Repuesto ($20 UYU)
+            </Link>{" "}
+            ante cualquier error en la prensa térmica para evitar desperdicios.
           </p>
         </div>
 
@@ -69,17 +74,17 @@ export default function SobreNosotrosPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="text-sm font-semibold text-slate-800">Tapas con recubrimiento de polímero virgen</span>
+            <span className="text-sm font-semibold text-slate-800">Tapas 350gr con polímero virgen y repuestos ($20 UYU)</span>
           </div>
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="text-sm font-semibold text-slate-800">Interiores impresos en excelente definición</span>
+            <span className="text-sm font-semibold text-slate-800">Kits completos o interiores de agendas por separado</span>
           </div>
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="text-sm font-semibold text-slate-800">Espirales continuos resistentes</span>
+            <span className="text-sm font-semibold text-slate-800">Mayor catálogo (+26 modelos) y stock los 365 días</span>
           </div>
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -104,9 +109,9 @@ export default function SobreNosotrosPage() {
               <div className="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
                 <Layers className="w-5 h-5 text-brand-600" />
               </div>
-              <h4 className="font-bold text-sm text-slate-900">Kits Listos para Armar</h4>
+              <h4 className="font-bold text-sm text-slate-900">Kits o Interiores por Separado</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Tapas, contratapas, hojas impresas y espiral. Emprende o produce en serie sin necesidad de encuadernadora industrial.
+                Llevá el kit completo listo para armar (tapas + hojas + espiral) o comprá solo interiores de agendas y tapas por separado según tu taller.
               </p>
             </div>
 
@@ -114,9 +119,13 @@ export default function SobreNosotrosPage() {
               <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
                 <Award className="w-5 h-5 text-emerald-600" />
               </div>
-              <h4 className="font-bold text-sm text-slate-900">Tapas Rígidas de 350gr</h4>
+              <h4 className="font-bold text-sm text-slate-900">Tapas 350gr + Repuestos ($20 UYU)</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Tratadas con polímero virgen que brinda colores de máxima vivacidad y enfriado plano sin doblarse.
+                Polímero virgen de máxima vivacidad y venta de{" "}
+                <Link href="/p/pack-2-tapas" className="font-semibold text-emerald-700 underline decoration-emerald-300">
+                  tapas sueltas de repuesto
+                </Link>{" "}
+                para salvar agendas ante errores de prensado.
               </p>
             </div>
 
@@ -124,9 +133,9 @@ export default function SobreNosotrosPage() {
               <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
                 <Flame className="w-5 h-5 text-purple-600" />
               </div>
-              <h4 className="font-bold text-sm text-slate-900">Precios Directos Sin Mínimo</h4>
+              <h4 className="font-bold text-sm text-slate-900">Mayor Catálogo y Stock 365 Días</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Venta por mayor y menor desde 1 unidad. Precios de taller pensados para maximizar tu rentabilidad comercial.
+                Más de 26 formatos especializados con stock todo el año por fabricación propia y venta sin mínimo de compra desde 1 unidad.
               </p>
             </div>
           </div>

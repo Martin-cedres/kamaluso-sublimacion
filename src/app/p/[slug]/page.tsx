@@ -47,27 +47,33 @@ function getProductDisplayName(product: Product): string {
 
 function getProductMetaDescription(product: Product): string {
   const measure = getProductMeasures(product);
-  const isKit =
-    !product.name.toLowerCase().includes("cartulina") &&
-    !product.name.toLowerCase().includes("pack 2 tapas");
-  const includes = isKit
-    ? "hojas interiores impresas + tapas sublimables 350gr + espiral"
-    : "tapas sublimables de cartón cristal 350gr";
+  const displayName = getProductDisplayName(product);
+  const isPack2Tapas = product.slug === "pack-2-tapas";
+  const isCartulina = product.name.toLowerCase().includes("cartulina");
 
-  let desc = `${product.name} (${measure}): kit de ${includes}. Parámetros: 170ºC / 120s. $${product.price} UYU. Envíos a todo Uruguay.`;
-  if (desc.length > 160) {
-    desc = `${product.name} (${measure}): kit de ${includes}. Estampar 170ºC/120s. $${product.price} UYU. Envíos a todo Uruguay.`;
+  let candidates: string[];
+  if (isPack2Tapas) {
+    candidates = [
+      `${displayName} (${measure}): tapas sueltas de repuesto 350gr (170ºC/120s). $${product.price} UYU. Salvá agendas ante errores, stock todo el año. Envíos.`,
+      `${displayName} (${measure}): tapas sueltas de repuesto 350gr. $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
+    ];
+  } else if (isCartulina) {
+    candidates = [
+      `${displayName} (${measure}): tapas sueltas sublimables 350gr (170ºC/120s). $${product.price} UYU. Stock todo el año. Envíos a todo Uruguay.`,
+      `${displayName} (${measure}): tapas sublimables 350gr. $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
+    ];
+  } else {
+    candidates = [
+      `${displayName} (${measure}): Kit o interior por separado + tapas 350gr. 170ºC/120s. $${product.price} UYU. Stock todo el año. Envíos a todo Uruguay.`,
+      `${displayName} (${measure}): Kit o interior por separado + tapas 350gr. $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
+      `${displayName} (${measure}): Kit o interior + tapas 350gr. $${product.price} UYU. Stock todo el año. Envíos Uruguay.`,
+      `${displayName}: Kit o interior 350gr. $${product.price} UYU. Stock todo el año. Envíos.`,
+    ];
   }
-  if (desc.length > 160) {
-    desc = `${product.name} (${measure}): hojas impresas + tapas 350gr + espiral. 170ºC/120s. $${product.price} UYU. Envíos a todo Uruguay.`;
-  }
-  if (desc.length < 140) {
-    desc = `${product.name} (${measure}): kit de ${includes}. Parámetros: 170ºC / 120s. Precio: $${product.price} UYU. Envíos a todo Uruguay desde San José.`;
-  }
-  if (desc.length > 160) {
-    desc = desc.slice(0, 157) + "...";
-  }
-  return desc;
+
+  const matched = candidates.find((c) => c.length <= 160);
+  if (matched) return matched;
+  return candidates[candidates.length - 1].slice(0, 157) + "...";
 }
 
 export async function generateMetadata({
@@ -149,6 +155,9 @@ export default async function ProductDetailPage({
   const displayName = getProductDisplayName(product);
   const productUrl = `https://www.kamaluso.com/p/${product.slug}`;
   const productDesc = getProductMetaDescription(product);
+  const productMeasure = getProductMeasures(product);
+  const isPack2Tapas = product.slug === "pack-2-tapas";
+  const is15x21Kit = productMeasure === "15x21cm" && !isPack2Tapas;
 
   const absoluteImages = (product.images || []).map((img) =>
     img.startsWith("http")
@@ -169,6 +178,24 @@ export default async function ProductDetailPage({
       "@type": "Brand",
       name: "Kamaluso",
     },
+    ...(isPack2Tapas
+      ? {
+          isSparePartFor: {
+            "@type": "Product",
+            name: "Agendas, Libretas y Recetarios Sublimables 15x21cm (A5) Kamaluso",
+            url: "https://www.kamaluso.com/categoria/agendas",
+          },
+        }
+      : {}),
+    ...(is15x21Kit
+      ? {
+          isRelatedTo: {
+            "@type": "Product",
+            name: "Pack 2 Tapas Sublimables de Repuesto 15x21cm (350gr)",
+            url: "https://www.kamaluso.com/p/pack-2-tapas",
+          },
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       url: productUrl,
@@ -234,6 +261,14 @@ export default async function ProductDetailPage({
         acceptedAnswer: {
           "@type": "Answer",
           text: "El tiempo de preparación estimado es de 48 horas hábiles. Realizamos envíos diarios a Montevideo y los 19 departamentos de Uruguay desde San José de Mayo mediante DAC, Correo Uruguayo y COTMI sin mínimo de compra.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "¿Tienen stock todo el año y venden tapas de repuesto o interiores por separado si me equivoco al sublimar?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sí, fabricamos en San José de Mayo con stock disponible todo el año (365 días). Además de kits completos, vendemos interiores de agendas por separado y el Pack de 2 Tapas Sublimables de Repuesto 350gr ($20 UYU) para que nunca tengas que desechar un producto ante errores en la prensa.",
         },
       },
     ],
@@ -347,27 +382,57 @@ export default async function ProductDetailPage({
 
           {/* Ficha Técnica Estructurada (GEO & Especificaciones de Taller) */}
           <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2.5">
-            <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-              📋 Ficha Técnica del Insumo
-            </h4>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                📋 Ficha Técnica del Insumo
+              </h4>
+              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                Stock: Todo el año (365 días)
+              </span>
+            </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="text-slate-400 block text-[10px] font-bold uppercase">Gramaje de Tapa</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase">Gramaje de Tapa</span>
                 <span className="font-bold text-slate-800">350 gr (Cartón Cristal)</span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="text-slate-400 block text-[10px] font-bold uppercase">Polímero Térmico</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase">Polímero Térmico</span>
                 <span className="font-bold text-emerald-700">Virgen Alta Transferencia</span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="text-slate-400 block text-[10px] font-bold uppercase">Kit Incluye</span>
-                <span className="font-bold text-slate-800">Tapa + Contratapa + Interior</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase">Modalidad de Venta</span>
+                <span className="font-bold text-slate-800">
+                  {isPack2Tapas ? "Pack 2 Tapas Repuesto 350gr" : "Kit, Interior o Tapas sueltas"}
+                </span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="text-slate-400 block text-[10px] font-bold uppercase">Fabricación</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase">Fabricación</span>
                 <span className="font-bold text-slate-800">San José de Mayo, Uruguay</span>
               </div>
             </div>
+            {!isPack2Tapas ? (
+              <div className="p-3 bg-brand-50/70 rounded-xl border border-brand-200/80 text-xs text-slate-800 leading-relaxed">
+                💡 <strong>Respaldo de Taller:</strong> ¿Tuviste un error al estampar?{" "}
+                <Link
+                  href="/p/pack-2-tapas"
+                  className="font-bold text-brand-700 underline decoration-brand-400 hover:text-brand-800"
+                >
+                  Comprá solo el Pack de 2 Tapas de Repuesto ($20 UYU)
+                </Link>{" "}
+                o interiores por separado sin desechar tu producto.
+              </div>
+            ) : (
+              <div className="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 text-xs text-slate-800 leading-relaxed">
+                💡 <strong>Respaldo de Taller:</strong> Este repuesto salva tus{" "}
+                <Link
+                  href="/categoria/agendas"
+                  className="font-bold text-emerald-800 underline decoration-emerald-400 hover:text-emerald-900"
+                >
+                  agendas, libretas y recetarios 15x21cm
+                </Link>{" "}
+                ante errores en la prensa térmica sin desechar el producto completo.
+              </div>
+            )}
           </div>
 
           {/* Bloque Destacado de Parámetros de Sublimación */}

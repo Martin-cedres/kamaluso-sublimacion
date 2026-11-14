@@ -13,8 +13,8 @@ import {
 import { GLOBAL_FAQ_ITEMS } from "@/lib/schema";
 
 export function HomeSeoSection() {
-  // Tomamos las 3 dudas más críticas para compra B2B
-  const topFaqs = GLOBAL_FAQ_ITEMS.slice(0, 3);
+  // Tomamos las 4 dudas más críticas para compra B2B en paridad con el Schema global
+  const topFaqs = GLOBAL_FAQ_ITEMS.slice(0, 4);
 
   return (
     <section className="py-10 max-w-7xl mx-auto px-4 text-slate-800 space-y-8">
@@ -28,7 +28,7 @@ export function HomeSeoSection() {
             Fabricantes directos de insumos para sublimación y talleres
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            En <strong>Kamaluso</strong> producimos kits completos listos para estampar y armar. Abastecemos a emprendedores y revendedores de todo Uruguay con tapas de 350g tratadas con polímero virgen de alta adherencia térmica, interiores diagramados en papel obra de primera calidad y espirales continuos.
+            En <strong>Kamaluso</strong> somos fábrica especialista con <strong>el mayor catálogo de papelería sublimable en Uruguay (+26 modelos)</strong> y stock continuo todo el año. Abastecemos a emprendedores y talleres con kits completos listos para estampar y armar, interiores de agendas por separado y tapas de 350g con polímero virgen (incluyendo repuestos sueltos para cero desperdicio).
           </p>
         </div>
 
@@ -38,9 +38,9 @@ export function HomeSeoSection() {
             <div className="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
               <Layers className="w-5 h-5 text-brand-600" />
             </div>
-            <h3 className="font-bold text-sm sm:text-base text-slate-900">Kits Listos para Armar</h3>
+            <h3 className="font-bold text-sm sm:text-base text-slate-900">Kits Completos o Interiores por Separado</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Tapas, contratapas, hojas impresas y espiral. Emprende o produce en serie sin costosa maquinaria de encuadernación.
+              Posibilidad de llevar el kit listo para armar (tapas + hojas + espiral) o solo interiores de agendas y tapas por separado según la necesidad de tu taller.
             </p>
           </div>
 
@@ -48,9 +48,9 @@ export function HomeSeoSection() {
             <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
               <Award className="w-5 h-5 text-emerald-600" />
             </div>
-            <h3 className="font-bold text-sm sm:text-base text-slate-900">Tapas Rígidas de 350gr</h3>
+            <h3 className="font-bold text-sm sm:text-base text-slate-900">Tapas 350gr + Repuestos ($20 UYU)</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Polímero virgen que asegura colores vivos y resistencia al calor para un enfriamiento plano sin deformaciones.
+              Polímero virgen de alta transferencia térmica y venta de tapas sublimables sueltas de repuesto para que si te equivocás al estampar nunca tengas que desechar la agenda completa.
             </p>
           </div>
 
@@ -58,9 +58,9 @@ export function HomeSeoSection() {
             <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
               <Flame className="w-5 h-5 text-purple-600" />
             </div>
-            <h3 className="font-bold text-sm sm:text-base text-slate-900">Precios Directos de Taller</h3>
+            <h3 className="font-bold text-sm sm:text-base text-slate-900">El Mayor Catálogo y Stock Todo el Año</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Venta por mayor y menor sin mínimos de compra. Margen de rentabilidad óptimo para talleres y revendedores.
+              Más de 26 formatos y modelos especializados en papelería sublimable con stock continuo los 365 días del año y venta por mayor y menor sin mínimo de compra.
             </p>
           </div>
         </div>
