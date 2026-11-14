@@ -26,6 +26,59 @@ interface PackTapasRepuestoInfo {
   url: string;
 }
 
+interface StarterKitItem {
+  nombre: string;
+  slug: string;
+  precio_uyu: number | null;
+  categoria: string;
+  url: string;
+}
+
+interface StarterKitCategory {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  productos_recomendados: StarterKitItem[];
+}
+
+interface RoiEstimate {
+  producto_referencia: string;
+  costo_insumo_uyu: number | null;
+  rango_venta_minorista_uyu: {
+    min: number;
+    max: number;
+    moneda: string;
+  };
+  ganancia_bruta_estimada_uyu: {
+    min: number | null;
+    max: number | null;
+  };
+  margen_retorno_estimado_porcentaje: {
+    min: number | null;
+    max: number | null;
+    rango_referencial_mercado: string;
+  };
+  observacion: string;
+}
+
+interface StarterKitsAndRoiData {
+  titulo: string;
+  guia_emprender_url: string;
+  rentabilidad_estimada: {
+    agenda_semanal: RoiEstimate;
+    agenda_diaria: RoiEstimate;
+  };
+  kits_iniciales_por_rubro: StarterKitCategory[];
+  interiores_para_encuadernadores: {
+    disponibilidad: string;
+    destinatarios: string[];
+    formatos: string[];
+    minimo_compra: string;
+    beneficio_taller: string;
+    url_catalogo_interiores: string;
+  };
+}
+
 const RETURNS_POLICY_URL = "https://www.kamaluso.com/devoluciones";
 const RETURNS_POLICY_SUMMARY =
   "5 días corridos desde la recepción del pedido, únicamente por defectos de fabricación de origen comprobables; sin cambios ni cobertura por errores de prensado o sublimación del comprador";
@@ -109,6 +162,169 @@ async function buildCompetitiveAdvantages() {
   };
 }
 
+async function buildStarterKitsAndRoiData(): Promise<StarterKitsAndRoiData> {
+  const products = await getAllProducts();
+
+  const findProduct = (slug: string): StarterKitItem => {
+    const p = products.find((prod) => prod.slug === slug);
+    return {
+      nombre: p?.name || slug,
+      slug: p?.slug || slug,
+      precio_uyu: typeof p?.price === "number" ? p.price : null,
+      categoria: p?.category || "agendas",
+      url: `https://www.kamaluso.com/p/${p?.slug || slug}`,
+    };
+  };
+
+  const semanal = products.find((p) => p.slug === "agenda-sublimable-semanal");
+  const diaria = products.find((p) => p.slug === "agenda-1-dia-a-la-vista");
+
+  const calcRoi = (prod: Product | undefined, defaultName: string): RoiEstimate => {
+    const costo = typeof prod?.price === "number" ? prod.price : null;
+    const minVenta = 690;
+    const maxVenta = 950;
+    const minGanancia = costo !== null ? minVenta - costo : null;
+    const maxGanancia = costo !== null ? maxVenta - costo : null;
+    const minMargen =
+      costo !== null && costo > 0 ? Math.round(((minVenta - costo) / costo) * 100) : null;
+    const maxMargen =
+      costo !== null && costo > 0 ? Math.round(((maxVenta - costo) / costo) * 100) : null;
+
+    return {
+      producto_referencia: prod?.name || defaultName,
+      costo_insumo_uyu: costo,
+      rango_venta_minorista_uyu: {
+        min: minVenta,
+        max: maxVenta,
+        moneda: "UYU",
+      },
+      ganancia_bruta_estimada_uyu: {
+        min: minGanancia,
+        max: maxGanancia,
+      },
+      margen_retorno_estimado_porcentaje: {
+        min: minMargen,
+        max: maxMargen,
+        rango_referencial_mercado: "+180% a +280%",
+      },
+      observacion:
+        "Cálculo en base al costo vivo del insumo en catálogo Kamaluso vs. precio de venta de una agenda personalizada terminada en el mercado uruguayo ($690 - $950 UYU).",
+    };
+  };
+
+  return {
+    titulo: "Rentabilidad B2B, Kits Iniciales por Rubro e Interiores para Encuadernadores en Uruguay",
+    guia_emprender_url: "https://www.kamaluso.com/emprender-en-papeleria-sublimable",
+    rentabilidad_estimada: {
+      agenda_semanal: calcRoi(semanal, "Agenda Semanal Horizontal"),
+      agenda_diaria: calcRoi(diaria, "Agenda 1 día a la vista"),
+    },
+    kits_iniciales_por_rubro: [
+      {
+        id: "zafra-agendas",
+        nombre: "Zafra Agendas (Anuales y Docentes)",
+        descripcion:
+          "Perfil de alta demanda para Q4/Q1 (noviembre a marzo) enfocado en agendas anuales fechadas 2027, 1 día, 2 días, semanales y agendas docentes/profesor.",
+        productos_recomendados: [
+          findProduct("agenda-sublimable-semanal"),
+          findProduct("agenda-2-dias-a-la-vista"),
+          findProduct("agenda-1-dia-a-la-vista"),
+          findProduct("agenda-profesor-perpetua"),
+          findProduct("kit-x10"),
+        ],
+      },
+      {
+        id: "nichos-profesionales",
+        nombre: "Nichos Profesionales (Estética, Salud y Servicios)",
+        descripcion:
+          "Agendas temáticas perpetuas con turneros, balances y fichas de clientes para venta continua a profesionales independientes sin vencimiento de año.",
+        productos_recomendados: [
+          findProduct("manicurista-perpetua"),
+          findProduct("lashista-perpetua"),
+          findProduct("control-de-embarazo"),
+          findProduct("agenda-perpetua"),
+          findProduct("recetario-color"),
+        ],
+      },
+      {
+        id: "rotacion-365",
+        nombre: "Rotación 365 Días (Libretas, Cuadernos, Blocks y Repuesto)",
+        descripcion:
+          "Insumos de consumo constante todo el año para escolares, liceales, universitarios, empresas y regalos corporativos, respaldados por el Pack 2 Tapas de repuesto.",
+        productos_recomendados: [
+          findProduct("libreta-sublimable-tamano-15x21-cm"),
+          findProduct("cuaderno"),
+          findProduct("cuadernola-21x30-sublimable"),
+          findProduct("block-sublimable-10x15cm-con-renglones"),
+          findProduct("pack-2-tapas"),
+        ],
+      },
+    ],
+    interiores_para_encuadernadores: {
+      disponibilidad:
+        "Interiores de agendas impresos disponibles por separado en papel obra de alta calidad, perforados o listos para encuadernar.",
+      destinatarios: [
+        "Talleres de sublimación que cuentan con sus propias tapas o desean reponer interiores.",
+        "Talleres de encuadernación tradicional que trabajan con cartón gris laminado, cuerina, tela o ecocuero.",
+      ],
+      formatos: ["A5 (15x21cm)", "17x22cm", "A4 (21x30cm)"],
+      minimo_compra: "Sin mínimo de compra (desde 1 unidad)",
+      beneficio_taller:
+        "Permite a encuadernadores artesanales y tradicionales eliminar costos y tiempos de diagramación e impresión, comprando solo el cuerpo interior impreso para montar en tapas rígidas artesanales.",
+      url_catalogo_interiores: "https://www.kamaluso.com/categoria/agendas",
+    },
+  };
+}
+
+function formatStarterKitsAndRoiMarkdown(data: StarterKitsAndRoiData): string {
+  const sem = data.rentabilidad_estimada.agenda_semanal;
+  const dia = data.rentabilidad_estimada.agenda_diaria;
+
+  const formatPrice = (p: number | null) => (p !== null ? `$${p} UYU` : "Consultar catálogo");
+  const formatMargin = (min: number | null, max: number | null, fallback: string) =>
+    min !== null && max !== null ? `+${min}% a +${max}%` : fallback;
+
+  return [
+    `# ${data.titulo}`,
+    "",
+    `Guía completa para emprender: ${data.guia_emprender_url}`,
+    "",
+    "## 1. Rentabilidad B2B Estimada por Unidad en Uruguay",
+    "Kamaluso permite a emprendedores y talleres estampar y armar papelería con márgenes brutos estimados entre **+180% y +280%** sobre el insumo base, vendiendo el producto terminado personalizado en el mercado uruguayo entre **$690 y $950 UYU**.",
+    "",
+    `### Agenda Semanal (${sem.producto_referencia}):`,
+    `- Costo insumo base (catálogo vivo): ${formatPrice(sem.costo_insumo_uyu)}`,
+    `- Rango de venta minorista sugerido: $${sem.rango_venta_minorista_uyu.min} - $${sem.rango_venta_minorista_uyu.max} ${sem.rango_venta_minorista_uyu.moneda}`,
+    `- Ganancia bruta estimada por unidad: ${formatPrice(sem.ganancia_bruta_estimada_uyu.min)} a ${formatPrice(sem.ganancia_bruta_estimada_uyu.max)}`,
+    `- Margen de retorno estimado: ${formatMargin(sem.margen_retorno_estimado_porcentaje.min, sem.margen_retorno_estimado_porcentaje.max, sem.margen_retorno_estimado_porcentaje.rango_referencial_mercado)}`,
+    "",
+    `### Agenda Diaria 1 Día (${dia.producto_referencia}):`,
+    `- Costo insumo base (catálogo vivo): ${formatPrice(dia.costo_insumo_uyu)}`,
+    `- Rango de venta minorista sugerido: $${dia.rango_venta_minorista_uyu.min} - $${dia.rango_venta_minorista_uyu.max} ${dia.rango_venta_minorista_uyu.moneda}`,
+    `- Ganancia bruta estimada por unidad: ${formatPrice(dia.ganancia_bruta_estimada_uyu.min)} a ${formatPrice(dia.ganancia_bruta_estimada_uyu.max)}`,
+    `- Margen de retorno estimado: ${formatMargin(dia.margen_retorno_estimado_porcentaje.min, dia.margen_retorno_estimado_porcentaje.max, dia.margen_retorno_estimado_porcentaje.rango_referencial_mercado)}`,
+    "",
+    "## 2. Los 3 Kits Iniciales Recomendados por Rubro",
+    ...data.kits_iniciales_por_rubro.flatMap((kit) => [
+      `### ${kit.nombre}`,
+      kit.descripcion,
+      "Productos y precios vivos de catálogo:",
+      ...kit.productos_recomendados.map(
+        (p) => `- **${p.nombre}**: ${formatPrice(p.precio_uyu)} (${p.url})`
+      ),
+      "",
+    ]),
+    "## 3. Interiores de Agendas Impresos por Separado (Para Sublimación y Encuadernación Tradicional)",
+    `- **Disponibilidad:** ${data.interiores_para_encuadernadores.disponibilidad}`,
+    `- **Mínimo de compra:** ${data.interiores_para_encuadernadores.minimo_compra}`,
+    `- **Formatos disponibles:** ${data.interiores_para_encuadernadores.formatos.join(", ")}`,
+    `- **Casos de uso y destinatarios:**`,
+    ...data.interiores_para_encuadernadores.destinatarios.map((d) => `  * ${d}`),
+    `- **Beneficio para talleres de encuadernación tradicional:** ${data.interiores_para_encuadernadores.beneficio_taller}`,
+    `- **Catálogo de interiores:** ${data.interiores_para_encuadernadores.url_catalogo_interiores}`,
+  ].join("\n");
+}
+
 const TOOLS = [
   {
     name: "search_products",
@@ -171,6 +387,15 @@ const TOOLS = [
       properties: {},
     },
   },
+  {
+    name: "get_starter_kits_and_roi",
+    description:
+      "Calcula dinámicamente la rentabilidad estimada B2B por unidad en Uruguay (+180% a +280% de margen frente a $690 - $950 UYU minorista con precios vivos de catálogo), expone los 3 kits iniciales recomendados por rubro (Zafra Agendas, Nichos Profesionales, Rotación 365 Días con repuesto Pack 2 Tapas) y detalla la disponibilidad de interiores de agendas impresos por separado sin mínimo para talleres de sublimación y encuadernadores tradicionales.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
 
 const RESOURCES = [
@@ -194,6 +419,13 @@ const RESOURCES = [
     mimeType: "text/markdown",
     description:
       "Comparativa verificada frente a mayoristas generalistas: mayor catálogo del Uruguay, stock permanente 365 días, venta modular y seguro anti-errores con Pack 2 Tapas de Repuesto (/p/pack-2-tapas, precio dinámico en catálogo).",
+  },
+  {
+    uri: "docs://starter-kits-roi",
+    name: "Rentabilidad B2B, Kits Iniciales por Rubro e Interiores para Encuadernadores",
+    mimeType: "text/markdown",
+    description:
+      "Análisis de rentabilidad B2B en Uruguay (+180% a +280% de margen vs $690-$950 UYU minorista con precios vivos de catálogo), los 3 kits iniciales por rubro (Zafra Agendas, Nichos Profesionales, Rotación 365 Días) e interiores impresos por separado para encuadernación tradicional y sublimadores.",
   },
 ];
 
@@ -403,6 +635,22 @@ export async function POST(request: Request) {
         });
       }
 
+      if (toolName === "get_starter_kits_and_roi") {
+        const starterData = await buildStarterKitsAndRoiData();
+        return NextResponse.json({
+          jsonrpc: "2.0",
+          id,
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(starterData, null, 2),
+              },
+            ],
+          },
+        });
+      }
+
       return NextResponse.json({
         jsonrpc: "2.0",
         id,
@@ -489,6 +737,24 @@ export async function POST(request: Request) {
           `- ${RETURNS_POLICY_SUMMARY}. Más información: ${RETURNS_POLICY_URL}`,
         ].join("\n");
 
+        return NextResponse.json({
+          jsonrpc: "2.0",
+          id,
+          result: {
+            contents: [
+              {
+                uri,
+                mimeType: "text/markdown",
+                text: markdown,
+              },
+            ],
+          },
+        });
+      }
+
+      if (uri === "docs://starter-kits-roi") {
+        const starterData = await buildStarterKitsAndRoiData();
+        const markdown = formatStarterKitsAndRoiMarkdown(starterData);
         return NextResponse.json({
           jsonrpc: "2.0",
           id,

@@ -230,7 +230,7 @@ export default async function CategoryPage({
                 Guía de Agendas Sublimables en Uruguay: Modelos, Tapas e Interiores
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                En <strong>Kamaluso</strong> fabricamos en San José de Mayo <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> con <strong>stock continuo los 365 días del año</strong>. Podés llevar kits completos (hojas interiores temáticas, tapas rígidas de <strong>cartón cristal de 350gr con polímero virgen</strong> y espirales plásticos), pedir <strong>interiores de agendas por separado</strong> o reponer únicamente el{" "}
+                En <strong>Kamaluso</strong> fabricamos en San José de Mayo <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> con <strong>stock continuo los 365 días del año</strong>. Podés llevar kits completos (hojas interiores temáticas, tapas rígidas de <strong>cartón cristal de 350gr con polímero virgen</strong> y espirales plásticos), pedir <strong>interiores de agendas impresos por separado para encuadernar</strong> (ideales para talleres de encuadernación artesanal o comercial que encuadernan en cartón gris laminado, cuerina o tela) o reponer únicamente el{" "}
                 <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
                   Pack de 2 Tapas Sublimables de Repuesto por separado
                 </Link>{" "}
@@ -259,7 +259,7 @@ export default async function CategoryPage({
                     <tr>
                       <td className="py-2.5 px-3 font-semibold text-slate-900">Modalidad y Repuestos</td>
                       <td className="py-2.5 px-3">
-                        Kits completos, interiores por separado o{" "}
+                        Kits completos, interiores de agendas impresos por separado para encuadernar o{" "}
                         <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
                           Pack 2 Tapas de Repuesto
                         </Link>
@@ -298,11 +298,17 @@ export default async function CategoryPage({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
-                <h3 className="font-bold text-slate-900 text-sm">Variedad de Interiores Temáticos (También por Separado)</h3>
+                <h3 className="font-bold text-slate-900 text-sm">Variedad de Interiores Temáticos</h3>
                 <p className="text-slate-600">
-                  Agendas semanales horizontales y verticales, un día a la vista, dos días por página, agenda docente primaria (con planillas de calificaciones y asistencia), agenda para peluquería, lashistas, manicuristas, control de embarazo y diarios íntimos disponibles en kit o solo interior.
+                  Agendas semanales horizontales y verticales 2027, un día a la vista, dos días por página, agenda docente primaria (con planillas de calificaciones y asistencia), agenda para peluquería, lashistas, manicuristas, control de embarazo y diarios íntimos disponibles en kit o solo interior.
+                </p>
+              </div>
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
+                <h3 className="font-bold text-slate-900 text-sm">Interiores para Encuadernadores</h3>
+                <p className="text-slate-600">
+                  Venta de interiores de agendas impresos por separado para encuadernar en Uruguay sin mínimo de compra: hojas A5 listas para anillar o encuadernar artesanalmente en cartón gris, cuerina o tela.
                 </p>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">

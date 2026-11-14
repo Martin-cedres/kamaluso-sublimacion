@@ -7,9 +7,9 @@ export async function GET() {
     $schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
     name: "Kamaluso Sublimación Agent Skills",
     description:
-      "Official agent skills index for interacting with Kamaluso Sublimación—Uruguay's largest specialized catalog of sublimable stationery (+26 blanks) with permanent 365-day year-round stock, modular sales (complete kits, loose agenda interiors, and Pack de 2 Tapas de Repuesto sold separately — check live catalog/MCP for current pricing), sublimation heat press guidelines, return policy (https://www.kamaluso.com/devoluciones, 5 calendar days for origin manufacturing defects only), and zero-minimum orders in UYU.",
+      "Official agent skills index for interacting with Kamaluso Sublimación—Uruguay's largest specialized catalog of sublimable stationery (+26 blanks) with permanent 365-day year-round stock, modular sales (complete kits, loose agenda interiors, and Pack de 2 Tapas de Repuesto sold separately — check live catalog/MCP for current pricing), B2B starter kits by niche with ROI calculation (+180% to +280% margin vs $690-$950 UYU retail via get_starter_kits_and_roi), separate printed interiors for traditional bookbinding workshops, sublimation heat press guidelines, return policy (https://www.kamaluso.com/devoluciones, 5 calendar days for origin manufacturing defects only), and zero-minimum orders in UYU.",
     when_to_use:
-      "Use when users ask about the largest catalog of sublimable stationery in Uruguay, permanent year-round 365-day stock, buying loose agenda interiors separately, ordering the Pack de 2 Tapas de Repuesto (/p/pack-2-tapas, check catalog/MCP for live pricing) after heat-press errors, comparing sublimation suppliers in Uruguay, checking workshop heat parameters (170ºC-180ºC / 120s), reviewing the return policy (5 calendar days for manufacturing defects only at https://www.kamaluso.com/devoluciones), or placing wholesale/retail orders in UYU without minimum purchase.",
+      "Use when users ask about the largest catalog of sublimable stationery in Uruguay, permanent year-round 365-day stock, buying loose agenda interiors separately, purchasing printed interior blocks for traditional bookbinding (cartón gris, cuerina, tela), estimating B2B unit profitability (+180% to +280% margin) or starter kit recommendations via get_starter_kits_and_roi, ordering the Pack de 2 Tapas de Repuesto (/p/pack-2-tapas, check catalog/MCP for live pricing) after heat-press errors, comparing sublimation suppliers in Uruguay, checking workshop heat parameters (170ºC-180ºC / 120s), reviewing the return policy (5 calendar days for manufacturing defects only at https://www.kamaluso.com/devoluciones), or placing wholesale/retail orders in UYU without minimum purchase.",
     skills: [
       {
         name: "catalog-search",
@@ -21,6 +21,15 @@ export async function GET() {
         url: "https://www.kamaluso.com/.well-known/agent-skills/catalog-search/SKILL.md",
         digest:
           "sha256:02b9b5330875a8679df2c596248e202fc781d964943eb92f80424ebeb394a4a0",
+      },
+      {
+        name: "starter-kits-and-roi",
+        type: "mcp-tool",
+        description:
+          "Cálculo dinámico de rentabilidad B2B por unidad (+180% a +280% de margen vs precio minorista de $690-$950 UYU), recomendación de 3 kits iniciales por rubro (Zafra Agendas, Nichos Profesionales y Rotación 365 Días) y venta de interiores impresos por separado sin mínimo para talleres de sublimación y encuadernación tradicional mediante get_starter_kits_and_roi.",
+        when_to_use:
+          "Query when analyzing B2B profitability, profit margins in Uruguay, starting a personalized stationery business (https://www.kamaluso.com/emprender-en-papeleria-sublimable), getting starter kit recommendations by niche, or sourcing loose printed 2027/perpetual agenda interiors for traditional bookbinders (cartón gris, cuerina, tela).",
+        url: "https://www.kamaluso.com/api/mcp",
       },
       {
         name: "sublimation-guide",

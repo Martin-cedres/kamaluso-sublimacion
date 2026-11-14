@@ -4,16 +4,16 @@ import { getAllResources } from "@/lib/resources";
 import RecursosListClient from "@/components/recursos/RecursosListClient";
 
 export const metadata = {
-  title: "Plantillas para Agendas y Libretas Sublimables Gratis (PDF/PNG) | Kamaluso Uruguay",
+  title: "Guía de Medidas de Sangrado y Recursos para Sublimar Papelería | Kamaluso Uruguay",
   description:
-    "Descarga gratis plantillas para agendas sublimables, moldes de tapas 15x21cm (A5), blocks 10x15cm y guías con medidas de sangrado para sublimar papelería en Uruguay.",
+    "Centro técnico de medidas de corte y sangrado (5mm de demasía) para sublimar papelería en Uruguay. Descarga recursos y accede a plantillas PDF y guías de rentabilidad.",
   alternates: {
     canonical: "https://www.kamaluso.com/recursos",
   },
   openGraph: {
-    title: "Plantillas para Agendas y Libretas Sublimables Gratis (PDF/PNG) | Kamaluso Uruguay",
+    title: "Guía de Medidas de Sangrado y Recursos para Sublimar Papelería | Kamaluso Uruguay",
     description:
-      "Descarga gratis plantillas para agendas sublimables, moldes de tapas 15x21cm (A5), blocks 10x15cm y guías con medidas de sangrado para sublimar papelería en Uruguay.",
+      "Centro técnico de medidas de corte y sangrado (5mm de demasía) para sublimar papelería en Uruguay. Descarga recursos y accede a plantillas PDF y guías de rentabilidad.",
     url: "https://www.kamaluso.com/recursos",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -23,15 +23,15 @@ export const metadata = {
         url: "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
         width: 1200,
         height: 630,
-        alt: "Kamaluso Recursos y Plantillas Gratis",
+        alt: "Kamaluso Recursos y Medidas de Sangrado",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Plantillas para Agendas y Libretas Sublimables Gratis (PDF/PNG) | Kamaluso Uruguay",
+    title: "Guía de Medidas de Sangrado y Recursos para Sublimar Papelería | Kamaluso Uruguay",
     description:
-      "Descarga gratis plantillas para agendas sublimables, moldes de tapas 15x21cm (A5), blocks 10x15cm y guías con medidas de sangrado para sublimar papelería en Uruguay.",
+      "Centro técnico de medidas de corte y sangrado (5mm de demasía) para sublimar papelería en Uruguay. Descarga recursos y accede a plantillas PDF y guías de rentabilidad.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
@@ -46,14 +46,57 @@ export default async function RecursosPage() {
       {/* Header */}
       <div className="text-center space-y-4">
         <span className="text-xs font-bold text-brand-600 uppercase tracking-widest bg-brand-50 px-3 py-1 rounded-full">
-          Recursos Gratuitos para Sublimadores
+          Centro Técnico para Sublimadores
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-          Plantillas para Agendas, Libretas y Tapas Sublimables Descargables (Gratis)
+          Guía de Medidas de Sangrado y Recursos para Sublimar Papelería
         </h1>
         <p className="text-slate-600 leading-relaxed text-base max-w-2xl mx-auto">
-          Descarga gratis las guías de sublimación y plantillas con medidas exactas para diseñar las tapas de tus agendas, libretas y cuadernos.
+          Especificaciones técnicas de demasía (5 mm), parámetros de corte y recursos descargables para diseñar tapas de agendas, cuadernos y libretas con acabado profesional sin bordes blancos.
         </p>
+      </div>
+
+      {/* Enlaces directos a Plantillas PDF y Rentabilidad */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link
+          href="/plantillas-sublimacion"
+          className="group p-5 bg-gradient-to-br from-brand-50/70 to-white rounded-2xl border border-brand-200/80 hover:border-brand-400 transition-all shadow-xs flex flex-col justify-between space-y-2"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-brand-700 uppercase tracking-wider block">
+              Moldes y Descargas PDF
+            </span>
+            <h2 className="font-extrabold text-slate-900 text-base group-hover:text-brand-600 transition-colors">
+              Plantillas para Sublimación (PDF) →
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Descarga moldes exactos en PDF con sangrado de 5mm listos para diseñar en Canva, Photoshop o Illustrator.
+            </p>
+          </div>
+          <span className="text-xs font-bold text-brand-600 group-hover:translate-x-1 transition-transform inline-block pt-1">
+            Ver moldes en /plantillas-sublimacion
+          </span>
+        </Link>
+
+        <Link
+          href="/emprender-en-papeleria-sublimable"
+          className="group p-5 bg-gradient-to-br from-purple-50/70 to-white rounded-2xl border border-purple-200/80 hover:border-purple-400 transition-all shadow-xs flex flex-col justify-between space-y-2"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-purple-700 uppercase tracking-wider block">
+              Guía de Negocio y Rentabilidad
+            </span>
+            <h2 className="font-extrabold text-slate-900 text-base group-hover:text-purple-600 transition-colors">
+              Cómo Emprender en Papelería Sublimable →
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Costos reales en UYU, márgenes netos de más del 180% y calendario de zafras para vender todo el año.
+            </p>
+          </div>
+          <span className="text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform inline-block pt-1">
+            Ver guía de negocio en /emprender
+          </span>
+        </Link>
       </div>
 
       {/* Grid Dinámico de Descargables */}

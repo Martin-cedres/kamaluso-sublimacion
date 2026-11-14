@@ -1,8 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { TrendingUp, Calculator, CheckCircle2, Calendar, ArrowRight, DollarSign, Sparkles, Printer, Layers, Flame } from "lucide-react";
+import { TrendingUp, Calculator, CheckCircle2, Calendar, ArrowRight, DollarSign, Sparkles, Printer, Layers, Flame, PackageCheck, Briefcase, Clock, ShieldCheck } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
+import { getAllProducts } from "@/lib/products";
+import { Product } from "@/types";
 
 export const metadata: Metadata = {
   title: "Cómo Emprender con Agendas y Papelería Sublimable en Uruguay | Guía Kamaluso",
@@ -37,7 +39,44 @@ export const metadata: Metadata = {
   },
 };
 
-export default function EmprenderPage() {
+export const revalidate = 3600;
+
+export default async function EmprenderPage() {
+  const products = await getAllProducts();
+  const productMap = new Map<string, Product>();
+  products.forEach((p) => {
+    if (p && p.slug) productMap.set(p.slug, p);
+  });
+
+  const getPrice = (slug: string, fallback: number): number => {
+    const prod = productMap.get(slug);
+    return prod && typeof prod.price === "number" && !isNaN(prod.price) ? prod.price : fallback;
+  };
+
+  // Precios dinámicos calculados del catálogo oficial
+  const kitSemanalPrice = getPrice("agenda-sublimable-semanal", 175);
+  const insumosSublimacion = 15; // 2 hojas de papel de sublimación + tinta por portada
+  const costoFabricacionTotal = kitSemanalPrice + insumosSublimacion;
+  const precioVentaMin = 690;
+  const precioVentaMax = 950;
+  const gananciaNetaMin = precioVentaMin - costoFabricacionTotal;
+  const gananciaNetaMax = precioVentaMax - costoFabricacionTotal;
+  const margenMin = Math.round((gananciaNetaMin / costoFabricacionTotal) * 100);
+  const margenMax = Math.round((gananciaNetaMax / costoFabricacionTotal) * 100);
+
+  // Precios dinámicos para los 3 Kits Iniciales y CTA
+  const kitX10Price = getPrice("kit-x10", 1600);
+  const agendaDocentePrice = getPrice("agenda-profesor-perpetua", 290);
+  const agenda2DiasPrice = getPrice("agenda-2-dias-a-la-vista", 240);
+  const manicuristaPrice = getPrice("manicurista-perpetua", 250);
+  const lashistaPrice = getPrice("lashista-perpetua", 250);
+  const embarazoPrice = getPrice("control-de-embarazo", 160);
+  const recetarioColorPrice = getPrice("recetario-color", 150);
+  const libretaA5Price = getPrice("libreta-sublimable-tamano-15x21-cm", 140);
+  const cuadernolaPrice = getPrice("cuadernola-21x30-sublimable", 180);
+  const pack2TapasPrice = getPrice("pack-2-tapas", 20);
+  const agendaPerpetuaPrice = getPrice("agenda-perpetua", 155);
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 sm:py-16 space-y-12">
       {/* Header */}
@@ -77,16 +116,16 @@ export default function EmprenderPage() {
               1. Costo de Fabricación
             </span>
             <span className="text-3xl sm:text-4xl font-black text-slate-900 block">
-              ~$245 <span className="text-sm font-normal text-slate-500">UYU</span>
+              ~${costoFabricacionTotal} <span className="text-sm font-normal text-slate-500">UYU</span>
             </span>
             <ul className="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-slate-200/60">
-              <li>• Kit Kamaluso (Tapas 350g + Interior impreso + Espiral): <strong>$230 UYU</strong></li>
-              <li>• 2 hojas de papel de sublimación + tinta: <strong>~$15 UYU</strong></li>
+              <li>• Kit Kamaluso (Tapas 350g + Interior impreso + Espiral): <strong>${kitSemanalPrice} UYU</strong></li>
+              <li>• 2 hojas de papel de sublimación + tinta: <strong>~${insumosSublimacion} UYU</strong></li>
               <li>• Gasto de energía por 2 minutos de prensa: <strong>Mínimo</strong></li>
               <li>
                 • Cero desperdicio al aprender:{" "}
                 <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
-                  Pack 2 Tapas de Repuesto por separado
+                  Pack 2 Tapas de Repuesto (${pack2TapasPrice} UYU)
                 </Link>
               </li>
             </ul>
@@ -98,7 +137,7 @@ export default function EmprenderPage() {
               2. Precio de Venta al Público
             </span>
             <span className="text-3xl sm:text-4xl font-black text-brand-600 block">
-              $690 – $950 <span className="text-sm font-normal text-slate-500">UYU</span>
+              ${precioVentaMin} – ${precioVentaMax} <span className="text-sm font-normal text-slate-500">UYU</span>
             </span>
             <p className="text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-200/60">
               El cliente paga por el valor emocional del diseño personalizado con su nombre, profesión, fotos o frases motivacionales.
@@ -111,16 +150,198 @@ export default function EmprenderPage() {
               3. Ganancia Neta por Unidad
             </span>
             <span className="text-3xl sm:text-4xl font-black block">
-              +$445 – $705 <span className="text-sm font-normal text-emerald-100">UYU</span>
+              +${gananciaNetaMin} – ${gananciaNetaMax} <span className="text-sm font-normal text-emerald-100">UYU</span>
             </span>
             <div className="pt-2 border-t border-emerald-400/40 space-y-1">
               <span className="inline-block bg-white text-emerald-900 font-extrabold text-xs px-2.5 py-1 rounded-full">
-                +180% a +280% de Margen
+                +{margenMin}% a +{margenMax}% de Margen
               </span>
               <p className="text-xs text-emerald-100">
-                Fabricando solo 20 agendas al mes, generas más de <strong>$10.000 a $14.000 UYU</strong> de ganancia neta.
+                Fabricando solo 20 agendas al mes, generas más de <strong>${(gananciaNetaMin * 20).toLocaleString("es-UY")} a ${(gananciaNetaMax * 20).toLocaleString("es-UY")} UYU</strong> de ganancia neta.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3 Kits Iniciales Recomendados según tu Rubro o Temporada */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-sm space-y-6">
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-brand-600 uppercase tracking-wider">
+            Estrategia de Selección para Tu Taller
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+            3 Kits Iniciales Recomendados según tu Rubro o Temporada
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Combina los insumos con mayor demanda en Uruguay para optimizar tus tiempos de entrega y garantizar rentabilidad desde tu primer pedido:
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Kit 1: Zafra Agendas Anuales y Docentes */}
+          <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200/90 flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                <Calendar className="w-5 h-5 text-brand-600" />
+              </div>
+              <span className="text-xs font-bold text-brand-700 uppercase tracking-wider block">
+                Pico de Temporada (Octubre–Marzo)
+              </span>
+              <h3 className="font-extrabold text-lg text-slate-900">
+                1. Zafra Agendas Anuales y Docentes
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                La temporada más fuerte del año en Uruguay para preventa corporativa y el regreso a clases de maestras y profesoras.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-2 pt-2 border-t border-slate-200/70">
+                <li>
+                  •{" "}
+                  <Link href="/p/agenda-sublimable-semanal" className="font-bold text-brand-700 hover:underline">
+                    Semanal Horizontal Unisex
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${kitSemanalPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/agenda-profesor-perpetua" className="font-bold text-brand-700 hover:underline">
+                    Agenda Docente / Profesor
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${agendaDocentePrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/agenda-2-dias-a-la-vista" className="font-bold text-brand-700 hover:underline">
+                    Dos Días a la Vista
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${agenda2DiasPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/kit-x10" className="font-bold text-brand-700 hover:underline">
+                    Kit Promo Mayorista x10 Agendas
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${kitX10Price} UYU)</span>
+                </li>
+              </ul>
+            </div>
+            <Link
+              href="/categoria/agendas"
+              className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1.5 pt-2"
+            >
+              <span>Ver todas las agendas sublimables</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Kit 2: Nichos Profesionales y Regalería */}
+          <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200/90 flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                <Briefcase className="w-5 h-5 text-purple-600" />
+              </div>
+              <span className="text-xs font-bold text-purple-700 uppercase tracking-wider block">
+                Alto Valor Percibido
+              </span>
+              <h3 className="font-extrabold text-lg text-slate-900">
+                2. Nichos Profesionales y Regalería
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Diseñadas para salones de belleza, estéticas, futuras mamás y aficionados a la gastronomía con layouts especializados.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-2 pt-2 border-t border-slate-200/70">
+                <li>
+                  •{" "}
+                  <Link href="/p/manicurista-perpetua" className="font-bold text-purple-700 hover:underline">
+                    Agenda Manicurista Perpetua
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${manicuristaPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/lashista-perpetua" className="font-bold text-purple-700 hover:underline">
+                    Agenda Lashista & Pestañas
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${lashistaPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/control-de-embarazo" className="font-bold text-purple-700 hover:underline">
+                    Control de Embarazo & Bebé
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${embarazoPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/recetario-color" className="font-bold text-purple-700 hover:underline">
+                    Recetario de Cocina Color
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${recetarioColorPrice} UYU)</span>
+                </li>
+              </ul>
+            </div>
+            <Link
+              href="/categoria/especiales"
+              className="text-xs font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1.5 pt-2"
+            >
+              <span>Ver especiales de nicho</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Kit 3: Rotación Todo el Año + Respaldo Anti-Merma */}
+          <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200/90 flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                <ShieldCheck className="w-5 h-5 text-emerald-600" />
+              </div>
+              <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">
+                Cero Vencimiento & Cero Merma
+              </span>
+              <h3 className="font-extrabold text-lg text-slate-900">
+                3. Rotación Todo el Año (365 días) + Respaldo
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Productos sin fecha de caducidad para regalos corporativos y el respaldo indispensable para salvar tapas ante fallas de prensa.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-2 pt-2 border-t border-slate-200/70">
+                <li>
+                  •{" "}
+                  <Link href="/p/agenda-perpetua" className="font-bold text-emerald-700 hover:underline">
+                    Agenda Perpetua sin Fechas
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${agendaPerpetuaPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/libreta-sublimable-tamano-15x21-cm" className="font-bold text-emerald-700 hover:underline">
+                    Libreta A5 15x21 cm Rayada
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${libretaA5Price} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/cuadernola-21x30-sublimable" className="font-bold text-emerald-700 hover:underline">
+                    Cuadernola 21x30 cm
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${cuadernolaPrice} UYU)</span>
+                </li>
+                <li>
+                  •{" "}
+                  <Link href="/p/pack-2-tapas" className="font-bold text-emerald-700 hover:underline">
+                    Pack 2 Tapas de Repuesto Anti-Merma
+                  </Link>{" "}
+                  <span className="text-slate-500 font-semibold">(${pack2TapasPrice} UYU)</span>
+                </li>
+              </ul>
+            </div>
+            <Link
+              href="/categoria/libretas"
+              className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1.5 pt-2"
+            >
+              <span>Ver libretas y cuadernos</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
@@ -233,12 +454,12 @@ export default function EmprenderPage() {
             Comienza tu taller con nuestro Kit Promo Mayorista
           </h3>
           <p className="text-brand-100 text-sm sm:text-base leading-relaxed">
-            Pide nuestro paquete promocional de 10 agendas semanales sublimables con descuento ($2.100 UYU) y despáchate a estampar con asesoramiento técnico directo.
+            Pide nuestro paquete promocional Kit x10 agendas semanales sublimables con descuento (${kitX10Price} UYU) y despáchate a estampar con asesoramiento técnico directo.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link
-            href="/p/kit-10-1-agendas-semanales-sublimables"
+            href="/p/kit-x10"
             className="bg-white text-brand-700 font-extrabold px-7 py-4 rounded-2xl hover:bg-brand-50 transition-all shadow-lg flex items-center gap-2 text-sm"
           >
             <span>Ver Kit Promo 10 Agendas</span>

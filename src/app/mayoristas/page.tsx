@@ -224,6 +224,79 @@ export default function MayoristasPage() {
         </div>
       </section>
 
+      {/* Sección Semántica: Interiores de Agendas 2027 e Impresos por Separado para Encuadernadores */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-6">
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-brand-600 uppercase tracking-wider">
+            Suministro Especializado para Talleres de Encuadernación
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+            Interiores de Agendas 2027 e Impresos por Separado para Encuadernadores
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Abastecemos a encuadernadores artesanales y comerciales en Uruguay que buscan <strong>interiores para agendas 2027 Uruguay</strong> u <strong>hojas impresas para encuadernar agendas A5</strong> en tapas duras de cartón gris laminado, cuerina, eco-cuero o tela, sin la obligación de comprar tapas plásticas ni espirales.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2.5">
+            <span className="text-xs font-extrabold text-brand-700 uppercase tracking-wider block">
+              1. Formatos A5 & Variedad Editorial
+            </span>
+            <h3 className="font-bold text-base text-slate-900">
+              Modelos Semanales, Diarios y Docentes
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Disponibles en formato estándar A5 (15x21 cm): agendas semanales 2027 (horizontales y verticales), 1 día a la vista, 2 días por página, agenda docente para maestros de primaria y nichos perpetuos (salud, estética y cocina).
+            </p>
+          </div>
+
+          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2.5">
+            <span className="text-xs font-extrabold text-emerald-700 uppercase tracking-wider block">
+              2. Venta Suelta Sin Mínimo
+            </span>
+            <h3 className="font-bold text-base text-slate-900">
+              Flexibilidad Total para tu Taller
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Comprá desde 1 interior impreso por separado hasta lotes por volumen para tu producción de encuadernación. Sin mínimos forzados ni paquetes cerrados que inmovilicen tu capital de trabajo.
+            </p>
+          </div>
+
+          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2.5">
+            <span className="text-xs font-extrabold text-purple-700 uppercase tracking-wider block">
+              3. Producción Continua en San José
+            </span>
+            <h3 className="font-bold text-base text-slate-900">
+              Stock los 365 Días & Envíos 48h
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Impresión nítida en papel obra de alto gramaje con excelente opacidad para que no traspase la tinta. Despachos rápidos a Montevideo y todo el interior por DAC, Correo Uruguayo y COTMI.
+            </p>
+          </div>
+        </div>
+
+        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs sm:text-sm text-emerald-950 font-medium">
+          <div className="space-y-0.5">
+            <p className="font-bold text-emerald-900">
+              ¿Precisas interiores de agendas impresos por separado o medidas personalizadas para encuadernar?
+            </p>
+            <p className="text-emerald-800 text-xs">
+              Coordinamos pedidos de interiores sueltos con o sin perforación directamente por WhatsApp de taller.
+            </p>
+          </div>
+          <a
+            href={WHATSAPP_MAYORISTA_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl transition-colors whitespace-nowrap text-xs shadow-xs"
+          >
+            <WhatsAppIcon className="w-4 h-4 fill-white" />
+            <span>Consultar Interiores Sueltos</span>
+          </a>
+        </div>
+      </section>
+
       {/* Tabla de Tarifas y Precios de Referencia */}
       <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-sm space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">

@@ -2025,3 +2025,51 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   - **Diagnóstico y feed (`PRODUCTS SOURCE 3`, `10794852377`):** 26 productos sin problemas de archivo ni errores de catálogo; únicamente aviso opcional de vincular cuenta de Google Ads (paso 314).
 - **Subcuenta `5807763791` (`www.papeleriapersonalizada.uy`):**
   - Verificado visualmente en la UI de Merchant Center Next que el texto `"Finaliza la configuración"` en la columna Estado se muestra sobre el badge verde activo con tilde (`Mostrar en Google`), por lo que `Envío Gratis a Agencia` (`Sin coste · 0-5 días · Uruguay · Todos`) ya se encuentra configurada y activa.
+
+### Logros adicionales (14 nov 2026 — GEO/IA: Herramienta MCP `get_starter_kits_and_roi`, Starter Kits por Rubro, Rentabilidad B2B e Interiores para Encuadernadores)
+- **`src/app/api/mcp/route.ts`:**
+  - Integrada la herramienta **`get_starter_kits_and_roi`** en `TOOLS` y en `POST (tools/call)` con lectura dinámica en tiempo de ejecución vía `getAllProducts()`.
+  - Integrado el recurso **`docs://starter-kits-roi`** en `RESOURCES` y en `POST (resources/read)`.
+  - Cálculo dinámico de rentabilidad B2B por unidad en Uruguay frente al rango minorista terminado (`$690 - $950 UYU`, margen estimado `+180% a +280%`) sin precios hardcodeados.
+  - Exposición dinámica de los 3 perfiles de kits recomendados (*Zafra Agendas*, *Nichos Profesionales*, *Rotación 365 Días*) con URLs y precios leídos en tiempo real del catálogo.
+  - Caso de uso de **interiores de agendas impresos por separado** para talleres de sublimación y encuadernación tradicional (cartón gris laminado, cuerina, tela) sin mínimo de compra.
+- **`public/llms.txt` y `public/llms-full.txt`:**
+  - Añadida la sección **"Rentabilidad B2B, Kits Iniciales por Rubro e Interiores para Encuadernadores"** con margen estimado del +180% al +280%, enlace a `https://www.kamaluso.com/emprender-en-papeleria-sublimable` y consulta de precios vivos en `/api/products` o MCP `get_starter_kits_and_roi`.
+  - Agregado el caso de uso explícito de encuadernación tradicional y actualizada la guía de agentes y llamada programática con `get_starter_kits_and_roi`.
+- **`src/app/.well-known/agent-card.json/route.ts` y `src/app/.well-known/agent-skills/index.json/route.ts`:**
+  - Actualizados ambos endpoints anunciando la herramienta `get_starter_kits_and_roi`, el cálculo de rentabilidad B2B para emprendedores y los interiores por separado para encuadernadores.
+- **Verificación técnica:**
+  - TypeScript estricto verificado con `npx tsc --noEmit` (código 0).
+  - Cero usos de `any` y cero precios estáticos hardcodeados para `pack-2-tapas` ni competidores.
+
+
+### Logros adicionales (14 nov 2026 — SEO Técnico On-Page, Schema transitTime, Descanibalización, Kits Iniciales Dinámicos e Interiores para Encuadernadores)
+- **`src/app/p/[slug]/page.tsx`:**
+  - En `shippingDetails.deliveryTime`, se incorporó `transitTime` (1 a 3 días, unitCode: "DAY") junto a `handlingTime` (1 a 2 días), completando el esquema `ShippingDeliveryTime` para Google Search y Merchant Center.
+- **`src/app/recursos/page.tsx`:**
+  - Eliminada la canibalización SEO con `/plantillas-sublimacion`:
+    - Actualizados `metadata.title`, `openGraph.title` y `twitter.title` a `"Guía de Medidas de Sangrado y Recursos para Sublimar Papelería | Kamaluso Uruguay"`.
+    - Enfocada la descripción en medidas técnicas de corte y sangrado (5 mm de demasía) y recursos descargables.
+    - Actualizado el H1 a `"Guía de Medidas de Sangrado y Recursos para Sublimar Papelería"` e integrados dos bloques destacados con enlaces contextuales directos hacia `/plantillas-sublimacion` (moldes PDF) y `/emprender-en-papeleria-sublimable` (rentabilidad), preservando `getAllResources()` y `RecursosListClient`.
+- **`src/app/emprender-en-papeleria-sublimable/page.tsx`:**
+  - Convertido a Server Component dinámico con `export const revalidate = 3600;` y `export default async function EmprenderPage()`.
+  - Reemplazados los precios estáticos hardcodeados por cálculo dinámico en tiempo de compilación/ISR mediante `await getAllProducts()` con fallbacks tipados seguros sin `any`.
+  - Incorporada la sección semántica con diseño Tailwind `"3 Kits Iniciales Recomendados según tu Rubro o Temporada"` con enlaces a los slugs reales confirmados del catálogo:
+    1) *Zafra Agendas Anuales y Docentes (Octubre–Marzo)*: `/categoria/agendas`, `/p/agenda-sublimable-semanal`, `/p/agenda-profesor-perpetua`, `/p/agenda-2-dias-a-la-vista`, `/p/kit-x10`.
+    2) *Nichos Profesionales y Regalería (Estética y Salud)*: `/p/manicurista-perpetua`, `/p/lashista-perpetua`, `/p/control-de-embarazo`, `/p/recetario-color`.
+    3) *Rotación Todo el Año (365 días) + Respaldo Anti-Merma*: `/categoria/libretas`, `/p/agenda-perpetua`, `/p/libreta-sublimable-tamano-15x21-cm`, `/p/cuadernola-21x30-sublimable`, `/p/pack-2-tapas`.
+  - Enlace del CTA final actualizado hacia `/p/kit-x10` con precio dinámico del catálogo.
+- **`src/app/mayoristas/page.tsx`:**
+  - Añadida la sección semántica destacada `"Interiores de Agendas 2027 e Impresos por Separado para Encuadernadores"`, orientada a búsquedas como *"interiores para agendas 2027 Uruguay"* u *"hojas impresas para encuadernar agendas A5"* en talleres de encuadernación artesanal o comercial (cartón gris, cuerina o tela), resaltando la venta suelta sin mínimo de compra y envíos en 48h.
+- **`src/app/categoria/[slug]/page.tsx`:**
+  - Enriquecido el bloque de categoría `agendas` incorporando menciones explícitas a la venta de *interiores de agendas impresos por separado para encuadernar* en la guía semántica, en la Ficha Técnica oficial y en las tarjetas técnicas, sin hardcodear precios ni nombrar marcas competidoras.
+- **`kamaluso_fullstack/pages/sublimacion.tsx`:**
+  - Enriquecidas las 3 tarjetas de `"¿Qué encontrás en Kamaluso.com?"` y las 4 respuestas de `faqData` sumando enlaces contextuales directos con atributos de seguridad (`target="_blank" rel="noopener noreferrer"`) hacia:
+    - `https://www.kamaluso.com/p/pack-2-tapas`
+    - `https://www.kamaluso.com/categoria/agendas`
+    - `https://www.kamaluso.com/mayoristas`
+    - `https://www.kamaluso.com/guia-sublimacion-papeleria`
+  - Preservada la integridad del JSON-LD `Service` y `FAQPage` manteniendo texto limpio sin romper validación de Schema.org.
+- **Verificación técnica:**
+  - Ejecutado `npx tsc --noEmit` en ambos proyectos (`Kamaluso sublimacion` y `kamaluso_fullstack`): código de salida 0, 0 errores de TypeScript y estricto respeto a la regla de no usar `any`.
+  - Cero comandos `git commit` ni `git push` ejecutados conforme a las instrucciones recibidas.
