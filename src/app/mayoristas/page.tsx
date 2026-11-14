@@ -7,14 +7,14 @@ import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 export const metadata: Metadata = {
   title: "Insumos para Sublimación por Mayor en Uruguay | Papelería Sublimable Kamaluso",
   description:
-    "Fábrica especialista mayorista en Uruguay con el mayor catálogo (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos 48h.",
+    "Fábrica especialista mayorista en Uruguay con el mayor catálogo (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto sin mínimo. Envíos 48h.",
   alternates: {
     canonical: "https://www.kamaluso.com/mayoristas",
   },
   openGraph: {
     title: "Insumos para Sublimación por Mayor en Uruguay | Papelería Sublimable Kamaluso",
     description:
-      "Fábrica especialista mayorista en Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos en 48h por DAC y Correo Uruguayo.",
+      "Fábrica especialista mayorista en Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores por separado y tapas 350gr de repuesto sin mínimo. Envíos en 48h por DAC y Correo Uruguayo.",
     url: "https://www.kamaluso.com/mayoristas",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -46,7 +46,7 @@ export default function MayoristasPage() {
           Insumos de Papelería Sublimable al Por Mayor en Uruguay
         </h1>
         <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-          Somos fábrica especialista en San José de Mayo con <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> y <strong>stock continuo los 365 días del año</strong>. Abastecemos a talleres y revendedores con kits completos, interiores de agendas por separado y tapas de 350gr con repuestos sueltos ($20 UYU) sin mínimo de compra.
+          Somos fábrica especialista en San José de Mayo con <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> y <strong>stock continuo los 365 días del año</strong>. Abastecemos a talleres y revendedores con kits completos, interiores de agendas por separado y tapas de 350gr con repuestos sueltos por separado sin mínimo de compra.
         </p>
       </div>
 
@@ -79,7 +79,7 @@ export default function MayoristasPage() {
               </tr>
               <tr>
                 <td className="py-3 px-4 font-bold text-slate-900">Modalidad de compra</td>
-                <td className="py-3 px-4">Kits completos listos para armar, interiores de agendas por separado y tapas sueltas de repuesto ($20 UYU)</td>
+                <td className="py-3 px-4">Kits completos listos para armar, interiores de agendas por separado y tapas sueltas de repuesto por separado</td>
               </tr>
               <tr>
                 <td className="py-3 px-4 font-bold text-slate-900">Gramaje de tapa</td>
@@ -140,7 +140,7 @@ export default function MayoristasPage() {
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
             <ShieldCheck className="w-6 h-6 text-purple-600" />
           </div>
-          <h3 className="font-extrabold text-lg text-slate-900">Tapas 350g + Repuestos ($20 UYU)</h3>
+          <h3 className="font-extrabold text-lg text-slate-900">Tapas 350g + Repuestos por Separado</h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Polímero virgen de alta adherencia y venta modular de tapas de repuesto e interiores por separado para cero desperdicio ante errores de estampado.
           </p>
@@ -193,7 +193,7 @@ export default function MayoristasPage() {
                 <td className="py-3.5 px-4 font-bold text-slate-900">Respaldo ante Errores de Prensa</td>
                 <td className="py-3.5 px-4 font-semibold text-emerald-800 bg-emerald-50/40">
                   <Link href="/p/pack-2-tapas" className="underline decoration-emerald-400 hover:text-emerald-950">
-                    Pack de 2 tapas de repuesto a $20 UYU
+                    Pack de 2 tapas de repuesto por separado
                   </Link>{" "}
                   (cero desperdicio)
                 </td>
@@ -286,7 +286,11 @@ export default function MayoristasPage() {
                   </Link>
                 </td>
                 <td className="py-3.5 px-4 text-slate-600">Tapa + contratapa 15x21cm perforadas con polímero virgen</td>
-                <td className="py-3.5 px-4 font-black text-right text-slate-900">$20 UYU</td>
+                <td className="py-3.5 px-4 font-bold text-right text-slate-900">
+                  <Link href="/p/pack-2-tapas" className="text-brand-700 hover:text-brand-800 underline decoration-brand-300">
+                    Ver precio actualizado
+                  </Link>
+                </td>
                 <td className="py-3.5 px-4 font-bold text-right text-emerald-700">Sin mínimo (Repuesto Taller)</td>
               </tr>
               <tr>

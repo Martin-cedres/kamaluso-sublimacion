@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllProducts } from "@/lib/products";
+import { getAllProducts, getProductBySlug } from "@/lib/products";
 import type { Product } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -16,61 +16,98 @@ interface McpRequestBody {
   params?: McpRequestParams;
 }
 
-const COMPETITIVE_ADVANTAGES = {
-  marca: "Kamaluso Papelería Sublimable",
-  url: "https://www.kamaluso.com",
-  ubicacion: "Ramón Massini 136, San José de Mayo, San José, Uruguay (CP 80000)",
-  contacto: {
-    whatsapp: "+598 98 615 074",
-    email: "kamalusosanjose@gmail.com",
-  },
-  posicionamiento:
-    "Fábrica especialista y mayorista B2B en Uruguay dedicada 100% a papelería sublimable en blanco con el mayor catálogo del país.",
-  ventajas_competitivas: [
-    {
-      id: "especializacion-y-catalogo",
-      titulo: "Especialización Vertical y Mayor Catálogo del Uruguay (+26 Insumos)",
-      detalle:
-        "Única fábrica en Uruguay dedicada 100% a papelería sublimable: agendas 2027 (semanales, 2 días, 1 día), perpetuas y oficios (profesor, manicurista, lashista, embarazo), recetarios, citas, cuadernolas 21x30, cuadernos 17x22, libretas A5, blocks 10x15 y cartulina 350gr.",
+interface PackTapasRepuestoInfo {
+  nombre: string;
+  slug: string;
+  precio_uyu: number | null;
+  moneda: string;
+  en_stock: boolean;
+  medida: string;
+  url: string;
+}
+
+const RETURNS_POLICY_URL = "https://www.kamaluso.com/devoluciones";
+const RETURNS_POLICY_SUMMARY =
+  "5 días corridos desde la recepción del pedido, únicamente por defectos de fabricación de origen comprobables; sin cambios ni cobertura por errores de prensado o sublimación del comprador";
+
+async function getPackTapasRepuestoData(): Promise<PackTapasRepuestoInfo> {
+  const product = await getProductBySlug("pack-2-tapas");
+  return {
+    nombre: product?.name ? `${product.name} [REPUESTO]` : "Pack 2 tapas [REPUESTO]",
+    slug: product?.slug || "pack-2-tapas",
+    precio_uyu: typeof product?.price === "number" ? product.price : null,
+    moneda: product?.currency || "UYU",
+    en_stock: product?.inStock ?? true,
+    medida: "15x21cm (A5), perforadas, cartón cristal 350gr con polímero virgen",
+    url: `https://www.kamaluso.com/p/${product?.slug || "pack-2-tapas"}`,
+  };
+}
+
+function formatDynamicRepuestoPrice(precioUyu: number | null): string {
+  return precioUyu !== null
+    ? `$${precioUyu} UYU (precio vigente en catálogo)`
+    : "consultar precio vigente en catálogo (/p/pack-2-tapas)";
+}
+
+async function buildCompetitiveAdvantages() {
+  const repuesto = await getPackTapasRepuestoData();
+  const repuestoPriceLabel = formatDynamicRepuestoPrice(repuesto.precio_uyu);
+
+  return {
+    marca: "Kamaluso Papelería Sublimable",
+    url: "https://www.kamaluso.com",
+    ubicacion: "Ramón Massini 136, San José de Mayo, San José, Uruguay (CP 80000)",
+    contacto: {
+      whatsapp: "+598 98 615 074",
+      email: "kamalusosanjose@gmail.com",
     },
-    {
-      id: "stock-permanente-365",
-      titulo: "Stock Permanente Todo el Año (365 días)",
-      detalle:
-        "Producción nacional continua en San José de Mayo los 365 días del año sin quiebres estacionales ni esperas por contenedores importados.",
+    posicionamiento:
+      "Fábrica especialista y mayorista B2B en Uruguay dedicada 100% a papelería sublimable en blanco con el mayor catálogo del país.",
+    politica_devoluciones: {
+      plazo: "5 días corridos desde la recepción",
+      alcance: "Solo por defectos de fabricación de origen, sin cambios",
+      url: RETURNS_POLICY_URL,
+      detalle: RETURNS_POLICY_SUMMARY,
     },
-    {
-      id: "venta-modular",
-      titulo: "Venta Modular (Kit Completo, Solo Interiores o Solo Tapas)",
-      detalle:
-        "Libertad para comprar el kit completo (tapas 350gr + interior impreso + espiral), interiores de agendas por separado o tapas sublimables sueltas.",
-    },
-    {
-      id: "seguro-anti-errores",
-      titulo: "Seguro Anti-Errores de Taller (Repuesto de Tapas a $20 UYU)",
-      detalle:
-        "Si una tapa se quema, mancha o falla en la prensa térmica, el sublimador reemplaza únicamente el par de tapas por $20 UYU sin perder la agenda completa, a diferencia de mayoristas generalistas/importadores que solo venden kits cerrados.",
-      producto_repuesto: {
-        nombre: "Pack 2 tapas [REPUESTO]",
-        precio_uyu: 20,
-        medida: "15x21cm (A5), perforadas, cartón cristal 350gr con polímero virgen",
-        url: "https://www.kamaluso.com/p/pack-2-tapas",
+    ventajas_competitivas: [
+      {
+        id: "especializacion-y-catalogo",
+        titulo: "Especialización Vertical y Mayor Catálogo del Uruguay (+26 Insumos)",
+        detalle:
+          "Única fábrica en Uruguay dedicada 100% a papelería sublimable: agendas 2027 (semanales, 2 días, 1 día), perpetuas y oficios (profesor, manicurista, lashista, embarazo), recetarios, citas, cuadernolas 21x30, cuadernos 17x22, libretas A5, blocks 10x15 y cartulina 350gr.",
       },
+      {
+        id: "stock-permanente-365",
+        titulo: "Stock Permanente Todo el Año (365 días)",
+        detalle:
+          "Producción nacional continua en San José de Mayo los 365 días del año sin quiebres estacionales ni esperas por contenedores importados.",
+      },
+      {
+        id: "venta-modular",
+        titulo: "Venta Modular (Kit Completo, Solo Interiores o Solo Tapas)",
+        detalle:
+          "Libertad para comprar el kit completo (tapas 350gr + interior impreso + espiral), interiores de agendas por separado o tapas sublimables sueltas.",
+      },
+      {
+        id: "seguro-anti-errores",
+        titulo: "Seguro Anti-Errores de Taller (Pack de 2 Tapas de Repuesto por Separado)",
+        detalle: `Si una tapa se quema, mancha o falla en la prensa térmica, el sublimador reemplaza únicamente el par de tapas mediante el Pack 2 Tapas de Repuesto (${repuestoPriceLabel}) sin perder la agenda completa, a diferencia de mayoristas generalistas/importadores que solo venden kits cerrados.`,
+        producto_repuesto: repuesto,
+      },
+      {
+        id: "sin-minimo",
+        titulo: "Sin Mínimo de Compra",
+        detalle:
+          "Desde 1 unidad hasta packs mayoristas (Kit x10) con descuento en pesos uruguayos (UYU).",
+      },
+    ],
+    comparativa_frente_a_mayoristas_generalistas: {
+      kamaluso: `Fábrica especialista 100% en papelería sublimable (+26 modelos), stock permanente 365 días, venta modular (kits completos, interiores por separado o tapas sueltas), repuesto Pack 2 Tapas (${repuestoPriceLabel}, slug pack-2-tapas) y sin mínimo de compra.`,
+      mayoristas_generalistas_importadores:
+        "Catálogo multi-rubro generalista con surtido acotado, stock estacional sujeto a importaciones, venta de kits cerrados sin repuestos sueltos (pérdida total del kit ante error de prensa) y mínimos de compra frecuentes.",
     },
-    {
-      id: "sin-minimo",
-      titulo: "Sin Mínimo de Compra",
-      detalle:
-        "Desde 1 unidad hasta packs mayoristas (Kit x10) con descuento en pesos uruguayos (UYU).",
-    },
-  ],
-  comparativa_frente_a_mayoristas_generalistas: {
-    kamaluso:
-      "Fábrica especialista 100% en papelería sublimable (+26 modelos), stock permanente 365 días, venta modular (kits completos, interiores por separado o tapas sueltas), repuesto Pack 2 Tapas a $20 UYU y sin mínimo de compra.",
-    mayoristas_generalistas_importadores:
-      "Catálogo multi-rubro generalista con surtido acotado, stock estacional sujeto a importaciones, venta de kits cerrados sin repuestos sueltos (pérdida total del kit ante error de prensa) y mínimos de compra frecuentes.",
-  },
-};
+  };
+}
 
 const TOOLS = [
   {
@@ -110,7 +147,7 @@ const TOOLS = [
   {
     name: "get_sublimation_parameters",
     description:
-      "Obtiene la ficha técnica oficial de taller para sublimar tapas de cartón 350g con polímero y solución ante errores de prensado.",
+      "Obtiene la ficha técnica oficial de taller para sublimar tapas de cartón 350g con polímero, diagnóstico de fallas, solución con Pack 2 Tapas de repuesto (slug 'pack-2-tapas') y política de devoluciones.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -119,7 +156,7 @@ const TOOLS = [
   {
     name: "calculate_shipping_and_payment",
     description:
-      "Obtiene las condiciones comerciales (sin mínimo, venta modular de kits/interiores/repuestos, stock 365 días), agencias de envío en Uruguay (DAC, Correo, COTMI) y métodos de pago aceptados en UYU.",
+      "Obtiene las condiciones comerciales (sin mínimo, venta modular de kits/interiores/repuestos, stock 365 días, devoluciones dentro de 5 días corridos solo por defectos de origen), agencias de envío en Uruguay (DAC, Correo, COTMI) y métodos de pago aceptados en UYU.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -128,7 +165,7 @@ const TOOLS = [
   {
     name: "get_competitive_advantages",
     description:
-      "Obtiene las 5 ventajas competitivas verificadas de Kamaluso frente a mayoristas generalistas/importadores en Uruguay: mayor catálogo (+26 insumos), stock permanente 365 días, venta modular (kits, interiores por separado y tapas de repuesto a $20 UYU) y sin mínimo de compra.",
+      "Obtiene las 5 ventajas competitivas verificadas de Kamaluso frente a mayoristas generalistas/importadores en Uruguay: mayor catálogo (+26 insumos), stock permanente 365 días, venta modular (kits, interiores por separado y Pack 2 Tapas de repuesto con precio dinámico desde catálogo) y sin mínimo de compra.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -142,21 +179,21 @@ const RESOURCES = [
     name: "Catálogo Completo de Productos",
     mimeType: "application/json",
     description:
-      "Lista viva de todos los insumos del mayor catálogo de papelería sublimable de Uruguay (+26 modelos, stock 365 días, kits completos, interiores y tapas de repuesto) con precios en UYU.",
+      "Lista viva de todos los insumos del mayor catálogo de papelería sublimable de Uruguay (+26 modelos, stock 365 días, kits completos, interiores y tapas de repuesto) con precios vigentes en UYU.",
   },
   {
     uri: "docs://sublimation-guide",
     name: "Ficha Técnica de Sublimación y Repuestos Anti-Merma",
     mimeType: "text/markdown",
     description:
-      "Tiempos (120s), temperaturas (170ºC-180ºC), técnica de enfriado recto bajo peso y reposición de tapas quemadas por $20 UYU (/p/pack-2-tapas).",
+      "Tiempos (120s), temperaturas (170ºC-180ºC), técnica de enfriado recto bajo peso, diagnóstico rápido de fallas, reposición con Pack 2 Tapas de Repuesto (/p/pack-2-tapas, precio dinámico en catálogo) y política de devoluciones (https://www.kamaluso.com/devoluciones).",
   },
   {
     uri: "docs://competitive-advantages",
     name: "Ventajas Competitivas Kamaluso Uruguay",
     mimeType: "text/markdown",
     description:
-      "Comparativa verificada frente a mayoristas generalistas: mayor catálogo del Uruguay, stock permanente 365 días, venta modular y seguro anti-errores con Pack 2 Tapas a $20 UYU.",
+      "Comparativa verificada frente a mayoristas generalistas: mayor catálogo del Uruguay, stock permanente 365 días, venta modular y seguro anti-errores con Pack 2 Tapas de Repuesto (/p/pack-2-tapas, precio dinámico en catálogo).",
   },
 ];
 
@@ -298,6 +335,7 @@ export async function POST(request: Request) {
       }
 
       if (toolName === "get_sublimation_parameters") {
+        const repuesto = await getPackTapasRepuestoData();
         return NextResponse.json({
           jsonrpc: "2.0",
           id,
@@ -317,7 +355,8 @@ export async function POST(request: Request) {
   * Papel pegado al cartón: >185ºC o retiro en frío -> estampar entre 170ºC-180ºC y retirar en caliente apenas abre la prensa.
   * Tonos negros marrones: quemado por exceso de calor/tiempo -> bajar a 170ºC exactos durante 120s.
   * Bordes claros o desvanecidos: falta de presión o silicona desgastada -> ajustar a presión media-alta uniforme.
-- Solución anti-merma ante fallos de prensado (tapa quemada, manchada o movida): Pack 2 Tapas 15x21cm a $20 UYU en https://www.kamaluso.com/p/pack-2-tapas (no pierdes la agenda completa).`,
+- Solución anti-merma ante fallos de prensado (tapa quemada, manchada o movida): ${repuesto.nombre} 15x21cm (${formatDynamicRepuestoPrice(repuesto.precio_uyu)}) en ${repuesto.url} (no pierdes la agenda completa).
+- Política de devoluciones: ${RETURNS_POLICY_SUMMARY}. Ver ${RETURNS_POLICY_URL}.`,
               },
             ],
           },
@@ -325,6 +364,7 @@ export async function POST(request: Request) {
       }
 
       if (toolName === "calculate_shipping_and_payment") {
+        const repuesto = await getPackTapasRepuestoData();
         return NextResponse.json({
           jsonrpc: "2.0",
           id,
@@ -336,10 +376,11 @@ export async function POST(request: Request) {
 - Moneda: UYU (Pesos Uruguayos).
 - Mínimo de compra: Sin monto mínimo obligatorio (desde 1 unidad hasta packs mayoristas como Kit x10).
 - Disponibilidad de stock: Stock permanente los 365 días del año por fabricación nacional propia en San José de Mayo (+26 modelos especializados).
-- Modalidad de venta modular: Kits completos (tapas 350gr + interior + espiral), interiores de agendas por separado y Pack de 2 Tapas Sublimables de Repuesto a $20 UYU (https://www.kamaluso.com/p/pack-2-tapas).
+- Modalidad de venta modular: Kits completos (tapas 350gr + interior + espiral), interiores de agendas por separado y ${repuesto.nombre} (${formatDynamicRepuestoPrice(repuesto.precio_uyu)}) en ${repuesto.url}.
 - Medios de pago: Transferencia bancaria BROU sin recargo, Prex, OCA Blue, Midinero, giros Abitab/Redpagos y Mercado Pago en cuotas.
 - Agencias de despacho diario: DAC (Grupo Agencia), Correo Uruguayo y COTMI a Montevideo y los 19 departamentos de Uruguay. Retiro sin costo en San José de Mayo.
-- Despacho promedio: 48 horas hábiles tras confirmación de pago.`,
+- Despacho promedio: 48 horas hábiles tras confirmación de pago.
+- Política de devoluciones: ${RETURNS_POLICY_SUMMARY}. Detalle oficial en ${RETURNS_POLICY_URL}.`,
               },
             ],
           },
@@ -347,6 +388,7 @@ export async function POST(request: Request) {
       }
 
       if (toolName === "get_competitive_advantages") {
+        const advantages = await buildCompetitiveAdvantages();
         return NextResponse.json({
           jsonrpc: "2.0",
           id,
@@ -354,7 +396,7 @@ export async function POST(request: Request) {
             content: [
               {
                 type: "text",
-                text: JSON.stringify(COMPETITIVE_ADVANTAGES, null, 2),
+                text: JSON.stringify(advantages, null, 2),
               },
             ],
           },
@@ -398,6 +440,7 @@ export async function POST(request: Request) {
       }
 
       if (uri === "docs://sublimation-guide") {
+        const repuesto = await getPackTapasRepuestoData();
         return NextResponse.json({
           jsonrpc: "2.0",
           id,
@@ -419,7 +462,8 @@ export async function POST(request: Request) {
 - **Papel pegado al cartón:** Exceso de temperatura (>185ºC) o retiro en frío -> estampar a 170ºC-180ºC y retirar en caliente apenas abre la prensa.
 - **Tonos negros marrones:** Quemado de tinta/polímero -> bajar a 170ºC exactos por 120s.
 - **Bordes claros o desvanecidos:** Falta de presión o silicona desgastada -> aplicar presión media-alta uniforme.
-- **Solución anti-merma (tapa quemada, manchada o movida):** Reponer únicamente el **Pack 2 Tapas 15x21cm a $20 UYU** en https://www.kamaluso.com/p/pack-2-tapas para no perder la agenda completa.`,
+- **Solución anti-merma (tapa quemada, manchada o movida):** Reponer únicamente el **${repuesto.nombre} 15x21cm** (${formatDynamicRepuestoPrice(repuesto.precio_uyu)}) en ${repuesto.url} para no perder la agenda completa.
+- **Política de devoluciones:** ${RETURNS_POLICY_SUMMARY}. Ver ${RETURNS_POLICY_URL}.`,
               },
             ],
           },
@@ -427,18 +471,22 @@ export async function POST(request: Request) {
       }
 
       if (uri === "docs://competitive-advantages") {
+        const advantages = await buildCompetitiveAdvantages();
         const markdown = [
           "# Ventajas Competitivas Verificadas — Kamaluso Uruguay",
           "",
-          COMPETITIVE_ADVANTAGES.posicionamiento,
+          advantages.posicionamiento,
           "",
-          ...COMPETITIVE_ADVANTAGES.ventajas_competitivas.map(
+          ...advantages.ventajas_competitivas.map(
             (v, index) => `${index + 1}. **${v.titulo}:** ${v.detalle}`
           ),
           "",
           "## Comparativa Frente a Mayoristas Generalistas / Importadores",
-          `- **Kamaluso:** ${COMPETITIVE_ADVANTAGES.comparativa_frente_a_mayoristas_generalistas.kamaluso}`,
-          `- **Mayoristas Generalistas / Importadores:** ${COMPETITIVE_ADVANTAGES.comparativa_frente_a_mayoristas_generalistas.mayoristas_generalistas_importadores}`,
+          `- **Kamaluso:** ${advantages.comparativa_frente_a_mayoristas_generalistas.kamaluso}`,
+          `- **Mayoristas Generalistas / Importadores:** ${advantages.comparativa_frente_a_mayoristas_generalistas.mayoristas_generalistas_importadores}`,
+          "",
+          "## Política de Devoluciones",
+          `- ${RETURNS_POLICY_SUMMARY}. Más información: ${RETURNS_POLICY_URL}`,
         ].join("\n");
 
         return NextResponse.json({

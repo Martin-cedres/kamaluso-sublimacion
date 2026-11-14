@@ -86,7 +86,7 @@ export default function EmprenderPage() {
               <li>
                 • Cero desperdicio al aprender:{" "}
                 <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
-                  Pack 2 Tapas de Repuesto a $20 UYU
+                  Pack 2 Tapas de Repuesto por separado
                 </Link>
               </li>
             </ul>
@@ -166,7 +166,7 @@ export default function EmprenderPage() {
           <span>
             <strong>¿Y el anillado o si me equivoco al estampar?</strong> Nuestros kits incluyen las hojas perforadas y el espiral plástico continuo a medida (ensamblado en menos de 2 minutos). Además, al ser fábrica directa vendemos <strong>interiores de agendas por separado</strong> y{" "}
             <Link href="/p/pack-2-tapas" className="font-bold underline decoration-purple-400 hover:text-purple-950">
-              tapas sublimables de repuesto ($20 UYU)
+              tapas sublimables de repuesto por separado
             </Link>{" "}
             para que nunca tengas que desechar una agenda completa por un error de prensa.
           </span>

@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s | Kamaluso Papelería Sublimable",
   },
   description:
-    "Fábrica especialista en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos a todo el país.",
+    "Fábrica especialista en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto sin mínimo. Envíos a todo el país.",
   metadataBase: new URL("https://www.kamaluso.com"),
   manifest: "/manifest.json",
   keywords: [
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kamaluso | Insumos y Papelería Sublimable en Uruguay",
     description:
-      "Fábrica especialista en San José, Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores de agendas por separado y tapas 350gr de repuesto ($20 UYU) sin mínimo. Envíos a todo el país.",
+      "Fábrica especialista en San José, Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores de agendas por separado y tapas 350gr de repuesto sin mínimo. Envíos a todo el país.",
     url: "https://www.kamaluso.com",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kamaluso | Papelería Sublimable Uruguay",
     description:
-      "Fábrica en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores y tapas 350gr de repuesto ($20 UYU) sin mínimo.",
+      "Fábrica en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores y tapas 350gr de repuesto sin mínimo.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
   verification: {

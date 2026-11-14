@@ -121,7 +121,7 @@ const jsonLdFaqTroubleshooting = {
       "name": "¿Qué hago si me equivoqué y se quemó, manchó o movió una tapa al sublimar?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No tenés que tirar ni desechar tu agenda completa. En Kamaluso vendemos las tapas sublimables de 350gr por separado (Pack 2 Tapas de Repuesto a $20 UYU en https://www.kamaluso.com/p/pack-2-tapas) y también interiores de agendas sueltos todo el año para que tu taller salve el producto con cero desperdicio."
+        "text": "No tenés que tirar ni desechar tu agenda completa. En Kamaluso vendemos las tapas sublimables de 350gr por separado (Pack 2 Tapas de Repuesto por separado en https://www.kamaluso.com/p/pack-2-tapas) y también interiores de agendas sueltos todo el año para que tu taller salve el producto con cero desperdicio."
       }
     }
   ]
@@ -356,7 +356,7 @@ export default function GuiaSublimacionPage() {
         <div className="bg-brand-50/90 border border-brand-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <h3 className="font-extrabold text-sm sm:text-base text-slate-900">
-              ¿Te salió mal una tapa? No tires tu agenda: comprá solo el Pack de 2 Tapas de Repuesto ($20 UYU) o interiores por separado
+              ¿Te salió mal una tapa? No tires tu agenda: comprá solo el Pack de 2 Tapas de Repuesto o interiores por separado
             </h3>
             <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
               Si se quemó, manchó o movió el diseño en la prensa térmica, en Kamaluso contamos con stock los 365 días del año de tapas sublimables 350gr sueltas e interiores de agendas por separado para producir con cero desperdicio.
@@ -366,7 +366,7 @@ export default function GuiaSublimacionPage() {
             href="/p/pack-2-tapas"
             className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition-colors flex-shrink-0 w-fit"
           >
-            <span>Ver Pack 2 Tapas ($20 UYU)</span>
+            <span>Ver Pack 2 Tapas de Repuesto</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

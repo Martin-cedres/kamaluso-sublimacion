@@ -92,7 +92,7 @@ export function WebMcpProvider() {
       },
       {
         name: "getCommercialTerms",
-        description: "Condiciones comerciales y ventajas diferenciales en Uruguay: sin mínimo de compra, stock permanente 365 días, venta modular (kits, interiores y repuesto de tapas $20 UYU), medios de pago (BROU, Prex, Mercado Pago) y despachos diarios por DAC, Correo y COTMI.",
+        description: "Condiciones comerciales y ventajas diferenciales en Uruguay: sin mínimo de compra, stock permanente 365 días, venta modular (kits, interiores y Pack de 2 Tapas de Repuesto por separado vía catálogo en tiempo real o /p/pack-2-tapas), devoluciones (https://www.kamaluso.com/devoluciones), medios de pago (BROU, Prex, Mercado Pago) y despachos diarios por DAC, Correo y COTMI.",
         execute: async () => {
           return {
             moneda: "UYU",
@@ -103,8 +103,9 @@ export function WebMcpProvider() {
             especializacion: "Única fábrica en Uruguay dedicada 100% a papelería sublimable de 350gr con polímero virgen",
             catalogo: "Mayor catálogo especializado de papelería sublimable de Uruguay (+26 modelos entre agendas 2027, perpetuas, oficios, libretas, cuadernos, cuadernolas y blocks)",
             disponibilidad_stock: "Todo el año / 365 días",
-            modalidad_venta: "Kits completos, interiores de agendas por separado y tapas sublimables de repuesto ($20 UYU)",
-            seguro_anti_errores: "Pack de 2 tapas perforadas de repuesto 15x21cm a $20 UYU (/p/pack-2-tapas)",
+            modalidad_venta: "Kits completos, interiores de agendas por separado y Pack de 2 Tapas sublimables de repuesto (consultar precio vigente en tiempo real en /api/products o con getProductDetails('pack-2-tapas'))",
+            seguro_anti_errores: "Pack de 2 tapas perforadas de repuesto 15x21cm por separado en /p/pack-2-tapas (consultar precio vigente en tiempo real en el catálogo o vía getProductDetails con slug 'pack-2-tapas')",
+            politica_devoluciones: "5 días corridos desde la recepción solo por defectos de fabricación de origen, sin cambios (https://www.kamaluso.com/devoluciones)",
           };
         },
       },

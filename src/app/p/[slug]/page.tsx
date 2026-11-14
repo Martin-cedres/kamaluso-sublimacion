@@ -214,9 +214,10 @@ export default async function ProductDetailPage({
         "@type": "MerchantReturnPolicy",
         applicableCountry: "UY",
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 14,
+        merchantReturnDays: 5,
         returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/FreeReturn",
+        returnFees: "https://schema.org/ReturnShippingFees",
+        merchantReturnLink: "https://www.kamaluso.com/devoluciones",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
@@ -268,7 +269,7 @@ export default async function ProductDetailPage({
         name: "¿Tienen stock todo el año y venden tapas de repuesto o interiores por separado si me equivoco al sublimar?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Sí, fabricamos en San José de Mayo con stock disponible todo el año (365 días). Además de kits completos, vendemos interiores de agendas por separado y el Pack de 2 Tapas Sublimables de Repuesto 350gr ($20 UYU) para que nunca tengas que desechar un producto ante errores en la prensa.",
+          text: "Sí, fabricamos en San José de Mayo con stock disponible todo el año (365 días). Además de kits completos, vendemos interiores de agendas por separado y el Pack de 2 Tapas Sublimables de Repuesto 350gr por separado para que nunca tengas que desechar un producto ante errores en la prensa.",
         },
       },
     ],
@@ -417,9 +418,9 @@ export default async function ProductDetailPage({
                   href="/p/pack-2-tapas"
                   className="font-bold text-brand-700 underline decoration-brand-400 hover:text-brand-800"
                 >
-                  Comprá solo el Pack de 2 Tapas de Repuesto ($20 UYU)
+                  Comprá solo el Pack de 2 Tapas de Repuesto por separado
                 </Link>{" "}
-                o interiores por separado sin desechar tu producto.
+                o interiores sueltos sin desechar tu producto.
               </div>
             ) : (
               <div className="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 text-xs text-slate-800 leading-relaxed">

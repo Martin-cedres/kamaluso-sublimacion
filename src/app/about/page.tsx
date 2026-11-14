@@ -49,7 +49,7 @@ export default function AboutPage() {
             <p>
               Además, ofrecemos <strong>venta modular y sin mínimo de compra</strong>: podés llevar kits completos listos para armar, comprar <strong>interiores de agendas por separado</strong> o reponer únicamente el{" "}
               <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
-                Pack de 2 Tapas Sublimables de Repuesto ($20 UYU)
+                Pack de 2 Tapas Sublimables de Repuesto por separado
               </Link>{" "}
               si tuviste un error en la prensa térmica, asegurando cero desperdicio para tu taller desde 1 unidad hasta grandes zafras corporativas.
             </p>
@@ -70,7 +70,7 @@ export default function AboutPage() {
               <span>
                 <strong>www.kamaluso.com (Este sitio):</strong> Es la división fabricante especialista y mayorista B2B con stock los 365 días del año en +26 modelos. Proveemos insumos en blanco (kits completos, interiores impresos por separado, tapas sublimables de 350g y{" "}
                 <Link href="/p/pack-2-tapas" className="font-semibold text-brand-700 underline decoration-brand-300">
-                  repuestos de tapas a $20 UYU
+                  repuestos de tapas por separado
                 </Link>
                 ) listos para que cada taller o sublimador estampe sus propios diseños.
               </span>

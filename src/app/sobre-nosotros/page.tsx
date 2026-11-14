@@ -64,7 +64,7 @@ export default function SobreNosotrosPage() {
           <p>
             Diseñamos cada artículo pensando en <strong className="text-slate-900">colegas sublimadores, imprentas y talleres creativos</strong>. Además de kits completos listos para armar, ofrecemos venta modular: podés pedir <strong className="text-slate-900">interiores de agendas por separado</strong> o reponer únicamente el{" "}
             <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
-              Pack de 2 Tapas Sublimables de Repuesto ($20 UYU)
+              Pack de 2 Tapas Sublimables de Repuesto por separado
             </Link>{" "}
             ante cualquier error en la prensa térmica para evitar desperdicios.
           </p>
@@ -74,7 +74,7 @@ export default function SobreNosotrosPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="text-sm font-semibold text-slate-800">Tapas 350gr con polímero virgen y repuestos ($20 UYU)</span>
+            <span className="text-sm font-semibold text-slate-800">Tapas 350gr con polímero virgen y repuestos por separado</span>
           </div>
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -119,7 +119,7 @@ export default function SobreNosotrosPage() {
               <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
                 <Award className="w-5 h-5 text-emerald-600" />
               </div>
-              <h4 className="font-bold text-sm text-slate-900">Tapas 350gr + Repuestos ($20 UYU)</h4>
+              <h4 className="font-bold text-sm text-slate-900">Tapas 350gr + Repuestos por Separado</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Polímero virgen de máxima vivacidad y venta de{" "}
                 <Link href="/p/pack-2-tapas" className="font-semibold text-emerald-700 underline decoration-emerald-300">

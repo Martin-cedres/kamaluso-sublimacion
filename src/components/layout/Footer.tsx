@@ -119,6 +119,11 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/devoluciones" className="hover:text-white transition-colors">
+                Política de Devoluciones
+              </Link>
+            </li>
+            <li>
               <Link href="/developers" className="hover:text-emerald-400 font-semibold transition-colors flex items-center gap-1">
                 <span>Portal Developers & Agentes IA</span>
               </Link>

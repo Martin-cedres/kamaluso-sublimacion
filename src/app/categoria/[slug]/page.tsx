@@ -21,9 +21,9 @@ const CATEGORY_SEO: Record<
     h1: "Agendas Sublimables 2027 y Perpetuas en Uruguay",
     title: "Agendas Sublimables 2027 y Perpetuas en Uruguay | Kamaluso",
     metaDescription:
-      "Agendas sublimables 2027 y perpetuas directas de fábrica en San José con stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto ($20). Envíos.",
+      "Agendas sublimables 2027 y perpetuas directas de fábrica en San José con stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto. Envíos.",
     intro:
-      "Kits completos de agendas para sublimar directos de fábrica en San José de Mayo, parte del mayor catálogo de papelería sublimable de Uruguay (+26 modelos) con stock disponible los 365 días del año. Compra kits listos para armar, interiores de agendas por separado o tapas de repuesto 350gr ($20 UYU) sin mínimo de compra.",
+      "Kits completos de agendas para sublimar directos de fábrica en San José de Mayo, parte del mayor catálogo de papelería sublimable de Uruguay (+26 modelos) con stock disponible los 365 días del año. Compra kits listos para armar, interiores de agendas por separado o tapas de repuesto 350gr por separado sin mínimo de compra.",
   },
   libretas: {
     h1: "Libretas y Cuadernos Sublimables en Uruguay (A5, 17x22 y A4)",
@@ -31,7 +31,7 @@ const CATEGORY_SEO: Record<
     metaDescription:
       "Libretas, cuadernos y cuadernolas 21x30 para sublimar en Uruguay con stock todo el año. Tapas 350gr, kits o repuestos directos de fábrica en San José. Sin mínimo.",
     intro:
-      "Insumos de libretas, cuadernos y cuadernolas 21x30 para sublimación fabricados en San José de Mayo con stock continuo los 365 días del año. Parte del mayor catálogo del país (+26 modelos) con venta modular en kits completos, interiores o tapas de repuesto 15x21cm ($20 UYU) sin mínimo de compra.",
+      "Insumos de libretas, cuadernos y cuadernolas 21x30 para sublimación fabricados en San José de Mayo con stock continuo los 365 días del año. Parte del mayor catálogo del país (+26 modelos) con venta modular en kits completos, interiores o tapas de repuesto 15x21cm por separado sin mínimo de compra.",
   },
   "blocks-planners": {
     h1: "Blocks 10x15 y Planners Sublimables en Uruguay",
@@ -45,9 +45,9 @@ const CATEGORY_SEO: Record<
     h1: "Insumos Especiales, Tapas de Repuesto y Cartulina Sublimable 350gr",
     title: "Insumos Especiales y Cartulina Sublimable 350gr en Uruguay | Kamaluso",
     metaDescription:
-      "Cartulina sublimable A4 350gr, tapas sueltas de repuesto ($20 UYU) y recetarios sublimables en Uruguay. Stock todo el año directo de fábrica en San José. Sin mínimo.",
+      "Cartulina sublimable A4 350gr, tapas sueltas de repuesto y recetarios sublimables en Uruguay. Stock todo el año directo de fábrica en San José. Sin mínimo.",
     intro:
-      "Packs de cartulina sublimable A4 de 350gr, tapas sublimables perforadas de repuesto ($20 UYU), interiores por separado y recetarios (color, negro e infantil) con stock continuo los 365 días del año desde nuestra fábrica en San José de Mayo.",
+      "Packs de cartulina sublimable A4 de 350gr, tapas sublimables perforadas de repuesto por separado, interiores sueltos y recetarios (color, negro e infantil) con stock continuo los 365 días del año desde nuestra fábrica en San José de Mayo.",
   },
   outlet: {
     h1: "Outlet de Papelería e Insumos Sublimables en Uruguay",
@@ -232,7 +232,7 @@ export default async function CategoryPage({
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 En <strong>Kamaluso</strong> fabricamos en San José de Mayo <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> con <strong>stock continuo los 365 días del año</strong>. Podés llevar kits completos (hojas interiores temáticas, tapas rígidas de <strong>cartón cristal de 350gr con polímero virgen</strong> y espirales plásticos), pedir <strong>interiores de agendas por separado</strong> o reponer únicamente el{" "}
                 <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
-                  Pack de 2 Tapas Sublimables de Repuesto ($20 UYU)
+                  Pack de 2 Tapas Sublimables de Repuesto por separado
                 </Link>{" "}
                 ante errores de prensa.
               </p>
@@ -261,7 +261,7 @@ export default async function CategoryPage({
                       <td className="py-2.5 px-3">
                         Kits completos, interiores por separado o{" "}
                         <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
-                          Pack 2 Tapas de Repuesto ($20 UYU)
+                          Pack 2 Tapas de Repuesto
                         </Link>
                       </td>
                     </tr>
@@ -310,7 +310,7 @@ export default async function CategoryPage({
                 <p className="text-slate-600">
                   Estampa las tapas a <strong>170ºC – 180ºC durante 120 segundos</strong> y enfría bajo peso plano. Si te equivocás al sublimar una portada, no tires el interior: reponé solo el{" "}
                   <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
-                    Pack de 2 Tapas 15x21cm a $20 UYU
+                    Pack de 2 Tapas de Repuesto 15x21cm
                   </Link>
                   .
                 </p>
@@ -339,7 +339,7 @@ export default async function CategoryPage({
                 <p className="text-slate-600">
                   El clásico formato transportable de 70 hojas interiores y anillado espiral continuo. Compatible con nuestro{" "}
                   <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
-                    Pack de 2 Tapas de Repuesto ($20 UYU)
+                    Pack de 2 Tapas de Repuesto por separado
                   </Link>{" "}
                   para evitar desperdicio si fallás al estampar.
                 </p>
@@ -381,9 +381,9 @@ export default async function CategoryPage({
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Nuestros <strong>kits por volumen</strong> están pensados para optimizar el margen del taller o revendedor. Accedés al mayor catálogo especializado de Uruguay (+26 modelos) con <strong>stock continuo todo el año</strong> gracias a nuestra fabricación propia en San José de Mayo, y la tranquilidad de poder sumar{" "}
               <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
-                tapas sublimables de repuesto ($20 UYU)
+                tapas sublimables de repuesto por separado
               </Link>{" "}
-              o interiores por separado cuando lo necesites.
+              o interiores sueltos cuando lo necesites.
             </p>
             <p className="text-xs text-slate-500">
               Despachamos pedidos mayoristas y minoristas sin mínimo obligatorio a todo el Uruguay mediante DAC, Correo Uruguayo y COTMI desde San José de Mayo.
@@ -402,7 +402,7 @@ export default async function CategoryPage({
             <div className="p-4 bg-brand-50/80 rounded-2xl border border-brand-200 text-xs sm:text-sm text-slate-800 leading-relaxed">
               💡 <strong>¿Se quemó o movió una tapa al estampar?</strong> En esta categoría encontrás el{" "}
               <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-400 hover:text-brand-800">
-                Pack de 2 Tapas Sublimables 350gr de Repuesto ($20 UYU)
+                Pack de 2 Tapas Sublimables 350gr de Repuesto por separado
               </Link>
               , ideal para salvar agendas, libretas y recetarios 15x21cm sin desechar los interiores ni el espiral.
             </div>

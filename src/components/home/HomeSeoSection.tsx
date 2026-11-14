@@ -48,7 +48,7 @@ export function HomeSeoSection() {
             <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
               <Award className="w-5 h-5 text-emerald-600" />
             </div>
-            <h3 className="font-bold text-sm sm:text-base text-slate-900">Tapas 350gr + Repuestos ($20 UYU)</h3>
+            <h3 className="font-bold text-sm sm:text-base text-slate-900">Tapas 350gr + Repuestos por Separado</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Polímero virgen de alta transferencia térmica y venta de tapas sublimables sueltas de repuesto para que si te equivocás al estampar nunca tengas que desechar la agenda completa.
             </p>

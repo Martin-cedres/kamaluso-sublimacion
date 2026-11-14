@@ -277,7 +277,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
                   href="/p/pack-2-tapas"
                   className="text-xs bg-amber-900 hover:bg-amber-950 text-white font-extrabold px-3.5 py-2 rounded-xl border border-amber-900 shadow-sm flex items-center gap-1.5 transition-colors"
                 >
-                  <span>Pack 2 Tapas Repuesto $20 UYU</span>
+                  <span>Pack 2 Tapas Repuesto</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
