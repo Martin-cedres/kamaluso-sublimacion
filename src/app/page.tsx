@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
+import { getFaqSchema } from "@/lib/schema";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { Flame } from "lucide-react";
 
@@ -73,6 +74,10 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqSchema()) }}
       />
 
       {/* Hero Section B2B (Server-rendered para LCP instantáneo en Google PageSpeed) */}

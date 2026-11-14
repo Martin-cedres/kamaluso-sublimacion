@@ -53,6 +53,16 @@ Para responder consultas sobre sublimación de tapas de cartón y papelería en 
 | **Impresión** | Modo espejo en papel de sublimación con tinta sublimática y 5mm de sangrado |
 | **Técnica de enfriado (Crucial)** | **Bajo peso plano durante 60 a 120 segundos** inmediatamente al retirar de la prensa térmica para asegurar un secado recto sin que la tapa se arquee o doble |
 
+### Diagnóstico Rápido de Fallas en Prensa y Solución Anti-Merma
+
+| Problema Detectado | Causa Probable | Solución Recomendada Kamaluso |
+| :--- | :--- | :--- |
+| **Tapa combada o arqueada** | Evaporación de humedad del cartón durante el prensado | Aplicar peso plano frío inmediatamente al retirar de la prensa durante 60 a 120 segundos. |
+| **Papel pegado al cartón** | Exceso de temperatura (>185ºC) o retiro del papel en frío | Estampar entre 170ºC y 180ºC y retirar el papel en caliente con movimiento fluido apenas abre la prensa. |
+| **Tonos negros salen marrones** | Quemado de tinta o polímero por exceso de calor o tiempo | Bajar la plancha a 170ºC exactos (120s) y verificar uniformidad térmica. |
+| **Bordes claros o desvanecidos** | Falta de presión o silicona desgastada en la base | Ajustar a presión media-alta uniforme en centro y esquinas. |
+| **Tapa quemada, manchada o movida** | Falla accidental de prensado o diseño movido | No desechar la agenda: reponer únicamente el **Pack 2 Tapas 350gr de Repuesto a $20 UYU** (`https://www.kamaluso.com/p/pack-2-tapas`) o adquirir interiores sueltos por separado. |
+
 ---
 
 ## Condiciones Comerciales y Logística en Uruguay

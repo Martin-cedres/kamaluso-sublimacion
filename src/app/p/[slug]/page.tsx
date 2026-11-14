@@ -436,19 +436,35 @@ export default async function ProductDetailPage({
           </div>
 
           {/* Bloque Destacado de Parámetros de Sublimación */}
-          <div className="p-4 bg-amber-50/80 border border-amber-200/80 rounded-2xl space-y-2">
+          <div className="p-4 bg-amber-50/80 border border-amber-200/80 rounded-2xl space-y-2.5">
             <h4 className="font-extrabold text-xs text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
               🔥 Parámetros de Estampado Recomendados
             </h4>
             <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-amber-950">
               <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
-                <span className="text-slate-400 block text-[10px]">Temperatura</span>
-                <span className="text-base font-black text-amber-700">170 ºC – 180 ºC</span>
+                <span className="text-slate-600 block text-[10px]">Temperatura</span>
+                <span className="text-base font-black text-amber-800">170 ºC – 180 ºC</span>
               </div>
               <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
-                <span className="text-slate-400 block text-[10px]">Tiempo Prensa Plana</span>
-                <span className="text-base font-black text-amber-700">120 segundos</span>
+                <span className="text-slate-600 block text-[10px]">Tiempo Prensa Plana</span>
+                <span className="text-base font-black text-amber-800">120 segundos</span>
               </div>
+              <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
+                <span className="text-slate-600 block text-[10px]">Presión</span>
+                <span className="text-sm sm:text-base font-black text-amber-800">Media - Alta pareja</span>
+              </div>
+              <div className="bg-white/80 p-2.5 rounded-xl border border-amber-100">
+                <span className="text-slate-600 block text-[10px]">Enfriado Recto</span>
+                <span className="text-sm sm:text-base font-black text-amber-800">Bajo peso plano 60–120s</span>
+              </div>
+            </div>
+            <div className="pt-1">
+              <Link
+                href="/guia-sublimacion-papeleria"
+                className="inline-flex items-center text-xs font-bold text-amber-900 hover:text-amber-950 underline decoration-amber-400 transition-colors"
+              >
+                Ver guía técnica y solución a errores de prensa →
+              </Link>
             </div>
           </div>
 

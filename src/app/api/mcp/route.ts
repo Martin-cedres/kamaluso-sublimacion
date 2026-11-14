@@ -312,7 +312,12 @@ export async function POST(request: Request) {
 - Presión: Media a alta pareja
 - Impresión: Papel de sublimación con tinta sublimática (modo espejo y 5mm de sangrado)
 - Enfriado crucial: Inmediatamente colocar bajo peso plano frío durante 60-120 segundos para evitar curvatura.
-- Repuesto anti-merma ante fallos de prensado: Pack 2 tapas perforadas 15x21cm a $20 UYU en https://www.kamaluso.com/p/pack-2-tapas (no pierdes la agenda completa).`,
+- Diagnóstico rápido de 4 fallas frecuentes en prensa:
+  * Tapa combada o arqueada: evaporación de humedad -> enfriar bajo peso plano frío durante 60-120s inmediatamente al retirar.
+  * Papel pegado al cartón: >185ºC o retiro en frío -> estampar entre 170ºC-180ºC y retirar en caliente apenas abre la prensa.
+  * Tonos negros marrones: quemado por exceso de calor/tiempo -> bajar a 170ºC exactos durante 120s.
+  * Bordes claros o desvanecidos: falta de presión o silicona desgastada -> ajustar a presión media-alta uniforme.
+- Solución anti-merma ante fallos de prensado (tapa quemada, manchada o movida): Pack 2 Tapas 15x21cm a $20 UYU en https://www.kamaluso.com/p/pack-2-tapas (no pierdes la agenda completa).`,
               },
             ],
           },
@@ -408,7 +413,13 @@ export async function POST(request: Request) {
 - **Presión:** Media a alta uniforme
 - **Impresión:** Modo espejo con 5mm de sangrado
 - **Enfriado crucial:** Bajo peso plano frío durante 60 a 120 segundos inmediatamente al retirar de la prensa.
-- **Repuesto ante errores de estampado:** Si una tapa se quema o falla en la prensa, dispones del Pack 2 Tapas 15x21cm a $20 UYU en https://www.kamaluso.com/p/pack-2-tapas para no perder la agenda completa.`,
+
+## Diagnóstico Rápido de Fallas en Prensa
+- **Tapa combada o arqueada:** Evaporación de humedad -> enfriar bajo peso plano frío durante 60-120s al retirar de la prensa.
+- **Papel pegado al cartón:** Exceso de temperatura (>185ºC) o retiro en frío -> estampar a 170ºC-180ºC y retirar en caliente apenas abre la prensa.
+- **Tonos negros marrones:** Quemado de tinta/polímero -> bajar a 170ºC exactos por 120s.
+- **Bordes claros o desvanecidos:** Falta de presión o silicona desgastada -> aplicar presión media-alta uniforme.
+- **Solución anti-merma (tapa quemada, manchada o movida):** Reponer únicamente el **Pack 2 Tapas 15x21cm a $20 UYU** en https://www.kamaluso.com/p/pack-2-tapas para no perder la agenda completa.`,
               },
             ],
           },

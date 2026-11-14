@@ -250,27 +250,57 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
 
         {/* Tip de Sublimación / Prensa Plana */}
         <div className="max-w-4xl mx-auto">
-          <div className="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-amber-500 text-white rounded-xl shadow flex-shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+          <div className="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-amber-500 text-white rounded-xl shadow flex-shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-amber-950 flex items-center gap-1.5">
+                    🔥 Parámetro de Sublimación: Prensa Plana
+                  </h4>
+                  <p className="text-xs text-amber-900 font-medium">
+                    Especificaciones para tapas sublimables de cartón cristal 350gr.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-extrabold text-sm text-amber-950 flex items-center gap-1.5">
-                  🔥 Parámetro de Sublimación: Prensa Plana
-                </h4>
-                <p className="text-xs text-amber-800 font-medium">
-                  Estampado a <strong>170ºC – 180ºC durante 120 seg</strong> para tapas sublimables de 350gr.
-                </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href="/guia-sublimacion-papeleria"
+                  className="text-xs bg-white hover:bg-amber-100 text-amber-950 font-extrabold px-3.5 py-2 rounded-xl border border-amber-200 shadow-sm flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Ver Guía Técnica</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <Link
+                  href="/p/pack-2-tapas"
+                  className="text-xs bg-amber-900 hover:bg-amber-950 text-white font-extrabold px-3.5 py-2 rounded-xl border border-amber-900 shadow-sm flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Pack 2 Tapas Repuesto $20 UYU</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
-            <Link
-              href="/guia-sublimacion-papeleria"
-              className="text-xs bg-white hover:bg-amber-100 text-amber-900 font-extrabold px-3.5 py-2 rounded-xl border border-amber-200 shadow-sm flex-shrink-0 flex items-center gap-1.5 transition-colors"
-            >
-              <span>170ºC / 120 seg · Ver Guía</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div className="bg-white/90 p-2.5 rounded-xl border border-amber-200/70">
+                <span className="text-amber-800 block text-[10px] font-bold uppercase">Temperatura</span>
+                <span className="font-black text-amber-950">170ºC – 180ºC</span>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-xl border border-amber-200/70">
+                <span className="text-amber-800 block text-[10px] font-bold uppercase">Tiempo</span>
+                <span className="font-black text-amber-950">120 seg</span>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-xl border border-amber-200/70">
+                <span className="text-amber-800 block text-[10px] font-bold uppercase">Presión</span>
+                <span className="font-black text-amber-950">Presión Media - Alta</span>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-xl border border-amber-200/70">
+                <span className="text-amber-800 block text-[10px] font-bold uppercase">Enfriado (evita curvatura)</span>
+                <span className="font-black text-amber-950">Enfriado bajo peso plano 60–120s</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
