@@ -2017,3 +2017,11 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   - Desplegado en Vercel y verificado en producción: `https://www.kamaluso.com/devoluciones` respondió `HTTP 200` (`5 días corridos`).
 - **Google Merchant Center (pendiente de cierre por intervención manual del usuario `USER_TAKEOVER`):**
   - El subagente `browser` fue detenido por el sistema tras `USER_TAKEOVER` (`step 221`) al abrir `https://merchants.google.com/mc/returnoverview?a=632165118&hl=es`; quedaron pendientes las ediciones manuales o asistidas en Merchant Center para cambiar la URL de devoluciones en `632165118` a `https://www.kamaluso.com/devoluciones` y completar los envíos (`Finaliza la configuración`) en `632165118` y `5807763791`.
+
+### Logros finales (13 nov 2026 — Cierre Google Merchant Center en `632165118` y verificación de envíos)
+- **Subcuenta `632165118` (`www.kamaluso.com`):**
+  - **Política de devoluciones (`policyId=9491681760`):** actualizada y verificada en pantalla con URL **`https://www.kamaluso.com/devoluciones`**, `Aceptar devoluciones solo de productos defectuosos` y `Cambios: No se aceptan` (paso 240).
+  - **Política de envío `Envío a Agencia (DAC / Correo / COTMI)`:** guardada definitivamente con `Uruguay`, `Todos los productos`, `0-5 días hábiles` y **`Envío gratuito`** (alineado con `shippingRate: 0 UYU` en `src/app/p/[slug]/page.tsx`, confirmado en paso 320).
+  - **Diagnóstico y feed (`PRODUCTS SOURCE 3`, `10794852377`):** 26 productos sin problemas de archivo ni errores de catálogo; únicamente aviso opcional de vincular cuenta de Google Ads (paso 314).
+- **Subcuenta `5807763791` (`www.papeleriapersonalizada.uy`):**
+  - Verificado visualmente en la UI de Merchant Center Next que el texto `"Finaliza la configuración"` en la columna Estado se muestra sobre el badge verde activo con tilde (`Mostrar en Google`), por lo que `Envío Gratis a Agencia` (`Sin coste · 0-5 días · Uruguay · Todos`) ya se encuentra configurada y activa.
