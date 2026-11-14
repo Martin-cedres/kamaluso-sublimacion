@@ -1959,3 +1959,61 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   - `npx tsc --noEmit`: 0 errores, sin usos de `any`.
   - Auditoría de marca en HTML/Schema público: 0 menciones a marcas de la competencia.
   - `npm run build`: Compilación de producción exitosa (73/73 páginas estáticas y dinámicas generadas en Next.js 15.5.22).
+
+================================================================================
+🚀 DESPLIEGUE A PRODUCCIÓN: ESTRATEGIA GEO (IA) + SEO GOOGLE + FEED ENRIQUECIDO
+================================================================================
+- Commit `7b8732d`: "feat(geo-seo): posicionamiento IA, venta modular, stock anual, tapas repuesto y Google Shopping enriquecido"
+- Subido a GitHub en rama `main` (`https://github.com/Martin-cedres/kamaluso-sublimacion.git`), disparando el despliegue automático en Vercel para `https://www.kamaluso.com`.
+================================================================================
+
+- **Google Merchant Center (`https://merchants.google.com`):**
+  - Vinculada la fuente de datos `PRODUCTS SOURCE 3` (ID `10795141617`) en la cuenta `Papeleria Personalizada Kamaluso` (ID `5807763791`) apuntando a `https://www.kamaluso.com/google-shopping.xml` (programación automática cada 24h, país Uruguay, idioma Español).
+  - Primera lectura procesada el 13 de noviembre de 2026 16:30 (26 productos reconocidos del feed).
+  - Nota operativa pendiente de verificación: la cuenta `5807763791` tiene actualmente reclamado el dominio `www.papeleriapersonalizada.uy`, por lo que conviene verificar en `Productos -> Todos los productos` si Google aprueba los ítems de `www.kamaluso.com` o si requiere crear una cuenta/subcuenta separada en Merchant Center para el dominio `www.kamaluso.com`.
+
+### Logros adicionales (13 nov 2026 — Optimización `kamaluso_fullstack` y separación de subcuentas en Google Merchant Center)
+- **Proyecto `kamaluso_fullstack` (`https://www.papeleriapersonalizada.uy` — commit `c6cc238` en `main`):**
+  - Optimizado `pages/api/feed/google-shopping.ts` (tipado `FeedProduct`, títulos/descripciones SEO detallados, `<g:product_type>` y URLs de imágenes `/api/images/...`).
+  - Agregado rewrite `/google-shopping.xml` -> `/api/feed/google-shopping` en `next.config.js` (verificado HTTP 200 en producción).
+  - Agregada derivación B2B mayorista de insumos de sublimación hacia `https://www.kamaluso.com` en `public/llms.txt` y `public/llms-full.txt`.
+- **Google Merchant Center (MCA `5807165311` — ambos dominios separados en sus subcuentas):**
+  - **Subcuenta `5807763791` (`Papeleria Personalizada Kamaluso` — `www.papeleriapersonalizada.uy`):**
+    - Eliminadas `PRODUCTS SOURCE 1` (`10674096050`, duplicado en inglés) y `PRODUCTS SOURCE 3` (`10795141617`, feed cruzado de `kamaluso.com`).
+    - Sincronizada `PRODUCTS SOURCE 2` (`10791866291`, `https://www.papeleriapersonalizada.uy/api/feed/google-shopping`, 8 productos, `"No se han encontrado problemas"`).
+    - Completada la configuración inicial (`6 de 6 tareas completadas`), configurando política de devoluciones para Uruguay con URL `https://www.papeleriapersonalizada.uy/devoluciones` y devoluciones solo de productos defectuosos (nota: quedó activo `Cambios · Aceptar cambios` por defecto en el formulario).
+  - **Subcuenta `632165118` (`Kamaluso Papeleria Personalizada` — `www.kamaluso.com`):**
+    - Confirmada subcuenta existente bajo MCA `5807165311` con `www.kamaluso.com` **Verificada** y **Reclamada**.
+    - Creada y sincronizada `PRODUCTS SOURCE 3` (`afmDataSourceId=10794852377`) con `https://www.kamaluso.com/google-shopping.xml` (actualización cada 24h a las `0:00`, Uruguay, Español; 25 productos reconocidos tras sincronización, `"Tus productos están actualizados"` y `"No se han encontrado problemas"`).
+    - Diagnóstico *Requiere atención* (`Correcciones prioritarias`): `"Genial, se han resuelto todas las correcciones prioritarias"`.
+
+### Logros adicionales (13 nov 2026 — Ampliación técnica de sublimación en `kamaluso.com` y ajustes finos en Merchant Center)
+- **Código SEO/Frontend y GEO/IA en `kamaluso.com` (commit `851c4b4` en `main`):**
+  - `src/app/page.tsx`: inyectado JSON-LD `FAQPage` (`getFaqSchema()`) junto a `WebSite` en la portada `/` (expone parámetros `170ºC - 180ºC / 120s`, enfriado bajo peso plano, interiores sueltos y tapas de repuesto `$20 UYU`).
+  - `src/components/products/ProductGrid.tsx`: ampliado el bloque de prensa plana con los 4 parámetros clave (`170ºC – 180ºC`, `120 seg`, `Presión Media - Alta`, `Enfriado bajo peso plano 60–120s`) y botón directo a `/p/pack-2-tapas`.
+  - `src/app/p/[slug]/page.tsx`: ampliada la ficha de estampado recomendada a grilla 2x2 con `Temperatura`, `Tiempo Prensa Plana`, `Presión` y `Enfriado Recto`, más enlace a `/guia-sublimacion-papeleria`.
+  - `public/llms.txt` y `public/llms-full.txt`: agregada subsección `### Diagnóstico Rápido de Fallas en Prensa y Solución Anti-Merma` (tapa combada, papel pegado, tonos negros marrones, bordes claros y repuesto `Pack 2 Tapas 350gr a $20 UYU`).
+  - `src/app/api/mcp/route.ts`: ampliados `get_sublimation_parameters` y `docs://sublimation-guide` con el diagnóstico rápido de las 4 fallas frecuentes y solución anti-merma.
+  - Verificado con `npx tsc --noEmit` (código 0) y subido a `https://github.com/Martin-cedres/kamaluso-sublimacion.git` (`main`, despliegue automático en Vercel).
+- **Google Merchant Center (`https://merchants.google.com`):**
+  - **Subcuenta `5807763791` (`www.papeleriapersonalizada.uy`):** actualizada política `Estándar para Uruguay` (`policyId=9490502893`) a `Cambios · No se aceptan` manteniendo `https://www.papeleriapersonalizada.uy/devoluciones` y devoluciones solo de productos defectuosos.
+  - **Subcuenta `632165118` (`www.kamaluso.com`):**
+    - Eliminada la fuente manual antigua `Merchant Center` (2 productos); quedó únicamente **`PRODUCTS SOURCE 3`** (`afmDataSourceId=10794852377`, `https://www.kamaluso.com/google-shopping.xml`, **26 productos**).
+    - Corregida la política de devoluciones `Estándar para Uruguay` (`policyId=9490514072`, Verificada), que apuntaba erróneamente a `papeleriapersonalizada.uy/devoluciones` con `Aceptar cambios`, dejándola con **`https://www.kamaluso.com/faq`**, `Aceptar devoluciones solo de productos defectuosos` y **`Cambios · No se aceptan`**.
+    - Revisada la pestaña *Políticas de envío*: existe una configuración por peso (`0-5 días`, Uruguay, Todos los productos) marcada como `Finaliza la configuración` (al igual que `Envío Gratis a Agencia` en `5807763791`, opcionalmente editable por el usuario).
+
+### Logros adicionales (13 nov 2026 — Página `/devoluciones`, Schema de 5 días y eliminación de precios estáticos `$20`)
+- **Política oficial `/devoluciones` y Schema `MerchantReturnPolicy` (`commit 2826078` en `main`):**
+  - Creada `src/app/devoluciones/page.tsx` con metadata SEO completa (`canonical: "https://www.kamaluso.com/devoluciones"`), plazo de **5 días corridos** desde la recepción, cobertura exclusiva por defectos comprobables de fabricación de origen previos a prensa térmica, exclusiones expresas por arrepentimiento o errores de sublimación del taller comprador, enlace al repuesto `/p/pack-2-tapas`, y contacto/retorno en San José de Mayo (`098 615 074`, `kamalusosanjose@gmail.com`, `Ramón Massini 136`).
+  - Añadido `/devoluciones` en `src/app/sitemap.ts` y `"Política de Devoluciones"` en `src/components/layout/Footer.tsx`.
+  - Actualizado `hasMerchantReturnPolicy` en `src/app/p/[slug]/page.tsx`: `merchantReturnDays: 5`, `returnFees: "https://schema.org/ReturnShippingFees"` y `merchantReturnLink: "https://www.kamaluso.com/devoluciones"`.
+  - Añadida pregunta de cambios y devoluciones en `GLOBAL_FAQ_ITEMS` (`src/lib/schema.ts`).
+- **Eliminación de precios estáticos hardcodeados (`$20 UYU` / `precio_uyu: 20`) para `pack-2-tapas` (`commit 2826078` en `main`):**
+  - Limpiadas todas las referencias fijas a `$20` / `20 UYU` en SEO, vistas y componentes React (`src/app/layout.tsx`, `src/app/page.tsx`, `src/app/about/page.tsx`, `src/app/categoria/[slug]/page.tsx`, `src/app/emprender-en-papeleria-sublimable/page.tsx`, `src/app/guia-sublimacion-papeleria/page.tsx`, `src/app/mayoristas/page.tsx`, `src/app/p/[slug]/page.tsx`, `src/app/sobre-nosotros/page.tsx`, `src/components/home/HomeSeoSection.tsx`, `src/components/products/ProductGrid.tsx`, `src/lib/schema.ts`), reemplazándolas por redacción sin precio fijo o enlace `"Ver precio actualizado"` hacia `/p/pack-2-tapas`.
+  - Limpiados los endpoints IA/MCP y documentos LLM (`src/app/.well-known/agent-card.json/route.ts`, `src/app/.well-known/agent-skills/index.json/route.ts`, `src/app/api/mcp/route.ts` con lectura dinámica mediante `getProductBySlug("pack-2-tapas")`, `src/components/agent/WebMcpProvider.tsx`, `public/llms.txt` y `public/llms-full.txt`), sumando la URL oficial `https://www.kamaluso.com/devoluciones`.
+- **Verificación y despliegue:**
+  - `npx tsc --noEmit` finalizó con código `0`.
+  - Verificación `Select-String` en `src/` y `public/`: 0 ocurrencias estáticas restantes para `pack-2-tapas`.
+  - Desplegado en Vercel y verificado en producción: `https://www.kamaluso.com/devoluciones` respondió `HTTP 200` (`5 días corridos`).
+- **Google Merchant Center (pendiente de cierre por intervención manual del usuario `USER_TAKEOVER`):**
+  - El subagente `browser` fue detenido por el sistema tras `USER_TAKEOVER` (`step 221`) al abrir `https://merchants.google.com/mc/returnoverview?a=632165118&hl=es`; quedaron pendientes las ediciones manuales o asistidas en Merchant Center para cambiar la URL de devoluciones en `632165118` a `https://www.kamaluso.com/devoluciones` y completar los envíos (`Finaliza la configuración`) en `632165118` y `5807763791`.
