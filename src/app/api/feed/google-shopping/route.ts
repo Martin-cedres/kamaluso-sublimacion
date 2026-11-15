@@ -173,11 +173,16 @@ export async function GET() {
       <g:link>${productUrl}</g:link>
       <g:image_link>${imageUrl}</g:image_link>
       <g:availability>${availability}</g:availability>
-      <g:price>${product.price} UYU</g:price>
+      <g:price>${Number(product.price).toFixed(2)} UYU</g:price>
       <g:brand>Kamaluso</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>no</g:identifier_exists>
       <g:product_type><![CDATA[${safeProductType}]]></g:product_type>
+      <g:shipping>
+        <g:country>UY</g:country>
+        <g:service>Agencia DAC / Correo Uruguayo</g:service>
+        <g:price>200.00 UYU</g:price>
+      </g:shipping>
     </item>`;
     })
     .join("\n");

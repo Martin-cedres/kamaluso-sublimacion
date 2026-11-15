@@ -2073,3 +2073,24 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 - **Verificación técnica:**
   - Ejecutado `npx tsc --noEmit` en ambos proyectos (`Kamaluso sublimacion` y `kamaluso_fullstack`): código de salida 0, 0 errores de TypeScript y estricto respeto a la regla de no usar `any`.
   - Cero comandos `git commit` ni `git push` ejecutados conforme a las instrucciones recibidas.
+
+
+### Logros adicionales (15 nov 2026 — Corrección de Datos Estructurados Merchant Listings en Search Console)
+- **`src/app/p/[slug]/page.tsx`:**
+  - Agregado `validFrom: "2026-01-01T00:00:00-03:00"` dentro de `offers` junto a `priceValidUntil: "2027-12-31"` para resolver la advertencia `Falta el campo "validFrom" (en "offers")`.
+  - Actualizado `offers.hasMerchantReturnPolicy.returnFees` de `"https://schema.org/ReturnShippingFees"` a `"https://schema.org/ReturnFeesCustomerResponsibility"`, alineándolo con la política oficial publicada en `/devoluciones` (envío de retorno a cargo del comprador) y eliminando el requerimiento de `returnShippingFeesAmount`.
+- **Verificación técnica:**
+  - Ejecutado `npx tsc --noEmit` y `npm run build` (Next.js 15.5.22): código de salida 0, lint/tipos válidos y 74/74 páginas generadas sin errores.
+
+### Logros adicionales (15 nov 2026 — Envío $200 UYU unificado en Feed, JSON-LD y Merchant Center + Fix returnFees en papeleriapersonalizada.uy)
+- **`src/app/p/[slug]/page.tsx` (`www.kamaluso.com`):**
+  - Actualizado `offers.shippingDetails.shippingRate.value` de `"0"` a `"200"` (`UYU`) para alinearlo con el costo real de encomienda por agencia.
+- **`src/app/api/feed/google-shopping/route.ts` (`www.kamaluso.com`):**
+  - Agregado nodo `<g:shipping>` (`UY`, `Agencia DAC / Correo Uruguayo`, `200.00 UYU`) y formateado `<g:price>` con `.toFixed(2)`.
+- **Google Merchant Center (`632165118` — `www.kamaluso.com`):**
+  - Actualizada la política de envío en Merchant Center a tarifa plana **`UYU 200.00`** (`Envío a Agencia (DAC / Correo / COTMI)`), con manejo `1–2` días hábiles y tránsito `1–3` días hábiles (`2–5` días totales).
+- **`kamaluso_fullstack/components/seo/JsonLd.tsx` (`www.papeleriapersonalizada.uy`):**
+  - Corregido `hasMerchantReturnPolicy.returnFees` a `'https://schema.org/ReturnFeesCustomerResponsibility'` y agregado `merchantReturnLink: 'https://www.papeleriapersonalizada.uy/devoluciones'`.
+- **Verificación técnica:**
+  - `npx tsc --noEmit` en ambos proyectos: código `0`.
+  - `npm run build` en `Kamaluso sublimacion` (`74/74` páginas) y `kamaluso_fullstack` (`95/95` páginas + `next-sitemap`): código `0`.

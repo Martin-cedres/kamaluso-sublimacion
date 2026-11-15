@@ -201,6 +201,7 @@ export default async function ProductDetailPage({
       url: productUrl,
       priceCurrency: product.currency || "UYU",
       price: product.price,
+      validFrom: "2026-01-01T00:00:00-03:00",
       priceValidUntil: "2027-12-31",
       itemCondition: "https://schema.org/NewCondition",
       availability: product.inStock
@@ -216,14 +217,14 @@ export default async function ProductDetailPage({
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 5,
         returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/ReturnShippingFees",
+        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
         merchantReturnLink: "https://www.kamaluso.com/devoluciones",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingRate: {
           "@type": "MonetaryAmount",
-          value: "0",
+          value: "200",
           currency: "UYU",
         },
         shippingDestination: {
