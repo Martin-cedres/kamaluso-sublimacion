@@ -357,29 +357,10 @@ export default function ShippingLabelModal({
   };
 
   const handlePrintPdf = async (mode: "preview" | "download" = "preview") => {
-    let targetWindow: Window | null = null;
     try {
       setPdfError(null);
-      setIsGeneratingPdf(true);
-      setPdfActionType(mode);
 
-      // Abrir pestaña en blanco de forma síncrona para evitar bloqueos de popups
-      if (mode === "preview") {
-        targetWindow = window.open("about:blank", "_blank");
-        if (targetWindow) {
-          try {
-            targetWindow.document.open();
-            targetWindow.document.write(
-              `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8" /><title>Generando etiqueta PDF...</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#0f172a}main{text-align:center;padding:24px}p{margin:8px 0 0;font-size:14px;color:#475569}</style></head><body><main><strong>Generando etiqueta PDF...</strong><p>Preparando el archivo listo para imprimir.</p></main></body></html>`
-            );
-            targetWindow.document.close();
-          } catch {
-            // Ignorar si el navegador restringe acceso al documento de la pestaña recién abierta
-          }
-        }
-      }
-
-      const payload = {
+      const payload: Record<string, string> = {
         recipientName: (recipientName || "").trim(),
         recipientPhone: (recipientPhone || "").trim(),
         recipientDept: (recipientDept || "Montevideo").trim(),
@@ -400,6 +381,28 @@ export default function ShippingLabelModal({
         paperFormat,
       };
 
+      if (mode === "preview") {
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(payload)) {
+          if (value) {
+            params.set(key, value);
+          }
+        }
+        const previewWindow = window.open(
+          `/api/admin/shipping-label-pdf?${params.toString()}`,
+          "_blank"
+        );
+        if (!previewWindow) {
+          setPdfError(
+            "El navegador bloqueó la pestaña de la etiqueta. Habilitá las ventanas emergentes o usá el botón PDF / Impresión directa HTML."
+          );
+        }
+        return;
+      }
+
+      setIsGeneratingPdf(true);
+      setPdfActionType(mode);
+
       const res = await fetch("/api/admin/shipping-label-pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -407,7 +410,6 @@ export default function ShippingLabelModal({
       });
 
       if (!res.ok) {
-        if (targetWindow) targetWindow.close();
         const errJson = (await res.json().catch(() => null)) as { message?: string } | null;
         throw new Error(errJson?.message || "No se pudo generar el PDF de la etiqueta");
       }
@@ -417,20 +419,14 @@ export default function ShippingLabelModal({
       const formatTag = paperFormat === "thermal100x150" ? "100x150" : "A6";
       const safeOrder = (orderNumber || "Kamaluso").replace(/[^a-zA-Z0-9_-]/g, "");
 
-      if (mode === "download" || !targetWindow) {
-        const link = document.createElement("a");
-        link.href = pdfUrl;
-        link.download = `Etiqueta-${formatTag}-${safeOrder}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(pdfUrl), 5000);
-      } else {
-        targetWindow.location.href = pdfUrl;
-        setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
-      }
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = `Etiqueta-${formatTag}-${safeOrder}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(pdfUrl), 5000);
     } catch (err) {
-      if (targetWindow) targetWindow.close();
       const message = err instanceof Error ? err.message : "Error al generar la etiqueta PDF";
       console.error("Error generando PDF de etiqueta:", err);
       setPdfError(message);
