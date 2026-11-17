@@ -12,6 +12,17 @@ import { ShippingLabelPDFData } from "@/lib/shippingLabelUtils";
 export async function generateShippingLabelPDF(
   data: ShippingLabelPDFData
 ): Promise<Buffer> {
+  // Asegurar que @vercel/nft trace las fuentes estándar de pdfkit usadas por createRequire
+  const stdFontsDir = path.join(process.cwd(), "node_modules", "pdfkit", "js", "standard-fonts");
+  [
+    "Helvetica.cjs",
+    "HelveticaBold.cjs",
+    "HelveticaOblique.cjs",
+    "HelveticaBoldOblique.cjs",
+  ].forEach((file) => {
+    fs.existsSync(path.join(stdFontsDir, file));
+  });
+
   let logoBase64: string | undefined;
   try {
     const logoPngPath = path.join(process.cwd(), "public", "logo.png");

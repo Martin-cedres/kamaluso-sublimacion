@@ -7,6 +7,12 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   outputFileTracingRoot: path.join(__dirname),
+  outputFileTracingIncludes: {
+    "/api/admin/shipping-label-pdf": [
+      "./node_modules/pdfkit/js/standard-fonts/**/*",
+      "./node_modules/pdfkit/js/data/**/*",
+    ],
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },

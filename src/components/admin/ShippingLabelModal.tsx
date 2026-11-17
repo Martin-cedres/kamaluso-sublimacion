@@ -366,6 +366,17 @@ export default function ShippingLabelModal({
       // Abrir pestaña en blanco de forma síncrona para evitar bloqueos de popups
       if (mode === "preview") {
         targetWindow = window.open("about:blank", "_blank");
+        if (targetWindow) {
+          try {
+            targetWindow.document.open();
+            targetWindow.document.write(
+              `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8" /><title>Generando etiqueta PDF...</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#0f172a}main{text-align:center;padding:24px}p{margin:8px 0 0;font-size:14px;color:#475569}</style></head><body><main><strong>Generando etiqueta PDF...</strong><p>Preparando el archivo listo para imprimir.</p></main></body></html>`
+            );
+            targetWindow.document.close();
+          } catch {
+            // Ignorar si el navegador restringe acceso al documento de la pestaña recién abierta
+          }
+        }
       }
 
       const payload = {
@@ -478,6 +489,22 @@ export default function ShippingLabelModal({
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
+
+  const renderPdfErrorBanner = (extraClassName = "") =>
+    pdfError ? (
+      <div
+        className={`text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 ${extraClassName}`.trim()}
+      >
+        <span>{pdfError}</span>
+        <button
+          type="button"
+          onClick={handlePrint}
+          className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[11px] font-extrabold transition cursor-pointer"
+        >
+          Usar impresión HTML directa
+        </button>
+      </div>
+    ) : null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
@@ -832,11 +859,7 @@ export default function ShippingLabelModal({
 
             {/* Botones de Acción */}
             <div className="pt-2 space-y-2">
-              {pdfError && (
-                <p className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-                  {pdfError}
-                </p>
-              )}
+              {renderPdfErrorBanner()}
 
               <div className="flex flex-col sm:flex-row gap-2">
                 <button
@@ -979,6 +1002,8 @@ export default function ShippingLabelModal({
                 <span>Imprimir</span>
               </button>
             </div>
+
+            {renderPdfErrorBanner("w-full max-w-[340px] mb-2.5 no-print")}
 
             {/* THE PRINTABLE LABEL (Targeted by @media print) */}
             <div
