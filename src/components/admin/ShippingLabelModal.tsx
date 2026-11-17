@@ -17,7 +17,17 @@ import {
   RotateCcw,
   Copy,
   Check,
+  FileDown,
+  Loader2,
 } from "lucide-react";
+import {
+  LabelPaperFormat,
+  cleanLabelAddress,
+  cleanLabelObservations,
+  formatCityDeptDisplay,
+  isSystemOrPaymentNote,
+  normalizeAgencyDisplay,
+} from "@/lib/shippingLabelUtils";
 
 export interface ShippingLabelData {
   recipientName: string;
@@ -82,71 +92,40 @@ export default function ShippingLabelModal({
   // Modo de impresión (Color para impresoras láser/tinta o B/N para impresoras térmicas directas)
   const [printColorMode, setPrintColorMode] = useState<"color" | "bw">("color");
 
+  // Formato de papel PDF (A6 105x148mm por defecto o Térmica 100x150mm)
+  const [paperFormat, setPaperFormat] = useState<LabelPaperFormat>("a6");
+
+  // Estados de generación de PDF
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfActionType, setPdfActionType] = useState<"preview" | "download" | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+
   // Código QR Web Real (kamaluso.com)
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
-  // Función para detectar si una nota es técnica / interna de pago (Mercado Pago, pasarela, etc.)
-  const isSystemOrPaymentNote = (text: string): boolean => {
-    if (!text) return false;
-    const lower = text.trim().toLowerCase();
-    return (
-      lower.startsWith("[pago") ||
-      lower.startsWith("[pedido manual") ||
-      lower.startsWith("[pedido cargado") ||
-      lower.includes("pago mp #") ||
-      lower.includes("(approved)") ||
-      lower.includes("(pending)") ||
-      lower.includes("(rejected)") ||
-      lower.includes("mercadopago") ||
-      lower.includes("mercado pago")
-    );
-  };
-
   // Visualización limpia de Ciudad y Departamento sin duplicados (evita "Montevideo, Montevideo")
-  const cityDeptDisplay = React.useMemo(() => {
-    const city = (recipientCity || "").trim();
-    const dept = (recipientDept || "").trim();
-    if (!city) return dept || "Uruguay";
-    if (city.toLowerCase() === dept.toLowerCase()) return dept;
-    return `${city}, ${dept}`;
-  }, [recipientCity, recipientDept]);
+  const cityDeptDisplay = React.useMemo(
+    () => formatCityDeptDisplay(recipientCity, recipientDept),
+    [recipientCity, recipientDept]
+  );
 
   // Nombre de agencia estandarizado y limpio (DAC, CORREO URUGUAYO, COTMI, etc.)
-  const cleanAgencyName = React.useMemo(() => {
-    const ag = (shippingAgency || "").trim();
-    const lower = ag.toLowerCase();
-    if (lower.includes("correo")) return "CORREO URUGUAYO";
-    if (lower.includes("cotmi")) return "COTMI";
-    if (lower.includes("dac")) return "DAC";
-    if (lower.includes("local") || lower.includes("taller")) return "LOCAL";
-    return ag.toUpperCase() || "DAC";
-  }, [shippingAgency]);
+  const cleanAgencyName = React.useMemo(
+    () => normalizeAgencyDisplay(shippingAgency),
+    [shippingAgency]
+  );
 
   // Limpieza inteligente del texto de destino (dirección o sucursal)
-  const cleanAddressDisplay = React.useMemo(() => {
-    let clean = (recipientAddress || "").trim();
-    // Eliminar notas incrustadas en corchetes ej: [Observaciones: ...] o [Notas: ...]
-    clean = clean.replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "").trim();
-    // Eliminar prefijos repetitivos si el usuario los escribió
-    clean = clean.replace(/^Retiro en Sucursal:\s*/i, "");
-    clean = clean.replace(/^Retiro en Agencia:\s*/i, "");
-    clean = clean.replace(/^Sucursal:\s*/i, "");
-    clean = clean.replace(/^Agencia:\s*/i, "");
-    // Eliminar coletillas de "Notas domicilio: ..."
-    clean = clean.replace(/(?:notas?\s*domicilio|observaciones?|indicaciones?):\s*.*$/gi, "").trim();
-    return clean;
-  }, [recipientAddress]);
+  const cleanAddressDisplay = React.useMemo(
+    () => cleanLabelAddress(recipientAddress),
+    [recipientAddress]
+  );
 
   // Sanitización de observaciones para mostrar indicaciones limpias y sin prefijos
-  const cleanObservations = React.useMemo(() => {
-    if (!observations) return "";
-    let obs = observations.trim();
-    if (isSystemOrPaymentNote(obs)) return "";
-    // Eliminar prefijos comunes
-    obs = obs.replace(/^(?:notas?\s*(?:de\s*)?domicilio|observaciones?|indicaciones?):\s*/i, "").trim();
-    if (isSystemOrPaymentNote(obs)) return "";
-    return obs;
-  }, [observations]);
+  const cleanObservations = React.useMemo(
+    () => cleanLabelObservations(observations),
+    [observations]
+  );
 
   // Escala tipográfica adaptativa para la dirección: se auto-ajusta si el texto es extenso o si hay notas
   const addressFontSizeClass = React.useMemo(() => {
@@ -372,6 +351,79 @@ export default function ShippingLabelModal({
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handlePrintPdf = async (mode: "preview" | "download" = "preview") => {
+    let targetWindow: Window | null = null;
+    try {
+      setPdfError(null);
+      setIsGeneratingPdf(true);
+      setPdfActionType(mode);
+
+      // Abrir pestaña en blanco de forma síncrona para evitar bloqueos de popups
+      if (mode === "preview") {
+        targetWindow = window.open("about:blank", "_blank");
+      }
+
+      const payload = {
+        recipientName: (recipientName || "").trim(),
+        recipientPhone: (recipientPhone || "").trim(),
+        recipientDept: (recipientDept || "Montevideo").trim(),
+        recipientCity: (recipientCity || "").trim(),
+        recipientAddress: (recipientAddress || "").trim(),
+        shippingAgency: (shippingAgency || "DAC").trim(),
+        deliveryType,
+        observations: (observations || "").trim(),
+        rutInfo: (rutInfo || "").trim(),
+        notes: (notes || "").trim(),
+        orderNumber: (orderNumber || `KAM-${Date.now().toString().slice(-6)}`).trim(),
+        senderName: (senderName || "").trim(),
+        senderPhone: (senderPhone || "").trim(),
+        senderAddress: (senderAddress || "").trim(),
+        senderWebsite: (senderWebsite || "").trim(),
+        senderRut: (senderRut || "").trim(),
+        printColorMode,
+        paperFormat,
+      };
+
+      const res = await fetch("/api/admin/shipping-label-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        if (targetWindow) targetWindow.close();
+        const errJson = (await res.json().catch(() => null)) as { message?: string } | null;
+        throw new Error(errJson?.message || "No se pudo generar el PDF de la etiqueta");
+      }
+
+      const blob = await res.blob();
+      const pdfUrl = URL.createObjectURL(blob);
+      const formatTag = paperFormat === "thermal100x150" ? "100x150" : "A6";
+      const safeOrder = (orderNumber || "Kamaluso").replace(/[^a-zA-Z0-9_-]/g, "");
+
+      if (mode === "download" || !targetWindow) {
+        const link = document.createElement("a");
+        link.href = pdfUrl;
+        link.download = `Etiqueta-${formatTag}-${safeOrder}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(pdfUrl), 5000);
+      } else {
+        targetWindow.location.href = pdfUrl;
+        setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
+      }
+    } catch (err) {
+      if (targetWindow) targetWindow.close();
+      const message = err instanceof Error ? err.message : "Error al generar la etiqueta PDF";
+      console.error("Error generando PDF de etiqueta:", err);
+      setPdfError(message);
+    } finally {
+      setIsGeneratingPdf(false);
+      setPdfActionType(null);
+    }
   };
 
   const handleReset = () => {
@@ -770,36 +822,116 @@ export default function ShippingLabelModal({
             </div>
 
             {/* Botones de Acción */}
-            <div className="pt-2 flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={handlePrint}
-                className="flex-1 py-3.5 px-4 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-2xl shadow-lg shadow-pink-600/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider cursor-pointer"
-              >
-                <Printer className="w-4 h-4" />
-                <span>Imprimir Etiqueta ({printColorMode === "color" ? "Color" : "Térmica B/N"})</span>
-              </button>
+            <div className="pt-2 space-y-2">
+              {pdfError && (
+                <p className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                  {pdfError}
+                </p>
+              )}
 
-              <button
-                type="button"
-                onClick={handleCopyText}
-                className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl border border-slate-300 flex items-center justify-center gap-1.5 text-xs transition cursor-pointer"
-                title="Copiar datos para enviar por WhatsApp al fletero"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                <span>{copied ? "Copiado" : "Copiar Texto"}</span>
-              </button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  type="button"
+                  onClick={() => handlePrintPdf("preview")}
+                  disabled={isGeneratingPdf}
+                  className="flex-1 py-3.5 px-4 bg-pink-600 hover:bg-pink-700 disabled:bg-pink-400 text-white font-extrabold rounded-2xl shadow-lg shadow-pink-600/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 text-xs uppercase tracking-wider cursor-pointer"
+                  title="Abre el PDF nativo centrado en el navegador para imprimir sin ajustar márgenes"
+                >
+                  {isGeneratingPdf && pdfActionType === "preview" ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Printer className="w-4 h-4" />
+                  )}
+                  <span>
+                    {isGeneratingPdf && pdfActionType === "preview"
+                      ? "Generando PDF..."
+                      : `Imprimir PDF ${paperFormat === "a6" ? "A6" : "100×150"} (${
+                          printColorMode === "color" ? "Color" : "Térmica B/N"
+                        })`}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePrintPdf("download")}
+                  disabled={isGeneratingPdf}
+                  className="py-3 px-3.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-60 text-slate-700 font-bold rounded-2xl border border-slate-300 flex items-center justify-center gap-1.5 text-xs transition cursor-pointer"
+                  title="Descargar etiqueta en PDF"
+                >
+                  {isGeneratingPdf && pdfActionType === "download" ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-pink-600" />
+                  ) : (
+                    <FileDown className="w-4 h-4" />
+                  )}
+                  <span>PDF</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyText}
+                  className="py-3 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl border border-slate-300 flex items-center justify-center gap-1.5 text-xs transition cursor-pointer"
+                  title="Copiar datos para enviar por WhatsApp al fletero"
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  <span>{copied ? "Copiado" : "Copiar"}</span>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-0.5">
+                <span className="text-[11px] text-emerald-700 font-bold">
+                  {paperFormat === "a6"
+                    ? "✓ PDF A6 nativo (105 × 148 mm) centrado"
+                    : "✓ PDF Térmico nativo (100 × 150 mm) centrado"}
+                </span>
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="text-[10.5px] text-slate-400 hover:text-slate-600 underline transition cursor-pointer"
+                  title="Imprimir directamente la vista HTML del navegador"
+                >
+                  Impresión directa HTML (alternativa)
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Printable Label Preview Side */}
           <div className="lg:col-span-6 flex flex-col items-center justify-start bg-slate-100/70 p-3 sm:p-4 rounded-3xl border border-slate-200 self-start lg:sticky lg:top-0">
-            <div className="flex items-center justify-between w-full max-w-[340px] mb-2.5 no-print gap-2">
+            <div className="flex flex-wrap items-center justify-between w-full max-w-[340px] mb-2.5 no-print gap-1.5">
+              {/* Selector Formato Papel (A6 vs 100x150mm) */}
+              <div className="inline-flex items-center bg-white p-0.5 rounded-xl border border-slate-300 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setPaperFormat("a6")}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                    paperFormat === "a6"
+                      ? "bg-pink-600 text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                  title="Hoja A6 (105 × 148 mm)"
+                >
+                  A6
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaperFormat("thermal100x150")}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                    paperFormat === "thermal100x150"
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                  title="Etiqueta Térmica 100 × 150 mm"
+                >
+                  100×150
+                </button>
+              </div>
+
               {/* Selector Color vs Térmica B/N */}
               <div className="inline-flex items-center bg-white p-0.5 rounded-xl border border-slate-300 shadow-2xs">
                 <button
                   type="button"
                   onClick={() => setPrintColorMode("color")}
-                  className={`px-2 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                  className={`px-2 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
                     printColorMode === "color"
                       ? "bg-pink-600 text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -811,25 +943,30 @@ export default function ShippingLabelModal({
                 <button
                   type="button"
                   onClick={() => setPrintColorMode("bw")}
-                  className={`px-2 py-1 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                  className={`px-2 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
                     printColorMode === "bw"
                       ? "bg-slate-900 text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                   title="Impresión Térmica B/N (Alto contraste para impresoras térmicas de bobina)"
                 >
-                  <span>⬛ Térmica</span>
+                  <span>⬛ B/N</span>
                 </button>
               </div>
 
               {/* Botón de Impresión Rápido (1 Clic arriba sin scroll) */}
               <button
                 type="button"
-                onClick={handlePrint}
-                className="px-3.5 py-1.5 bg-pink-600 hover:bg-pink-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-md shadow-pink-600/25 flex items-center gap-1.5 transition cursor-pointer"
-                title="Imprimir etiqueta inmediatamente (1 Clic)"
+                onClick={() => handlePrintPdf("preview")}
+                disabled={isGeneratingPdf}
+                className="px-3 py-1.5 bg-pink-600 hover:bg-pink-700 disabled:bg-pink-400 active:scale-95 text-white font-black text-xs rounded-xl shadow-md shadow-pink-600/25 flex items-center gap-1.5 transition cursor-pointer"
+                title="Abrir PDF en el navegador e imprimir (1 Clic)"
               >
-                <Printer className="w-3.5 h-3.5" />
+                {isGeneratingPdf && pdfActionType === "preview" ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Printer className="w-3.5 h-3.5" />
+                )}
                 <span>Imprimir</span>
               </button>
             </div>
@@ -1012,21 +1149,21 @@ export default function ShippingLabelModal({
         </div>
       </div>
 
-      {/* ESTILOS CSS PARA IMPRESIÓN PRECISA EN IMPRESORA TÉRMICA (10x15cm / 100x150mm / 4x6") */}
+      {/* ESTILOS CSS PARA IMPRESIÓN HTML ALTERNATIVA (A6 105x148mm / Térmica 100x150mm) */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
             @page {
-              size: 100mm 150mm !important;
+              size: ${paperFormat === "a6" ? "105mm 148mm" : "100mm 150mm"} !important;
               margin: 0mm !important;
             }
             @media print {
               html,
               body {
-                width: 100mm !important;
-                height: 150mm !important;
-                max-width: 100mm !important;
-                max-height: 150mm !important;
+                width: ${paperFormat === "a6" ? "105mm" : "100mm"} !important;
+                height: ${paperFormat === "a6" ? "148mm" : "150mm"} !important;
+                max-width: ${paperFormat === "a6" ? "105mm" : "100mm"} !important;
+                max-height: ${paperFormat === "a6" ? "148mm" : "150mm"} !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 overflow: hidden !important;
@@ -1045,13 +1182,13 @@ export default function ShippingLabelModal({
                 visibility: visible !important;
               }
               #printable-shipping-label {
-                position: absolute !important;
-                left: 2mm !important;
-                top: 2mm !important;
-                width: 96mm !important;
-                height: 146mm !important;
-                max-width: 96mm !important;
-                max-height: 146mm !important;
+                position: fixed !important;
+                left: ${paperFormat === "a6" ? "5.8mm" : "3mm"} !important;
+                top: ${paperFormat === "a6" ? "4mm" : "3mm"} !important;
+                width: ${paperFormat === "a6" ? "93.4mm" : "94mm"} !important;
+                height: ${paperFormat === "a6" ? "140mm" : "144mm"} !important;
+                max-width: ${paperFormat === "a6" ? "93.4mm" : "94mm"} !important;
+                max-height: ${paperFormat === "a6" ? "140mm" : "144mm"} !important;
                 min-height: 0 !important;
                 box-sizing: border-box !important;
                 border: 2.5px solid #000000 !important;

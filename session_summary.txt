@@ -2094,3 +2094,16 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 - **Verificación técnica:**
   - `npx tsc --noEmit` en ambos proyectos: código `0`.
   - `npm run build` en `Kamaluso sublimacion` (`74/74` páginas) y `kamaluso_fullstack` (`95/95` páginas + `next-sitemap`): código `0`.
+
+
+### Diagnóstico (16 nov 2026 — Causa de desajuste de márgenes al imprimir etiquetas de envío)
+- Comparado [ShippingLabelModal.tsx](src/components/admin/ShippingLabelModal.tsx) en `Kamaluso sublimacion` vs `kamaluso_fullstack` ([ShippingLabelModal.tsx](c:\Users\LENOVO\Desktop\kamaluso_fullstack\components\admin\ShippingLabelModal.tsx), [shippingLabelTemplate.tsx](c:\Users\LENOVO\Desktop\kamaluso_fullstack\lib\pdf\shippingLabelTemplate.tsx), [shipping-label-pdf.ts](c:\Users\LENOVO\Desktop\kamaluso_fullstack\pages\api\admin\orders\shipping-label-pdf.ts)).
+- Confirmada la causa raíz: `kamaluso_fullstack` genera un PDF A6 nativo (`297.64 × 419.53 pt` / `105 × 148 mm`) con `@react-pdf/renderer` y lo abre en nueva pestaña, mientras `kamaluso.com` usa `window.print()` directo sobre el DOM del modal con `@page { size: 100mm 150mm; margin: 0mm }`.
+
+### Logros (16 nov 2026 — Generador PDF nativo A6 y Térmica 100×150 mm para Etiquetas de Envío)
+- **`package.json`:** Instalado `@react-pdf/renderer` para generación de PDFs vectoriales nativos sin depender de `window.print()`.
+- **`src/lib/shippingLabelUtils.ts`:** Extraídas utilidades compartidas (`LabelPaperFormat`, `ShippingLabelPDFData`, `formatCityDeptDisplay`, `normalizeAgencyDisplay`, `cleanLabelAddress`, `cleanLabelObservations`, `isSystemOrPaymentNote`) reutilizadas por el modal y la plantilla PDF.
+- **`src/lib/pdf/shippingLabelTemplate.tsx`:** Creada plantilla PDF vectorial para Kamaluso (`KAMALUSO - Papelería Sublimable`, QR a `https://www.kamaluso.com`, modo Color y Térmica B/N) con soporte exacto para **A6 (`105 × 148 mm` / `297.64 × 419.53 pt`)** por defecto y **Térmica (`100 × 150 mm` / `283.46 × 425.20 pt`)** centradas de fábrica.
+- **`src/lib/pdf/generateShippingLabelPDF.tsx` y `src/app/api/admin/shipping-label-pdf/route.ts`:** Implementado endpoint `POST`/`GET` que carga `public/logo.png`, genera el QR y devuelve `application/pdf` (`Content-Disposition: inline`).
+- **`src/components/admin/ShippingLabelModal.tsx`:** Integrado selector de formato (`A6` por defecto y `100×150`), botón principal **Imprimir PDF** que abre el PDF en una pestaña nueva del navegador, botón **PDF** para descarga directa y fallback HTML `@page` ajustado.
+- **Verificación técnica:** `npx tsc --noEmit` y `npm run build` (`74/74` páginas, código `0`), más prueba real sobre `next start` devolviendo HTTP `200`, `application/pdf` y cabecera `%PDF-` en ambos formatos (`A6`: `116887` bytes; `100×150`: `116712` bytes).
