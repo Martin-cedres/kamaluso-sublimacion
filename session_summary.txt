@@ -2107,3 +2107,14 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 - **`src/lib/pdf/generateShippingLabelPDF.tsx` y `src/app/api/admin/shipping-label-pdf/route.ts`:** Implementado endpoint `POST`/`GET` que carga `public/logo.png`, genera el QR y devuelve `application/pdf` (`Content-Disposition: inline`).
 - **`src/components/admin/ShippingLabelModal.tsx`:** Integrado selector de formato (`A6` por defecto y `100×150`), botón principal **Imprimir PDF** que abre el PDF en una pestaña nueva del navegador, botón **PDF** para descarga directa y fallback HTML `@page` ajustado.
 - **Verificación técnica:** `npx tsc --noEmit` y `npm run build` (`74/74` páginas, código `0`), más prueba real sobre `next start` devolviendo HTTP `200`, `application/pdf` y cabecera `%PDF-` en ambos formatos (`A6`: `116887` bytes; `100×150`: `116712` bytes).
+### Logros adicionales (16 nov 2026 — Observaciones integradas en domicilio entre paréntesis con autoajuste)
+- **`src/lib/shippingLabelUtils.ts`:**
+  - Agregada constante `DEFAULT_FRAGILE_NOTE`, extractor `extractRutFromObservations` y ayudante `formatAddressWithObservations`.
+  - Corregido `cleanLabelObservations` para eliminar solo los bloques técnicos entre corchetes (`[Pago MP #...]`, `[Pedido manual ...]`) y segmentos `RUT:` sin perder las indicaciones reales del cliente.
+- **`src/lib/pdf/shippingLabelTemplate.tsx` y `src/components/admin/ShippingLabelModal.tsx`:**
+  - Eliminada la caja separada `INDICACIONES:` e integradas las observaciones limpias directamente dentro del campo de domicilio/sucursal entre paréntesis: `DIRECCIÓN (OBSERVACIONES)`.
+  - Implementado autoajuste tipográfico dinámico sobre la longitud combinada (`dirección + observaciones`) tanto en la vista previa HTML como en el PDF (A6 y 100×150 mm).
+  - Blindado el recuadro inferior de frágil (`notes`) para mantenerse exclusivamente con la advertencia de paquete frágil, restableciéndose al cambiar de pedido y extrayendo el RUT al badge correspondiente.
+- **Verificación técnica:** `npx tsc --noEmit`, `npm run build` (`74/74` páginas, código `0`) y prueba en `next start` con dirección + observación + RUT + etiqueta `[Pago MP #...]` (`200 OK`, `%PDF-`, `117531` bytes).
+### Logros adicionales (16 nov 2026 — Hero compacto en Home)
+- **`src/app/page.tsx`:** Sintetizada la bajada del Hero a 2 líneas escaneables manteniendo el contenido semántico completo y JSON-LD en la sección inferior `HomeSeoSection.tsx`.

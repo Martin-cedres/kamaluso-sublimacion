@@ -2,6 +2,8 @@ export type LabelPaperFormat = "a6" | "thermal100x150";
 export type LabelColorMode = "color" | "bw";
 export type LabelDeliveryType = "agencia" | "domicilio" | "local";
 
+export const DEFAULT_FRAGILE_NOTE = "⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE";
+
 export interface ShippingLabelPDFData {
   recipientName: string;
   recipientPhone: string;
@@ -24,7 +26,7 @@ export interface ShippingLabelPDFData {
 }
 
 /**
- * Detecta si una nota proviene de registros automáticos de pago o del sistema.
+ * Detecta si un segmento de texto proviene exclusivamente de registros internos de pago o sistema.
  */
 export function isSystemOrPaymentNote(text: string): boolean {
   if (!text) return false;
@@ -81,13 +83,68 @@ export function cleanLabelAddress(address?: string): string {
 }
 
 /**
- * Sanitiza las observaciones del cliente descartando notas internas de pago y prefijos redundantes.
+ * Extrae el RUT si viene incluido en las observaciones del checkout (ej. "RUT: 150754350013 • Notas...").
+ */
+export function extractRutFromObservations(observations?: string): string {
+  if (!observations) return "";
+  const match = observations.match(/\bRUT\s*:\s*([0-9.\-]+)/i);
+  return match?.[1]?.trim() || "";
+}
+
+/**
+ * Sanitiza las observaciones del cliente preservando indicaciones reales incluso cuando
+ * el webhook de Mercado Pago añadió bloques técnicos como `[Pago MP #...]` en la misma cadena.
  */
 export function cleanLabelObservations(observations?: string): string {
   if (!observations) return "";
-  let obs = observations.trim();
-  if (isSystemOrPaymentNote(obs)) return "";
-  obs = obs.replace(/^(?:notas?\s*(?:de\s*)?domicilio|observaciones?|indicaciones?):\s*/i, "").trim();
-  if (isSystemOrPaymentNote(obs)) return "";
-  return obs;
+
+  // 1. Quitar bloques técnicos entre corchetes (ej. [Pago MP #...], [Pedido manual ...])
+  const withoutSystemBlocks = observations
+    .replace(/\[(?:pago|pedido\s+manual|pedido\s+cargado)[^\]]*\]/gi, " ")
+    .trim();
+
+  if (!withoutSystemBlocks) return "";
+
+  // 2. Dividir por separadores habituales del checkout ("•", "|", ";") y filtrar cada tramo
+  const segments = withoutSystemBlocks
+    .split(/\s*[•|;]\s*/)
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+    .filter((segment) => !isSystemOrPaymentNote(segment))
+    // El RUT se muestra en su propio badge `rutInfo`, no dentro de la dirección
+    .filter((segment) => !/^RUT\s*:/i.test(segment))
+    .map((segment) =>
+      segment
+        .replace(/^(?:notas?\s*(?:de\s*)?domicilio|observaciones?|indicaciones?|empresa)\s*:\s*/i, "")
+        .trim()
+    )
+    .filter(Boolean);
+
+  return segments.join(" - ");
+}
+
+/**
+ * Combina dirección base y observaciones entre paréntesis para mostrar en el campo de domicilio.
+ */
+export function formatAddressWithObservations(
+  address: string,
+  observations?: string
+): {
+  baseAddress: string;
+  observations: string;
+  combined: string;
+} {
+  const baseAddress = address.trim();
+  const cleanObs = cleanLabelObservations(observations);
+  if (!cleanObs) {
+    return { baseAddress, observations: "", combined: baseAddress };
+  }
+  if (!baseAddress) {
+    return { baseAddress: "", observations: cleanObs, combined: `(${cleanObs})` };
+  }
+  return {
+    baseAddress,
+    observations: cleanObs,
+    combined: `${baseAddress} (${cleanObs})`,
+  };
 }

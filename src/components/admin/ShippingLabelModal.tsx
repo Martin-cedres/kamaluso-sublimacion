@@ -21,11 +21,12 @@ import {
   Loader2,
 } from "lucide-react";
 import {
+  DEFAULT_FRAGILE_NOTE,
   LabelPaperFormat,
   cleanLabelAddress,
   cleanLabelObservations,
+  extractRutFromObservations,
   formatCityDeptDisplay,
-  isSystemOrPaymentNote,
   normalizeAgencyDisplay,
 } from "@/lib/shippingLabelUtils";
 
@@ -127,22 +128,23 @@ export default function ShippingLabelModal({
     [observations]
   );
 
-  // Escala tipográfica adaptativa para la dirección: se auto-ajusta si el texto es extenso o si hay notas
+  // Escala tipográfica adaptativa para la dirección + (observaciones) combinadas
   const addressFontSizeClass = React.useMemo(() => {
-    const len = (cleanAddressDisplay || "").length;
-    const hasObs = Boolean(cleanObservations);
-    if (hasObs) {
-      if (len > 55) return "text-sm font-black leading-snug";
-      if (len > 35) return "text-base font-black leading-snug";
-      if (len > 22) return "text-lg font-black leading-snug";
-      return "text-xl font-black leading-snug";
-    }
-    // Sin observaciones (mayor espacio vertical disponible)
-    if (len > 60) return "text-base font-black leading-snug";
-    if (len > 40) return "text-lg font-black leading-snug";
-    if (len > 24) return "text-xl font-black leading-snug";
-    return "text-[23px] font-black leading-snug";
-  }, [cleanAddressDisplay, cleanObservations]);
+    const baseText =
+      deliveryType === "local"
+        ? "LOCAL KAMALUSO (SAN JOSÉ DE MAYO)"
+        : cleanAddressDisplay || "";
+    const combinedLen = (
+      baseText + (cleanObservations ? ` (${cleanObservations})` : "")
+    ).length;
+
+    if (combinedLen > 125) return "text-[11px] font-black leading-snug";
+    if (combinedLen > 95) return "text-xs font-black leading-snug";
+    if (combinedLen > 68) return "text-sm font-black leading-snug";
+    if (combinedLen > 45) return "text-base font-black leading-snug";
+    if (combinedLen > 26) return "text-lg font-black leading-snug";
+    return "text-[21px] font-black leading-snug";
+  }, [deliveryType, cleanAddressDisplay, cleanObservations]);
 
   // Escala tipográfica adaptativa para el nombre del destinatario (paridad 1:1 en pantalla e impresión)
   const nameFontSizeClass = React.useMemo(() => {
@@ -182,21 +184,22 @@ export default function ShippingLabelModal({
       setRecipientCity(order.customer.city || "");
       
       const rawAddress = (order.customer.address || "").trim();
-      let initialObs =
+      const rawObsCandidate =
         order.customer.observations ||
         order.observations ||
         order.customer.notes ||
         order.notes ||
         "";
-      if (isSystemOrPaymentNote(initialObs)) {
-        initialObs = "";
-      } else if (!initialObs && rawAddress.includes("[")) {
+      let initialObs = cleanLabelObservations(rawObsCandidate);
+      if (!initialObs && rawAddress.includes("[")) {
         const obsMatch = rawAddress.match(/\[(?:Observaciones|Notas?):\s*([^\]]+)\]/i);
-        if (obsMatch && obsMatch[1] && !isSystemOrPaymentNote(obsMatch[1])) {
-          initialObs = obsMatch[1].trim();
+        if (obsMatch && obsMatch[1]) {
+          initialObs = cleanLabelObservations(obsMatch[1]);
         }
       }
       setObservations(initialObs);
+      setRutInfo(extractRutFromObservations(rawObsCandidate));
+      setNotes(DEFAULT_FRAGILE_NOTE);
       setOrderNumber(order.id || `KAM-${Date.now().toString().slice(-6)}`);
 
       // Determinar agencia y modalidad a partir del método de envío del pedido
@@ -434,9 +437,15 @@ export default function ShippingLabelModal({
       setRecipientCity(order.customer.city || "");
       const rawAddr = (order.customer.address || "").trim();
       setRecipientAddress(rawAddr.replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "").trim());
-      let obs = order.customer.observations || order.observations || order.customer.notes || order.notes || "";
-      if (isSystemOrPaymentNote(obs)) obs = "";
-      setObservations(obs);
+      const rawObs =
+        order.customer.observations ||
+        order.observations ||
+        order.customer.notes ||
+        order.notes ||
+        "";
+      setObservations(cleanLabelObservations(rawObs));
+      setRutInfo(extractRutFromObservations(rawObs));
+      setNotes(DEFAULT_FRAGILE_NOTE);
       setOrderNumber(order.id);
     }
   };
@@ -716,11 +725,11 @@ export default function ShippingLabelModal({
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Observaciones / Indicaciones para identificar la vivienda (Opcional)
+                  Observaciones / Indicaciones (se agregan entre paréntesis al domicilio)
                 </label>
                 <input
                   type="text"
-                  placeholder="Ej. Casa de rejas negras, portón de madera, entre calles X e Y, timbre blanco..."
+                  placeholder="Ej. Casa de rejas negras, portón de madera, timbre blanco..."
                   value={observations}
                   onChange={(e) => setObservations(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
@@ -763,7 +772,7 @@ export default function ShippingLabelModal({
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-0.5">
-                  Leyenda / Advertencia
+                  Aviso de Paquete / Frágil
                 </label>
                 <input
                   type="text"
@@ -1073,7 +1082,7 @@ export default function ShippingLabelModal({
                   </div>
                 </div>
 
-                {/* 2. Dirección de Entrega / Sucursal de Retiro con auto-escalado según longitud */}
+                {/* 2. Dirección de Entrega / Sucursal de Retiro + (Observaciones) con auto-escalado */}
                 <div className="border-t-[2.5px] border-black pt-1.5 mt-1.5">
                   <span className="text-[10px] font-black uppercase text-slate-600 block thermal-text-black tracking-wider leading-none mb-1">
                     {deliveryType === "agencia"
@@ -1087,26 +1096,19 @@ export default function ShippingLabelModal({
                       ? "LOCAL KAMALUSO (SAN JOSÉ DE MAYO)"
                       : cleanAddressDisplay ||
                         (deliveryType === "agencia" ? "[INDICAR SUCURSAL]" : "[CALLE Y N°]")}
-                  </p>
-
-                  {/* Observaciones (solo si hay indicaciones reales y no notas de pago) */}
-                  {cleanObservations && (
-                    <div className="mt-1.5 p-1.5 bg-slate-50 border border-black rounded-lg thermal-box">
-                      <span className="text-[9px] font-black uppercase text-slate-700 block thermal-text-black leading-none mb-0.5">
-                        💬 INDICACIONES:
+                    {cleanObservations && (
+                      <span className="text-slate-800 thermal-text-black font-extrabold">
+                        {` (${cleanObservations})`}
                       </span>
-                      <p className="text-xs font-bold text-black leading-tight break-words">
-                        {cleanObservations}
-                      </p>
-                    </div>
-                  )}
+                    )}
+                  </p>
                 </div>
               </div>
 
               {/* Advertencia de Manipulación y Cuidado - Frágil */}
               <div className="py-1 px-2 bg-red-50 border border-red-500 rounded-lg text-center flex-shrink-0 thermal-box">
                 <p className="font-black text-red-700 text-[9.5px] tracking-wide uppercase leading-none thermal-text-black">
-                  {notes || "⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE"}
+                  {notes || DEFAULT_FRAGILE_NOTE}
                 </p>
               </div>
 

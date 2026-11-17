@@ -14,6 +14,7 @@ import {
   ShippingLabelPDFData,
   cleanLabelAddress,
   cleanLabelObservations,
+  extractRutFromObservations,
   formatCityDeptDisplay,
   normalizeAgencyDisplay,
 } from "@/lib/shippingLabelUtils";
@@ -274,27 +275,9 @@ const styles = StyleSheet.create({
     color: "#000000",
     lineHeight: 1.18,
   },
-  observationsBox: {
-    marginTop: 4,
-    paddingVertical: 3.5,
-    paddingHorizontal: 5,
-    backgroundColor: "#f8fafc",
-    borderWidth: 0.9,
-    borderColor: "#000000",
-    borderRadius: 4,
-  },
-  observationsLabel: {
-    fontSize: 6.8,
+  observationsInline: {
     fontFamily: "Helvetica-Bold",
-    textTransform: "uppercase",
-    color: "#334155",
-    marginBottom: 1,
-  },
-  observationsText: {
-    fontSize: 8.2,
-    fontFamily: "Helvetica-Bold",
-    color: "#000000",
-    lineHeight: 1.2,
+    color: "#1e293b",
   },
   // Frágil
   fragileBox: {
@@ -398,6 +381,8 @@ export const ShippingLabelPDFDocument: React.FC<{
       ? "LOCAL KAMALUSO (SAN JOSÉ DE MAYO)"
       : cleanLabelAddress(data.recipientAddress);
   const cleanObs = stripNonPrintableSymbols(cleanLabelObservations(data.observations));
+  const resolvedRut =
+    (data.rutInfo || "").trim() || extractRutFromObservations(data.observations);
 
   const nameLen = (data.recipientName || "").trim().length;
   const nameFontSize = nameLen > 35 ? 14.5 : nameLen > 22 ? 17 : 19.5;
@@ -405,23 +390,22 @@ export const ShippingLabelPDFDocument: React.FC<{
   const phoneLen = (data.recipientPhone || "").trim().length;
   const phoneFontSize = phoneLen > 22 ? 13 : phoneLen > 16 ? 14.5 : 16;
 
-  const addrLen = cleanAddress.length;
-  const hasObs = Boolean(cleanObs);
-  const addressFontSize = hasObs
-    ? addrLen > 55
-      ? 10.5
-      : addrLen > 35
-      ? 12
-      : addrLen > 22
-      ? 13.5
-      : 15
-    : addrLen > 60
-    ? 12
-    : addrLen > 40
-    ? 13.5
-    : addrLen > 24
-    ? 15
-    : 16.5;
+  // Auto-escala sobre la longitud combinada de dirección + (observaciones)
+  const combinedAddrLen = (
+    cleanAddress + (cleanObs ? ` (${cleanObs})` : "")
+  ).length;
+  const addressFontSize =
+    combinedAddrLen > 125
+      ? 9
+      : combinedAddrLen > 95
+      ? 10
+      : combinedAddrLen > 68
+      ? 11.5
+      : combinedAddrLen > 45
+      ? 13
+      : combinedAddrLen > 26
+      ? 14.5
+      : 16;
 
   const fragileText =
     stripNonPrintableSymbols(data.notes || "") ||
@@ -578,7 +562,7 @@ export const ShippingLabelPDFDocument: React.FC<{
                   </Text>
                 </View>
 
-                {data.rutInfo ? (
+                {resolvedRut ? (
                   <Text
                     style={[
                       styles.rutText,
@@ -591,7 +575,7 @@ export const ShippingLabelPDFDocument: React.FC<{
                         : {},
                     ]}
                   >
-                    RUT / CI: {data.rutInfo}
+                    RUT / CI: {resolvedRut}
                   </Text>
                 ) : null}
               </View>
@@ -617,31 +601,17 @@ export const ShippingLabelPDFDocument: React.FC<{
                   (deliveryType === "agencia"
                     ? "[INDICAR SUCURSAL]"
                     : "[CALLE Y N°]")}
-              </Text>
-
-              {cleanObs ? (
-                <View
-                  style={[
-                    styles.observationsBox,
-                    isBw ? { backgroundColor: "#ffffff" } : {},
-                  ]}
-                >
+                {cleanObs ? (
                   <Text
                     style={[
-                      styles.observationsLabel,
+                      styles.observationsInline,
                       isBw ? { color: "#000000" } : {},
                     ]}
                   >
-                    INDICACIONES:
+                    {` (${cleanObs})`}
                   </Text>
-                  <Text
-                    hyphenationCallback={(w) => [w]}
-                    style={styles.observationsText}
-                  >
-                    {cleanObs}
-                  </Text>
-                </View>
-              ) : null}
+                ) : null}
+              </Text>
             </View>
           </View>
 
