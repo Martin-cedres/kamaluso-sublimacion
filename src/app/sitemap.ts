@@ -1,9 +1,14 @@
 import { MetadataRoute } from "next";
 import { getAllProducts, CATEGORIES } from "@/lib/products";
+import redirects from "../../data/redirects.json";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.kamaluso.com";
   const products = await getAllProducts();
+
+  const redirectedPaths = new Set(
+    (redirects as Array<{ source: string }>).map((r) => r.source.toLowerCase())
+  );
 
   const forbiddenSlugs = new Set([
     "recetario-infantil-sublimable1",
@@ -20,7 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productUrls: MetadataRoute.Sitemap = [];
 
   for (const product of products) {
-    if (!forbiddenSlugs.has(product.slug) && !seenSlugs.has(product.slug)) {
+    const productPath = `/p/${product.slug}`.toLowerCase();
+    if (
+      !forbiddenSlugs.has(product.slug) &&
+      !redirectedPaths.has(productPath) &&
+      !seenSlugs.has(product.slug)
+    ) {
       seenSlugs.add(product.slug);
       productUrls.push({
         url: `${baseUrl}/p/${product.slug}`,
@@ -106,12 +116,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/developers`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
     },
     ...categoryUrls,
     ...productUrls,

@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   title: "Portal de Desarrolladores & Agentes de IA | Kamaluso API & MCP",
   description:
     "Documentación oficial, OpenAPI 3.1, Model Context Protocol (MCP) streamable y guías de integración para asistentes autónomos y desarrolladores de la fábrica Kamaluso en Uruguay.",
+  robots: {
+    index: false,
+    follow: true,
+  },
   alternates: {
     canonical: "https://www.kamaluso.com/developers",
   },

@@ -258,5 +258,25 @@
     "source": "/plantillas-sublimacion",
     "destination": "/recursos",
     "permanent": true
+  },
+  {
+    "source": "/p/kit-10-1-agendas-semanales-sublimables",
+    "destination": "/p/kit-x10",
+    "permanent": true
+  },
+  {
+    "source": "/p/cartulina-sublimable-a4",
+    "destination": "/p/cartulina-sublimable-x10",
+    "permanent": true
+  },
+  {
+    "source": "/p/fotocopias-impresiones-encuadernaciones1",
+    "destination": "https://www.papeleriapersonalizada.uy/imprimeya",
+    "permanent": true
+  },
+  {
+    "source": "/p/recetario-infantil-sublimable",
+    "destination": "/p/recetario-infantil",
+    "permanent": true
   }
 ]

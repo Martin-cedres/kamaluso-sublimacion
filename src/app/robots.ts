@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: ["/", "/api/feed/google-shopping", "/google-shopping.xml"],
-        disallow: ["/admin/"],
+        disallow: ["/admin/", "/checkout", "/cdn-cgi/"],
       },
       {
         userAgent: [
@@ -28,12 +28,9 @@ export default function robots(): MetadataRoute.Robots {
           "/api/health",
           "/.well-known/",
         ],
-        disallow: ["/admin/"],
+        disallow: ["/admin/", "/checkout", "/cdn-cgi/"],
       },
     ],
-    sitemap: [
-      "https://www.kamaluso.com/sitemap.xml",
-      "https://www.kamaluso.com/llms.txt",
-    ],
+    sitemap: "https://www.kamaluso.com/sitemap.xml",
   };
 }
