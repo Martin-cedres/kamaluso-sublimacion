@@ -4,9 +4,9 @@ import { GLOBAL_FAQ_ITEMS, getFaqSchema } from "@/lib/schema";
 import { HelpCircle, ChevronRight, MessageCircle } from "lucide-react";
 
 export const metadata = {
-  title: "Preguntas Frecuentes (FAQ) | Kamaluso Sublimación Uruguay",
+  title: "Preguntas Frecuentes (FAQ) | Kamaluso Sublimación",
   description:
-    "Respuestas sobre tiempos de sublimado (170ºC/120s), mínimos de compra, envíos desde San José de Mayo a todo Uruguay y formatos de papel.",
+    "Respuestas sobre sublimado de tapas 350gr (170ºC/120s), mínimos de compra, venta modular de interiores, tapas de repuesto y envíos a los 19 departamentos.",
   alternates: {
     canonical: "https://www.kamaluso.com/faq",
   },

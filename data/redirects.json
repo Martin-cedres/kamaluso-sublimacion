@@ -278,5 +278,10 @@
     "source": "/p/recetario-infantil-sublimable",
     "destination": "/p/recetario-infantil",
     "permanent": true
+  },
+  {
+    "source": "/about",
+    "destination": "/sobre-nosotros",
+    "permanent": true
   }
 ]

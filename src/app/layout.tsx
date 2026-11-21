@@ -31,11 +31,11 @@ const KAMALUSO_LOGO_URL = "/logo.png";
 
 export const metadata: Metadata = {
   title: {
-    default: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
-    template: "%s | Kamaluso Papelería Sublimable",
+    default: "Kamaluso | Papelería Sublimable por Mayor en Uruguay",
+    template: "%s",
   },
   description:
-    "Fábrica especialista en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto sin mínimo. Envíos a todo el país.",
+    "Fabricantes directos en San José de Mayo de insumos sublimables en blanco: tapas 350gr, agendas 2027, interiores sueltos y repuestos. Envíos a Uruguay.",
   metadataBase: new URL("https://www.kamaluso.com"),
   manifest: "/manifest.json",
   keywords: [
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kamaluso | Insumos y Papelería Sublimable en Uruguay",
     description:
-      "Fábrica especialista en San José, Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores de agendas por separado y tapas 350gr de repuesto sin mínimo. Envíos a todo el país.",
+      "Fabricantes directos en San José con 26 modelos de papelería sublimable y stock todo el año. Kits, interiores por separado y tapas 350gr sin mínimo.",
     url: "https://www.kamaluso.com",
     siteName: "Kamaluso Sublimación",
     locale: "es_UY",
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kamaluso | Papelería Sublimable Uruguay",
     description:
-      "Fábrica en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores y tapas 350gr de repuesto sin mínimo.",
+      "Fabricantes en San José con 26 modelos de papelería sublimable y stock todo el año. Kits, interiores y tapas 350gr de repuesto sin mínimo.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
   verification: {
@@ -116,7 +116,7 @@ export default function RootLayout({
         <link rel="service-desc" href="/.well-known/agent-card.json" />
         <link rel="service-meta" href="/.well-known/agent-skills/index.json" />
         <link rel="service-doc" href="/llms.txt" />
-        <link rel="author" href="/auth.md" />
+        <link rel="service-doc" href="/auth.md" />
         {/* Marcado de Entidad Local & SEO/GEO global */}
         <script
           type="application/ld+json"

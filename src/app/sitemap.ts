@@ -4,6 +4,7 @@ import redirects from "../../data/redirects.json";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.kamaluso.com";
+  const SITE_LAST_MODIFIED = new Date("2026-11-20T00:00:00.000Z");
   const products = await getAllProducts();
 
   const redirectedPaths = new Set(
@@ -34,18 +35,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       seenSlugs.add(product.slug);
       productUrls.push({
         url: `${baseUrl}/p/${product.slug}`,
-        lastModified: new Date(),
+        lastModified: SITE_LAST_MODIFIED,
         changeFrequency: "weekly" as const,
         priority: 0.8,
       });
     }
   }
 
+  const activeCategorySlugs = new Set(products.map((p) => p.category));
   const categoryUrls: MetadataRoute.Sitemap = CATEGORIES.filter(
-    (c) => c.id !== "todos"
+    (c) => c.id !== "todos" && activeCategorySlugs.has(c.id)
   ).map((cat) => ({
     url: `${baseUrl}/categoria/${cat.id}`,
-    lastModified: new Date(),
+    lastModified: SITE_LAST_MODIFIED,
     changeFrequency: "weekly" as const,
     priority: 0.9,
   }));
@@ -53,67 +55,61 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 1.0,
     },
     {
       url: `${baseUrl}/mayoristas`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.95,
     },
     {
       url: `${baseUrl}/guia-sublimacion-papeleria`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/emprender-en-papeleria-sublimable`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.85,
     },
     {
       url: `${baseUrl}/recursos`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.85,
     },
     {
       url: `${baseUrl}/faq`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/sobre-nosotros`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${baseUrl}/contacto`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "yearly",
       priority: 0.4,
     },
     {
       url: `${baseUrl}/devoluciones`,
-      lastModified: new Date(),
+      lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "yearly",
       priority: 0.5,
     },

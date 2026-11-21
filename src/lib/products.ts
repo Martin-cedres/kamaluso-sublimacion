@@ -2,7 +2,7 @@ import { Product, Category } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 import localProductsData from "../../data/products.json";
 
-export const CURRENT_CATALOG_VERSION = 6;
+export const CURRENT_CATALOG_VERSION = 8;
 export const DIRECT_BLOB_PRODUCTS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json";
 
 export const CATEGORIES: Category[] = [
@@ -228,11 +228,11 @@ export async function getProductBySlug(slug: string): Promise<Product | undefine
     return products.find((p) => p.slug === "block-sublimable-10x15cm-con-renglones");
   }
 
-  // Fallback inteligente para variantes de slug sin año o variaciones (ej: agenda-semanal-2027, agenda-sublimable-semanal, agenda-semanal)
-  const normTarget = slug.toLowerCase().replace(/-202[0-9]/g, "").replace(/[^a-z0-9]/g, "");
+  // Coincidencia exacta normalizada sin substring matching para evitar soft-404 infinitos
+  const normTarget = slug.toLowerCase().replace(/[^a-z0-9]/g, "");
   return products.find((p) => {
-    const normP = p.slug.toLowerCase().replace(/-202[0-9]/g, "").replace(/[^a-z0-9]/g, "");
-    return normP === normTarget || normP.includes(normTarget) || normTarget.includes(normP);
+    const normP = p.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return normP === normTarget;
   });
 }
 

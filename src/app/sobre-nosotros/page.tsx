@@ -4,9 +4,9 @@ import Image from "next/image";
 import { ShieldCheck, Heart, Sparkles, Truck, CheckCircle2, Instagram, ExternalLink, Layers, Award, Flame } from "lucide-react";
 
 export const metadata = {
-  title: "Sobre Nosotros | Kamaluso San José, Papelería Sublimable",
+  title: "Sobre Nosotros | Kamaluso Papelería Sublimable",
   description:
-    "Nos especializamos en la confección de artículos de papelería sublimables en San José, Uruguay: agendas, libretas, blocks y cuadernos para sublimadores y revendedores.",
+    "Fabricantes directos de insumos de papelería sublimable en Ramón Massini 136, San José de Mayo, Uruguay. Tapas 350gr e interiores con envíos a los 19 departamentos.",
   alternates: {
     canonical: "https://www.kamaluso.com/sobre-nosotros",
   },
@@ -37,18 +37,57 @@ export const metadata = {
 };
 
 export default function SobreNosotrosPage() {
+  const jsonLdAbout = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        "@id": "https://www.kamaluso.com/sobre-nosotros#webpage",
+        "url": "https://www.kamaluso.com/sobre-nosotros",
+        "name": "Sobre Nosotros | Kamaluso Papelería Sublimable",
+        "description":
+          "Fabricantes directos de insumos de papelería sublimable en San José de Mayo, Uruguay (Ramón Massini 136, CP 80000).",
+        "inLanguage": "es-UY",
+        "mainEntity": {
+          "@id": "https://www.kamaluso.com/#organization",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://www.kamaluso.com",
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Sobre Nosotros",
+            "item": "https://www.kamaluso.com/sobre-nosotros",
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdAbout) }}
+      />
       {/* Header */}
       <div className="text-center space-y-4">
         <span className="text-xs font-bold text-brand-600 uppercase tracking-widest bg-brand-50 px-3 py-1 rounded-full">
-          Conócenos
+          Fabricantes Directos • Industria Uruguaya
         </span>
         <h1 className="text-4xl font-extrabold text-slate-900">
           Somos Kamaluso San José
         </h1>
         <p className="text-slate-600 leading-relaxed text-base max-w-2xl mx-auto">
-          Especialistas en insumos de papelería sublimable para emprendedores de todo el Uruguay.
+          Especialistas en insumos de papelería sublimable en blanco para talleres, imprentas y emprendedores de todo el Uruguay.
         </p>
       </div>
 
@@ -59,7 +98,7 @@ export default function SobreNosotrosPage() {
             Papelería para sublimadores y revendedores
           </h2>
           <p>
-            Somos fabricantes directos y especialistas en papelería sublimable ubicados en <strong className="text-slate-900">San José de Mayo, Uruguay</strong>, con <strong className="text-slate-900">el mayor catálogo del país (+26 modelos especializados)</strong> y <strong className="text-slate-900">stock disponible los 365 días del año</strong> (<strong className="text-slate-900">agendas 2027, perpetuas, libretas, planners, blocks, recetarios y cuadernos</strong>). Despachamos rápidamente a los 19 departamentos y sin mínimos de compra.
+            Somos fabricantes directos y especialistas en papelería sublimable ubicados en <strong className="text-slate-900">San José de Mayo, Uruguay</strong>, con <strong className="text-slate-900">el mayor catálogo del país (26 modelos especializados)</strong> y <strong className="text-slate-900">stock disponible los 365 días del año</strong> (<strong className="text-slate-900">agendas 2027, perpetuas, libretas, planners, blocks, recetarios y cuadernos</strong>). Despachamos rápidamente a los 19 departamentos sin mínimos de compra.
           </p>
           <p>
             Diseñamos cada artículo pensando en <strong className="text-slate-900">colegas sublimadores, imprentas y talleres creativos</strong>. Además de kits completos listos para armar, ofrecemos venta modular: podés pedir <strong className="text-slate-900">interiores de agendas por separado</strong> o reponer únicamente el{" "}
@@ -84,7 +123,7 @@ export default function SobreNosotrosPage() {
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="text-sm font-semibold text-slate-800">Mayor catálogo (+26 modelos) y stock los 365 días</span>
+            <span className="text-sm font-semibold text-slate-800">Mayor catálogo (26 modelos) y stock los 365 días</span>
           </div>
 
           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -135,9 +174,48 @@ export default function SobreNosotrosPage() {
               </div>
               <h4 className="font-bold text-sm text-slate-900">Mayor Catálogo y Stock 365 Días</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Más de 26 formatos especializados con stock todo el año por fabricación propia y venta sin mínimo de compra desde 1 unidad.
+                26 modelos especializados con stock todo el año como fabricantes directos y venta sin mínimo de compra desde 1 unidad.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Diferenciación de Marca B2B vs B2C */}
+        <div className="bg-brand-50/70 border border-brand-200/80 rounded-2xl p-6 space-y-3">
+          <h3 className="text-lg font-extrabold text-brand-900">
+            Diferencia entre Kamaluso Insumos (kamaluso.com) y Papelería Personalizada (papeleriapersonalizada.uy)
+          </h3>
+          <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
+            <li>
+              <strong>www.kamaluso.com (este sitio):</strong> Fábrica mayorista B2B de insumos en blanco sin estampar (kits completos, interiores impresos por separado y tapas 350gr) para talleres y emprendedores.
+            </li>
+            <li>
+              <strong>www.papeleriapersonalizada.uy:</strong> Tienda minorista hermana dedicada a agendas y cuadernos ya terminados y personalizados para consumidor final y empresas.
+            </li>
+          </ul>
+        </div>
+
+        {/* Datos Corporativos Oficiales */}
+        <div className="bg-slate-900 text-white rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-300">
+          <div>
+            <strong className="text-white block text-sm mb-1">Dirección del Taller</strong>
+            <span>Ramón Massini 136, San José de Mayo, CP 80000, Uruguay</span>
+          </div>
+          <div>
+            <strong className="text-white block text-sm mb-1">Horario de Atención</strong>
+            <span>Lunes a Viernes de 09:00 a 18:00 hs</span>
+          </div>
+          <div>
+            <strong className="text-white block text-sm mb-1">WhatsApp Directo</strong>
+            <a href="https://wa.me/59898615074" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline font-semibold">
+              +598 98 615 074
+            </a>
+          </div>
+          <div>
+            <strong className="text-white block text-sm mb-1">Correo Electrónico</strong>
+            <a href="mailto:kamalusosanjose@gmail.com" className="text-brand-300 hover:underline font-semibold">
+              kamalusosanjose@gmail.com
+            </a>
           </div>
         </div>
 
@@ -175,9 +253,9 @@ export default function SobreNosotrosPage() {
               <Instagram className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 text-base">Síguenos en Instagram</h4>
+              <h4 className="font-bold text-slate-900 text-base">Seguinos en Instagram</h4>
               <p className="text-xs text-slate-600">
-                Mira fotos de nuestros procesos de taller, novedades de agendas y tips de sublimación en <strong>@kamaluso_sanjose</strong>.
+                Mirá fotos de nuestros procesos de taller, novedades de agendas y tips de sublimación en <strong>@kamaluso_sanjose</strong>.
               </p>
             </div>
           </div>

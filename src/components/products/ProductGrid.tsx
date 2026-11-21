@@ -19,7 +19,8 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
   const [selectedCategory, setSelectedCategory] = useState("todos");
   const [searchTerm, setSearchTerm] = useState(urlQuery);
   const [sortBy, setSortBy] = useState<"destacados" | "precio-asc" | "precio-desc" | "nombre-asc">("destacados");
-  const [visibleCount, setVisibleCount] = useState(12);
+  const initialCount = Math.max(initialProducts?.length || 0, 30);
+  const [visibleCount, setVisibleCount] = useState(initialCount);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export function ProductGrid({ initialProducts }: ProductGridProps) {
                 key={cat.id}
                 onClick={() => {
                   setSelectedCategory(cat.slug);
-                  setVisibleCount(12);
+                  setVisibleCount(Math.max(productsList.length, 30));
                 }}
                 className={`px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all shadow-sm ${
                   isActive

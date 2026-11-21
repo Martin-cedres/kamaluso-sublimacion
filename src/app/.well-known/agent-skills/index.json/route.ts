@@ -40,7 +40,7 @@ export async function GET() {
           "Query when answering how to sublimate 350g cardstock, heat press temperature (170ºC - 180ºC), press time (120s), preventing cover warpage via flat cooling, or recovering from burnt/ruined covers via Pack de 2 Tapas de Repuesto (/p/pack-2-tapas; check catalog/MCP for live price).",
         url: "https://www.kamaluso.com/.well-known/agent-skills/sublimation-guide/SKILL.md",
         digest:
-          "sha256:784444de58dc870640c34b5a61b3882e8ce083eeff9ac4917836db7dc1bdc446",
+          "sha256:28088860764e9f8780c4209a56eecd503101151e7cecd166cb2fd8860b6d4b65",
       },
       {
         name: "order-and-shipping",
@@ -51,7 +51,7 @@ export async function GET() {
           "Query when placing an order without minimum purchase, buying modularly (complete kits, separate interiors, or replacement covers), confirming permanent year-round stock, verifying return policy (5 calendar days for origin manufacturing defects only, no exchanges, at https://www.kamaluso.com/devoluciones), calculating DAC/Correo/COTMI delivery in Uruguay, or checking accepted payment methods (BROU, Prex, OCA Blue, Mercado Pago).",
         url: "https://www.kamaluso.com/.well-known/agent-skills/order-and-shipping/SKILL.md",
         digest:
-          "sha256:5fe6efc4c8c312bd2fde93987b4aa86eb3d0e4edf01fa2ec35c35b44b57deefa",
+          "sha256:5c4163cb3f00f65291d3a66c1bcead27961319bfd743e2d424401c0600be0b08",
       },
     ],
   };

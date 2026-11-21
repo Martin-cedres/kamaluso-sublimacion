@@ -1,16 +1,17 @@
 import React, { Suspense } from "react";
 import { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
-import { getFaqSchema } from "@/lib/schema";
+import { getFaqSchema, GLOBAL_FAQ_ITEMS } from "@/lib/schema";
 import { ProductGrid } from "@/components/products/ProductGrid";
+import { HomeSeoSection } from "@/components/home/HomeSeoSection";
 import { Flame } from "lucide-react";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
+  title: "Kamaluso | Fábrica de Papelería Sublimable en Uruguay",
   description:
-    "Fábrica especialista en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto sin mínimo. Envíos a todo el país.",
+    "Fabricantes en San José con 26 modelos de papelería sublimable y stock todo el año. Kits, interiores sueltos y tapas 350gr sin mínimo. Envíos a Uruguay.",
   alternates: {
     canonical: "https://www.kamaluso.com",
   },
@@ -29,11 +30,11 @@ export const metadata: Metadata = {
     "san jose de mayo",
   ],
   openGraph: {
-    title: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
+    title: "Kamaluso | Fábrica de Papelería Sublimable en Uruguay",
     description:
-      "Fábrica especialista en San José, Uruguay con el mayor catálogo de papelería sublimable (+26 modelos) y stock todo el año. Kits completos, interiores de agendas por separado y tapas 350gr de repuesto sin mínimo. Envíos a todo el país.",
+      "Fabricantes en San José con 26 modelos de papelería sublimable y stock todo el año. Kits completos, interiores por separado y tapas 350gr sin mínimo.",
     url: "https://www.kamaluso.com",
-    siteName: "Kamaluso Papelería Sublimable",
+    siteName: "Kamaluso Sublimación",
     locale: "es_UY",
     type: "website",
     images: [
@@ -47,9 +48,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kamaluso | Fábrica de Insumos de Papelería Sublimable en Uruguay",
+    title: "Kamaluso | Fábrica de Papelería Sublimable en Uruguay",
     description:
-      "Fábrica en San José con el mayor catálogo de papelería sublimable en Uruguay (+26 modelos) y stock todo el año. Kits, interiores y tapas 350gr de repuesto sin mínimo.",
+      "Fabricantes en San José con 26 modelos de papelería sublimable y stock todo el año. Kits, interiores y tapas 350gr de repuesto sin mínimo.",
     images: ["https://www.kamaluso.com/agenda_fondo_kamaluso.jpg"],
   },
 };
@@ -59,6 +60,10 @@ const jsonLdWebSite = {
   "@type": "WebSite",
   "name": "Kamaluso",
   "url": "https://www.kamaluso.com",
+  "inLanguage": "es-UY",
+  "publisher": {
+    "@id": "https://www.kamaluso.com/#organization",
+  },
   "potentialAction": {
     "@type": "SearchAction",
     "target": "https://www.kamaluso.com/?q={search_term_string}",
@@ -68,6 +73,7 @@ const jsonLdWebSite = {
 
 export default async function HomePage() {
   const products = await getAllProducts();
+  const visibleHomeFaqs = GLOBAL_FAQ_ITEMS.slice(0, 4);
 
   return (
     <div className="min-h-screen">
@@ -77,7 +83,7 @@ export default async function HomePage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqSchema()) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqSchema(visibleHomeFaqs)) }}
       />
 
       {/* Hero Section B2B (Server-rendered para LCP instantáneo en Google PageSpeed) */}
@@ -93,7 +99,7 @@ export default async function HomePage() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-700 max-w-2xl mx-auto font-normal leading-relaxed">
-            Kits listos para armar, interiores de agendas y tapas 350gr de repuesto por separado. Stock todo el año (+26 modelos) sin mínimo de compra y envíos a los 19 departamentos.
+            Kits listos para armar, interiores de agendas y tapas 350gr de repuesto por separado. Stock todo el año (26 modelos) sin mínimo de compra y envíos a los 19 departamentos.
           </p>
         </div>
       </section>
@@ -101,6 +107,8 @@ export default async function HomePage() {
       <Suspense fallback={<div className="min-h-[400px] bg-slate-50/50" />}>
         <ProductGrid initialProducts={products} />
       </Suspense>
+
+      <HomeSeoSection />
     </div>
   );
 }

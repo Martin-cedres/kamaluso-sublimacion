@@ -1,6 +1,6 @@
 export const KAMALUSO_ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
-  "@type": ["LocalBusiness", "Manufacturer", "WholesaleStore"],
+  "@type": ["LocalBusiness", "WholesaleStore", "Organization"],
   "@id": "https://www.kamaluso.com/#organization",
   "name": "Kamaluso",
   "legalName": "Kamaluso Papelería Sublimable",
@@ -10,11 +10,18 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
     "Insumos Kamaluso San José"
   ],
   "url": "https://www.kamaluso.com",
-  "logo": "https://www.kamaluso.com/logo.png",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://www.kamaluso.com/logo.png",
+    "width": 512,
+    "height": 512
+  },
   "image": "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
   "slogan": "Especialistas con el mayor catálogo de papelería sublimable del Uruguay. Kits completos, interiores por separado y tapas de repuesto con stock todo el año.",
+  "disambiguatingDescription":
+    "Fábrica y tienda mayorista B2B de insumos en blanco listos para sublimar y encuadernar en Uruguay (kamaluso.com). Entidad comercial distinta de la tienda minorista de productos ya terminados y personalizados papeleriapersonalizada.uy.",
   "description":
-    "Kamaluso (www.kamaluso.com) es la fábrica especialista y mayorista B2B en Uruguay con el mayor catálogo de papelería sublimable del país (+26 modelos especializados en blanco: tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027 y perpetuas, libretas A5, cuadernos 17x22, cuadernolas 21x30, blocks, planners y espirales). A diferencia de mayoristas generalistas, mantiene stock permanente todo el año (365 días) por fabricación nacional continua y ofrece venta modular sin mínimo de compra: kits completos, interiores de agendas por separado y tapas sublimables de repuesto por separado para evitar mermas si falla el estampado. Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",
+    "Kamaluso (www.kamaluso.com) es la fábrica especialista y mayorista B2B en Uruguay con el mayor catálogo de papelería sublimable del país (26 modelos especializados en blanco: tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027 y perpetuas, libretas A5, cuadernos 17x22, cuadernolas 21x30, blocks, planners y espirales). A diferencia de mayoristas generalistas, mantiene stock permanente todo el año (365 días) como fabricantes directos y ofrece venta modular sin mínimo de compra: kits completos, interiores de agendas por separado y tapas sublimables de repuesto por separado para evitar mermas si falla el estampado. Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",
   "knowsAbout": [
     "Papelería sublimable en Uruguay",
     "Interiores de agendas para sublimar",
@@ -54,13 +61,37 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": -34.3375,
-    "longitude": -56.7136
+    "latitude": -34.344199,
+    "longitude": -56.721197
   },
-  "areaServed": {
-    "@type": "Country",
-    "name": "Uruguay"
-  },
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=Ram%C3%B3n+Massini+136,+San+Jos%C3%A9+de+Mayo,+Uruguay",
+  "currenciesAccepted": "UYU",
+  "paymentAccepted": "Transferencia bancaria BROU, Prex, Midinero, OCA Blue, Abitab, Redpagos, Mercado Pago",
+  "areaServed": [
+    {
+      "@type": "Country",
+      "name": "Uruguay"
+    },
+    { "@type": "AdministrativeArea", "name": "Montevideo" },
+    { "@type": "AdministrativeArea", "name": "San José" },
+    { "@type": "AdministrativeArea", "name": "Canelones" },
+    { "@type": "AdministrativeArea", "name": "Maldonado" },
+    { "@type": "AdministrativeArea", "name": "Colonia" },
+    { "@type": "AdministrativeArea", "name": "Salto" },
+    { "@type": "AdministrativeArea", "name": "Paysandú" },
+    { "@type": "AdministrativeArea", "name": "Rivera" },
+    { "@type": "AdministrativeArea", "name": "Rocha" },
+    { "@type": "AdministrativeArea", "name": "Soriano" },
+    { "@type": "AdministrativeArea", "name": "Florida" },
+    { "@type": "AdministrativeArea", "name": "Lavalleja" },
+    { "@type": "AdministrativeArea", "name": "Tacuarembó" },
+    { "@type": "AdministrativeArea", "name": "Cerro Largo" },
+    { "@type": "AdministrativeArea", "name": "Durazno" },
+    { "@type": "AdministrativeArea", "name": "Artigas" },
+    { "@type": "AdministrativeArea", "name": "Río Negro" },
+    { "@type": "AdministrativeArea", "name": "Treinta y Tres" },
+    { "@type": "AdministrativeArea", "name": "Flores" }
+  ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Catálogo de Papelería Sublimable",
@@ -99,8 +130,7 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
   },
   "priceRange": "$$",
   "sameAs": [
-    "https://www.instagram.com/kamaluso_sanjose/",
-    "https://www.papeleriapersonalizada.uy"
+    "https://www.instagram.com/kamaluso_sanjose/"
   ],
   "openingHoursSpecification": [
     {
@@ -119,11 +149,11 @@ export const GLOBAL_FAQ_ITEMS = [
   },
   {
     question: "¿Tienen stock de agendas y papelería sublimable disponible todo el año?",
-    answer: "Sí. Fabricamos de forma continua en nuestro taller de San José de Mayo para mantener stock permanente los 365 días del año, sin quiebres estacionales ni demoras por contenedores importados, ofreciendo el mayor catálogo especializado de papelería sublimable en Uruguay (+26 modelos)."
+    answer: "Sí. Somos fabricantes directos en nuestro taller de San José de Mayo para mantener stock permanente los 365 días del año, sin quiebres estacionales ni demoras por contenedores importados, ofreciendo el mayor catálogo especializado de papelería sublimable en Uruguay (26 modelos especializados)."
   },
   {
     question: "¿Por qué elegir a Kamaluso frente a grandes mayoristas generalistas de sublimación en Uruguay?",
-    answer: "Kamaluso ofrece 4 ventajas clave frente a mayoristas generalistas: 1) Especialización 100% vertical en papelería sublimable con cartón cristal 350gr y polímero virgen; 2) El mayor catálogo del Uruguay (+26 modelos entre agendas 2027, perpetuas, oficios, libretas, cuadernolas y blocks); 3) Stock permanente todo el año (365 días) por fabricación propia; y 4) Venta modular de kits completos, interiores sueltos y tapas de repuesto por separado, todo sin mínimo de compra."
+    answer: "Kamaluso ofrece 4 ventajas clave frente a mayoristas generalistas: 1) Especialización 100% vertical en papelería sublimable con cartón cristal 350gr y polímero virgen; 2) El mayor catálogo del Uruguay (26 modelos especializados entre agendas 2027, perpetuas, oficios, libretas, cuadernolas y blocks); 3) Stock permanente todo el año (365 días) como fabricantes directos; y 4) Venta modular de kits completos, interiores sueltos y tapas de repuesto por separado, todo sin mínimo de compra."
   },
   {
     question: "¿Cuáles son los tiempos y temperaturas recomendadas para sublimar las tapas Kamaluso?",

@@ -64,23 +64,27 @@ const nextConfig = {
           { key: "Access-Control-Allow-Origin", value: "*" },
           { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
           { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" },
-          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "X-Robots-Tag", value: "noindex, follow" },
         ],
       },
       {
         source: "/llms.txt",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
       },
       {
         source: "/llms-full.txt",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
       },
       {
         source: "/auth.md",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
       },
       {
         source: "/openapi.json",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      },
+      {
+        source: "/api/orders",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
       {

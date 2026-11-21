@@ -17,7 +17,7 @@ export function AddToCartDetail({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const showPromoKit = Boolean(product.hasPromoKit) && product.slug !== "kit-10-1-de-regalo";
+  const showPromoKit = Boolean(product.hasPromoKit) && product.slug !== "kit-x10";
 
   return (
     <div className="space-y-4 pt-2">
@@ -87,10 +87,10 @@ export function AddToCartDetail({ product }: { product: Product }) {
             <Gift className="w-5 h-5" />
           </div>
           <div className="space-y-1 text-xs">
-            <h4 className="font-extrabold text-slate-900 flex items-center gap-1.5">
+            <h3 className="font-extrabold text-slate-900 flex items-center gap-1.5">
               <span>Promo Mayorista: KIT x 10 (Con Descuento)</span>
               <Sparkles className="w-3.5 h-3.5 text-pink-600" />
-            </h4>
+            </h3>
             <p className="text-slate-600 leading-relaxed">
               ¿Llevás 10 o más unidades? Comprando el <strong>Kit x 10 obtenés precio especial con descuento</strong> por cantidad en tus insumos.
             </p>

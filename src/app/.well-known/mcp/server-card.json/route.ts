@@ -7,7 +7,7 @@ export async function GET() {
     $schema: "https://modelcontextprotocol.io/schemas/server-card/v1.json",
     serverInfo: {
       name: "kamaluso-mcp-server",
-      version: "1.0.0",
+      version: "1.1.0",
       title: "Kamaluso Sublimación MCP Server",
       description:
         "Servidor MCP oficial para consulta de catálogo, precios en UYU, stock y parámetros de taller de Kamaluso en Uruguay.",

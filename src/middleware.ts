@@ -11,6 +11,7 @@ const AGENT_LINK_HEADER = [
   '</llms.txt>; rel="service-doc"',
   '</auth.md>; rel="service-doc"',
   '</openapi.json>; rel="service-desc"',
+  '</developers>; rel="service-doc"',
 ].join(", ");
 
 function buildMarkdownResponse(pathname: string): string {
@@ -25,7 +26,7 @@ Insumo de papelería sublimable fabricado en Uruguay por Kamaluso (San José de 
 - **Encuadernación:** Espiral continuo plástico resistente.
 - **Sublimación:** 170ºC a 180ºC por 120 segundos en prensa plana. Enfriar bajo peso plano durante 60-120s.
 - **Moneda:** Pesos Uruguayos (UYU).
-- **Despacho:** Envíos a todo Uruguay vía DAC y Correo Uruguayo.
+- **Despacho:** Envíos a todo Uruguay vía DAC, Correo Uruguayo y COTMI.
 
 Para consultar detalles específicos en tiempo real, invocar la API:
 - \`GET https://www.kamaluso.com/api/products\`
@@ -122,6 +123,11 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
+    "/p/:path*",
+    "/categoria/:path*",
+    "/guia-sublimacion-papeleria",
+    "/mayoristas",
     "/admin/:path*",
     "/api/agent/:path*",
   ],

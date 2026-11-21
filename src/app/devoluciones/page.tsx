@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Política de Cambios y Devoluciones | Kamaluso Papelería Sublimable",
+  title: "Política de Devoluciones | Kamaluso Sublimación",
   description:
-    "Política oficial de cambios y devoluciones de Kamaluso Papelería Sublimable en Uruguay. Plazo de 5 días corridos exclusivamente por defectos de fabricación de origen, exclusiones por errores de sublimación y procedimiento de contacto en San José de Mayo.",
+    "Política oficial de devoluciones en Uruguay: plazo de 5 días corridos solo por defectos de fabricación de origen previos a la prensa. Retiro o envío.",
   alternates: {
     canonical: "https://www.kamaluso.com/devoluciones",
   },

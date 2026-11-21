@@ -32,7 +32,7 @@ export async function GET() {
         representativeQueries: [
           "buscar productos mayor catalogo papeleria sublimable uruguay",
           "consultar stock permanente 365 dias y precios en pesos uruguayos",
-          "pack 2 tapas repuesto 20 pesos uruguayos agenda sublimable",
+          "pack 2 tapas repuesto agenda sublimable 350g uruguay",
           "cotizar pedido mayorista o unitario papeleria sublimacion sin minimo",
         ],
       },

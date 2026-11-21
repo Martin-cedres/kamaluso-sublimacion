@@ -7,9 +7,9 @@ import { getAllProducts } from "@/lib/products";
 import { Product } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Cómo Emprender con Agendas y Papelería Sublimable en Uruguay | Guía Kamaluso",
+  title: "Emprender con Agendas Sublimables Uruguay | Kamaluso",
   description:
-    "Guía práctica para iniciar tu taller de agendas y cuadernos personalizados en Uruguay: costos en pesos uruguayos (UYU), márgenes de rentabilidad, insumos necesarios y calendario de zafra.",
+    "Costos reales en UYU, márgenes de rentabilidad, kits iniciales y calendario de zafras para emprender en papelería sublimable y personalizada en Uruguay.",
   alternates: {
     canonical: "https://www.kamaluso.com/emprender-en-papeleria-sublimable",
   },
@@ -89,7 +89,7 @@ export default async function EmprenderPage() {
           Cómo Iniciar un Negocio de Agendas Personalizadas y Papelería Sublimable
         </h1>
         <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-          La papelería personalizada tiene uno de los mayores márgenes de ganancia en el rubro del estampado en Uruguay. Conoce los números reales, la maquinaria básica y cómo emprender con <strong>el mayor catálogo del país (+26 modelos)</strong> y <strong>stock todo el año (365 días)</strong> desde nuestra fábrica en San José de Mayo, comprando kits completos, interiores por separado o tapas de repuesto sin mínimo.
+          La papelería personalizada tiene uno de los mayores márgenes de ganancia en el rubro del estampado en Uruguay. Conoce los números reales, la maquinaria básica y cómo emprender con <strong>el mayor catálogo del país (26 modelos)</strong> y <strong>stock todo el año (365 días)</strong> como fabricantes directos en San José de Mayo, comprando kits completos, interiores por separado o tapas de repuesto sin mínimo.
         </p>
       </div>
 
@@ -405,7 +405,7 @@ export default async function EmprenderPage() {
             Las 4 temporadas pico para vender papelería en Uruguay
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Gracias a nuestra fabricación propia en San José de Mayo, contamos con <strong>stock continuo los 365 días del año</strong> en +26 modelos para que tu taller no sufra quiebres de mercadería en plena zafra.
+            Como fabricantes directos en San José de Mayo, contamos con <strong>stock continuo los 365 días del año</strong> en 26 modelos para que tu taller no sufra quiebres de mercadería en plena zafra.
           </p>
         </div>
 
@@ -422,7 +422,7 @@ export default async function EmprenderPage() {
             <span className="text-brand-400 font-extrabold text-xs uppercase block">Mayo</span>
             <h4 className="font-bold text-base text-white">Día de la Madre</h4>
             <p className="text-xs text-slate-400">
-              Momento cumbre para recetarios de cocina, diarios íntimos y agendas semanales personalizadas con fotos familiares.
+              Momento cumbre para recetarios de cocina, cuadernos de citas y agendas semanales personalizadas con fotos familiares.
             </p>
           </div>
 

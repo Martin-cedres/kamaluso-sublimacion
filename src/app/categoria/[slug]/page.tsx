@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAllProducts, CATEGORIES } from "@/lib/products";
 import { ProductCard } from "@/components/products/ProductCard";
-import { ChevronRight, Layers, Sparkles } from "lucide-react";
+import { ChevronRight, Layers, Sparkles, CheckCircle2, Truck, ShieldCheck } from "lucide-react";
 
 export const dynamicParams = true;
 export const revalidate = 300;
@@ -19,51 +19,51 @@ const CATEGORY_SEO: Record<
 > = {
   agendas: {
     h1: "Agendas Sublimables 2027 y Perpetuas en Uruguay",
-    title: "Agendas Sublimables 2027 y Perpetuas en Uruguay | Kamaluso",
+    title: "Agendas Sublimables 2027 y Perpetuas | Kamaluso",
     metaDescription:
       "Agendas sublimables 2027 y perpetuas directas de fábrica en San José con stock todo el año. Kits, interiores por separado y tapas 350gr de repuesto. Envíos.",
     intro:
-      "Kits completos de agendas para sublimar directos de fábrica en San José de Mayo, parte del mayor catálogo de papelería sublimable de Uruguay (+26 modelos) con stock disponible los 365 días del año. Compra kits listos para armar, interiores de agendas por separado o tapas de repuesto 350gr por separado sin mínimo de compra.",
+      "Somos fabricantes directos en San José con stock todo el año sin depender de importadores. El mayor catálogo de agendas sublimables de Uruguay (26 modelos especializados): Agendas 2027 con año y perpetuas con tapas de cartulina cristal sublimable de 350gr, tapas de repuesto e interiores por separado para no perder ninguna agenda. Despacho en 48 horas hábiles a Montevideo y todo el país.",
   },
   libretas: {
     h1: "Libretas y Cuadernos Sublimables en Uruguay (A5, 17x22 y A4)",
-    title: "Libretas y Cuadernos Sublimables en Uruguay (A5, 17x22 y A4) | Kamaluso",
+    title: "Libretas y Cuadernos Sublimables Uruguay | Kamaluso",
     metaDescription:
-      "Libretas, cuadernos y cuadernolas 21x30 para sublimar en Uruguay con stock todo el año. Tapas 350gr, kits o repuestos directos de fábrica en San José. Sin mínimo.",
+      "Libretas, cuadernos y cuadernolas 21x30 para sublimar en Uruguay con stock todo el año. Tapas 350gr, kits o repuestos directos en San José. Sin mínimo.",
     intro:
-      "Insumos de libretas, cuadernos y cuadernolas 21x30 para sublimación fabricados en San José de Mayo con stock continuo los 365 días del año. Parte del mayor catálogo del país (+26 modelos) con venta modular en kits completos, interiores o tapas de repuesto 15x21cm por separado sin mínimo de compra.",
+      "Insumos de libretas, cuadernos y cuadernolas 21x30 para sublimación fabricados en San José de Mayo con stock continuo los 365 días del año. Parte del mayor catálogo del país (26 modelos) con venta modular en kits completos, interiores o tapas de repuesto 15x21cm por separado sin mínimo de compra.",
   },
   "blocks-planners": {
     h1: "Blocks 10x15 y Planners Sublimables en Uruguay",
-    title: "Blocks 10x15 y Planners Sublimables en Uruguay | Kamaluso",
+    title: "Blocks 10x15 y Planners Sublimables | Kamaluso",
     metaDescription:
-      "Blocks 10x15 y planners sublimables en Uruguay con stock todo el año. Tapas 350gr con polímero virgen y espiral directos de fábrica en San José. Sin mínimo.",
+      "Blocks 10x15 y planners sublimables en Uruguay con stock todo el año. Tapas 350gr con polímero virgen y espiral directos en San José. Sin mínimo.",
     intro:
-      "Organizadores perpetuos, planners semanales y blocks anotadores 10x15cm dentro del mayor catálogo sublimable de Uruguay (+26 modelos) con stock disponible los 365 días del año. Ideales para souvenirs, regalos empresariales y talleres sin mínimo de compra.",
+      "Organizadores perpetuos, planners semanales y blocks anotadores 10x15cm dentro del mayor catálogo sublimable de Uruguay (26 modelos) con stock disponible los 365 días del año. Ideales para souvenirs, regalos empresariales y talleres sin mínimo de compra.",
   },
   especiales: {
     h1: "Insumos Especiales, Tapas de Repuesto y Cartulina Sublimable 350gr",
-    title: "Insumos Especiales y Cartulina Sublimable 350gr en Uruguay | Kamaluso",
+    title: "Tapas Repuesto y Cartulina 350gr Sublimable | Kamaluso",
     metaDescription:
       "Cartulina sublimable A4 350gr, tapas sueltas de repuesto y recetarios sublimables en Uruguay. Stock todo el año directo de fábrica en San José. Sin mínimo.",
     intro:
-      "Packs de cartulina sublimable A4 de 350gr, tapas sublimables perforadas de repuesto por separado, interiores sueltos y recetarios (color, negro e infantil) con stock continuo los 365 días del año desde nuestra fábrica en San José de Mayo.",
+      "Packs de cartulina sublimable A4 de 350gr, tapas sublimables perforadas de repuesto por separado, interiores sueltos y recetarios (color, negro e infantil) con stock continuo los 365 días del año desde nuestro taller en San José de Mayo.",
   },
   outlet: {
     h1: "Outlet de Papelería e Insumos Sublimables en Uruguay",
-    title: "Outlet de Papelería e Insumos Sublimables en Uruguay | Kamaluso",
+    title: "Outlet de Papelería Sublimable Uruguay | Kamaluso",
     metaDescription:
-      "Liquidación de temporada, lotes promocionales y formatos discontinuados de papelería sublimable con descuento directo de taller. Sin mínimo de compra y con envíos a todo el país.",
+      "Liquidación de temporada y lotes promocionales de papelería sublimable con descuento directo de taller en Uruguay. Sin mínimo de compra y envíos.",
     intro:
       "Liquidación de temporada, lotes promocionales y formatos discontinuados de papelería sublimable con descuento directo de taller. Sin mínimo de compra y con envíos a todo el país.",
   },
   "kits-promos": {
     h1: "Kits Mayoristas de Papelería Sublimable en Uruguay",
-    title: "Kits Mayoristas de Papelería Sublimable en Uruguay | Kamaluso",
+    title: "Kits Mayoristas Papelería Sublimable | Kamaluso",
     metaDescription:
-      "Kits mayoristas de papelería sublimable en Uruguay con stock todo el año. Mayor catálogo (+26 modelos) directo de fábrica en San José. Envíos a todo el país.",
+      "Kits mayoristas de papelería sublimable en Uruguay con stock todo el año. 26 modelos directos de fábrica en San José sin mínimo. Envíos a todo el país.",
     intro:
-      "Packs y promociones por volumen en agendas y cuadernos con descuento directo de fábrica en San José de Mayo. Accede al mayor catálogo de papelería sublimable de Uruguay (+26 modelos) con stock los 365 días, interiores por separado y respaldo de tapas de repuesto.",
+      "Packs y promociones por volumen en agendas y cuadernos con descuento directo en San José de Mayo. Accede al mayor catálogo de papelería sublimable de Uruguay (26 modelos) con stock los 365 días, interiores por separado y respaldo de tapas de repuesto.",
   },
 };
 
@@ -93,7 +93,8 @@ export async function generateMetadata({
   const canonicalUrl = `https://www.kamaluso.com/categoria/${slug}`;
 
   const allProducts = await getAllProducts();
-  const catProduct = allProducts.find((p) => p.category === slug && p.images && p.images.length > 0);
+  const categoryProducts = allProducts.filter((p) => p.category === slug);
+  const catProduct = categoryProducts.find((p) => p.images && p.images.length > 0);
   const rawCatImg = catProduct && catProduct.images[0] ? catProduct.images[0] : "/agenda_fondo_kamaluso.jpg";
   const catImageUrl = rawCatImg.startsWith("http")
     ? rawCatImg
@@ -102,6 +103,9 @@ export async function generateMetadata({
   return {
     title: seoData.title,
     description: seoData.metaDescription,
+    ...(categoryProducts.length === 0
+      ? { robots: { index: false, follow: true } }
+      : {}),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -159,27 +163,48 @@ export default async function CategoryPage({
     intro: `Encuentra kits completos de ${category.name.toLowerCase()} para sublimar y personalizar en Uruguay.`,
   };
 
-  // Schema.org ItemList para la categoría
-  const jsonLdItemList = {
+  // Schema.org ItemList + BreadcrumbList para la categoría
+  const jsonLdCategory = {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": seoData.h1,
-    "description": seoData.metaDescription,
-    "numberOfItems": categoryProducts.length,
-    "itemListElement": categoryProducts.map((prod, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "url": `https://www.kamaluso.com/p/${prod.slug}`,
-      "name": prod.name,
-    })),
+    "@graph": [
+      {
+        "@type": "ItemList",
+        "name": seoData.h1,
+        "description": seoData.metaDescription,
+        "numberOfItems": categoryProducts.length,
+        "itemListElement": categoryProducts.map((prod, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": `https://www.kamaluso.com/p/${prod.slug}`,
+          "name": prod.name,
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://www.kamaluso.com",
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": category.name,
+            "item": `https://www.kamaluso.com/categoria/${slug}`,
+          },
+        ],
+      },
+    ],
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
-      {/* Script JSON-LD ItemList */}
+    <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8 space-y-5 sm:space-y-10">
+      {/* Script JSON-LD ItemList + BreadcrumbList */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdItemList) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdCategory) }}
       />
 
       {/* Breadcrumb */}
@@ -194,16 +219,30 @@ export default async function CategoryPage({
       </nav>
 
       {/* Category Banner con H1 e Intro Limpios y Específicos */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-pink-950 p-8 sm:p-10 rounded-3xl text-white space-y-3 shadow-lg relative overflow-hidden">
-        <div className="flex items-center gap-2 text-xs font-bold text-pink-400 uppercase tracking-widest">
-          <Layers className="w-4 h-4" /> Categoría de Insumos Sublimables
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-pink-950 p-5 sm:p-8 rounded-3xl text-white space-y-2.5 shadow-lg relative overflow-hidden">
+        <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-pink-400 uppercase tracking-wider sm:tracking-widest">
+          <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> Categoría de Insumos Sublimables
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black">
+        <h1 className="text-2xl sm:text-4xl font-black leading-tight">
           {seoData.h1}
         </h1>
-        <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-200 max-w-3xl leading-snug sm:leading-relaxed">
           {seoData.intro}
         </p>
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-0.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-white">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            Somos fabricantes • Stock todo el año
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-white">
+            <Truck className="w-3.5 h-3.5 text-sky-300 shrink-0" />
+            Despacho a las 48 hs del pago
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-white">
+            <ShieldCheck className="w-3.5 h-3.5 text-pink-300 shrink-0" />
+            Tapas Cristal 350gr + Repuestos
+          </span>
+        </div>
       </div>
 
       {/* Category Products Grid */}
@@ -230,11 +269,11 @@ export default async function CategoryPage({
                 Guía de Agendas Sublimables en Uruguay: Modelos, Tapas e Interiores
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                En <strong>Kamaluso</strong> fabricamos en San José de Mayo <strong>el mayor catálogo de papelería sublimable de Uruguay (+26 modelos)</strong> con <strong>stock continuo los 365 días del año</strong>. Podés llevar kits completos (hojas interiores temáticas, tapas rígidas de <strong>cartón cristal de 350gr con polímero virgen</strong> y espirales plásticos), pedir <strong>interiores de agendas impresos por separado para encuadernar</strong> (ideales para talleres de encuadernación artesanal o comercial que encuadernan en cartón gris laminado, cuerina o tela) o reponer únicamente el{" "}
+                En <strong>Kamaluso</strong> somos fabricantes directos en San José de Mayo con <strong>el mayor catálogo de papelería sublimable de Uruguay (26 modelos especializados)</strong> y <strong>stock todo el año sin depender de importadores</strong>. Contamos con <strong>Agendas 2027 con año</strong> fechadas y agendas perpetuas: podés llevar kits completos (hojas interiores temáticas, tapas rígidas de <strong>cartulina cristal sublimable de 350gr</strong> —ideal frente a alternativas de tela importadas— y espirales plásticos), pedir <strong>interiores de agendas impresos por separado para encuadernar</strong> (ideales para talleres de encuadernación artesanal o comercial que encuadernan en cartón gris laminado, cuerina o tela) o sumar el{" "}
                 <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300 hover:text-brand-800">
-                  Pack de 2 Tapas Sublimables de Repuesto por separado
+                  Pack de 2 Tapas de Repuesto por separado
                 </Link>{" "}
-                ante errores de prensa.
+                para no perder ninguna agenda si falla una tapa en la plancha. Despachamos en <strong>48 horas hábiles</strong> tras confirmar el pago a Montevideo y los 19 departamentos.
               </p>
             </div>
 
@@ -248,26 +287,26 @@ export default async function CategoryPage({
                   <thead>
                     <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                       <th className="py-2.5 px-3">Parámetro / Componente</th>
-                      <th className="py-2.5 px-3">Especificación Oficial de Fábrica</th>
+                      <th className="py-2.5 px-3">Especificación Oficial de Taller</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/60 text-slate-700">
                     <tr>
                       <td className="py-2.5 px-3 font-semibold text-slate-900">Disponibilidad y Catálogo</td>
-                      <td className="py-2.5 px-3 font-semibold text-emerald-700">Stock todo el año (365 días) • +26 modelos en fábrica propia</td>
+                      <td className="py-2.5 px-3 font-semibold text-emerald-700">Agendas 2027 con año y perpetuas • Fabricación directa todo el año • 26 modelos</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold text-slate-900">Modalidad y Repuestos</td>
                       <td className="py-2.5 px-3">
                         Kits completos, interiores de agendas impresos por separado para encuadernar o{" "}
                         <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
-                          Pack 2 Tapas de Repuesto
+                          Pack de 2 Tapas de Repuesto por separado
                         </Link>
                       </td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold text-slate-900">Gramaje de tapa</td>
-                      <td className="py-2.5 px-3">350gr Cartón Cristal de alta rigidez</td>
+                      <td className="py-2.5 px-3">Cartulina cristal sublimable de 350gr (ideal frente a alternativas de tela importadas)</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold text-slate-900">Polímero térmico</td>
@@ -291,7 +330,7 @@ export default async function CategoryPage({
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-semibold text-slate-900">Logística y envíos</td>
-                      <td className="py-2.5 px-3">DAC, Correo Uruguayo y COTMI a Montevideo y los 19 departamentos</td>
+                      <td className="py-2.5 px-3">Despacho en 48 horas hábiles tras confirmar el pago por DAC, Correo Uruguayo y COTMI a Montevideo y los 19 departamentos</td>
                     </tr>
                   </tbody>
                 </table>
@@ -302,7 +341,7 @@ export default async function CategoryPage({
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
                 <h3 className="font-bold text-slate-900 text-sm">Variedad de Interiores Temáticos</h3>
                 <p className="text-slate-600">
-                  Agendas semanales horizontales y verticales 2027, un día a la vista, dos días por página, agenda docente primaria (con planillas de calificaciones y asistencia), agenda para peluquería, lashistas, manicuristas, control de embarazo y diarios íntimos disponibles en kit o solo interior.
+                  Agendas 2027 con año fechadas (semanales horizontales y verticales, un día a la vista, dos días por página) además de agendas perpetuas sin fecha (docente/profesor, lashistas, manicuristas y control de embarazo) disponibles en kit o solo interior.
                 </p>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
@@ -314,9 +353,9 @@ export default async function CategoryPage({
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
                 <h3 className="font-bold text-slate-900 text-sm">Respaldo ante Errores y Parámetros</h3>
                 <p className="text-slate-600">
-                  Estampa las tapas a <strong>170ºC – 180ºC durante 120 segundos</strong> y enfría bajo peso plano. Si te equivocás al sublimar una portada, no tires el interior: reponé solo el{" "}
+                  Estampa las tapas de cartulina cristal sublimable de 350gr a <strong>170ºC – 180ºC durante 120 segundos</strong> y enfría bajo peso plano. Si falla una tapa en la plancha, no perdés ninguna agenda: reponé solo el{" "}
                   <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
-                    Pack de 2 Tapas de Repuesto 15x21cm
+                    Pack de 2 Tapas de Repuesto por separado
                   </Link>
                   .
                 </p>
@@ -331,7 +370,7 @@ export default async function CategoryPage({
               Cuadernos y Libretas Sublimables en Uruguay (Formato A5 y Cuadernolas 21x30)
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Nuestra línea de <strong>cuadernos y libretas para sublimar</strong> forma parte del mayor catálogo especializado de Uruguay (+26 modelos) con <strong>stock continuo los 365 días del año</strong> desde nuestra fábrica en San José de Mayo. Disponible en kits completos listos para armar, interiores por separado y tapas de repuesto 15x21cm para talleres y papelería corporativa sin mínimo de compra.
+              Nuestra línea de <strong>cuadernos y libretas para sublimar</strong> forma parte del mayor catálogo especializado de Uruguay (26 modelos) con <strong>stock continuo los 365 días del año</strong> desde nuestro taller en San José de Mayo. Disponible en kits completos listos para armar, interiores por separado y tapas de repuesto 15x21cm para talleres y papelería corporativa sin mínimo de compra.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
@@ -343,7 +382,7 @@ export default async function CategoryPage({
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
                 <h3 className="font-bold text-slate-900 text-sm">Libretas A5 (15x21 cm) + Tapas de Repuesto</h3>
                 <p className="text-slate-600">
-                  El clásico formato transportable de 70 hojas interiores y anillado espiral continuo. Compatible con nuestro{" "}
+                  El clásico formato transportable con tapa dura 350gr y anillado espiral continuo. Compatible con nuestro{" "}
                   <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
                     Pack de 2 Tapas de Repuesto por separado
                   </Link>{" "}
@@ -360,17 +399,17 @@ export default async function CategoryPage({
               Blocks de Notas 10x15 y Planners Sublimables para Escritorio
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Los <strong>blocks y anotadores sublimables de 10x15cm</strong> integran nuestro catálogo de +26 modelos especializados con <strong>stock disponible los 365 días del año</strong> en San José de Mayo. Permiten producir souvenirs y organizadores por decenas sin quiebres de stock en eventos ni mínimos de compra, ofreciendo kits completos e insumos modulares.
+              Los <strong>blocks y planners sublimables</strong> integran nuestro catálogo de 26 modelos especializados con <strong>stock disponible los 365 días del año</strong> en San José de Mayo. Permiten producir souvenirs y organizadores por decenas sin quiebres de stock en eventos ni mínimos de compra, ofreciendo kits completos e insumos modulares.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
                 <h3 className="font-bold text-slate-900 text-sm">Blocks 10x15 Lisos y Rayados</h3>
                 <p className="text-slate-600">
-                  Kits de 70 hojas con tapa y contratapa sublimables 350gr desde $60 a $80 UYU. Ideales para armar a mano con espiral continuo en segundos.
+                  Kits con hojas lisas o con renglones, tapa y contratapa sublimables 350gr ideales para armar a mano con espiral continuo en segundos.
                 </p>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
-                <h3 className="font-bold text-slate-900 text-sm">Planners Semanales y Control de Gastos</h3>
+                <h3 className="font-bold text-slate-900 text-sm">Planners Semanales Perpetuos (Rombos y Verde)</h3>
                 <p className="text-slate-600">
                   Planificadores perpetuos disponibles todo el año en kits completos o interiores por separado para reposición de taller.
                 </p>
@@ -385,7 +424,7 @@ export default async function CategoryPage({
               Kits Mayoristas de Papelería Sublimable con Descuento y Stock 365 Días
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Nuestros <strong>kits por volumen</strong> están pensados para optimizar el margen del taller o revendedor. Accedés al mayor catálogo especializado de Uruguay (+26 modelos) con <strong>stock continuo todo el año</strong> gracias a nuestra fabricación propia en San José de Mayo, y la tranquilidad de poder sumar{" "}
+              Nuestros <strong>kits por volumen</strong> están pensados para optimizar el margen del taller o revendedor. Accedés al mayor catálogo especializado de Uruguay (26 modelos) con <strong>stock continuo todo el año</strong> como fabricantes directos en San José de Mayo, y la tranquilidad de poder sumar{" "}
               <Link href="/p/pack-2-tapas" className="font-bold text-brand-700 underline decoration-brand-300">
                 tapas sublimables de repuesto por separado
               </Link>{" "}
@@ -403,7 +442,7 @@ export default async function CategoryPage({
               Insumos Especiales, Cartulina A4 y Tapas Sublimables de Repuesto en Uruguay
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              En Kamaluso fabricamos todo el año en San José de Mayo (stock los 365 días dentro de nuestro catálogo de +26 modelos) soluciones clave para que tu taller nunca se detenga ni desperdicie mercadería: cartulina sublimable A4 de 350gr, recetarios temáticos, interiores sueltos y repuestos de tapas perforadas 15x21cm.
+              En Kamaluso somos fabricantes todo el año en San José de Mayo (stock los 365 días dentro de nuestro catálogo de 26 modelos) con soluciones clave para que tu taller nunca se detenga ni desperdicie mercadería: cartulina sublimable A4 de 350gr, recetarios temáticos, interiores sueltos y repuestos de tapas perforadas 15x21cm.
             </p>
             <div className="p-4 bg-brand-50/80 rounded-2xl border border-brand-200 text-xs sm:text-sm text-slate-800 leading-relaxed">
               💡 <strong>¿Se quemó o movió una tapa al estampar?</strong> En esta categoría encontrás el{" "}
@@ -421,7 +460,7 @@ export default async function CategoryPage({
               Insumos de Papelería Sublimable en San José de Mayo, Uruguay
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              En Kamaluso actualizamos constantemente nuestro catálogo (+26 modelos especializados con stock todo el año) con lotes promocionales y promociones por liquidación de temporada. Envíos ágiles a los 19 departamentos sin mínimo de compra.
+              En Kamaluso actualizamos constantemente nuestro catálogo (26 modelos especializados con stock todo el año) con lotes promocionales y promociones por liquidación de temporada. Envíos ágiles a los 19 departamentos sin mínimo de compra.
             </p>
           </div>
         )}

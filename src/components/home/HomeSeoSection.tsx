@@ -28,7 +28,7 @@ export function HomeSeoSection() {
             Fabricantes directos de insumos para sublimación y talleres
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            En <strong>Kamaluso</strong> somos fábrica especialista con <strong>el mayor catálogo de papelería sublimable en Uruguay (+26 modelos)</strong> y stock continuo todo el año. Abastecemos a emprendedores y talleres con kits completos listos para estampar y armar, interiores de agendas por separado y tapas de 350g con polímero virgen (incluyendo repuestos sueltos para cero desperdicio).
+            En <strong>Kamaluso</strong> somos fabricantes directos con <strong>el mayor catálogo de papelería sublimable en Uruguay (26 modelos especializados)</strong> y stock continuo todo el año. Abastecemos a emprendedores y talleres con kits completos listos para estampar y armar, interiores de agendas por separado y tapas de 350g con polímero virgen (incluyendo repuestos sueltos para cero desperdicio).
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export function HomeSeoSection() {
             </div>
             <h3 className="font-bold text-sm sm:text-base text-slate-900">El Mayor Catálogo y Stock Todo el Año</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Más de 26 formatos y modelos especializados en papelería sublimable con stock continuo los 365 días del año y venta por mayor y menor sin mínimo de compra.
+              26 formatos y modelos especializados en papelería sublimable con stock continuo los 365 días del año y venta por mayor y menor sin mínimo de compra.
             </p>
           </div>
         </div>
@@ -74,7 +74,7 @@ export function HomeSeoSection() {
               Logística Nacional
             </span>
             <span className="text-xs text-slate-400 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-amber-400" /> Despachos en 24 a 48 hs
+              <Clock className="w-3.5 h-3.5 text-amber-400" /> Despachos en 48 horas hábiles
             </span>
           </div>
           <h3 className="text-xl sm:text-2xl font-extrabold text-white">

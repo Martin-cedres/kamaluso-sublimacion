@@ -2132,3 +2132,99 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 - **`src/lib/pdf/generateShippingLabelPDF.tsx`:** Agregada referencia explícita con `fs.existsSync(path.join(stdFontsDir, file))` para `Helvetica.cjs`, `HelveticaBold.cjs`, `HelveticaOblique.cjs` y `HelveticaBoldOblique.cjs` para asegurar su inclusión en `route.js.nft.json`.
 - **`src/components/admin/ShippingLabelModal.tsx`:** Actualizado `handlePrintPdf("preview")` para abrir síncronamente `/api/admin/shipping-label-pdf?${params.toString()}` vía `GET` directo (cargando el visor PDF nativo sobre HTTPS sin `about:blank` ni `blob:` asíncrono), manteniendo `POST` para descarga directa (`mode === "download"`). Agregado además `renderPdfErrorBanner` encima de la vista previa derecha y debajo del formulario con botón directo `Usar impresión HTML directa` como fallback.
 - **Verificación técnica:** `npx tsc --noEmit` (código `0`), `npm run build` (`74/74` páginas, código `0`), verificación de `route.js.nft.json` (`30` archivos de `standard-fonts`) y prueba directa en producción (`https://www.kamaluso.com/api/admin/shipping-label-pdf`) devolviendo `HTTP 200 OK` (`application/pdf`, `%PDF-1.3`, `~114 kB` en `GET` y `POST`).
+
+### Logros (17 nov 2026 — Campaña WhatsApp Status & Video Vertical 9:16 Kamaluso)
+- **8 plantillas HTML/CSS autocontenidas (`1080×1920 px`)** creadas en `C:\Users\LENOVO\.gemini\antigravity\brain\57c89bad-debb-4eec-8cae-815bff460c92\scratch\campaign\`:
+  - **Placas estáticas:** `placa_01.html` (Fábrica propia y stock todo el año), `placa_02.html` (Agendas 2027 con año y catálogo +26 modelos), `placa_03.html` (Tapas cartulina cristal 350gr y repuestos `$20`).
+  - **Escenas de video (1/5 a 5/5):** `escena_01.html`, `escena_02.html`, `escena_03.html`, `escena_04.html`, `escena_05.html`.
+- **Verificación visual (Chrome headless `1080×1920`):** Renderizado e inspección visual de las 8 piezas; márgenes seguros (`135px` superior, `165px` inferior, `56px` laterales) libres de elementos de texto o tarjetas, imágenes sin recortes tipográficos y precios reales verificados contra `data/products.json`.
+
+- **Renderizado Final y Video Vertical 9:16 MP4 (`1080×1920`)**:
+  - Generadas las 3 placas estáticas (`.png` y `.jpg` calidad 95) y el video vertical `04_Video_WhatsApp_Kamaluso_2027.mp4` (`H.264`, `1080×1920`, `16.01s`, transiciones crossfade entre 5 escenas) en `I:\Mi unidad\proyectos web\Kamaluso\Campaña WhatsApp 2027\` y espejo local `campana_whatsapp\`.
+- **Optimización Web en `kamaluso.com`**:
+  - `data/products.json` & `src/lib/products.ts`: Reordenadas agendas priorizando Semanales 2027, `Kit x10` (`MAYORISTA $160 C/U`), 2 Días, Diaria y Perpetua (`STOCK TODO EL AÑO`), subiendo `CURRENT_CATALOG_VERSION` a `7`.
+  - `src/app/categoria/[slug]/page.tsx`: Banner móvil compactado con píldoras de confianza (`Stock todo el año`, `Despacho a las 48 hs del pago`, `Tapas Cristal 350gr + Repuestos`), destacando Agendas 2027 con año, no dependencia de importadores y `Pack de 2 Tapas de Repuesto ($20)`.
+  - `src/components/ui/WhatsAppFloating.tsx`: Redimensionado y reubicado en móvil (`bottom-3 right-3`, `p-3`, ícono `w-6 h-6`) para minimizar solapamiento sobre precios en tarjetas.
+- **Control de Calidad (QA Visual + Técnico)**:
+  - Corregido typo en Placa 03 (`RESPUESTOS` → `REPUESTOS ORIGINALES DE FÁBRICA`), precisado subtítulo de los 5 modelos semanales en Placa 02 y re-renderizado con `ThreadingHTTPServer` verificando carga completa de todas las imágenes y márgenes seguros (`135px` sup / `165px` inf).
+  - Verificación web limpia con `npx tsc --noEmit` y `npm run build` (código `0`).
+
+### Actualización Estrategia Post-Lanzamiento Disershop y Corrección Placa 3 (18 nov 2026)
+- **Auditoría en vivo (`disershop.com.uy`):** Confirmado relanzamiento sobre OpenCart (*EcommerceFull*) enfocado en indumentaria, hogar/verano y cursos DTF (`$3.190`), con buscador devolviendo `0` resultados para `"agenda"` / `"agendas sublimables"`, 38 opciones vacías en el selector de categorías, URLs previas huérfanas tras la migración y mínimo mayorista de `6 artículos iguales o 12 diferentes`.
+- **Ajuste de piezas en Drive (`I:\Mi unidad\proyectos web\Kamaluso\Campaña WhatsApp 2027`):**
+  - `placa_03.html` -> `03_Tapas_350gr_Repuestos_Cero_Perdida.{png,jpg}`: Corregido titular a **`¡NO PIERDAS NINGUNA AGENDA!`**.
+  - `placa_01.html` & `escena_01.html` -> `01_Fabrica_Stock_Todo_El_Ano_Web_Activa.{png,jpg}` y `04_Video_WhatsApp_Kamaluso_2027.mp4` (`1080×1920`, H.264, `16.01s`): Actualizado gancho a **`¿Buscás agendas sublimables y los importadores se quedaron sin stock?`**.
+  - Verificación visual completada sobre placas PNG y fotograma inicial del MP4 actualizado en Drive.
+
+
+================================================================================
+✅ QA VISUAL Y TÉCNICA: CAMPAÑA WHATSAPP 2027 (VERSIÓN BLANCA ESTILO KAMALUSO)
+================================================================================
+- Archivos verificados en Drive (`I:\Mi unidad\proyectos web\Kamaluso\Campaña WhatsApp 2027\`): 3 placas PNG (1080x1920), 3 placas JPG y `04_Video_WhatsApp_Kamaluso_2027.mp4` (1080x1920, 16.01s, H.264).
+- Fotogramas clave extraídos con ffmpeg (`1.0s`, `4.5s`, `7.5s`, `11.0s`, `14.5s`) en `qa_v3_1.jpg`..`qa_v3_5.jpg` e inspeccionados junto a las 3 placas PNG.
+- Aprobación 100% visual y técnica: estilo blanco luminoso kamaluso.com, 0 imágenes rotas, copy "Somos fabricantes" (0 menciones a "fábrica propia"), Placa 3 con titular "¡NO PIERDAS NINGUNA AGENDA!" y badge "REPUESTOS ORIGINALES DE FÁBRICA", preguntas gancho bien proporcionadas, zonas seguras 135px/165px respetadas y precios exactos ($155, $175, $1.600 / $160 c/u, $240, $350, $20).
+- Compilación validada: `npx tsc --noEmit` (exit 0) y `npm run build` (exit 0, 74 páginas generadas).
+================================================================================
+
+### Rediseño Blanco Estilo Kamaluso, Jerarquía Tipográfica y Copy "Somos Fabricantes" (18 nov 2026)
+- **Rediseño integral 9:16 (8 plantillas HTML → PNG/JPG `1080×1920` y Video MP4 `9.44 MiB`):**
+  - Migrado el sistema visual de fondo oscuro a la paleta blanca luminosa oficial de `kamaluso.com` (`#fff1f2` / `#ffffff` / `#f8fafc`, texto `#0f172a`, acentos `#e11d48` y `#059669`), header con logo + `KAMALUSO / PAPELERÍA SUBLIMABLE` y footer oscuro de marca.
+  - Reemplazado `"fábrica propia"` por **`"Somos fabricantes"`** en las piezas (`placa_01`, `placa_03`, `escena_01`) y en [src/app/categoria/[slug]/page.tsx](file:///c:/Users/LENOVO/Desktop/Kamaluso%20sublimacion/src/app/categoria/%5Bslug%5D/page.tsx) (`"Somos fabricantes directos"`, `"Somos fabricantes • Stock todo el año"`, `"Fabricación directa todo el año"`).
+  - Ampliadas y jerarquizadas las preguntas gancho (`41px–44px` bold en bloques protagonistas `#fff1f2` borde `#fda4af`) equilibrando el ratio visual frente a las respuestas (`66px–76px`).
+  - Recompilado [04_Video_WhatsApp_Kamaluso_2027.mp4](file:///I:/Mi%20unidad/proyectos%20web/Kamaluso/Campa%C3%B1a%20WhatsApp%202027/04_Video_WhatsApp_Kamaluso_2027.mp4) (`1080×1920`, H.264, `16.01s`, `9.895.567` bytes) y actualizados todos los PNG/JPG en Drive y espejo local.
+- **Control de Calidad (QA):** Inspección visual aprobada de las 3 placas y los 5 fotogramas del MP4; `npx tsc --noEmit` y `npm run build` (`74/74` páginas) en código `0`.
+
+[2026-11-20 01:30] Correcciones SEO GSC (www.kamaluso.com):
+- data/redirects.json: agregados 4 redirects 301 (/p/kit-10-1-agendas-semanales-sublimables -> /p/kit-x10, /p/cartulina-sublimable-a4 -> /p/cartulina-sublimable-x10, /p/fotocopias-impresiones-encuadernaciones1 -> https://www.papeleriapersonalizada.uy/imprimeya, /p/recetario-infantil-sublimable -> /p/recetario-infantil).
+- src/app/robots.ts: removido llms.txt de sitemap y bloqueado /checkout y /cdn-cgi/.
+- src/app/sitemap.ts y src/app/developers/page.tsx: excluidos redirects de data/redirects.json y /developers del sitemap; agregado robots noindex, follow en /developers.
+- next.config.js: agregado X-Robots-Tag: noindex, nofollow en /.well-known/*, /llms*.txt, /auth.md, /openapi.json, /api/products, /api/mcp y /api/health.
+- Verificado con npx tsc --noEmit y npm run build (74/74 páginas estáticas); eliminado /sitemaps.xml (2021) en Google Search Console. Pendiente de commit/deploy por el usuario.
+
+
+[2026-11-20] Plan Maestro Dual-Entity SEO/GEO, Correcciones Técnicas P0/P1 y Catálogo (www.kamaluso.com):
+- Entidad Schema.org y NAP (`src/lib/schema.ts`, `src/app/contacto/page.tsx`, `src/app/sobre-nosotros/page.tsx`, `data/redirects.json`, `src/components/layout/Footer.tsx`):
+  * Removido `Manufacturer` (tipo inválido en Schema.org) -> `["LocalBusiness", "WholesaleStore", "Organization"]`; retirada `https://www.papeleriapersonalizada.uy` de `sameAs` y agregada `disambiguatingDescription` explícita.
+  * Coordenadas `geo` corregidas a `-34.344199, -56.721197`, añadido `hasMap`, `currenciesAccepted`, `paymentAccepted`, `areaServed` por departamento e `ImageObject` en `logo`.
+  * En `/contacto`: visible dirección `Ramón Massini 136, San José de Mayo, San José, CP 80000, Uruguay`, horario `Lunes a Viernes de 09:00 a 18:00 hs`, `mailto:` clicable, link y mapa embebido de Google Maps y JSON-LD `ContactPage` + `BreadcrumbList`.
+  * Consolidación `/about` -> 301 `/sobre-nosotros` (removido de `Footer.tsx` y `sitemap.ts`; integrados datos de sede y diferenciación B2B vs B2C + `AboutPage` JSON-LD en `/sobre-nosotros`).
+  * Actualizado Footer (`agendas 2027 y perpetuas` y `mailto:` clicable).
+- Metadatos, Home SSR y PDPs (`src/app/layout.tsx`, `src/app/page.tsx`, `src/components/home/HomeSeoSection.tsx`, `src/components/products/ProductGrid.tsx`, `src/app/p/[slug]/page.tsx`, `src/app/p/[slug]/AddToCartDetail.tsx`, `mayoristas`, `guia-sublimacion-papeleria`, `emprender-en-papeleria-sublimable`, `devoluciones`, `recursos`, `faq`, `categoria/[slug]`):
+  * Eliminada la duplicación global de `<title>` (`template: "%s"`) y recortados títulos (<=62 chars) y meta descriptions (<=158 chars). Cambiado `<link rel="author" href="/auth.md">` -> `rel="service-doc"`.
+  * Montado `<HomeSeoSection />` en `src/app/page.tsx` con paridad exacta `getFaqSchema(GLOBAL_FAQ_ITEMS.slice(0, 4))`, `publisher` e `inLanguage` en `WebSite`, y render SSR inicial completo en `ProductGrid` (26/26 productos visibles).
+  * En PDPs (`p/[slug]/page.tsx`): renderizada sección FAQ visible con paridad 100% respecto al `FAQPage` JSON-LD; corregido `getProductDisplayName` (ya no agrega `2027` a `Planner Rombos` ni `Kit x10`); corregido `material` condicional en JSON-LD (`pack-2-tapas` y `cartulina-sublimable-x10`), agregados `@id`, `mpn`, `category`, `manufacturer`, `audience`, `ReturnInStore`; corregida jerarquía de encabezados; añadido micro-callout B2B->B2C + consulta directa de interiores sueltos; unificado umbral `$2.000 UYU` y slug excluido `kit-x10` en `AddToCartDetail.tsx`.
+- Catálogo, Soft-404, Categorías y Precios Dinámicos (`data/products.json`, `src/lib/products.ts`, `src/app/categoria/[slug]/page.tsx`, `src/app/recursos/page.tsx`, `src/app/sitemap.ts`, `src/app/mayoristas/page.tsx`):
+  * Reclasificados `kit-x10` -> `kits-promos` (con `promoKitSlug: "kit-x10"` en `agenda-sublimable-semanal`), `planner-rombos` -> `blocks-planners`, `pack-2-tapas` -> `especiales`.
+  * Reescritas y diferenciadas descripciones del catálogo (incluidos `pack-2-tapas`, `kit-x10`, `cartulina-sublimable-x10`, `planner-rombos`, los 5 modelos semanales, y corregido copy-paste externo de `agenda-profesor-perpetua` + sinónimos en nichos). `CURRENT_CATALOG_VERSION = 8`.
+  * Eliminado substring matching en `getProductBySlug()` (404 reales), roto el bucle 301 en `/recursos`, agregado `noindex, follow` a categorías vacías (`outlet`), excluida `outlet` de `sitemap.ts` con `SITE_LAST_MODIFIED` fijo.
+  * `src/app/mayoristas/page.tsx` convertido en Server Component dinámico con `getAllProducts()` (eliminando precios viejos inflados como `Kit x10` $2.100 -> $1.600) y añadido `BreadcrumbList`.
+- Capa GEO/Agentes, Google Shopping, Robots y Middleware:
+  * Eliminados los 6 archivos estáticos obsoletos en `public/.well-known/*` que pisaban los Route Handlers de `src/app/.well-known/*`; actualizados `ai-catalog.json`, `mcp/server-card.json` (`1.1.0`), `order-and-shipping/SKILL.md`, `sublimation-guide/SKILL.md` (con hashes SHA-256 actualizados), `llms.txt` y `llms-full.txt` (corregido `$350/$380` en 1 día a la vista, recargo MP 10%, categorías y conteo `26 modelos`).
+  * Enriquecido `src/app/api/feed/google-shopping/route.ts` (`google_product_category`, `sale_price`, `additional_image_link`, `multipack`, `material`, `color`, `size`, `custom_label_0/1`, `escapeXml` y títulos corregidos).
+  * Actualizados `robots.ts` (`GPTBot`, `Bingbot`, `Applebot-Extended`; bloqueo `/api/orders`, `/api/admin/`), `next.config.js` (`X-Robots-Tag: noindex, follow` en `.well-known`, `llms*.txt`, `auth.md`, `openapi.json`, y `noindex, nofollow` en `/api/orders`), y activado `src/middleware.ts` en rutas públicas (`Accept: text/markdown` + `Link` con `/developers`).
+- Verificación: `npx tsc --noEmit` (código 0) y `npm run build` (74/74 páginas estáticas + middleware + route handlers `.well-known`) exitosos.
+
+
+[2026-11-20 22:10] Google Business Profile (Descripciones aplicadas en vivo):
+- Aplicadas en Google Business Profile (`https://business.google.com` / `https://www.google.com`) mediante navegador únicamente las descripciones de ambas fichas (sin alterar otros campos y sin tocar la tercera ficha ajena):
+  * Ficha 1 (`Kamaluso` — `Ramón Massini 136, San José`, Verificada): descripción B2B insumos sublimables en blanco guardada (`709/750` caracteres, sin URLs tras validación `En este campo no están permitidas las URL.`); estado visible: edición pendiente de revisión (~10 min).
+  * Ficha 2 (`Papelería Personalizada` — `Calle Ramon Massini Nro. 136, 80000 San José de Mayo`, Verificada): descripción B2C y regalos empresariales guardada (`717/750` caracteres, sin URLs tras validación); estado visible: edición pendiente de revisión (~10 min).
+- Hallazgo crítico observado en vivo en GBP: la ficha `Kamaluso` actualmente muestra ambos sitios web visibles (`https://www.papeleriapersonalizada.uy/` y `https://www.kamaluso.com/`) y comparte la categoría `Servicio de impresión digital` con `Papelería Personalizada` (`Papelería`, `Servicio de impresión digital`, `Proveedor de productos promocionales`).
+
+
+[2026-11-20 22:34] Google Business Profile (Limpieza de sitio web y separación de categorías en Kamaluso):
+- Descripciones previas verificadas en vivo: ambas descripciones (de `Kamaluso` y de `Papelería Personalizada`) ya figuran publicadas sin estado pendiente.
+- Correcciones aplicadas únicamente en `Kamaluso` (`Ramón Massini 136, San José`, Verificada; `Papelería Personalizada` e `Inmobiliaria Montaño` sin modificar):
+  * `Sitio web`: el campo contenía literalmente la cadena concatenada `https://www.papeleriapersonalizada.uy/      https://www.kamaluso.com/`. Reemplazado únicamente por `https://www.kamaluso.com/` (ya publicado). Confirmado que `papeleriapersonalizada.uy` no aparece en `Perfiles de redes sociales` (`facebook.com/kamalusosj/`) ni en `Usuario de chat` (`wa.me/59898615074`).
+  * `Categoría de negocio`: eliminada `Servicio de impresión digital` (que solapaba con `Papelería Personalizada`). Configuradas `Mayorista` (principal), `Fabricante` y `Distribuidor de papel` (secundarias). Guardado sin verificaciones ni advertencias; estado actual: pendiente de revisión (~10 min).
+- `Papelería Personalizada` conservada intacta (`https://www.papeleriapersonalizada.uy/`, `Papelería` principal + `Servicio de impresión digital` + `Proveedor de productos promocionales`) para evitar doble edición simultánea en el mismo domicilio/teléfono.
+
+
+[2026-11-20 23:06] Google Business Profile (Categorías rechazadas sin impacto + borrador de publicaciones con foto):
+- Categorías de `Kamaluso`: Google rechazó el cambio masivo (`Mayorista`, `Fabricante`, `Distribuidor de papel`) con "No puedes realizar cambios significativos en la identidad de tu empresa", por lo que `Distribuidor de papel` nunca llegó a publicarse y `Kamaluso` continúa activa y verificada sin advertencias con `Servicio de impresión digital`.
+- Publicaciones con foto: el sandbox del navegador bloquea `setInputFiles` sobre `https://www.google.com` (origen de autenticación protegido). Generadas las 4 imágenes `.jpg` listas en `scratch/gbp_fotos/` (`1_kamaluso_agendas_2027.jpg`, `2_kamaluso_tapas_sublimables.jpg`, `3_papeleria_agendas_personalizadas.jpg`, `4_papeleria_regalos_empresariales.jpg`).
+- Publicación 1 de `Kamaluso` dejada abierta y prellenada en el navegador (`Novedad`, 609 caracteres + botón `Más información` -> `https://www.kamaluso.com/categoria/agendas`), lista para que el usuario adjunte `1_kamaluso_agendas_2027.jpg` y pulse Publicar.
+
+[2026-11-21 00:05] Despliegue a producción de ambos proyectos:
+- `kamaluso_fullstack` (`www.papeleriapersonalizada.uy`): commit `bf0a21e` pusheado a `origin/main` y desplegado directo a producción vía Vercel CLI (`npx vercel --prod`).
+- `Kamaluso sublimacion` (`www.kamaluso.com`): commit y push a `origin/main` (`Martin-cedres/kamaluso-sublimacion`) disparando deploy automático en Vercel (incluye ajustes SEO/GEO, limpieza `.well-known` y ajuste móvil en `WhatsAppFloating.tsx`).

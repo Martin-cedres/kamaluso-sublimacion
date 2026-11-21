@@ -4,9 +4,9 @@ import { Metadata } from "next";
 import { Flame, ShieldCheck, HelpCircle, CheckCircle2, ArrowRight, AlertTriangle, Sparkles, BookOpen, Layers } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Cómo Sublimar Tapas de Cartón 350gr: Tiempos y Temperatura (170ºC / 120s) | Kamaluso",
+  title: "Cómo Sublimar Tapas 350gr (170ºC / 120s) | Kamaluso",
   description:
-    "Guía técnica oficial para sublimar tapas de cartón cristal de 350gr en prensa plana: 170ºC a 180ºC por 120 segundos, presión media-alta y técnica de enfriamiento bajo peso plano sin curvar.",
+    "Guía técnica oficial para sublimar tapas de cartón cristal 350gr en prensa plana: 170ºC–180ºC por 120s, presión media-alta y enfriado bajo peso plano.",
   alternates: {
     canonical: "https://www.kamaluso.com/guia-sublimacion-papeleria",
   },

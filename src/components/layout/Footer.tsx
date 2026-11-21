@@ -15,7 +15,7 @@ export function Footer() {
             KAMALUSO
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed">
-            Fabricantes de interiores para papelería sublimable en San José de Mayo: agendas 2026/27, libretas, blocks y cuadernos listos con tapas sublimables de 350gr para sublimadores y revendedores en Uruguay.
+            Fabricantes de interiores para papelería sublimable en San José de Mayo: agendas 2027 y perpetuas, libretas, blocks y cuadernos listos con tapas sublimables de 350gr para sublimadores y revendedores en Uruguay.
           </p>
           <div className="space-y-1 text-xs text-slate-300">
             <div className="flex items-center gap-2">
@@ -104,11 +104,6 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/about" className="hover:text-white transition-colors">
-                About Kamaluso
-              </Link>
-            </li>
-            <li>
               <Link href="/contacto" className="hover:text-white transition-colors">
                 Contacto & Ubicación
               </Link>
@@ -178,7 +173,12 @@ export function Footer() {
             </div>
             <div className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-brand-500 flex-shrink-0" />
-              <span>kamalusosanjose@gmail.com</span>
+              <a
+                href="mailto:kamalusosanjose@gmail.com"
+                className="hover:text-white transition-colors"
+              >
+                kamalusosanjose@gmail.com
+              </a>
             </div>
             <p className="text-[11px] text-slate-300 pt-2 leading-relaxed">
               Sin mínimo de compra. Envíos a todo el Uruguay desde San José de Mayo vía DAC, Correo Uruguayo o Agencia COTMI.

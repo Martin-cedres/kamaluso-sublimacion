@@ -4,9 +4,9 @@ import { getAllResources } from "@/lib/resources";
 import RecursosListClient from "@/components/recursos/RecursosListClient";
 
 export const metadata = {
-  title: "Guía de Medidas de Sangrado y Recursos para Sublimar Papelería | Kamaluso Uruguay",
+  title: "Plantillas PDF y Sangrado 5mm Sublimación | Kamaluso",
   description:
-    "Centro técnico de medidas de corte y sangrado (5mm de demasía) para sublimar papelería en Uruguay. Descarga recursos y accede a plantillas PDF y guías de rentabilidad.",
+    "Moldes PDF gratis con 5mm de sangrado para sublimar tapas 15x21, 10x15 y 21x30 sin bordes blancos. Medidas oficiales para Canva, Photoshop e Illustrator.",
   alternates: {
     canonical: "https://www.kamaluso.com/recursos",
   },
@@ -58,8 +58,8 @@ export default async function RecursosPage() {
 
       {/* Enlaces directos a Plantillas PDF y Rentabilidad */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link
-          href="/plantillas-sublimacion"
+        <a
+          href="#moldes"
           className="group p-5 bg-gradient-to-br from-brand-50/70 to-white rounded-2xl border border-brand-200/80 hover:border-brand-400 transition-all shadow-xs flex flex-col justify-between space-y-2"
         >
           <div className="space-y-1">
@@ -67,16 +67,16 @@ export default async function RecursosPage() {
               Moldes y Descargas PDF
             </span>
             <h2 className="font-extrabold text-slate-900 text-base group-hover:text-brand-600 transition-colors">
-              Plantillas para Sublimación (PDF) →
+              Plantillas para Sublimación (PDF) ↓
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed">
               Descarga moldes exactos en PDF con sangrado de 5mm listos para diseñar en Canva, Photoshop o Illustrator.
             </p>
           </div>
           <span className="text-xs font-bold text-brand-600 group-hover:translate-x-1 transition-transform inline-block pt-1">
-            Ver moldes en /plantillas-sublimacion
+            Ir a las plantillas descargables ↓
           </span>
-        </Link>
+        </a>
 
         <Link
           href="/emprender-en-papeleria-sublimable"
@@ -94,13 +94,15 @@ export default async function RecursosPage() {
             </p>
           </div>
           <span className="text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform inline-block pt-1">
-            Ver guía de negocio en /emprender
+            Ver guía en /emprender-en-papeleria-sublimable →
           </span>
         </Link>
       </div>
 
       {/* Grid Dinámico de Descargables */}
-      <RecursosListClient initialRecursos={initialRecursos} />
+      <div id="moldes" className="scroll-mt-24">
+        <RecursosListClient initialRecursos={initialRecursos} />
+      </div>
 
       {/* Guía de Medidas Oficiales y Sangrado para Diseñar */}
       <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">

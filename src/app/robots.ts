@@ -8,16 +8,19 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: ["/", "/api/feed/google-shopping", "/google-shopping.xml"],
-        disallow: ["/admin/", "/checkout", "/cdn-cgi/"],
+        disallow: ["/admin/", "/api/admin/", "/api/orders", "/checkout", "/cdn-cgi/"],
       },
       {
         userAgent: [
           "Googlebot",
+          "Bingbot",
           "Google-Extended",
           "OAI-SearchBot",
+          "GPTBot",
           "ChatGPT-User",
           "PerplexityBot",
           "ClaudeBot",
+          "Applebot-Extended",
         ],
         allow: [
           "/",
@@ -28,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
           "/api/health",
           "/.well-known/",
         ],
-        disallow: ["/admin/", "/checkout", "/cdn-cgi/"],
+        disallow: ["/admin/", "/api/admin/", "/api/orders", "/checkout", "/cdn-cgi/"],
       },
     ],
     sitemap: "https://www.kamaluso.com/sitemap.xml",
