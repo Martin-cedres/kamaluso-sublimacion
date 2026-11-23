@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Product, Order, OrderStatus, Customer } from "@/types";
 import { getAllProducts, deleteProduct, saveProduct, saveProductsOrder, CATEGORIES } from "@/lib/products";
 import { ResourceItem, getAllResources, deleteResource } from "@/lib/resources";
 import { getAllOrders, updateOrderStatus, deleteOrder } from "@/lib/orders";
-import { getAllCustomers, deleteCustomer } from "@/lib/customers";
+import { getAllCustomers, deleteCustomer, buildUnifiedCustomersList } from "@/lib/customers";
 import { getLocalAdminUser, removeLocalAdminUser, isAllowedAdminEmail, AdminUser } from "@/lib/auth";
 import ProductModal from "@/components/admin/ProductModal";
 import ResourceModal from "@/components/admin/ResourceModal";
@@ -15,6 +15,7 @@ import ShippingLabelModal from "@/components/admin/ShippingLabelModal";
 import OrderSummaryModal from "@/components/admin/OrderSummaryModal";
 import VisualReorderModal from "@/components/admin/VisualReorderModal";
 import ManualOrderModal from "@/components/admin/ManualOrderModal";
+import CustomerModal from "@/components/admin/CustomerModal";
 import {
   Plus,
   Search,
@@ -104,6 +105,10 @@ export default function AdminDashboardPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(true);
+  const [selectedCustomerForOrder, setSelectedCustomerForOrder] = useState<Customer | null>(null);
+  const [selectedCustomerForLabel, setSelectedCustomerForLabel] = useState<Customer | null>(null);
+  const [customerToEdit, setCustomerToEdit] = useState<Customer | null>(null);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
 
   // State Reordenamiento de Productos
   const [isSavingOrder, setIsSavingOrder] = useState(false);
@@ -340,8 +345,13 @@ export default function AdminDashboardPage() {
   const totalOrdersAmount = orders.reduce((sum, o) => sum + o.finalTotal, 0);
   const pendingOrdersCount = orders.filter((o) => o.status === "pendiente").length;
 
+  const unifiedCustomers = useMemo(
+    () => buildUnifiedCustomersList(customers, orders),
+    [customers, orders]
+  );
+
   // Filtrado de clientes registrados
-  const filteredCustomers = customers.filter((c) => {
+  const filteredCustomers = unifiedCustomers.filter((c) => {
     if (!c) return false;
     const q = customerSearchQuery.toLowerCase();
     return (
@@ -498,7 +508,7 @@ export default function AdminDashboardPage() {
                   : "bg-slate-700 text-sky-300 border border-slate-600"
               }`}
             >
-              {customers.length}
+              {unifiedCustomers.length}
             </span>
           </button>
         </div>
@@ -506,6 +516,14 @@ export default function AdminDashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 no-print">
+        {/* Toast o Feedback global del panel */}
+        {orderToastMessage && (
+          <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-fadeIn">
+            <Sparkles className="w-4 h-4 text-emerald-200" />
+            <span>{orderToastMessage}</span>
+          </div>
+        )}
+
         {/* TAB 1: PRODUCTOS */}
         {activeTab === "products" && (
           <>
@@ -603,14 +621,6 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
             </div>
-
-            {/* Toast o Feedback de Orden guardado */}
-            {orderToastMessage && (
-              <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-fadeIn">
-                <Sparkles className="w-4 h-4 text-emerald-200" />
-                <span>{orderToastMessage}</span>
-              </div>
-            )}
 
             {/* Table of Products */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -1158,7 +1168,7 @@ export default function AdminDashboardPage() {
               <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Clientes</p>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">{customers.length}</h3>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1">{unifiedCustomers.length}</h3>
                 </div>
                 <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center">
                   <Users className="w-6 h-6" />
@@ -1169,7 +1179,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Con Email</p>
                   <h3 className="text-2xl font-black text-slate-900 mt-1">
-                    {customers.filter((c) => c.email && c.email.trim()).length}
+                    {unifiedCustomers.filter((c) => c.email && c.email.trim()).length}
                   </h3>
                 </div>
                 <div className="w-12 h-12 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center">
@@ -1181,7 +1191,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recurrentes (2+)</p>
                   <h3 className="text-2xl font-black text-slate-900 mt-1">
-                    {customers.filter((c) => (c.totalOrders || 0) > 1).length}
+                    {unifiedCustomers.filter((c) => (c.totalOrders || 0) > 1).length}
                   </h3>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center">
@@ -1193,7 +1203,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Facturado</p>
                   <h3 className="text-2xl font-black text-emerald-600 mt-1">
-                    ${customers.reduce((sum, c) => sum + (c.totalSpent || 0), 0).toLocaleString("es-UY")} UYU
+                    ${unifiedCustomers.reduce((sum, c) => sum + (c.totalSpent || 0), 0).toLocaleString("es-UY")} UYU
                   </h3>
                 </div>
                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
@@ -1214,13 +1224,25 @@ export default function AdminDashboardPage() {
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium"
                 />
               </div>
-              <button
-                onClick={loadCustomersData}
-                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-xl text-xs flex items-center gap-2 transition"
-                title="Actualizar listado de clientes"
-              >
-                <span>Actualizar Clientes</span>
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button
+                  onClick={() => {
+                    setCustomerToEdit(null);
+                    setIsCustomerModalOpen(true);
+                  }}
+                  className="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 transition shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Nuevo Cliente</span>
+                </button>
+                <button
+                  onClick={loadCustomersData}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-xl text-xs flex items-center gap-2 transition"
+                  title="Actualizar listado de clientes"
+                >
+                  <span>Actualizar Clientes</span>
+                </button>
+              </div>
             </div>
 
             {/* Tabla de Clientes */}
@@ -1316,6 +1338,11 @@ export default function AdminDashboardPage() {
                                 {cust.address && (
                                   <p className="text-[11px] text-slate-500 truncate max-w-xs">{cust.address}</p>
                                 )}
+                                {(cust.shippingMethodName || cust.deliveryType) && (
+                                  <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 mt-0.5">
+                                    {cust.shippingMethodName || cust.deliveryType}
+                                  </span>
+                                )}
                               </div>
                             </td>
 
@@ -1333,7 +1360,44 @@ export default function AdminDashboardPage() {
                             </td>
 
                             <td className="py-3.5 px-4 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
+                              <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setOrderToEdit(null);
+                                    setSelectedCustomerForOrder(cust);
+                                    setIsManualOrderModalOpen(true);
+                                  }}
+                                  className="px-2.5 py-1.5 bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-300 rounded-lg text-[11px] font-extrabold inline-flex items-center gap-1 transition"
+                                  title="Crear nuevo pedido para este cliente"
+                                >
+                                  <ShoppingBag className="w-3.5 h-3.5" />
+                                  <span>Nuevo Pedido</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedOrderForLabel(null);
+                                    setSelectedCustomerForLabel(cust);
+                                    setIsLabelModalOpen(true);
+                                  }}
+                                  className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg text-[11px] font-extrabold inline-flex items-center gap-1 transition"
+                                  title="Generar etiqueta de envío para este cliente"
+                                >
+                                  <Printer className="w-3.5 h-3.5" />
+                                  <span>Etiqueta</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCustomerToEdit(cust);
+                                    setIsCustomerModalOpen(true);
+                                  }}
+                                  className="p-2 text-slate-600 hover:text-sky-700 hover:bg-sky-50 rounded-lg transition"
+                                  title="Editar ficha del cliente"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
                                 {waUrl && (
                                   <a
                                     href={waUrl}
@@ -1346,9 +1410,19 @@ export default function AdminDashboardPage() {
                                   </a>
                                 )}
                                 <button
+                                  type="button"
+                                  disabled={cust.id.startsWith("ORD-CUST-")}
                                   onClick={() => handleDeleteCustomer(cust.id, cust.name)}
-                                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                                  title="Eliminar cliente de la base"
+                                  className={`p-2 rounded-lg transition ${
+                                    cust.id.startsWith("ORD-CUST-")
+                                      ? "text-slate-300 cursor-not-allowed"
+                                      : "text-slate-400 hover:text-red-600 hover:bg-red-50"
+                                  }`}
+                                  title={
+                                    cust.id.startsWith("ORD-CUST-")
+                                      ? "Cliente del historial de pedidos (edítalo para crear ficha independiente)"
+                                      : "Eliminar cliente de la base"
+                                  }
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -1602,8 +1676,12 @@ export default function AdminDashboardPage() {
         onClose={() => {
           setIsLabelModalOpen(false);
           setSelectedOrderForLabel(null);
+          setSelectedCustomerForLabel(null);
         }}
         order={selectedOrderForLabel}
+        customers={unifiedCustomers}
+        initialCustomer={selectedCustomerForLabel}
+        onCustomerUpdated={() => loadCustomersData()}
       />
 
       {/* Modal de Resumen de Pedido A4 (Taller / Packing Slip) */}
@@ -1634,10 +1712,14 @@ export default function AdminDashboardPage() {
         onClose={() => {
           setIsManualOrderModalOpen(false);
           setOrderToEdit(null);
+          setSelectedCustomerForOrder(null);
         }}
         products={products}
         orderToEdit={orderToEdit}
-        onOrderCreated={(savedOrder) => {
+        customers={unifiedCustomers}
+        orders={orders}
+        initialCustomer={selectedCustomerForOrder}
+        onOrderCreated={(savedOrder, nextAction) => {
           setOrders((prev) => {
             const exists = prev.some((o) => o.id === savedOrder.id);
             if (exists) {
@@ -1650,6 +1732,30 @@ export default function AdminDashboardPage() {
           }
           loadOrdersData();
           loadCustomersData();
+
+          if (nextAction === "summary") {
+            setSelectedOrderForSummary(savedOrder);
+            setIsSummaryModalOpen(true);
+          } else if (nextAction === "label") {
+            setSelectedCustomerForLabel(null);
+            setSelectedOrderForLabel(savedOrder);
+            setIsLabelModalOpen(true);
+          }
+        }}
+      />
+
+      {/* Modal de Creación / Edición de Ficha de Cliente */}
+      <CustomerModal
+        isOpen={isCustomerModalOpen}
+        onClose={() => {
+          setIsCustomerModalOpen(false);
+          setCustomerToEdit(null);
+        }}
+        customerToEdit={customerToEdit}
+        onSaved={() => {
+          loadCustomersData();
+          setOrderToastMessage("✨ Ficha de cliente guardada");
+          setTimeout(() => setOrderToastMessage(null), 3500);
         }}
       />
     </div>

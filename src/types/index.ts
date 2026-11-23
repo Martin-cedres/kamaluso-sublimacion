@@ -77,6 +77,10 @@ export interface Customer {
   address: string;
   deliveryType?: "domicilio" | "agencia" | "local";
   shippingCompany?: string;
+  observations?: string;
+  rutInfo?: string;
+  shippingMethodName?: string;
+  paymentMethodId?: string;
   totalOrders: number;
   totalSpent: number;
   lastOrderAt?: string;

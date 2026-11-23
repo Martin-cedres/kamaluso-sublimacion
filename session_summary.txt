@@ -2228,3 +2228,19 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 [2026-11-21 00:05] Despliegue a producción de ambos proyectos:
 - `kamaluso_fullstack` (`www.papeleriapersonalizada.uy`): commit `bf0a21e` pusheado a `origin/main` y desplegado directo a producción vía Vercel CLI (`npx vercel --prod`).
 - `Kamaluso sublimacion` (`www.kamaluso.com`): commit y push a `origin/main` (`Martin-cedres/kamaluso-sublimacion`) disparando deploy automático en Vercel (incluye ajustes SEO/GEO, limpieza `.well-known` y ajuste móvil en `WhatsAppFloating.tsx`).
+
+
+[2026-11-23 10:16] Flujo Integral Clientes Recurrentes → Nota de Pedido → Etiqueta de Envío (`/admin`):
+- Implementación orquestada con 2 workers `Gemini 4 Hydrogen (Medium)` (`backend-clientes` y `modales-admin`) y verificación final de integración.
+- Tipos y persistencia unificada (`src/types/index.ts`, `src/lib/server-customers.ts`, `src/lib/customers.ts`, `src/app/api/customers/route.ts`, `src/app/api/orders/route.ts`):
+  * Extendido `Customer` con `observations`, `rutInfo`, `shippingMethodName` y `paymentMethodId`.
+  * Agregado handler `PUT /api/customers` con `explicitEdit: true` y extraída lógica compartida en `server-customers.ts` (caché + Vercel Blob `data/customers.json` + fallback local).
+  * Reemplazada la sincronización local `fs` en `/api/orders` por `syncCustomerFromOrder(order, isNew)` para persistir clientes en Vercel Blob en producción.
+  * Agregadas `updateCustomerById`, `resolveShippingMethodNameFromCustomer`, `resolveShippingCompanyAndDelivery` y `buildUnifiedCustomersList` (fusionando clientes registrados e historial de pedidos sin duplicados).
+- Componentes y modales (`/admin`):
+  * `src/components/admin/CustomerSelector.tsx`: buscador instantáneo autocompletable por nombre, teléfono, email, ciudad, depto o dirección con preview de pedidos y método de envío.
+  * `src/components/admin/CustomerModal.tsx`: modal CRUD de creación/edición de ficha de cliente (19 departamentos, modalidad, 7 métodos estándar, medio de pago y observaciones, preservando estadísticas al promover `ORD-CUST-*`).
+  * `src/components/admin/ManualOrderModal.tsx`: selector rápido de cliente, botón `Repetir ítems de su última compra`, sincronización opcional de ficha y botones directos `Guardar + Nota A4` y `Guardar + Etiqueta`.
+  * `src/components/admin/ShippingLabelModal.tsx`: selector rápido de cliente, precarga editable de etiqueta, `Restablecer` y botón `Guardar cambios en ficha del cliente`.
+  * `src/app/admin/page.tsx`: pestaña Clientes alimentada por `buildUnifiedCustomersList`, botón `Nuevo Cliente`, acciones por fila (`Nuevo Pedido`, `Etiqueta`, `Editar`), toast global multi-tab y apertura encadenada de `OrderSummaryModal` / `ShippingLabelModal` al guardar pedido manual.
+- Verificación técnica: `npx tsc --noEmit` (código `0`) y `npm run build` (`74/74` páginas generadas, código `0`).

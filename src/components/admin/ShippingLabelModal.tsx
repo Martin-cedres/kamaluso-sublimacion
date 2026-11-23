@@ -3,7 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
-import { Order } from "@/types";
+import { Order, Customer } from "@/types";
+import {
+  registerOrUpdateCustomer,
+  updateCustomerById,
+  resolveShippingMethodNameFromCustomer,
+  resolveShippingCompanyAndDelivery,
+} from "@/lib/customers";
+import CustomerSelector from "@/components/admin/CustomerSelector";
 import {
   X,
   Printer,
@@ -19,6 +26,7 @@ import {
   Check,
   FileDown,
   Loader2,
+  Save,
 } from "lucide-react";
 import {
   DEFAULT_FRAGILE_NOTE,
@@ -51,6 +59,9 @@ interface ShippingLabelModalProps {
   onClose: () => void;
   order?: Order | null;
   initialData?: ShippingLabelData;
+  customers?: Customer[];
+  initialCustomer?: Customer | null;
+  onCustomerUpdated?: (customer: Customer) => void;
 }
 
 const LOGO_URL =
@@ -61,6 +72,9 @@ export default function ShippingLabelModal({
   onClose,
   order,
   initialData,
+  customers = [],
+  initialCustomer = null,
+  onCustomerUpdated,
 }: ShippingLabelModalProps) {
   // Remitente (Kamaluso) - 100% Editable
   const [senderName, setSenderName] = useState("Katherine Silva");
@@ -86,6 +100,11 @@ export default function ShippingLabelModal({
   const [orderNumber, setOrderNumber] = useState("");
   const [itemsSummary, setItemsSummary] = useState("Insumos de Papelería Sublimable");
   const [notes, setNotes] = useState("⚠️ CUIDADO: FRÁGIL - PAPELERÍA SUBLIMABLE");
+
+  // Estado de cliente seleccionado y guardado en ficha
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [isSavingCustomer, setIsSavingCustomer] = useState(false);
+  const [customerSavedFeedback, setCustomerSavedFeedback] = useState(false);
 
   // Estado de copiado
   const [copied, setCopied] = useState(false);
@@ -175,9 +194,60 @@ export default function ShippingLabelModal({
       .catch((err) => console.error("Error al generar QR:", err));
   }, []);
 
-  // Sincronizar datos automáticamente cada vez que se abre con un pedido o se pasa un initialData
+  const applyCustomerToLabel = (cust: Customer) => {
+    setRecipientName(cust.name || "");
+    setRecipientPhone(cust.phone || "");
+    setRecipientDept(cust.department || "Montevideo");
+    setRecipientCity(cust.city || "");
+
+    const rawObs = cust.observations || "";
+    setObservations(cleanLabelObservations(rawObs));
+    setRutInfo(cust.rutInfo || extractRutFromObservations(rawObs));
+    setNotes(DEFAULT_FRAGILE_NOTE);
+    setOrderNumber(`KAM-${Date.now().toString().slice(-6)}`);
+    setPackageCount("1 Bulto");
+    setItemsSummary("Insumos de Papelería Sublimable");
+
+    const resolvedShipMethod = resolveShippingMethodNameFromCustomer(cust);
+    const { shippingCompany, deliveryType: resolvedDelivery } =
+      resolveShippingCompanyAndDelivery(resolvedShipMethod);
+    const finalDelivery = cust.deliveryType || resolvedDelivery;
+    const rawCompany = (cust.shippingCompany || shippingCompany || "").toLowerCase();
+    const rawAddress = (cust.address || "").trim();
+
+    if (finalDelivery === "local") {
+      setDeliveryType("local");
+      setShippingAgency("Retiro en Local (San José)");
+      setRecipientAddress("Retiro en Local Kamaluso (San José de Mayo)");
+      setFreightCondition("pago");
+    } else {
+      setDeliveryType(finalDelivery);
+      if (rawCompany.includes("correo")) {
+        setShippingAgency("Correo Uruguayo");
+      } else if (rawCompany.includes("cotmi")) {
+        setShippingAgency("COTMI");
+      } else {
+        setShippingAgency("DAC");
+      }
+      const cleanAddr = rawAddress
+        .replace(/^Retiro en Sucursal:\s*/i, "")
+        .replace(/^Retiro en Agencia:\s*/i, "")
+        .replace(/^Sucursal:\s*/i, "")
+        .replace(/^Agencia:\s*/i, "")
+        .replace(/\[\s*(?:observaciones|notas|obs)[^\]]*\]/gi, "")
+        .trim();
+      setRecipientAddress(cleanAddr);
+      setFreightCondition("destino");
+    }
+  };
+
+  // Sincronizar datos automáticamente cada vez que se abre con un pedido, initialData o cliente
   useEffect(() => {
+    if (!isOpen) return;
+    setCustomerSavedFeedback(false);
+
     if (order) {
+      setSelectedCustomer(null);
       setRecipientName(order.customer.name || "");
       setRecipientPhone(order.customer.phone || "");
       setRecipientDept(order.customer.department || "Montevideo");
@@ -290,6 +360,7 @@ export default function ShippingLabelModal({
 
       setFreightCondition(shipName.includes("retiro") ? "pago" : "destino");
     } else if (initialData) {
+      setSelectedCustomer(null);
       setRecipientName(initialData.recipientName || "");
       setRecipientPhone(initialData.recipientPhone || "");
       setRecipientDept(initialData.recipientDept || "Montevideo");
@@ -331,8 +402,12 @@ export default function ShippingLabelModal({
       setOrderNumber(initialData.orderNumber || `KAM-${Date.now().toString().slice(-6)}`);
       setPackageCount(initialData.packageCount || "1 Bulto");
       setFreightCondition(initialData.freightCondition || "destino");
+    } else if (initialCustomer) {
+      applyCustomerToLabel(initialCustomer);
+      setSelectedCustomer(initialCustomer);
     } else {
       // Valores por defecto para etiqueta manual
+      setSelectedCustomer(null);
       setRecipientName("");
       setRecipientPhone("");
       setRecipientDept("Montevideo");
@@ -348,7 +423,7 @@ export default function ShippingLabelModal({
       setPackageCount("1 Bulto");
       setFreightCondition("destino");
     }
-  }, [order, initialData, isOpen]);
+  }, [order, initialData, initialCustomer, isOpen]);
 
   if (!isOpen) return null;
 
@@ -454,6 +529,80 @@ export default function ShippingLabelModal({
       setRutInfo(extractRutFromObservations(rawObs));
       setNotes(DEFAULT_FRAGILE_NOTE);
       setOrderNumber(order.id);
+    } else if (selectedCustomer || initialCustomer) {
+      const target = selectedCustomer || initialCustomer;
+      if (target) {
+        applyCustomerToLabel(target);
+      }
+    }
+  };
+
+  const handleSaveCustomerProfile = async () => {
+    if (!recipientName.trim() && !recipientPhone.trim()) return;
+    setIsSavingCustomer(true);
+    setCustomerSavedFeedback(false);
+    try {
+      let inferredShippingMethodName = "Retiro en Local (San José de Mayo)";
+      if (deliveryType !== "local") {
+        const agencyLow = shippingAgency.toLowerCase();
+        if (agencyLow.includes("correo")) {
+          inferredShippingMethodName =
+            deliveryType === "domicilio"
+              ? "Correo Uruguayo - Envío a Domicilio"
+              : "Correo Uruguayo - Retiro en Sucursal";
+        } else if (agencyLow.includes("cotmi")) {
+          inferredShippingMethodName =
+            deliveryType === "domicilio"
+              ? "COTMI - Envío a Domicilio"
+              : "Agencia COTMI - Retiro en Agencia";
+        } else {
+          inferredShippingMethodName =
+            deliveryType === "domicilio"
+              ? "DAC - Envío a Domicilio"
+              : "DAC - Retiro en Agencia";
+        }
+      }
+
+      const { shippingCompany } = resolveShippingCompanyAndDelivery(inferredShippingMethodName);
+      const payload = {
+        name: recipientName.trim(),
+        phone: recipientPhone.trim(),
+        department: recipientDept,
+        city: recipientCity.trim(),
+        address: deliveryType === "local" ? "" : recipientAddress.trim(),
+        observations: observations.trim(),
+        rutInfo: rutInfo.trim(),
+        shippingMethodName: inferredShippingMethodName,
+        deliveryType,
+        shippingCompany,
+      };
+
+      const saved =
+        selectedCustomer?.id && !selectedCustomer.id.startsWith("ORD-CUST-")
+          ? await updateCustomerById({ id: selectedCustomer.id, ...payload })
+          : await registerOrUpdateCustomer({
+              ...payload,
+              ...(selectedCustomer?.id?.startsWith("ORD-CUST-")
+                ? {
+                    totalOrders: selectedCustomer.totalOrders,
+                    totalSpent: selectedCustomer.totalSpent,
+                    lastOrderAt: selectedCustomer.lastOrderAt,
+                  }
+                : {}),
+              explicitEdit: true,
+              incrementOrder: false,
+            });
+
+      if (saved) {
+        setSelectedCustomer(saved);
+        onCustomerUpdated?.(saved);
+        setCustomerSavedFeedback(true);
+        setTimeout(() => setCustomerSavedFeedback(false), 2500);
+      }
+    } catch (err) {
+      console.error("Error al guardar ficha del cliente desde etiqueta:", err);
+    } finally {
+      setIsSavingCustomer(false);
     }
   };
 
@@ -546,18 +695,31 @@ export default function ShippingLabelModal({
                 <User className="w-4 h-4 text-pink-600" />
                 <span>Campos Editables de la Etiqueta</span>
               </h4>
-              {order && (
+              {(order || selectedCustomer || initialCustomer) && (
                 <button
                   type="button"
                   onClick={handleReset}
                   className="text-[11px] text-slate-500 hover:text-pink-600 flex items-center gap-1 font-bold transition"
-                  title="Restablecer a datos originales del pedido"
+                  title="Restablecer a datos originales"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Restablecer</span>
                 </button>
               )}
             </div>
+
+            {customers && customers.length > 0 && (
+              <CustomerSelector
+                customers={customers}
+                selectedCustomerId={selectedCustomer?.id}
+                onSelect={(c) => {
+                  setSelectedCustomer(c);
+                  applyCustomerToLabel(c);
+                }}
+                onClear={() => setSelectedCustomer(null)}
+                label="Cargar Cliente Guardado"
+              />
+            )}
 
             {/* SECCIÓN 1: DESTINATARIO */}
             <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
@@ -757,6 +919,27 @@ export default function ShippingLabelModal({
                   onChange={(e) => setObservations(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white"
                 />
+              </div>
+
+              <div className="pt-1 flex flex-wrap items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveCustomerProfile}
+                  disabled={isSavingCustomer || (!recipientName.trim() && !recipientPhone.trim())}
+                  className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 disabled:opacity-50 text-sky-800 border border-sky-200 rounded-xl text-[11px] font-extrabold inline-flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  {isSavingCustomer ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Save className="w-3.5 h-3.5" />
+                  )}
+                  <span>💾 Guardar cambios en ficha del cliente</span>
+                </button>
+                {customerSavedFeedback && (
+                  <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                    ✓ Ficha del cliente actualizada
+                  </span>
+                )}
               </div>
             </div>
 

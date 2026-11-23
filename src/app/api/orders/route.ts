@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path";
 import { NextResponse } from "next/server";
 import {
   getLatestServerOrders,
@@ -7,6 +5,7 @@ import {
   upsertServerOrder,
   deleteServerOrder,
 } from "@/lib/server-orders";
+import { syncCustomerFromOrder } from "@/lib/server-customers";
 
 export const dynamic = "force-dynamic";
 
@@ -31,81 +30,19 @@ export async function POST(request: Request) {
     if (body && body.id) {
       const { order, orders, blobUrl, isNew } = await upsertServerOrder(body);
 
-      // Sincronizar automáticamente cliente registrado en data/customers.json (entorno local)
       try {
-        if (order.customer) {
-          const custFile = path.join(process.cwd(), "data", "customers.json");
-          let list: any[] = [];
-          if (fs.existsSync(custFile)) {
-            list = JSON.parse(fs.readFileSync(custFile, "utf-8"));
-          }
-          const cEmail = (order.customer.email || "").trim().toLowerCase();
-          const cPhone = (order.customer.phone || "").trim();
-          const cName = (order.customer.name || "").trim();
-          if (cName || cEmail || cPhone) {
-            const cIdx = list.findIndex((item) => {
-              if (cEmail && item.email && item.email.toLowerCase() === cEmail) return true;
-              if (cPhone && item.phone && item.phone === cPhone) return true;
-              return false;
-            });
-            const nowStr = new Date().toISOString();
-            const spent = Number(order.finalTotal || order.totalPrice || 0);
-            if (cIdx >= 0) {
-              list[cIdx] = {
-                ...list[cIdx],
-                name: cName || list[cIdx].name,
-                phone: cPhone || list[cIdx].phone,
-                email: cEmail || list[cIdx].email,
-                department: order.customer.department || list[cIdx].department,
-                city: order.customer.city || list[cIdx].city,
-                address: order.customer.address || list[cIdx].address,
-                totalOrders: isNew
-                  ? (list[cIdx].totalOrders || 0) + 1
-                  : list[cIdx].totalOrders || 1,
-                totalSpent: isNew
-                  ? (list[cIdx].totalSpent || 0) + spent
-                  : list[cIdx].totalSpent || spent,
-                lastOrderAt: isNew ? order.createdAt || nowStr : list[cIdx].lastOrderAt || order.createdAt || nowStr,
-                updatedAt: nowStr,
-              };
-            } else if (isNew) {
-              list.unshift({
-                id: `CUST-${Date.now().toString(36).toUpperCase()}`,
-                name: cName || "Cliente",
-                phone: cPhone,
-                email: cEmail,
-                department: order.customer.department || "Montevideo",
-                city: order.customer.city || "",
-                address: order.customer.address || "",
-                deliveryType:
-                  order.deliveryType ||
-                  order.customer.deliveryType ||
-                  ((order.shippingMethodName || "").toLowerCase().includes("local")
-                    ? "local"
-                    : (order.shippingMethodName || "").toLowerCase().includes("agencia")
-                    ? "agencia"
-                    : "domicilio"),
-                shippingCompany: "dac",
-                totalOrders: 1,
-                totalSpent: spent,
-                lastOrderAt: order.createdAt || nowStr,
-                createdAt: nowStr,
-                updatedAt: nowStr,
-              });
-            }
-            fs.writeFileSync(custFile, JSON.stringify(list, null, 2), "utf-8");
-          }
-        }
-      } catch {
-        // Ignorar en serverless
+        await syncCustomerFromOrder(order, isNew);
+      } catch (syncErr: unknown) {
+        console.warn("[API Orders] Aviso al sincronizar cliente desde pedido:", syncErr);
       }
 
       return NextResponse.json({ success: true, url: blobUrl, orders, order });
     }
 
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Error al procesar pedido";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -117,7 +54,8 @@ export async function DELETE(request: Request) {
 
     const orders = await deleteServerOrder(id);
     return NextResponse.json({ success: true, orders });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Error al eliminar pedido";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

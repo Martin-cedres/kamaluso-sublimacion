@@ -1,8 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Product, Order, OrderStatus, CartItem } from "@/types";
+import React, { useState, useEffect, useMemo } from "react";
+import { Product, Order, OrderStatus, CartItem, Customer } from "@/types";
 import { saveOrder } from "@/lib/orders";
+import {
+  registerOrUpdateCustomer,
+  updateCustomerById,
+  resolveShippingMethodNameFromCustomer,
+  resolveShippingCompanyAndDelivery,
+} from "@/lib/customers";
+import CustomerSelector from "@/components/admin/CustomerSelector";
 import {
   X,
   Plus,
@@ -15,6 +22,9 @@ import {
   Loader2,
   PackagePlus,
   Edit2,
+  RotateCcw,
+  FileText,
+  Printer,
 } from "lucide-react";
 
 interface ManualOrderModalProps {
@@ -22,7 +32,10 @@ interface ManualOrderModalProps {
   onClose: () => void;
   products: Product[];
   orderToEdit?: Order | null;
-  onOrderCreated: (newOrder: Order) => void;
+  customers?: Customer[];
+  orders?: Order[];
+  initialCustomer?: Customer | null;
+  onOrderCreated: (newOrder: Order, nextAction?: "none" | "summary" | "label") => void;
 }
 
 const URUGUAY_DEPARTMENTS = [
@@ -74,9 +87,14 @@ export default function ManualOrderModal({
   onClose,
   products,
   orderToEdit,
+  customers = [],
+  orders = [],
+  initialCustomer = null,
   onOrderCreated,
 }: ManualOrderModalProps) {
   // Datos del Cliente (100% Opcionales)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [syncCustomerProfile, setSyncCustomerProfile] = useState(true);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -105,11 +123,30 @@ export default function ManualOrderModal({
   // Estado de guardado
   const [isSaving, setIsSaving] = useState(false);
 
+  // Helper para precargar datos de un cliente guardado
+  const applyCustomerData = (cust: Customer) => {
+    setCustomerName(cust.name || "");
+    setCustomerPhone(cust.phone || "");
+    setCustomerEmail(cust.email || "");
+    setCustomerDepartment(cust.department || "San José");
+    setCustomerCity(cust.city || "");
+    setCustomerAddress(cust.address || "");
+    setCustomerObservations(cust.observations || "");
+    setShippingMethodName(resolveShippingMethodNameFromCustomer(cust));
+    if (
+      cust.paymentMethodId &&
+      PAYMENT_METHODS.some((p) => p.id === cust.paymentMethodId)
+    ) {
+      setPaymentMethodId(cust.paymentMethodId);
+    }
+  };
+
   // Sincronizar o limpiar formulario al abrir modal
   useEffect(() => {
     if (!isOpen) return;
 
     if (orderToEdit) {
+      setSelectedCustomer(null);
       setCustomerName(orderToEdit.customer?.name || "");
       setCustomerPhone(orderToEdit.customer?.phone || "");
       setCustomerEmail(orderToEdit.customer?.email || "");
@@ -164,7 +201,15 @@ export default function ManualOrderModal({
       } else {
         setCustomTotalPrice("");
       }
+    } else if (initialCustomer) {
+      setItems([]);
+      setCustomTotalPrice("");
+      setPaymentMethodId("brou");
+      setOrderStatus("pago_confirmado");
+      applyCustomerData(initialCustomer);
+      setSelectedCustomer(initialCustomer);
     } else {
+      setSelectedCustomer(null);
       setCustomerName("");
       setCustomerPhone("");
       setCustomerEmail("");
@@ -179,13 +224,51 @@ export default function ManualOrderModal({
       setOrderStatus("pago_confirmado");
     }
 
+    setSyncCustomerProfile(true);
     setSelectedCatalogProductId("");
     setCatalogQuantity(1);
     setCustomItemName("");
     setCustomItemPrice("");
     setCustomItemQuantity(1);
     setShowCustomItemForm(false);
-  }, [isOpen, orderToEdit]);
+  }, [isOpen, orderToEdit, initialCustomer]);
+
+  // Último pedido previo con ítems del cliente seleccionado
+  const lastCustomerOrder = useMemo(() => {
+    if (!selectedCustomer || !orders || orders.length === 0) return null;
+
+    const targetEmail = (selectedCustomer.email || "").trim().toLowerCase();
+    const targetPhone = (selectedCustomer.phone || "").replace(/\D/g, "");
+    const targetName = (selectedCustomer.name || "").trim().toLowerCase();
+
+    const matching = orders.filter((o) => {
+      if (!Array.isArray(o.items) || o.items.length === 0) return false;
+      const oEmail = (o.customer?.email || "").trim().toLowerCase();
+      const oPhone = (o.customer?.phone || "").replace(/\D/g, "");
+      const oName = (o.customer?.name || "").trim().toLowerCase();
+
+      if (targetEmail && oEmail && targetEmail === oEmail) return true;
+      if (
+        targetPhone.length >= 8 &&
+        oPhone.length >= 8 &&
+        (oPhone === targetPhone ||
+          oPhone.endsWith(targetPhone.slice(-8)) ||
+          targetPhone.endsWith(oPhone.slice(-8)))
+      ) {
+        return true;
+      }
+      if (!targetEmail && targetPhone.length < 8 && targetName && oName === targetName) {
+        return true;
+      }
+      return false;
+    });
+
+    if (matching.length === 0) return null;
+    matching.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    return matching[0];
+  }, [selectedCustomer, orders]);
 
   if (!isOpen) return null;
 
@@ -279,7 +362,7 @@ export default function ManualOrderModal({
   };
 
   // Guardar pedido manual o editado (SIN RESTRICCIONES NI CAMPOS OBLIGATORIOS)
-  const handleSave = async () => {
+  const handleSave = async (nextAction: "none" | "summary" | "label" = "none") => {
     setIsSaving(true);
     try {
       const paymentName =
@@ -323,7 +406,45 @@ export default function ManualOrderModal({
         deliveryType,
       });
 
-      onOrderCreated(finalOrder);
+      if (
+        syncCustomerProfile &&
+        (customerName.trim() || customerPhone.trim() || customerEmail.trim())
+      ) {
+        try {
+          const { shippingCompany, deliveryType: resolvedDelivery } =
+            resolveShippingCompanyAndDelivery(shippingMethodName);
+          const customerPayload = {
+            name: customerName.trim(),
+            phone: customerPhone.trim(),
+            email: customerEmail.trim(),
+            department: customerDepartment,
+            city: customerCity.trim(),
+            address: customerAddress.trim(),
+            observations: customerObservations.trim(),
+            shippingMethodName,
+            paymentMethodId,
+            deliveryType: resolvedDelivery,
+            shippingCompany,
+          };
+
+          if (selectedCustomer?.id && !selectedCustomer.id.startsWith("ORD-CUST-")) {
+            await updateCustomerById({
+              id: selectedCustomer.id,
+              ...customerPayload,
+            });
+          } else {
+            await registerOrUpdateCustomer({
+              ...customerPayload,
+              explicitEdit: true,
+              incrementOrder: false,
+            });
+          }
+        } catch (custErr) {
+          console.error("Error al sincronizar ficha del cliente:", custErr);
+        }
+      }
+
+      onOrderCreated(finalOrder, nextAction);
       onClose();
     } catch (error) {
       console.error("Error al guardar pedido:", error);
@@ -378,6 +499,41 @@ export default function ManualOrderModal({
               <User className="w-4 h-4 text-pink-600" />
               <span>1. Datos del Cliente (Opcional)</span>
             </h4>
+
+            {!isEditing && customers && customers.length > 0 && (
+              <CustomerSelector
+                customers={customers}
+                selectedCustomerId={selectedCustomer?.id}
+                onSelect={(c) => {
+                  setSelectedCustomer(c);
+                  applyCustomerData(c);
+                }}
+                onClear={() => setSelectedCustomer(null)}
+              />
+            )}
+
+            {selectedCustomer && lastCustomerOrder && (
+              <button
+                type="button"
+                onClick={() => {
+                  setItems(
+                    lastCustomerOrder.items.map((i) => ({
+                      ...i,
+                      product: { ...i.product },
+                    }))
+                  );
+                }}
+                className="w-full py-2 px-3 bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 rounded-xl text-[11px] font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>
+                  🔁 Repetir ítems de su última compra ($
+                  {(lastCustomerOrder.finalTotal || 0).toLocaleString("es-UY")} •{" "}
+                  {lastCustomerOrder.items.length}{" "}
+                  {lastCustomerOrder.items.length === 1 ? "ítem" : "ítems"})
+                </span>
+              </button>
+            )}
 
             <div className="space-y-2">
               <div>
@@ -476,6 +632,16 @@ export default function ManualOrderModal({
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-pink-500 focus:outline-none"
                 />
               </div>
+
+              <label className="flex items-center gap-2 pt-1 cursor-pointer select-none text-[11px] font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={syncCustomerProfile}
+                  onChange={(e) => setSyncCustomerProfile(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-pink-600 focus:ring-pink-500"
+                />
+                <span>Actualizar / guardar estos datos en la ficha del cliente</span>
+              </label>
             </div>
           </div>
 
@@ -795,7 +961,7 @@ export default function ManualOrderModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={onClose}
@@ -805,7 +971,25 @@ export default function ManualOrderModal({
             </button>
             <button
               type="button"
-              onClick={handleSave}
+              onClick={() => handleSave("summary")}
+              disabled={isSaving}
+              className="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-sm text-xs flex items-center gap-1.5 transition active:scale-95 disabled:opacity-50"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Guardar + Nota A4</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSave("label")}
+              disabled={isSaving}
+              className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-extrabold rounded-xl shadow-sm text-xs flex items-center gap-1.5 transition active:scale-95 disabled:opacity-50"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Guardar + Etiqueta</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSave("none")}
               disabled={isSaving}
               className="px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-xl shadow-md shadow-pink-600/20 text-xs flex items-center gap-1.5 transition active:scale-95 disabled:opacity-50"
             >

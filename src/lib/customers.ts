@@ -1,4 +1,243 @@
-import { Customer } from "@/types";
+import { Customer, Order } from "@/types";
+
+export const STANDARD_SHIPPING_METHODS = [
+  "Retiro en Local (San José de Mayo)",
+  "DAC - Retiro en Agencia",
+  "DAC - Envío a Domicilio",
+  "Correo Uruguayo - Retiro en Sucursal",
+  "Correo Uruguayo - Envío a Domicilio",
+  "Agencia COTMI - Retiro en Agencia",
+  "COTMI - Envío a Domicilio",
+] as const;
+
+function cleanDigits(val: string): string {
+  return (val || "").replace(/\D/g, "");
+}
+
+function normalizeEmail(val?: string): string {
+  return (val || "").trim().toLowerCase();
+}
+
+function normalizeName(val?: string): string {
+  return (val || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function phonesMatch(a?: string, b?: string): boolean {
+  const da = cleanDigits(a || "");
+  const db = cleanDigits(b || "");
+  if (da.length < 8 || db.length < 8) return false;
+  return da.slice(-8) === db.slice(-8) || da.endsWith(db) || db.endsWith(da);
+}
+
+function buildDeterministicOrderCustomerId(seed: string): string {
+  const clean = seed
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `ORD-CUST-${clean || "anonimo"}`;
+}
+
+/**
+ * Resuelve el nombre estándar de método de envío (una de las 7 opciones oficiales)
+ * a partir de los datos guardados del cliente.
+ */
+export function resolveShippingMethodNameFromCustomer(
+  customer: Partial<Customer>
+): string {
+  const rawMethod = (customer.shippingMethodName || "").trim();
+  const exactMatch = STANDARD_SHIPPING_METHODS.find(
+    (opt) => opt.toLowerCase() === rawMethod.toLowerCase()
+  );
+  if (exactMatch) return exactMatch;
+
+  const lowerMethod = rawMethod.toLowerCase();
+  const lowerCompany = (customer.shippingCompany || "").trim().toLowerCase();
+
+  if (
+    customer.deliveryType === "local" ||
+    lowerMethod.includes("local") ||
+    lowerCompany.includes("local")
+  ) {
+    return "Retiro en Local (San José de Mayo)";
+  }
+
+  const isDomicilio =
+    customer.deliveryType === "domicilio" || lowerMethod.includes("domicilio");
+
+  if (lowerMethod.includes("correo") || lowerCompany.includes("correo")) {
+    return isDomicilio
+      ? "Correo Uruguayo - Envío a Domicilio"
+      : "Correo Uruguayo - Retiro en Sucursal";
+  }
+
+  if (lowerMethod.includes("cotmi") || lowerCompany.includes("cotmi")) {
+    return isDomicilio
+      ? "COTMI - Envío a Domicilio"
+      : "Agencia COTMI - Retiro en Agencia";
+  }
+
+  return isDomicilio ? "DAC - Envío a Domicilio" : "DAC - Retiro en Agencia";
+}
+
+/**
+ * Deriva la empresa de envío y modalidad a partir del nombre estándar del método de envío.
+ */
+export function resolveShippingCompanyAndDelivery(
+  shippingMethodName: string
+): { shippingCompany: string; deliveryType: "agencia" | "domicilio" | "local" } {
+  const lower = (shippingMethodName || "").toLowerCase();
+
+  let deliveryType: "agencia" | "domicilio" | "local" = "agencia";
+  if (lower.includes("local")) {
+    deliveryType = "local";
+  } else if (lower.includes("domicilio")) {
+    deliveryType = "domicilio";
+  }
+
+  let shippingCompany = "dac";
+  if (lower.includes("local")) {
+    shippingCompany = "local";
+  } else if (lower.includes("correo")) {
+    shippingCompany = "correo";
+  } else if (lower.includes("cotmi")) {
+    shippingCompany = "cotmi";
+  }
+
+  return { shippingCompany, deliveryType };
+}
+
+/**
+ * Fusiona los clientes registrados con compradores únicos extraídos de los pedidos,
+ * evitando duplicados, completando campos vacíos desde su pedido más reciente
+ * y ordenando por última actividad descendente.
+ */
+export function buildUnifiedCustomersList(
+  customers: Customer[],
+  orders: Order[]
+): Customer[] {
+  const result: Customer[] = customers.map((c) => ({ ...c }));
+
+  const sortedOrders = [...orders].sort((a, b) => {
+    const ta = new Date(a.createdAt || 0).getTime();
+    const tb = new Date(b.createdAt || 0).getTime();
+    return tb - ta;
+  });
+
+  const findCustomerIndex = (
+    email: string,
+    phone: string,
+    name: string
+  ): number => {
+    if (email) {
+      const idx = result.findIndex((c) => normalizeEmail(c.email) === email);
+      if (idx >= 0) return idx;
+    }
+
+    if (cleanDigits(phone).length >= 8) {
+      const idx = result.findIndex((c) => phonesMatch(c.phone, phone));
+      if (idx >= 0) return idx;
+    }
+
+    if (!email && cleanDigits(phone).length < 8 && name) {
+      const idx = result.findIndex(
+        (c) =>
+          !normalizeEmail(c.email) &&
+          cleanDigits(c.phone).length < 8 &&
+          normalizeName(c.name) === name
+      );
+      if (idx >= 0) return idx;
+    }
+
+    return -1;
+  };
+
+  for (const order of sortedOrders) {
+    const oc = order.customer;
+    if (!oc) continue;
+
+    const email = normalizeEmail(oc.email);
+    const phone = (oc.phone || "").trim();
+    const name = (oc.name || "").trim();
+    const normName = normalizeName(name);
+
+    if (!name && !email && !phone) continue;
+
+    const orderShipMethod = order.shippingMethodName || "";
+    const resolvedShip = orderShipMethod
+      ? resolveShippingCompanyAndDelivery(orderShipMethod)
+      : null;
+    const orderDeliveryType =
+      order.deliveryType || oc.deliveryType || resolvedShip?.deliveryType;
+    const orderObservations = (
+      order.observations ||
+      oc.observations ||
+      ""
+    ).trim();
+    const orderTotal = Number(order.finalTotal || order.totalPrice || 0);
+    const orderDate = order.createdAt || new Date().toISOString();
+
+    const idx = findCustomerIndex(email, phone, normName);
+
+    if (idx >= 0) {
+      const existing = result[idx];
+      const isSynthesized = existing.id.startsWith("ORD-CUST-");
+
+      result[idx] = {
+        ...existing,
+        name: existing.name || name || "Cliente",
+        phone: existing.phone || phone,
+        email: existing.email || email,
+        department: existing.department || oc.department || "Montevideo",
+        city: existing.city || oc.city || "",
+        address: existing.address || oc.address || "",
+        observations: existing.observations || orderObservations || undefined,
+        shippingMethodName:
+          existing.shippingMethodName || orderShipMethod || undefined,
+        paymentMethodId:
+          existing.paymentMethodId || order.paymentMethodId || undefined,
+        deliveryType: existing.deliveryType || orderDeliveryType,
+        shippingCompany:
+          existing.shippingCompany || resolvedShip?.shippingCompany,
+        totalOrders: isSynthesized
+          ? existing.totalOrders + 1
+          : existing.totalOrders || 1,
+        totalSpent: isSynthesized
+          ? existing.totalSpent + orderTotal
+          : existing.totalSpent || orderTotal,
+        lastOrderAt: existing.lastOrderAt || orderDate,
+      };
+    } else {
+      const seed = email || cleanDigits(phone) || normName || order.id;
+      result.push({
+        id: buildDeterministicOrderCustomerId(seed),
+        name: name || "Cliente",
+        phone,
+        email,
+        department: oc.department || "Montevideo",
+        city: oc.city || "",
+        address: oc.address || "",
+        deliveryType: orderDeliveryType || "domicilio",
+        shippingCompany: resolvedShip?.shippingCompany || "dac",
+        observations: orderObservations || undefined,
+        shippingMethodName: orderShipMethod || undefined,
+        paymentMethodId: order.paymentMethodId || undefined,
+        totalOrders: 1,
+        totalSpent: orderTotal,
+        lastOrderAt: orderDate,
+        createdAt: orderDate,
+        updatedAt: orderDate,
+      });
+    }
+  }
+
+  return result.sort((a, b) => {
+    const ta = new Date(a.lastOrderAt || a.updatedAt || a.createdAt || 0).getTime();
+    const tb = new Date(b.lastOrderAt || b.updatedAt || b.createdAt || 0).getTime();
+    return tb - ta;
+  });
+}
 
 /**
  * Consulta un cliente registrado en la base de datos por su email.
@@ -44,7 +283,11 @@ export async function lookupCustomerByPhone(phone: string): Promise<Customer | n
  * Guarda o actualiza un cliente en la base de datos del servidor y Vercel Blob.
  */
 export async function registerOrUpdateCustomer(
-  customerData: Partial<Customer> & { incrementOrder?: boolean; orderAmount?: number }
+  customerData: Partial<Customer> & {
+    incrementOrder?: boolean;
+    orderAmount?: number;
+    explicitEdit?: boolean;
+  }
 ): Promise<Customer | null> {
   try {
     const res = await fetch("/api/customers", {
@@ -54,9 +297,30 @@ export async function registerOrUpdateCustomer(
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data.customer || null;
+    return (data.customer as Customer) || null;
   } catch (err) {
     console.warn("Aviso al registrar o actualizar cliente:", err);
+    return null;
+  }
+}
+
+/**
+ * Actualiza un cliente existente por ID mediante PUT /api/customers.
+ */
+export async function updateCustomerById(
+  customer: Partial<Customer> & { id: string }
+): Promise<Customer | null> {
+  try {
+    const res = await fetch("/api/customers", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (data.customer as Customer) || null;
+  } catch (err) {
+    console.warn("Aviso al actualizar cliente por ID:", err);
     return null;
   }
 }
@@ -69,7 +333,7 @@ export async function getAllCustomers(): Promise<Customer[]> {
     const res = await fetch("/api/customers", { cache: "no-store" });
     if (!res.ok) return [];
     const data = await res.json();
-    if (Array.isArray(data)) return data;
+    if (Array.isArray(data)) return data as Customer[];
   } catch (err) {
     console.warn("Aviso al obtener clientes registrados:", err);
   }
