@@ -1,7 +1,14 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import {
+  getAdminSessionFromRequest,
+  unauthorizedAdminResponse,
+} from "@/lib/admin-auth-server";
 
 export async function POST(request: Request): Promise<NextResponse> {
+  if (!getAdminSessionFromRequest(request)) {
+    return unauthorizedAdminResponse();
+  }
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get("filename") || `product-${Date.now()}.webp`;
 

@@ -8,7 +8,8 @@ import { getAllProducts, deleteProduct, saveProduct, saveProductsOrder, CATEGORI
 import { ResourceItem, getAllResources, deleteResource } from "@/lib/resources";
 import { getAllOrders, updateOrderStatus, deleteOrder } from "@/lib/orders";
 import { getAllCustomers, deleteCustomer, buildUnifiedCustomersList } from "@/lib/customers";
-import { getLocalAdminUser, removeLocalAdminUser, isAllowedAdminEmail, AdminUser } from "@/lib/auth";
+import { setLocalAdminUser, removeLocalAdminUser, AdminUser } from "@/lib/auth";
+import { exportOrdersToCsv, exportCustomersToCsv } from "@/lib/csv-export";
 import ProductModal from "@/components/admin/ProductModal";
 import ResourceModal from "@/components/admin/ResourceModal";
 import ShippingLabelModal from "@/components/admin/ShippingLabelModal";
@@ -51,6 +52,8 @@ import {
   Users,
   UserCheck,
   Lock,
+  Database,
+  Loader2,
 } from "lucide-react";
 
 const getOrderShippingCost = (o: Order): number => {
@@ -100,8 +103,21 @@ export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderSearchQuery, setOrderSearchQuery] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("todos");
+  const [orderMonthFilter, setOrderMonthFilter] = useState("todos");
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [selectedOrderModal, setSelectedOrderModal] = useState<Order | null>(null);
+
+  // State Estado Base de Datos / Migración Supabase
+  const [dbStatus, setDbStatus] = useState<{
+    supabaseConfigured: boolean;
+    tablesReady: boolean;
+    activeEngine: "supabase" | "blob";
+    blobOrdersCount: number;
+    blobCustomersCount: number;
+    supabaseOrdersCount: number;
+    supabaseCustomersCount: number;
+  } | null>(null);
+  const [isMigratingDb, setIsMigratingDb] = useState(false);
 
   // State Clientes Registrados
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -233,20 +249,83 @@ export default function AdminDashboardPage() {
     setIsLoadingCustomers(false);
   };
 
-  useEffect(() => {
-    const user = getLocalAdminUser();
-    if (!user || !isAllowedAdminEmail(user.email)) {
-      router.push("/admin/login");
+  const loadDbStatus = async () => {
+    try {
+      const res = await fetch("/api/admin/migrate-supabase", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        setDbStatus(data);
+      }
+    } catch {
+      // Ignorar si falla
+    }
+  };
+
+  const handleMigrateToSupabase = async () => {
+    if (
+      !confirm(
+        "¿Migrar pedidos y clientes actuales desde Vercel Blob hacia Supabase PostgreSQL? (Operación segura e idempotente)"
+      )
+    ) {
       return;
     }
-    setAdminUser(user);
-    loadData();
-    loadResourcesData();
-    loadOrdersData();
-    loadCustomersData();
+    setIsMigratingDb(true);
+    try {
+      const res = await fetch("/api/admin/migrate-supabase", {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        alert(data?.error || "No se pudo completar la migración a Supabase.");
+        return;
+      }
+      setOrderToastMessage(
+        `✅ Migración a Supabase completada (${data.migratedOrders} pedidos, ${data.migratedCustomers} clientes)`
+      );
+      setTimeout(() => setOrderToastMessage(null), 5000);
+      await Promise.all([loadOrdersData(), loadCustomersData(), loadDbStatus()]);
+    } finally {
+      setIsMigratingDb(false);
+    }
+  };
+
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/admin/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { authenticated?: boolean; user?: AdminUser | null } | null) => {
+        if (!active) return;
+        if (!data?.authenticated || !data?.user) {
+          removeLocalAdminUser();
+          router.replace("/admin/login");
+          return;
+        }
+        setLocalAdminUser(data.user);
+        setAdminUser(data.user);
+        loadData();
+        loadResourcesData();
+        loadOrdersData();
+        loadCustomersData();
+        loadDbStatus();
+      })
+      .catch(() => {
+        if (!active) return;
+        removeLocalAdminUser();
+        router.replace("/admin/login");
+      });
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/auth/logout", { method: "POST" });
+    } catch {
+      // Continuar limpieza local
+    }
     removeLocalAdminUser();
     router.push("/admin/login");
   };
@@ -331,10 +410,30 @@ export default function AdminDashboardPage() {
     );
   });
 
+  const availableOrderMonths = useMemo(() => {
+    const months = new Set<string>();
+    for (const o of orders) {
+      if (!o?.createdAt) continue;
+      const d = new Date(o.createdAt);
+      if (Number.isNaN(d.getTime())) continue;
+      const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      months.add(ym);
+    }
+    return Array.from(months).sort((a, b) => b.localeCompare(a));
+  }, [orders]);
+
   // Filtrado de pedidos
   const filteredOrders = orders.filter((o) => {
     if (!o || !o.customer) return false;
     const matchesStatus = orderStatusFilter === "todos" || o.status === orderStatusFilter;
+    let matchesMonth = true;
+    if (orderMonthFilter !== "todos") {
+      const d = new Date(o.createdAt || "");
+      const ym = !Number.isNaN(d.getTime())
+        ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+        : "";
+      matchesMonth = ym === orderMonthFilter;
+    }
     const q = orderSearchQuery.toLowerCase();
     const matchesQuery =
       (o.id && o.id.toLowerCase().includes(q)) ||
@@ -342,7 +441,7 @@ export default function AdminDashboardPage() {
       (o.customer.phone && o.customer.phone.toLowerCase().includes(q)) ||
       (o.customer.email && o.customer.email.toLowerCase().includes(q)) ||
       (o.customer.city && o.customer.city.toLowerCase().includes(q));
-    return matchesStatus && matchesQuery;
+    return matchesStatus && matchesMonth && matchesQuery;
   });
 
   const totalOrdersAmount = orders.reduce((sum, o) => sum + o.finalTotal, 0);
@@ -532,6 +631,56 @@ export default function AdminDashboardPage() {
           <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-fadeIn">
             <Sparkles className="w-4 h-4 text-emerald-200" />
             <span>{orderToastMessage}</span>
+          </div>
+        )}
+
+        {/* Indicador discreto de Motor de Base de Datos & Migrador Supabase */}
+        {dbStatus && (activeTab === "orders" || activeTab === "customers") && (
+          <div className="bg-white/80 border border-slate-200 px-3.5 py-2 rounded-xl flex flex-wrap items-center justify-between gap-2 text-[11px]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-extrabold border ${
+                  dbStatus.activeEngine === "supabase"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-slate-100 text-slate-700 border-slate-300"
+                }`}
+              >
+                <Database className="w-3 h-3" />
+                <span>
+                  {dbStatus.activeEngine === "supabase"
+                    ? "BD: Supabase PostgreSQL"
+                    : "BD: Vercel Blob"}
+                </span>
+              </span>
+              {dbStatus.supabaseConfigured && !dbStatus.tablesReady && (
+                <span className="text-amber-700 font-semibold">
+                  Supabase conectado, falta ejecutar <code>supabase/schema.sql</code> para activar tablas.
+                </span>
+              )}
+              {dbStatus.activeEngine === "supabase" && (
+                <span className="text-slate-500 font-medium">
+                  ({dbStatus.supabaseOrdersCount} pedidos • {dbStatus.supabaseCustomersCount} clientes en PostgreSQL)
+                </span>
+              )}
+            </div>
+
+            {dbStatus.supabaseConfigured && dbStatus.tablesReady && (
+              <button
+                type="button"
+                onClick={handleMigrateToSupabase}
+                disabled={isMigratingDb}
+                className="px-3 py-1 bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-extrabold rounded-lg text-[11px] inline-flex items-center gap-1.5 transition cursor-pointer"
+              >
+                {isMigratingDb ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <Database className="w-3 h-3 text-emerald-400" />
+                )}
+                <span>
+                  {isMigratingDb ? "Migrando..." : "Migrar Blob → Supabase"}
+                </span>
+              </button>
+            )}
           </div>
         )}
 
@@ -1012,9 +1161,45 @@ export default function AdminDashboardPage() {
                   <option value="despachado">🚚 Despachado</option>
                   <option value="cancelado">❌ Cancelado</option>
                 </select>
+
+                <select
+                  value={orderMonthFilter}
+                  onChange={(e) => setOrderMonthFilter(e.target.value)}
+                  className="py-2 px-3 border border-slate-300 rounded-xl text-sm font-medium bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                >
+                  <option value="todos">Todos los meses</option>
+                  {availableOrderMonths.map((ym) => {
+                    const [year, month] = ym.split("-");
+                    const label = new Date(Number(year), Number(month) - 1, 1).toLocaleDateString(
+                      "es-UY",
+                      { month: "long", year: "numeric" }
+                    );
+                    return (
+                      <option key={ym} value={ym}>
+                        {label.charAt(0).toUpperCase() + label.slice(1)}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto flex-wrap">
+                <button
+                  type="button"
+                  onClick={() =>
+                    exportOrdersToCsv(
+                      filteredOrders,
+                      orderMonthFilter !== "todos" ? orderMonthFilter : undefined
+                    )
+                  }
+                  disabled={filteredOrders.length === 0}
+                  className="w-full sm:w-auto py-2.5 px-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-xs whitespace-nowrap active:scale-95 cursor-pointer"
+                  title="Exportar pedidos filtrados a Excel (.csv UTF-8)"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Exportar Excel (.csv)</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => {
@@ -1235,7 +1420,17 @@ export default function AdminDashboardPage() {
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium"
                 />
               </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => exportCustomersToCsv(filteredCustomers)}
+                  disabled={filteredCustomers.length === 0}
+                  className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+                  title="Exportar clientes filtrados a Excel (.csv UTF-8)"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Exportar Excel (.csv)</span>
+                </button>
                 <button
                   onClick={() => {
                     setCustomerToEdit(null);

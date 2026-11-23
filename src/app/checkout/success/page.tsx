@@ -98,40 +98,37 @@ function CheckoutSuccessContent() {
       }
     } catch {}
 
-    // 2. Si aún falta data y tenemos orderId válido, consultar /api/orders
+    // 2. Si aún falta data y tenemos orderId válido, consultar resumen acotado en /api/orders?id=
     if (orderId && orderId !== "KAM-000000" && (subtotal === null || total === null || !shippingMethod)) {
-      fetch("/api/orders")
-        .then((res) => res.json())
-        .then((orders) => {
-          if (Array.isArray(orders)) {
-            const found = orders.find((o: any) => o.id === orderId);
-            if (found) {
-              if (!email && found.customer?.email) setEmail(found.customer.email);
-              if (subtotal === null && typeof found.totalPrice === "number") {
-                setSubtotal(found.totalPrice);
-              }
-              if (shippingCost === null) {
-                if (typeof found.shippingCost === "number") {
-                  setShippingCost(found.shippingCost);
+      fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          const found = data?.found && data?.order ? data.order : null;
+          if (found) {
+            if (subtotal === null && typeof found.totalPrice === "number") {
+              setSubtotal(found.totalPrice);
+            }
+            if (shippingCost === null) {
+              if (typeof found.shippingCost === "number") {
+                setShippingCost(found.shippingCost);
+              } else {
+                const ship = (found.shippingMethodName || "").toLowerCase();
+                if ((ship.includes("correo") || ship.includes("cotmi")) && ship.includes("domicilio")) {
+                  setShippingCost(200);
                 } else {
-                  const ship = (found.shippingMethodName || "").toLowerCase();
-                  if ((ship.includes("correo") || ship.includes("cotmi")) && ship.includes("domicilio")) {
-                    setShippingCost(200);
-                  } else {
-                    setShippingCost(0);
-                  }
+                  setShippingCost(0);
                 }
               }
-              if (!shippingMethod && found.shippingMethodName) {
-                setShippingMethod(found.shippingMethodName);
-              }
-              if (total === null && typeof found.finalTotal === "number") {
-                setTotal(found.finalTotal);
-              }
-              if (mpSurcharge === null && found.paymentMethodId === "mercado_pago_online") {
-                const sCost = typeof found.shippingCost === "number" ? found.shippingCost : 0;
-                setMpSurcharge(parseFloat(((found.totalPrice + sCost) * 0.1).toFixed(2)));
-              }
+            }
+            if (!shippingMethod && found.shippingMethodName) {
+              setShippingMethod(found.shippingMethodName);
+            }
+            if (total === null && typeof found.finalTotal === "number") {
+              setTotal(found.finalTotal);
+            }
+            if (mpSurcharge === null && found.paymentMethodId === "mercado_pago_online") {
+              const sCost = typeof found.shippingCost === "number" ? found.shippingCost : 0;
+              setMpSurcharge(parseFloat(((found.totalPrice + sCost) * 0.1).toFixed(2)));
             }
           }
         })

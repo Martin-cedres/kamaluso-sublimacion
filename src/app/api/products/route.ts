@@ -3,6 +3,10 @@ import path from "path";
 import { put, del } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import {
+  getAdminSessionFromRequest,
+  unauthorizedAdminResponse,
+} from "@/lib/admin-auth-server";
 import { Product } from "@/types";
 import { sanitizeProduct, INITIAL_PRODUCTS, ensureCompleteCatalog } from "@/lib/products";
 
@@ -96,6 +100,9 @@ export async function GET(request: Request) {
     const cache = globalThis.__kamaluso_products_cache__!;
 
     if (shouldReset) {
+      if (!getAdminSessionFromRequest(request)) {
+        return unauthorizedAdminResponse();
+      }
       const restored = [...INITIAL_PRODUCTS];
       cache.products = restored;
       cache.lastFetched = Date.now();
@@ -132,6 +139,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!getAdminSessionFromRequest(request)) {
+    return unauthorizedAdminResponse();
+  }
   try {
     const body = await request.json();
     const cache = globalThis.__kamaluso_products_cache__!;
@@ -200,6 +210,9 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!getAdminSessionFromRequest(request)) {
+    return unauthorizedAdminResponse();
+  }
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

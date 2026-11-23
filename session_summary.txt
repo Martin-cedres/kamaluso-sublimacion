@@ -2259,3 +2259,21 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * `src/components/admin/CustomerHistoryModal.tsx` (nuevo): modal con KPIs (`Total Pedidos`, `Total Invertido`, `Ticket Promedio`, `Última Compra`), datos logísticos habituales, editor inline de notas privadas de taller, ranking de productos más comprados e historial cronológico con accesos directos (`Nota A4`, `Etiqueta`, `Ver`, `Editar`, `Nuevo Pedido`).
   * `src/app/admin/page.tsx`: nombre/avatar de clientes clicable hacia el historial, badge `Nota` si tiene `internalNotes`, botón de acceso directo (`Eye`) y sincronización en vivo con `CustomerModal`, `ManualOrderModal` y `ShippingLabelModal`.
 - **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`74/74` páginas generadas, código `0`).
+- **Git & Deploy (2026-11-23 11:20):** Commit `684c7f5` (`feat(admin): sincronización exacta de clientes, historial mini-CRM y notas privadas`) pusheado a `origin/main` (`Martin-cedres/kamaluso-sublimacion`), disparando el despliegue automático en Vercel (`https://www.kamaluso.com`).
+
+
+[2026-11-23 11:36] Puntos 1 y 6 (Seguridad Server-Side Admin + Exportación Excel/CSV y Capa Supabase Dual):
+- **Punto 1 (Autenticación Server-Side con Cookie `HttpOnly` firmada):**
+  * `src/lib/admin-auth-server.ts` (nuevo): sesión firmada HMAC-SHA256 (`kamaluso_admin_session`, `httpOnly`, `sameSite: lax`, `secure` en prod, 7 días), validación `timingSafeEqual` contra `ADMIN_PASSWORD` (error `503` en prod si falta; clave local dev `kamaluso-dev` solo fuera de producción).
+  * `src/app/api/admin/auth/{login,logout,session}/route.ts` (nuevos): endpoints de login con email autorizado + contraseña, cierre de sesión y verificación de cookie.
+  * Protección en APIs: `shipping-label-pdf` (`GET`/`POST`), `customers` (`GET` listado completo, `PUT`, `DELETE`, y sanitización en `POST` público quitando `id`/`explicitEdit`/`internalNotes` + ocultamiento de `internalNotes` en lookup público), `orders` (`GET` listado completo, `DELETE`, `POST` lote/edición/estado distinto de `pendiente`/`skipCustomerSync`, y lookup público acotado por `?id=` sin datos personales), `products` (`GET ?reset=true`, `POST`, `DELETE`) y `upload` (`POST`).
+  * `src/app/checkout/success/page.tsx`: actualizado fallback post-Mercado Pago para consultar `/api/orders?id=...`.
+  * `src/app/admin/login/page.tsx` y `src/app/admin/page.tsx`: login con correo + contraseña verificado por cookie `HttpOnly` en servidor, verificación inicial vía `/api/admin/auth/session` y logout vía `/api/admin/auth/logout`.
+- **Punto 6 (Exportación Excel/CSV + Supabase Dual con Fallback a Vercel Blob):**
+  * `src/lib/csv-export.ts` (nuevo): exportación directa compatible con Excel (`\uFEFF` BOM UTF-8, separador `;`, escape RFC 4180) mediante `exportOrdersToCsv` y `exportCustomersToCsv`.
+  * `supabase/schema.sql` & `src/lib/supabase/server.ts` (nuevo): tablas `public.customers` y `public.orders` con índices y RLS habilitado + cliente servidor con `SUPABASE_SERVICE_ROLE_KEY`.
+  * `src/lib/server-orders.ts`, `src/lib/server-customers.ts` y `src/lib/orders.ts`: eliminadas llamadas directas del navegador a Supabase con anon key; implementada persistencia dual Supabase-first con fallback automático a Vercel Blob + helpers `getBlobOnlyOrders`/`getBlobOnlyCustomers`.
+  * `src/app/api/admin/migrate-supabase/route.ts` (nuevo): diagnóstico de motor activo y migración idempotente Blob → Supabase (`ignoreDuplicates: true`).
+  * `src/app/admin/page.tsx`: selector de Mes/Año en Pedidos, botones `Exportar Excel (.csv)` en Pedidos y Clientes, píldora de motor BD (`Supabase PostgreSQL` / `Vercel Blob`) y botón `Migrar Blob → Supabase`.
+- **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`76/76` páginas generadas, código `0`).
+- **Ajuste sesión admin (2026-11-23 20:15):** Extendida duración de cookie de sesión `kamaluso_admin_session` de 7 a 30 días en `src/lib/admin-auth-server.ts` (`npx tsc --noEmit` código `0`).

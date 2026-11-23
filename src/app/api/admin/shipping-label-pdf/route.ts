@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import {
+  getAdminSessionFromRequest,
+  unauthorizedAdminResponse,
+} from "@/lib/admin-auth-server";
 import { generateShippingLabelPDF } from "@/lib/pdf/generateShippingLabelPDF";
 import {
   LabelColorMode,
@@ -39,6 +43,9 @@ function buildPdfResponse(pdfBuffer: Buffer, data: ShippingLabelPDFData): NextRe
 }
 
 export async function POST(request: Request) {
+  if (!getAdminSessionFromRequest(request)) {
+    return unauthorizedAdminResponse();
+  }
   try {
     const body = (await request.json()) as Partial<ShippingLabelPDFData>;
     const labelData: ShippingLabelPDFData = {
@@ -74,6 +81,9 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
+  if (!getAdminSessionFromRequest(request)) {
+    return unauthorizedAdminResponse();
+  }
   try {
     const { searchParams } = new URL(request.url);
     const labelData: ShippingLabelPDFData = {

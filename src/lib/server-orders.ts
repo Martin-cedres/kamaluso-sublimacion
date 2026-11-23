@@ -2,10 +2,103 @@ import fs from "fs";
 import path from "path";
 import { put } from "@vercel/blob";
 import { Order, resolveOrderShippingCost } from "@/types";
+import { getServerSupabase, isServerSupabaseConfigured } from "@/lib/supabase/server";
 
 const BLOB_ORDERS_FILENAME = "data/orders.json";
 const DIRECT_BLOB_ORDERS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/orders.json";
 const LOCAL_ORDERS_PATH = path.join(process.cwd(), "data", "orders.json");
+
+interface SupabaseOrderRow {
+  id: string;
+  created_at: string;
+  customer_id: string | null;
+  customer: Order["customer"];
+  items: Order["items"];
+  total_price: number;
+  final_total: number;
+  payment_method_id: string | null;
+  payment_method_name: string | null;
+  shipping_method_name: string | null;
+  shipping_cost: number | null;
+  status: Order["status"];
+  notes: string | null;
+  observations: string | null;
+  delivery_type: Order["deliveryType"] | null;
+  mp_payment_id: string | null;
+  mp_payer_email: string | null;
+  mp_payer_name: string | null;
+  email_sent: boolean | null;
+  email_sent_at: string | null;
+}
+
+export function orderToSupabaseRow(order: Order): SupabaseOrderRow {
+  return {
+    id: order.id,
+    created_at: order.createdAt || new Date().toISOString(),
+    customer_id: order.customerId || null,
+    customer: order.customer,
+    items: Array.isArray(order.items) ? order.items : [],
+    total_price: Number(order.totalPrice || 0),
+    final_total: Number(order.finalTotal || order.totalPrice || 0),
+    payment_method_id: order.paymentMethodId || "brou",
+    payment_method_name: order.paymentMethodName || "",
+    shipping_method_name: order.shippingMethodName || "",
+    shipping_cost: resolveOrderShippingCost(order),
+    status: order.status || "pendiente",
+    notes: order.notes || order.observations || null,
+    observations: order.observations || order.customer?.observations || null,
+    delivery_type: order.deliveryType || order.customer?.deliveryType || null,
+    mp_payment_id: order.mpPaymentId || null,
+    mp_payer_email: order.mpPayerEmail || null,
+    mp_payer_name: order.mpPayerName || null,
+    email_sent: Boolean(order.emailSent),
+    email_sent_at: order.emailSentAt || null,
+  };
+}
+
+export function supabaseRowToOrder(row: SupabaseOrderRow): Order {
+  const shippingMethodName = row.shipping_method_name || "DAC - Retiro en Agencia";
+  const deliveryType = row.delivery_type || row.customer?.deliveryType || undefined;
+  const observations = row.observations || row.notes || row.customer?.observations || "";
+  const shippingCost = resolveOrderShippingCost({
+    shippingCost: typeof row.shipping_cost === "number" ? Number(row.shipping_cost) : undefined,
+    shippingMethodName,
+    deliveryType,
+  });
+
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    customerId: row.customer_id || undefined,
+    customer: {
+      name: row.customer?.name || "Cliente",
+      phone: row.customer?.phone || "",
+      email: row.customer?.email || "",
+      department: row.customer?.department || "Montevideo",
+      city: row.customer?.city || "",
+      address: row.customer?.address || "",
+      observations,
+      notes: observations,
+      deliveryType,
+    },
+    items: Array.isArray(row.items) ? row.items : [],
+    totalPrice: Number(row.total_price || 0),
+    finalTotal: Number(row.final_total || row.total_price || 0),
+    paymentMethodId: row.payment_method_id || "brou",
+    paymentMethodName: row.payment_method_name || "Transferencia Bancaria BROU",
+    shippingMethodName,
+    shippingCost,
+    status: row.status || "pendiente",
+    notes: observations || undefined,
+    observations: observations || undefined,
+    deliveryType,
+    mpPaymentId: row.mp_payment_id || undefined,
+    mpPayerEmail: row.mp_payer_email || undefined,
+    mpPayerName: row.mp_payer_name || undefined,
+    emailSent: Boolean(row.email_sent),
+    emailSentAt: row.email_sent_at || undefined,
+  };
+}
 
 declare global {
   var __kamaluso_orders_cache__: {
@@ -120,16 +213,12 @@ export function mergeOrderLists(
   );
 }
 
-export async function getLatestServerOrders(): Promise<Order[]> {
+export async function getBlobOnlyOrders(): Promise<Order[]> {
   const cache = globalThis.__kamaluso_orders_cache__!;
   if (!cache.deletedIds) {
     cache.deletedIds = new Set<string>();
   }
   const now = Date.now();
-
-  if (cache.orders && cache.orders.length > 0 && now - cache.lastFetched < 5000) {
-    return cache.orders;
-  }
 
   let blobOrders: Order[] | null = null;
   const targetUrl = `${cache.blobUrl || DIRECT_BLOB_ORDERS_URL}?t=${now}`;
@@ -151,16 +240,50 @@ export async function getLatestServerOrders(): Promise<Order[]> {
     console.warn("[Server Orders] Aviso al leer de Vercel Blob:", e);
   }
 
-  let finalOrders: Order[] = [];
-
   if (blobOrders !== null) {
-    // Fusionar blobOrders con cache.orders en memoria para que la caché CDN de Blob nunca borre un pedido recién creado
-    finalOrders = mergeOrderLists(cache.deletedIds, blobOrders, cache.orders);
-  } else if (cache.orders && cache.orders.length > 0) {
-    finalOrders = mergeOrderLists(cache.deletedIds, cache.orders);
-  } else {
-    finalOrders = mergeOrderLists(cache.deletedIds, readLocalOrdersFile());
+    return mergeOrderLists(cache.deletedIds, blobOrders, cache.orders);
   }
+  if (cache.orders && cache.orders.length > 0) {
+    return mergeOrderLists(cache.deletedIds, cache.orders);
+  }
+  return mergeOrderLists(cache.deletedIds, readLocalOrdersFile());
+}
+
+export async function getLatestServerOrders(): Promise<Order[]> {
+  const cache = globalThis.__kamaluso_orders_cache__!;
+  if (!cache.deletedIds) {
+    cache.deletedIds = new Set<string>();
+  }
+  const now = Date.now();
+
+  if (cache.orders && cache.orders.length > 0 && now - cache.lastFetched < 5000) {
+    return cache.orders;
+  }
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        const { data, error } = await client
+          .from("orders")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (!error && Array.isArray(data) && data.length > 0) {
+          const mapped = (data as SupabaseOrderRow[])
+            .map(supabaseRowToOrder)
+            .filter((o) => !cache.deletedIds.has(o.id));
+          cache.orders = mapped;
+          cache.lastFetched = now;
+          writeLocalOrdersFile(mapped);
+          return mapped;
+        }
+      }
+    } catch (supaErr) {
+      console.warn("[Server Orders] Fallback a Blob tras aviso en Supabase:", supaErr);
+    }
+  }
+
+  const finalOrders = await getBlobOnlyOrders();
 
   cache.orders = finalOrders;
   cache.lastFetched = now;
@@ -181,6 +304,19 @@ export async function persistServerOrders(orders: Order[]): Promise<{ blobUrl: s
   cache.lastFetched = Date.now();
 
   writeLocalOrdersFile(cleanOrders);
+
+  if (isServerSupabaseConfigured && cleanOrders.length > 0) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        await client
+          .from("orders")
+          .upsert(cleanOrders.map(orderToSupabaseRow), { onConflict: "id" });
+      }
+    } catch (supaErr) {
+      console.warn("[Server Orders] Aviso al sincronizar lote en Supabase:", supaErr);
+    }
+  }
 
   let blobUrl = cache.blobUrl || DIRECT_BLOB_ORDERS_URL;
   try {
@@ -307,6 +443,30 @@ export async function upsertServerOrder(
     updatedOrders = [savedOrder, ...existingOrders];
   }
 
+  if (isServerSupabaseConfigured) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        const { error } = await client
+          .from("orders")
+          .upsert(orderToSupabaseRow(savedOrder), { onConflict: "id" });
+        if (!error) {
+          cache.orders = updatedOrders;
+          cache.lastFetched = Date.now();
+          writeLocalOrdersFile(updatedOrders);
+          return {
+            order: savedOrder,
+            orders: updatedOrders,
+            blobUrl: cache.blobUrl || DIRECT_BLOB_ORDERS_URL,
+            isNew,
+          };
+        }
+      }
+    } catch (supaErr) {
+      console.warn("[Server Orders] Fallback a Blob en upsertServerOrder:", supaErr);
+    }
+  }
+
   const { blobUrl, orders } = await persistServerOrders(updatedOrders);
   return { order: savedOrder, orders, blobUrl, isNew };
 }
@@ -322,6 +482,24 @@ export async function deleteServerOrder(id: string): Promise<Order[]> {
 
   const existingOrders = await getLatestServerOrders();
   const filtered = existingOrders.filter((o) => o.id !== id);
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        const { error } = await client.from("orders").delete().eq("id", id);
+        if (!error) {
+          cache.orders = filtered;
+          cache.lastFetched = Date.now();
+          writeLocalOrdersFile(filtered);
+          return filtered;
+        }
+      }
+    } catch (supaErr) {
+      console.warn("[Server Orders] Fallback a Blob en deleteServerOrder:", supaErr);
+    }
+  }
+
   const { orders } = await persistServerOrders(filtered);
   return orders;
 }

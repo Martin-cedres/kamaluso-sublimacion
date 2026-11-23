@@ -1,5 +1,4 @@
 import { Order, OrderStatus, resolveOrderShippingCost } from "@/types";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
 const LOCAL_ORDERS_KEY = "kamaluso_orders";
 const DELETED_ORDERS_KEY = "kamaluso_deleted_order_ids";
@@ -121,25 +120,6 @@ export async function getAllOrders(): Promise<Order[]> {
   const localStored = getLocalStoredOrders() || [];
   const deletedIds = getDeletedOrderIds();
 
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
-        const cleanData = (data as Order[]).filter((o) => !deletedIds.includes(o.id));
-        const merged = mergeOrdersWithLocal(cleanData, localStored);
-        if (typeof window !== "undefined") {
-          localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(merged));
-        }
-        return merged;
-      }
-    } catch (e) {
-      console.warn("Supabase orders fetch error, fallbacking", e);
-    }
-  }
-
   try {
     const res = await fetch("/api/orders?t=" + Date.now(), { cache: "no-store" });
     if (res.ok) {
@@ -224,31 +204,7 @@ export async function saveOrder(
     localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(localOrders));
   }
 
-  // 2. Supabase if configured
-  if (isSupabaseConfigured && supabase) {
-    try {
-      await supabase.from("orders").upsert({
-        id: fullOrder.id,
-        created_at: fullOrder.createdAt,
-        customer_name: fullOrder.customer.name,
-        customer_phone: fullOrder.customer.phone,
-        customer_email: fullOrder.customer.email,
-        customer_department: fullOrder.customer.department,
-        customer_city: fullOrder.customer.city,
-        customer_address: fullOrder.customer.address,
-        items: fullOrder.items,
-        total_price: fullOrder.totalPrice,
-        final_total: fullOrder.finalTotal,
-        payment_method_name: fullOrder.paymentMethodName,
-        shipping_method_name: fullOrder.shippingMethodName,
-        status: fullOrder.status,
-      });
-    } catch (e) {
-      console.error("Error al guardar pedido en Supabase", e);
-    }
-  }
-
-  // 3. API Cloud / Local backend
+  // 2. API Cloud / Supabase Server / Local backend
   try {
     const res = await fetch("/api/orders", {
       method: "POST",
@@ -289,12 +245,6 @@ export async function updateOrderStatus(id: string, status: OrderStatus): Promis
 export async function deleteOrder(id: string): Promise<boolean> {
   saveDeletedOrderId(id);
   removeLocalStoredOrder(id);
-
-  if (isSupabaseConfigured && supabase) {
-    try {
-      await supabase.from("orders").delete().eq("id", id);
-    } catch (e) {}
-  }
 
   try {
     const res = await fetch(`/api/orders?id=${id}`, {

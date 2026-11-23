@@ -3,11 +3,83 @@ import path from "path";
 import { put } from "@vercel/blob";
 import { Customer, Order } from "@/types";
 import { resolveShippingCompanyAndDelivery } from "@/lib/customers";
+import { getServerSupabase, isServerSupabaseConfigured } from "@/lib/supabase/server";
 
 const BLOB_CUSTOMERS_FILENAME = "data/customers.json";
 const DIRECT_BLOB_CUSTOMERS_URL =
   "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/customers.json";
 const LOCAL_CUSTOMERS_PATH = path.join(process.cwd(), "data", "customers.json");
+
+interface SupabaseCustomerRow {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  department: string | null;
+  city: string | null;
+  address: string | null;
+  delivery_type: Customer["deliveryType"] | null;
+  shipping_company: string | null;
+  observations: string | null;
+  rut_info: string | null;
+  shipping_method_name: string | null;
+  payment_method_id: string | null;
+  internal_notes: string | null;
+  total_orders: number;
+  total_spent: number;
+  last_order_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export function customerToSupabaseRow(c: Customer): SupabaseCustomerRow {
+  return {
+    id: c.id,
+    name: c.name || "Cliente",
+    phone: c.phone || "",
+    email: c.email || "",
+    department: c.department || "Montevideo",
+    city: c.city || "",
+    address: c.address || "",
+    delivery_type: c.deliveryType || "domicilio",
+    shipping_company: c.shippingCompany || "dac",
+    observations: c.observations !== undefined ? c.observations : null,
+    rut_info: c.rutInfo !== undefined ? c.rutInfo : null,
+    shipping_method_name:
+      c.shippingMethodName !== undefined ? c.shippingMethodName : null,
+    payment_method_id: c.paymentMethodId !== undefined ? c.paymentMethodId : null,
+    internal_notes: c.internalNotes !== undefined ? c.internalNotes : null,
+    total_orders: Number(c.totalOrders || 0),
+    total_spent: Number(c.totalSpent || 0),
+    last_order_at: c.lastOrderAt || null,
+    created_at: c.createdAt || new Date().toISOString(),
+    updated_at: c.updatedAt || new Date().toISOString(),
+  };
+}
+
+export function supabaseRowToCustomer(row: SupabaseCustomerRow): Customer {
+  return {
+    id: row.id,
+    name: row.name || "Cliente",
+    phone: row.phone || "",
+    email: row.email || "",
+    department: row.department || "Montevideo",
+    city: row.city || "",
+    address: row.address || "",
+    deliveryType: row.delivery_type || "domicilio",
+    shippingCompany: row.shipping_company || "dac",
+    observations: row.observations ?? undefined,
+    rutInfo: row.rut_info ?? undefined,
+    shippingMethodName: row.shipping_method_name ?? undefined,
+    paymentMethodId: row.payment_method_id ?? undefined,
+    internalNotes: row.internal_notes ?? undefined,
+    totalOrders: Number(row.total_orders || 0),
+    totalSpent: Number(row.total_spent || 0),
+    lastOrderAt: row.last_order_at || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
 
 declare global {
   var __kamaluso_customers_cache__:
@@ -84,13 +156,9 @@ async function persistCustomers(customers: Customer[]): Promise<string> {
   return blobUrl;
 }
 
-export async function getLatestServerCustomers(): Promise<Customer[]> {
+export async function getBlobOnlyCustomers(): Promise<Customer[]> {
   const cache = getCache();
   const now = Date.now();
-
-  if (cache.customers && cache.customers.length > 0 && now - cache.lastFetched < 10000) {
-    return cache.customers;
-  }
 
   let blobCustomers: Customer[] | null = null;
   const targetUrl = (cache.blobUrl || DIRECT_BLOB_CUSTOMERS_URL) + `?t=${now}`;
@@ -106,14 +174,45 @@ export async function getLatestServerCustomers(): Promise<Customer[]> {
     console.warn("[Server Customers] Aviso al leer de Vercel Blob:", e);
   }
 
-  let finalCustomers: Customer[] = [];
   if (blobCustomers !== null && blobCustomers.length > 0) {
-    finalCustomers = blobCustomers;
-  } else if (cache.customers && cache.customers.length > 0) {
-    finalCustomers = cache.customers;
-  } else {
-    finalCustomers = readLocalCustomersFile();
+    return blobCustomers;
   }
+  if (cache.customers && cache.customers.length > 0) {
+    return cache.customers;
+  }
+  return readLocalCustomersFile();
+}
+
+export async function getLatestServerCustomers(): Promise<Customer[]> {
+  const cache = getCache();
+  const now = Date.now();
+
+  if (cache.customers && cache.customers.length > 0 && now - cache.lastFetched < 10000) {
+    return cache.customers;
+  }
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        const { data, error } = await client
+          .from("customers")
+          .select("*")
+          .order("updated_at", { ascending: false });
+        if (!error && Array.isArray(data) && data.length > 0) {
+          const mapped = (data as SupabaseCustomerRow[]).map(supabaseRowToCustomer);
+          cache.customers = mapped;
+          cache.lastFetched = now;
+          writeLocalCustomersFile(mapped);
+          return mapped;
+        }
+      }
+    } catch (supaErr: unknown) {
+      console.warn("[Server Customers] Fallback a Blob tras aviso en Supabase:", supaErr);
+    }
+  }
+
+  const finalCustomers = await getBlobOnlyCustomers();
 
   cache.customers = finalCustomers;
   cache.lastFetched = now;
@@ -291,6 +390,30 @@ export async function upsertServerCustomer(
     customers.unshift(updatedCustomer);
   }
 
+  if (isServerSupabaseConfigured) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        const { error } = await client
+          .from("customers")
+          .upsert(customerToSupabaseRow(updatedCustomer), { onConflict: "id" });
+        if (!error) {
+          const cache = getCache();
+          cache.customers = customers;
+          cache.lastFetched = Date.now();
+          writeLocalCustomersFile(customers);
+          return {
+            customer: updatedCustomer,
+            customers,
+            blobUrl: cache.blobUrl || "",
+          };
+        }
+      }
+    } catch (supaErr: unknown) {
+      console.warn("[Server Customers] Fallback a Blob en upsertServerCustomer:", supaErr);
+    }
+  }
+
   const blobUrl = await persistCustomers(customers);
   return { customer: updatedCustomer, customers, blobUrl };
 }
@@ -300,6 +423,25 @@ export async function deleteServerCustomer(
 ): Promise<{ customers: Customer[]; blobUrl: string }> {
   const customers = await getLatestServerCustomers();
   const filtered = customers.filter((c) => c.id !== id);
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const client = getServerSupabase();
+      if (client) {
+        const { error } = await client.from("customers").delete().eq("id", id);
+        if (!error) {
+          const cache = getCache();
+          cache.customers = filtered;
+          cache.lastFetched = Date.now();
+          writeLocalCustomersFile(filtered);
+          return { customers: filtered, blobUrl: cache.blobUrl || "" };
+        }
+      }
+    } catch (supaErr: unknown) {
+      console.warn("[Server Customers] Fallback a Blob en deleteServerCustomer:", supaErr);
+    }
+  }
+
   const blobUrl = await persistCustomers(filtered);
   return { customers: filtered, blobUrl };
 }
@@ -351,13 +493,41 @@ export async function syncCustomerFromOrder(
     const existing = customers[idx];
     const now = new Date().toISOString();
     const spent = Number(order.finalTotal || order.totalPrice || 0);
-    customers[idx] = {
+    const updatedCounters: Customer = {
       ...existing,
       totalOrders: (existing.totalOrders || 0) + 1,
       totalSpent: (existing.totalSpent || 0) + spent,
       lastOrderAt: order.createdAt || now,
       updatedAt: now,
     };
+    customers[idx] = updatedCounters;
+
+    if (isServerSupabaseConfigured) {
+      try {
+        const client = getServerSupabase();
+        if (client) {
+          const { error } = await client
+            .from("customers")
+            .update({
+              total_orders: updatedCounters.totalOrders,
+              total_spent: updatedCounters.totalSpent,
+              last_order_at: updatedCounters.lastOrderAt,
+              updated_at: updatedCounters.updatedAt,
+            })
+            .eq("id", existing.id);
+          if (!error) {
+            const cache = getCache();
+            cache.customers = customers;
+            cache.lastFetched = Date.now();
+            writeLocalCustomersFile(customers);
+            return;
+          }
+        }
+      } catch (supaErr: unknown) {
+        console.warn("[Server Customers] Fallback a Blob en incremento de pedido:", supaErr);
+      }
+    }
+
     await persistCustomers(customers);
     return;
   }

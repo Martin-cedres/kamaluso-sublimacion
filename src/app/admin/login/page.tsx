@@ -1,79 +1,89 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { ALLOWED_ADMIN_EMAILS, isAllowedAdminEmail, setLocalAdminUser, getLocalAdminUser } from "@/lib/auth";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
-import { ShieldCheck, LogIn, Lock, AlertCircle } from "lucide-react";
+import { AdminUser, removeLocalAdminUser, setLocalAdminUser } from "@/lib/auth";
+import { ShieldCheck, Lock, Mail, AlertCircle, Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 
 export default function AdminLoginPage() {
-  const router = Router();
-  const [selectedEmail, setSelectedEmail] = useState(ALLOWED_ADMIN_EMAILS[0]);
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
-    // Si ya está autenticado, redirigir al Dashboard
-    const user = getLocalAdminUser();
-    if (user && isAllowedAdminEmail(user.email)) {
-      router.push("/admin");
-      return;
-    }
+    let active = true;
 
-    // Verificar si regresó de Google OAuth vía Supabase
-    if (isSupabaseConfigured && supabase) {
-      const client = supabase;
-      client.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user?.email) {
-          if (isAllowedAdminEmail(session.user.email)) {
-            setLocalAdminUser({
-              email: session.user.email,
-              name: session.user.user_metadata?.full_name || session.user.email,
-              avatarUrl: session.user.user_metadata?.avatar_url,
-            });
-            router.push("/admin");
-          } else {
-            setErrorMessage(
-              `El correo ${session.user.email} no está registrado en la lista blanca de administradores.`
-            );
-            client.auth.signOut();
-          }
+    fetch("/api/admin/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { authenticated?: boolean; user?: AdminUser | null } | null) => {
+        if (!active) return;
+        if (data?.authenticated && data?.user) {
+          setLocalAdminUser(data.user);
+          router.replace("/admin");
+          return;
         }
+        removeLocalAdminUser();
+        setCheckingSession(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setCheckingSession(false);
       });
-    }
 
+    return () => {
+      active = false;
+    };
   }, [router]);
 
-  const handleGoogleLogin = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setErrorMessage(null);
 
-    if (isSupabaseConfigured && supabase) {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/admin`,
-        },
+    try {
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+        }),
       });
-      if (error) {
-        setErrorMessage("Error de conexión con Google OAuth: " + error.message);
+
+      const data = (await res.json().catch(() => null)) as {
+        success?: boolean;
+        user?: AdminUser;
+        error?: string;
+      } | null;
+
+      if (!res.ok || !data?.success || !data?.user) {
+        setErrorMessage(data?.error || "Credenciales inválidas.");
         setLoading(false);
+        return;
       }
-    } else {
-      // Modo Demo Local (Simula login con una de las 3 cuentas autorizadas)
-      if (isAllowedAdminEmail(selectedEmail)) {
-        setLocalAdminUser({
-          email: selectedEmail,
-          name: selectedEmail.split("@")[0],
-        });
-        router.push("/admin");
-      } else {
-        setErrorMessage("Este correo no tiene permisos de administración.");
-        setLoading(false);
-      }
+
+      setLocalAdminUser(data.user);
+      router.push("/admin");
+    } catch {
+      setErrorMessage("Error de conexión al verificar credenciales.");
+      setLoading(false);
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <div className="flex items-center gap-2.5 text-slate-300 text-sm font-semibold">
+          <Loader2 className="w-5 h-5 animate-spin text-pink-500" />
+          <span>Verificando sesión...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
@@ -97,39 +107,78 @@ export default function AdminLoginPage() {
           </div>
         )}
 
-        <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="admin-email"
+              className="block text-xs font-bold text-slate-700 mb-1"
+            >
+              Correo de administrador
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                id="admin-email"
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="tu-correo@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="admin-password"
+              className="block text-xs font-bold text-slate-700 mb-1"
+            >
+              Contraseña
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                id="admin-password"
+                type={showPassword ? "text" : "password"}
+                required
+                autoComplete="current-password"
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
           <button
-            onClick={handleGoogleLogin}
+            type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 bg-slate-900 hover:bg-black text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all duration-200 border border-slate-800 hover:scale-[1.01]"
+            className="w-full py-3.5 px-4 bg-slate-900 hover:bg-black disabled:opacity-60 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2.5 transition-all duration-200 border border-slate-800 hover:scale-[1.01] cursor-pointer"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.37 7.37 24 12 24z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.15 0 9.99 0 12s.45 3.85 1.24 5.42l4.04-3.15z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.26 2.63 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-              />
-            </svg>
-            <span>Iniciar Sesión con Google</span>
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Verificando acceso...</span>
+              </>
+            ) : (
+              <>
+                <LogIn className="w-4 h-4 text-pink-400" />
+                <span>Ingresar al Panel</span>
+              </>
+            )}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
-}
-
-// Router helper wrapper
-function Router() {
-  return useRouter();
 }
