@@ -203,6 +203,12 @@ export async function upsertServerCustomer(
       existing.paymentMethodId,
       ""
     );
+    const nextInternalNotes =
+      body.internalNotes !== undefined
+        ? allowClear
+          ? body.internalNotes.trim()
+          : body.internalNotes.trim() || existing.internalNotes || ""
+        : existing.internalNotes || "";
 
     updatedCustomer = {
       ...existing,
@@ -229,6 +235,7 @@ export async function upsertServerCustomer(
       rutInfo: nextRutInfo || undefined,
       shippingMethodName: nextShippingMethodName || undefined,
       paymentMethodId: nextPaymentMethodId || undefined,
+      internalNotes: nextInternalNotes || undefined,
       totalOrders: (existing.totalOrders || 0) + (body.incrementOrder ? 1 : 0),
       totalSpent: (existing.totalSpent || 0) + (Number(body.orderAmount) || 0),
       lastOrderAt: body.incrementOrder ? now : existing.lastOrderAt || now,
@@ -247,6 +254,9 @@ export async function upsertServerCustomer(
       }
       if (body.paymentMethodId !== undefined && !body.paymentMethodId.trim()) {
         updatedCustomer.paymentMethodId = "";
+      }
+      if (body.internalNotes !== undefined && !body.internalNotes.trim()) {
+        updatedCustomer.internalNotes = "";
       }
     }
 
@@ -271,6 +281,7 @@ export async function upsertServerCustomer(
       rutInfo: (body.rutInfo || "").trim() || undefined,
       shippingMethodName: (body.shippingMethodName || "").trim() || undefined,
       paymentMethodId: (body.paymentMethodId || "").trim() || undefined,
+      internalNotes: (body.internalNotes || "").trim() || undefined,
       totalOrders: body.incrementOrder ? 1 : Number(body.totalOrders) || 0,
       totalSpent: Number(body.orderAmount) || Number(body.totalSpent) || 0,
       lastOrderAt: body.incrementOrder ? now : body.lastOrderAt,
@@ -295,15 +306,63 @@ export async function deleteServerCustomer(
 
 export async function syncCustomerFromOrder(
   order: Order,
-  isNew: boolean
+  isNew: boolean,
+  options?: { customerId?: string; skipProfileUpdate?: boolean }
 ): Promise<void> {
   if (!order.customer) return;
 
   const name = (order.customer.name || "").trim();
   const phone = (order.customer.phone || "").trim();
   const email = (order.customer.email || "").trim().toLowerCase();
+  const resolvedCustomerId =
+    options?.customerId && !options.customerId.startsWith("ORD-CUST-")
+      ? options.customerId
+      : order.customerId && !order.customerId.startsWith("ORD-CUST-")
+      ? order.customerId
+      : undefined;
 
-  if (!name && !email && !phone) return;
+  if (options?.skipProfileUpdate) {
+    if (!isNew) return;
+    const customers = [...(await getLatestServerCustomers())];
+    const cleanPhoneInput = cleanCustomerPhoneDigits(phone);
+
+    let idx = -1;
+    if (resolvedCustomerId) {
+      idx = customers.findIndex((c) => c.id === resolvedCustomerId);
+    }
+    if (idx < 0 && email) {
+      idx = customers.findIndex(
+        (c) => c.email && c.email.trim().toLowerCase() === email
+      );
+    }
+    if (idx < 0 && cleanPhoneInput.length >= 8) {
+      idx = customers.findIndex((c) => {
+        if (!c.phone) return false;
+        const cDigits = cleanCustomerPhoneDigits(c.phone);
+        return (
+          cDigits === cleanPhoneInput ||
+          (cDigits.length >= 8 && cDigits.slice(-8) === cleanPhoneInput.slice(-8))
+        );
+      });
+    }
+
+    if (idx < 0) return;
+
+    const existing = customers[idx];
+    const now = new Date().toISOString();
+    const spent = Number(order.finalTotal || order.totalPrice || 0);
+    customers[idx] = {
+      ...existing,
+      totalOrders: (existing.totalOrders || 0) + 1,
+      totalSpent: (existing.totalSpent || 0) + spent,
+      lastOrderAt: order.createdAt || now,
+      updatedAt: now,
+    };
+    await persistCustomers(customers);
+    return;
+  }
+
+  if (!name && !email && !phone && !resolvedCustomerId) return;
 
   const shippingMethodName = (order.shippingMethodName || "").trim();
   const derivedShip = shippingMethodName
@@ -311,6 +370,7 @@ export async function syncCustomerFromOrder(
     : null;
 
   await upsertServerCustomer({
+    id: resolvedCustomerId,
     name: name || "Cliente",
     phone,
     email,

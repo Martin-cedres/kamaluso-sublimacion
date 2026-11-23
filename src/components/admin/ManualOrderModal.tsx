@@ -380,31 +380,43 @@ export default function ManualOrderModal({
         deliveryType = "agencia";
       }
 
-      const finalOrder = await saveOrder({
-        ...(orderToEdit || {}),
-        id: orderToEdit?.id || `KAM-MAN-${Date.now().toString().slice(-6)}`,
-        createdAt: orderToEdit?.createdAt || new Date().toISOString(),
-        customer: {
-          name: customerName.trim() || "Cliente Mostrador / WhatsApp",
-          phone: customerPhone.trim(),
-          email: customerEmail.trim(),
-          department: customerDepartment,
-          city: customerCity.trim(),
-          address: customerAddress.trim() || shippingMethodName,
+      const resolvedCustomerId =
+        selectedCustomer?.id && !selectedCustomer.id.startsWith("ORD-CUST-")
+          ? selectedCustomer.id
+          : orderToEdit?.customerId;
+
+      const finalOrder = await saveOrder(
+        {
+          ...(orderToEdit || {}),
+          id: orderToEdit?.id || `KAM-MAN-${Date.now().toString().slice(-6)}`,
+          createdAt: orderToEdit?.createdAt || new Date().toISOString(),
+          customerId: resolvedCustomerId,
+          customer: {
+            name: customerName.trim() || "Cliente Mostrador / WhatsApp",
+            phone: customerPhone.trim(),
+            email: customerEmail.trim(),
+            department: customerDepartment,
+            city: customerCity.trim(),
+            address: customerAddress.trim() || shippingMethodName,
+            observations: customerObservations.trim(),
+            deliveryType,
+          },
+          items,
+          totalPrice: computedItemsTotal > 0 ? computedItemsTotal : effectiveTotal,
+          shippingCost,
+          finalTotal: effectiveTotal,
+          paymentMethodId,
+          paymentMethodName: paymentName,
+          shippingMethodName,
+          status: orderStatus,
           observations: customerObservations.trim(),
           deliveryType,
         },
-        items,
-        totalPrice: computedItemsTotal > 0 ? computedItemsTotal : effectiveTotal,
-        shippingCost,
-        finalTotal: effectiveTotal,
-        paymentMethodId,
-        paymentMethodName: paymentName,
-        shippingMethodName,
-        status: orderStatus,
-        observations: customerObservations.trim(),
-        deliveryType,
-      });
+        {
+          skipCustomerSync: !syncCustomerProfile,
+          customerId: resolvedCustomerId,
+        }
+      );
 
       if (
         syncCustomerProfile &&
@@ -427,9 +439,9 @@ export default function ManualOrderModal({
             shippingCompany,
           };
 
-          if (selectedCustomer?.id && !selectedCustomer.id.startsWith("ORD-CUST-")) {
+          if (resolvedCustomerId) {
             await updateCustomerById({
-              id: selectedCustomer.id,
+              id: resolvedCustomerId,
               ...customerPayload,
             });
           } else {

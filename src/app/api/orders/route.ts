@@ -28,10 +28,17 @@ export async function POST(request: Request) {
     }
 
     if (body && body.id) {
-      const { order, orders, blobUrl, isNew } = await upsertServerOrder(body);
+      const skipCustomerSync = Boolean(body.skipCustomerSync);
+      const customerId =
+        typeof body.customerId === "string" ? body.customerId : undefined;
+      const cleanOrderBody = { ...body, skipCustomerSync: undefined };
+      const { order, orders, blobUrl, isNew } = await upsertServerOrder(cleanOrderBody);
 
       try {
-        await syncCustomerFromOrder(order, isNew);
+        await syncCustomerFromOrder(order, isNew, {
+          customerId,
+          skipProfileUpdate: skipCustomerSync,
+        });
       } catch (syncErr: unknown) {
         console.warn("[API Orders] Aviso al sincronizar cliente desde pedido:", syncErr);
       }

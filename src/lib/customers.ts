@@ -239,6 +239,105 @@ export function buildUnifiedCustomersList(
   });
 }
 
+export interface CustomerTopProduct {
+  productId: string;
+  name: string;
+  totalQuantity: number;
+  totalSpent: number;
+  orderCount: number;
+}
+
+/**
+ * Obtiene todos los pedidos asociados a un cliente (por customerId, email, teléfono
+ * o nombre cuando no hay email/teléfono), ordenados del más reciente al más antiguo.
+ */
+export function getOrdersForCustomer(customer: Customer, orders: Order[]): Order[] {
+  const targetId = !customer.id.startsWith("ORD-CUST-") ? customer.id : "";
+  const targetEmail = normalizeEmail(customer.email);
+  const targetPhone = (customer.phone || "").trim();
+  const targetPhoneDigits = cleanDigits(targetPhone);
+  const targetName = normalizeName(customer.name);
+
+  return orders
+    .filter((order) => {
+      if (targetId && order.customerId && order.customerId === targetId) {
+        return true;
+      }
+      const oc = order.customer;
+      if (!oc) return false;
+
+      const oEmail = normalizeEmail(oc.email);
+      if (targetEmail && oEmail && targetEmail === oEmail) {
+        return true;
+      }
+
+      if (targetPhoneDigits.length >= 8 && phonesMatch(targetPhone, oc.phone)) {
+        return true;
+      }
+
+      if (
+        !targetEmail &&
+        targetPhoneDigits.length < 8 &&
+        !oEmail &&
+        cleanDigits(oc.phone || "").length < 8 &&
+        targetName &&
+        normalizeName(oc.name) === targetName
+      ) {
+        return true;
+      }
+
+      return false;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+    );
+}
+
+/**
+ * Agrupa los productos más comprados por un cliente a partir de su historial de pedidos.
+ */
+export function getTopProductsForCustomer(
+  customerOrders: Order[]
+): CustomerTopProduct[] {
+  const map = new Map<string, CustomerTopProduct>();
+
+  for (const order of customerOrders) {
+    if (!Array.isArray(order.items)) continue;
+    const seenInOrder = new Set<string>();
+
+    for (const item of order.items) {
+      if (!item?.product) continue;
+      const key = item.product.id || normalizeName(item.product.name) || "item";
+      const qty = Number(item.quantity) || 0;
+      const subtotal = (Number(item.product.price) || 0) * qty;
+      const existing = map.get(key);
+
+      if (existing) {
+        existing.totalQuantity += qty;
+        existing.totalSpent += subtotal;
+        if (!seenInOrder.has(key)) {
+          existing.orderCount += 1;
+          seenInOrder.add(key);
+        }
+      } else {
+        map.set(key, {
+          productId: item.product.id || key,
+          name: item.product.name || "Producto",
+          totalQuantity: qty,
+          totalSpent: subtotal,
+          orderCount: 1,
+        });
+        seenInOrder.add(key);
+      }
+    }
+  }
+
+  return Array.from(map.values()).sort(
+    (a, b) => b.totalQuantity - a.totalQuantity
+  );
+}
+
 /**
  * Consulta un cliente registrado en la base de datos por su email.
  */

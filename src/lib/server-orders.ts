@@ -201,19 +201,22 @@ export async function persistServerOrders(orders: Order[]): Promise<{ blobUrl: s
 }
 
 export async function upsertServerOrder(
-  orderInput: Partial<Order> & { id: string }
+  orderInput: Partial<Order> & { id: string; skipCustomerSync?: boolean }
 ): Promise<{ order: Order; orders: Order[]; blobUrl: string; isNew: boolean }> {
+  const { skipCustomerSync: _ignoredSkipSync, ...cleanOrderInput } = orderInput;
+  void _ignoredSkipSync;
+
   const cache = globalThis.__kamaluso_orders_cache__!;
   if (!cache.deletedIds) {
     cache.deletedIds = new Set<string>();
   }
-  cache.deletedIds.delete(orderInput.id);
+  cache.deletedIds.delete(cleanOrderInput.id);
 
   const existingOrders = await getLatestServerOrders();
-  const idx = existingOrders.findIndex((o) => o.id === orderInput.id);
+  const idx = existingOrders.findIndex((o) => o.id === cleanOrderInput.id);
   const isNew = idx === -1;
 
-  const deliveryType = orderInput.deliveryType || orderInput.customer?.deliveryType;
+  const deliveryType = cleanOrderInput.deliveryType || cleanOrderInput.customer?.deliveryType;
 
   let savedOrder: Order;
   let updatedOrders: Order[];
@@ -222,82 +225,84 @@ export async function upsertServerOrder(
     const current = existingOrders[idx];
     const resolvedDeliveryType = deliveryType || current.deliveryType || current.customer?.deliveryType;
     const resolvedShippingCost = resolveOrderShippingCost({
-      shippingCost: typeof orderInput.shippingCost === "number" ? orderInput.shippingCost : current.shippingCost,
-      shippingMethodName: orderInput.shippingMethodName || current.shippingMethodName,
+      shippingCost: typeof cleanOrderInput.shippingCost === "number" ? cleanOrderInput.shippingCost : current.shippingCost,
+      shippingMethodName: cleanOrderInput.shippingMethodName || current.shippingMethodName,
       deliveryType: resolvedDeliveryType,
     });
     const resolvedObservations =
-      orderInput.observations !== undefined
-        ? orderInput.observations
-        : orderInput.customer?.observations !== undefined
-        ? orderInput.customer.observations
+      cleanOrderInput.observations !== undefined
+        ? cleanOrderInput.observations
+        : cleanOrderInput.customer?.observations !== undefined
+        ? cleanOrderInput.customer.observations
         : current.observations || current.customer?.observations || "";
 
     savedOrder = {
       ...current,
-      ...orderInput,
+      ...cleanOrderInput,
+      customerId: cleanOrderInput.customerId || current.customerId,
       shippingCost: resolvedShippingCost,
       deliveryType: resolvedDeliveryType,
       observations: resolvedObservations,
       notes: resolvedObservations,
       customer: {
         ...current.customer,
-        ...(orderInput.customer || {}),
+        ...(cleanOrderInput.customer || {}),
         observations: resolvedObservations,
         notes: resolvedObservations,
         deliveryType: resolvedDeliveryType,
       },
-      items: Array.isArray(orderInput.items) ? orderInput.items : current.items,
-      mpPaymentId: orderInput.mpPaymentId || current.mpPaymentId,
-      mpPayerEmail: orderInput.mpPayerEmail || current.mpPayerEmail,
-      mpPayerName: orderInput.mpPayerName || current.mpPayerName,
-      emailSent: Boolean(orderInput.emailSent || current.emailSent),
-      emailSentAt: orderInput.emailSentAt || current.emailSentAt,
+      items: Array.isArray(cleanOrderInput.items) ? cleanOrderInput.items : current.items,
+      mpPaymentId: cleanOrderInput.mpPaymentId || current.mpPaymentId,
+      mpPayerEmail: cleanOrderInput.mpPayerEmail || current.mpPayerEmail,
+      mpPayerName: cleanOrderInput.mpPayerName || current.mpPayerName,
+      emailSent: Boolean(cleanOrderInput.emailSent || current.emailSent),
+      emailSentAt: cleanOrderInput.emailSentAt || current.emailSentAt,
     };
     existingOrders[idx] = savedOrder;
     updatedOrders = [...existingOrders];
   } else {
     const observations =
-      orderInput.observations ||
-      orderInput.customer?.observations ||
-      orderInput.notes ||
-      orderInput.customer?.notes ||
+      cleanOrderInput.observations ||
+      cleanOrderInput.customer?.observations ||
+      cleanOrderInput.notes ||
+      cleanOrderInput.customer?.notes ||
       "";
     const resolvedShippingCost = resolveOrderShippingCost({
-      shippingCost: orderInput.shippingCost,
-      shippingMethodName: orderInput.shippingMethodName,
+      shippingCost: cleanOrderInput.shippingCost,
+      shippingMethodName: cleanOrderInput.shippingMethodName,
       deliveryType,
     });
     savedOrder = {
-      id: orderInput.id,
-      createdAt: orderInput.createdAt || new Date().toISOString(),
+      id: cleanOrderInput.id,
+      createdAt: cleanOrderInput.createdAt || new Date().toISOString(),
+      customerId: cleanOrderInput.customerId,
       customer: {
-        name: orderInput.customer?.name || "Cliente",
-        phone: orderInput.customer?.phone || "",
-        email: orderInput.customer?.email || "",
-        department: orderInput.customer?.department || "Montevideo",
-        city: orderInput.customer?.city || "",
-        address: orderInput.customer?.address || "",
+        name: cleanOrderInput.customer?.name || "Cliente",
+        phone: cleanOrderInput.customer?.phone || "",
+        email: cleanOrderInput.customer?.email || "",
+        department: cleanOrderInput.customer?.department || "Montevideo",
+        city: cleanOrderInput.customer?.city || "",
+        address: cleanOrderInput.customer?.address || "",
         observations,
         notes: observations,
         deliveryType,
       },
-      items: orderInput.items || [],
-      totalPrice: Number(orderInput.totalPrice || 0),
-      finalTotal: Number(orderInput.finalTotal || orderInput.totalPrice || 0),
-      paymentMethodId: orderInput.paymentMethodId || "brou",
-      paymentMethodName: orderInput.paymentMethodName || "Transferencia Bancaria BROU",
-      shippingMethodName: orderInput.shippingMethodName || "DAC - Retiro en Agencia",
+      items: cleanOrderInput.items || [],
+      totalPrice: Number(cleanOrderInput.totalPrice || 0),
+      finalTotal: Number(cleanOrderInput.finalTotal || cleanOrderInput.totalPrice || 0),
+      paymentMethodId: cleanOrderInput.paymentMethodId || "brou",
+      paymentMethodName: cleanOrderInput.paymentMethodName || "Transferencia Bancaria BROU",
+      shippingMethodName: cleanOrderInput.shippingMethodName || "DAC - Retiro en Agencia",
       shippingCost: resolvedShippingCost,
-      status: orderInput.status || "pendiente",
+      status: cleanOrderInput.status || "pendiente",
       observations,
       notes: observations,
       deliveryType,
-      mpPaymentId: orderInput.mpPaymentId,
-      mpPayerEmail: orderInput.mpPayerEmail,
-      mpPayerName: orderInput.mpPayerName,
-      emailSent: Boolean(orderInput.emailSent),
-      emailSentAt: orderInput.emailSentAt,
+      mpPaymentId: cleanOrderInput.mpPaymentId,
+      mpPayerEmail: cleanOrderInput.mpPayerEmail,
+      mpPayerName: cleanOrderInput.mpPayerName,
+      emailSent: Boolean(cleanOrderInput.emailSent),
+      emailSentAt: cleanOrderInput.emailSentAt,
     };
     updatedOrders = [savedOrder, ...existingOrders];
   }

@@ -16,6 +16,7 @@ import OrderSummaryModal from "@/components/admin/OrderSummaryModal";
 import VisualReorderModal from "@/components/admin/VisualReorderModal";
 import ManualOrderModal from "@/components/admin/ManualOrderModal";
 import CustomerModal from "@/components/admin/CustomerModal";
+import CustomerHistoryModal from "@/components/admin/CustomerHistoryModal";
 import {
   Plus,
   Search,
@@ -49,6 +50,7 @@ import {
   Sparkles,
   Users,
   UserCheck,
+  Lock,
 } from "lucide-react";
 
 const getOrderShippingCost = (o: Order): number => {
@@ -107,6 +109,7 @@ export default function AdminDashboardPage() {
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(true);
   const [selectedCustomerForOrder, setSelectedCustomerForOrder] = useState<Customer | null>(null);
   const [selectedCustomerForLabel, setSelectedCustomerForLabel] = useState<Customer | null>(null);
+  const [selectedCustomerForHistory, setSelectedCustomerForHistory] = useState<Customer | null>(null);
   const [customerToEdit, setCustomerToEdit] = useState<Customer | null>(null);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
 
@@ -349,6 +352,14 @@ export default function AdminDashboardPage() {
     () => buildUnifiedCustomersList(customers, orders),
     [customers, orders]
   );
+
+  const activeHistoryCustomer = useMemo(() => {
+    if (!selectedCustomerForHistory) return null;
+    return (
+      unifiedCustomers.find((c) => c.id === selectedCustomerForHistory.id) ||
+      selectedCustomerForHistory
+    );
+  }, [selectedCustomerForHistory, unifiedCustomers]);
 
   // Filtrado de clientes registrados
   const filteredCustomers = unifiedCustomers.filter((c) => {
@@ -1280,18 +1291,37 @@ export default function AdminDashboardPage() {
                           <tr key={cust.id} className="hover:bg-slate-50/60 transition-colors">
                             <td className="py-3.5 px-4">
                               <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-700 font-black flex items-center justify-center flex-shrink-0 text-xs">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedCustomerForHistory(cust)}
+                                  className="w-8 h-8 rounded-full bg-sky-100 hover:bg-sky-200 text-sky-700 font-black flex items-center justify-center flex-shrink-0 text-xs transition cursor-pointer"
+                                  title="Ver historial y notas privadas"
+                                >
                                   {cust.name ? cust.name.charAt(0).toUpperCase() : "C"}
-                                </div>
+                                </button>
                                 <div>
-                                  <p className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
-                                    <span>{cust.name || "Cliente Sin Nombre"}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedCustomerForHistory(cust)}
+                                    className="font-extrabold text-slate-900 hover:text-sky-700 text-sm flex items-center gap-1.5 flex-wrap text-left transition cursor-pointer"
+                                    title="Abrir historial y notas privadas de este cliente"
+                                  >
+                                    <span className="hover:underline">{cust.name || "Cliente Sin Nombre"}</span>
                                     {isFrequent && (
                                       <span className="text-[9px] bg-purple-100 text-purple-700 font-extrabold px-1.5 py-0.5 rounded-full border border-purple-200">
                                         Frecuente
                                       </span>
                                     )}
-                                  </p>
+                                    {cust.internalNotes?.trim() && (
+                                      <span
+                                        className="inline-flex items-center gap-0.5 text-[9px] bg-amber-100 text-amber-800 font-extrabold px-1.5 py-0.5 rounded-full border border-amber-300"
+                                        title={cust.internalNotes}
+                                      >
+                                        <Lock className="w-2.5 h-2.5" />
+                                        Nota
+                                      </span>
+                                    )}
+                                  </button>
                                   <span className="text-[10px] text-slate-400 font-mono">{cust.id}</span>
                                 </div>
                               </div>
@@ -1386,6 +1416,14 @@ export default function AdminDashboardPage() {
                                 >
                                   <Printer className="w-3.5 h-3.5" />
                                   <span>Etiqueta</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedCustomerForHistory(cust)}
+                                  className="p-2 text-slate-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition"
+                                  title="Ver historial de compras y notas privadas"
+                                >
+                                  <Eye className="w-4 h-4" />
                                 </button>
                                 <button
                                   type="button"
@@ -1744,6 +1782,47 @@ export default function AdminDashboardPage() {
         }}
       />
 
+      {/* Modal de Historial y Notas Privadas del Cliente (Mini-CRM) */}
+      <CustomerHistoryModal
+        isOpen={Boolean(activeHistoryCustomer)}
+        onClose={() => setSelectedCustomerForHistory(null)}
+        customer={activeHistoryCustomer}
+        orders={orders}
+        onNewOrder={(cust) => {
+          setOrderToEdit(null);
+          setSelectedCustomerForOrder(cust);
+          setIsManualOrderModalOpen(true);
+        }}
+        onPrintLabel={(cust) => {
+          setSelectedOrderForLabel(null);
+          setSelectedCustomerForLabel(cust);
+          setIsLabelModalOpen(true);
+        }}
+        onEditCustomer={(cust) => {
+          setCustomerToEdit(cust);
+          setIsCustomerModalOpen(true);
+        }}
+        onViewOrder={(order) => setSelectedOrderModal(order)}
+        onEditOrder={(order) => {
+          setSelectedCustomerForOrder(null);
+          setOrderToEdit(order);
+          setIsManualOrderModalOpen(true);
+        }}
+        onPrintOrderSummary={(order) => {
+          setSelectedOrderForSummary(order);
+          setIsSummaryModalOpen(true);
+        }}
+        onPrintOrderLabel={(order) => {
+          setSelectedCustomerForLabel(null);
+          setSelectedOrderForLabel(order);
+          setIsLabelModalOpen(true);
+        }}
+        onCustomerUpdated={(saved) => {
+          setSelectedCustomerForHistory(saved);
+          loadCustomersData();
+        }}
+      />
+
       {/* Modal de Creación / Edición de Ficha de Cliente */}
       <CustomerModal
         isOpen={isCustomerModalOpen}
@@ -1752,7 +1831,10 @@ export default function AdminDashboardPage() {
           setCustomerToEdit(null);
         }}
         customerToEdit={customerToEdit}
-        onSaved={() => {
+        onSaved={(saved) => {
+          if (selectedCustomerForHistory) {
+            setSelectedCustomerForHistory(saved);
+          }
           loadCustomersData();
           setOrderToastMessage("✨ Ficha de cliente guardada");
           setTimeout(() => setOrderToastMessage(null), 3500);

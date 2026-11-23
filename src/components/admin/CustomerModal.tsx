@@ -18,6 +18,7 @@ import {
   Loader2,
   Edit2,
   UserPlus,
+  Lock,
 } from "lucide-react";
 
 export interface CustomerModalProps {
@@ -79,6 +80,7 @@ export default function CustomerModal({
   );
   const [address, setAddress] = useState("");
   const [observations, setObservations] = useState("");
+  const [internalNotes, setInternalNotes] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState("brou");
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -104,6 +106,7 @@ export default function CustomerModal({
       setShippingMethodName(resolvedShip);
       setAddress(customerToEdit.address || "");
       setObservations(customerToEdit.observations || "");
+      setInternalNotes(customerToEdit.internalNotes || "");
       setPaymentMethodId(customerToEdit.paymentMethodId || "brou");
     } else {
       setName("");
@@ -116,6 +119,7 @@ export default function CustomerModal({
       setShippingMethodName("DAC - Retiro en Agencia");
       setAddress("");
       setObservations("");
+      setInternalNotes("");
       setPaymentMethodId("brou");
     }
   }, [isOpen, customerToEdit]);
@@ -178,6 +182,7 @@ export default function CustomerModal({
         city: city.trim(),
         address: address.trim(),
         observations: observations.trim(),
+        internalNotes: internalNotes.trim(),
         deliveryType: deliveryType || derivedDelivery,
         shippingCompany,
         shippingMethodName,
@@ -460,6 +465,25 @@ export default function CustomerModal({
                     value={observations}
                     onChange={(e) => setObservations(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-sky-500 focus:outline-none resize-none"
+                  />
+                </div>
+
+                <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <label className="text-[11px] font-extrabold text-amber-900 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Notas privadas de taller (solo uso interno)</span>
+                    </label>
+                    <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
+                      No aparece en etiquetas de envío ni en notas A4
+                    </span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    placeholder="Ej. Paga siempre por BROU, cliente mayorista habitual, pedir confirmación de tapas..."
+                    value={internalNotes}
+                    onChange={(e) => setInternalNotes(e.target.value)}
+                    className="w-full px-3 py-2 border border-amber-300 rounded-xl text-xs font-medium bg-white text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none resize-none"
                   />
                 </div>
               </div>

@@ -160,7 +160,10 @@ export async function getAllOrders(): Promise<Order[]> {
   return localStored;
 }
 
-export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
+export async function saveOrder(
+  orderData: Partial<Order>,
+  options?: { skipCustomerSync?: boolean; customerId?: string }
+): Promise<Order> {
   const id = orderData.id || `KAM-${Date.now().toString().slice(-6)}`;
   removeDeletedOrderId(id);
   const createdAt = orderData.createdAt || new Date().toISOString();
@@ -174,10 +177,12 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
 
   const deliveryType = orderData.deliveryType || orderData.customer?.deliveryType;
   const shippingCost = resolveOrderShippingCost(orderData);
+  const customerId = options?.customerId || orderData.customerId;
 
   const fullOrder: Order = {
     id,
     createdAt,
+    customerId,
     customer: {
       name: orderData.customer?.name || "Cliente",
       phone: orderData.customer?.phone || "",
@@ -248,7 +253,10 @@ export async function saveOrder(orderData: Partial<Order>): Promise<Order> {
     const res = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fullOrder),
+      body: JSON.stringify({
+        ...fullOrder,
+        skipCustomerSync: options?.skipCustomerSync,
+      }),
     });
     if (res.ok) {
       const resData = await res.json();

@@ -2244,3 +2244,18 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * `src/components/admin/ShippingLabelModal.tsx`: selector rápido de cliente, precarga editable de etiqueta, `Restablecer` y botón `Guardar cambios en ficha del cliente`.
   * `src/app/admin/page.tsx`: pestaña Clientes alimentada por `buildUnifiedCustomersList`, botón `Nuevo Cliente`, acciones por fila (`Nuevo Pedido`, `Etiqueta`, `Editar`), toast global multi-tab y apertura encadenada de `OrderSummaryModal` / `ShippingLabelModal` al guardar pedido manual.
 - Verificación técnica: `npx tsc --noEmit` (código `0`) y `npm run build` (`74/74` páginas generadas, código `0`).
+- **Git & Deploy (2026-11-23 10:30):** Commit `38190e3` (`feat(admin): flujo unificado de clientes recurrentes, pedidos manuales y etiquetas`) pusheado a `origin/main` (`Martin-cedres/kamaluso-sublimacion`), disparando el despliegue automático en Vercel (`npx vercel` CLI local sin sesión ni vínculo `.vercel/project.json`, y plugin Vercel sin login).
+
+
+[2026-11-23 11:20] Puntos 4 y 5 (Sincronización exacta de ficha + Historial de Cliente y Notas Privadas Mini-CRM):
+- **Punto 4 (Sincronización exacta por ID y `skipCustomerSync`):**
+  * `src/types/index.ts`: añadidos `customerId?: string` en `Order` e `internalNotes?: string` en `Customer`.
+  * `src/lib/server-orders.ts`, `src/lib/orders.ts` y `src/app/api/orders/route.ts`: agregado soporte de `customerId` en pedidos y flag `skipCustomerSync` (descartado antes de persistir `orders.json`) para respetar la casilla del modal manual.
+  * `src/lib/server-customers.ts`: `syncCustomerFromOrder` acepta `{ customerId, skipProfileUpdate }` — si `skipProfileUpdate` es `true`, solo incrementa `totalOrders`/`totalSpent` y `lastOrderAt` en cliente existente sin sobrescribir su dirección/envío; si es `false`, actualiza por `id` evitando duplicados cuando cambian teléfono y email a la vez, y nunca toca `internalNotes`.
+  * `src/components/admin/ManualOrderModal.tsx`: envía `customerId` y `skipCustomerSync: !syncCustomerProfile` a `saveOrder`.
+- **Punto 5 (Mini-CRM de Historial por Cliente y Notas Privadas):**
+  * `src/lib/customers.ts`: agregados `getOrdersForCustomer` y `getTopProductsForCustomer` (`CustomerTopProduct`).
+  * `src/components/admin/CustomerModal.tsx`: añadido campo de notas privadas de taller (`internalNotes`) con aviso de uso exclusivo interno (no aparece en etiquetas ni A4).
+  * `src/components/admin/CustomerHistoryModal.tsx` (nuevo): modal con KPIs (`Total Pedidos`, `Total Invertido`, `Ticket Promedio`, `Última Compra`), datos logísticos habituales, editor inline de notas privadas de taller, ranking de productos más comprados e historial cronológico con accesos directos (`Nota A4`, `Etiqueta`, `Ver`, `Editar`, `Nuevo Pedido`).
+  * `src/app/admin/page.tsx`: nombre/avatar de clientes clicable hacia el historial, badge `Nota` si tiene `internalNotes`, botón de acceso directo (`Eye`) y sincronización en vivo con `CustomerModal`, `ManualOrderModal` y `ShippingLabelModal`.
+- **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`74/74` páginas generadas, código `0`).

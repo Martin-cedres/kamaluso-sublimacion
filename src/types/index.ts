@@ -48,6 +48,7 @@ export interface OrderCustomer {
 export interface Order {
   id: string;
   createdAt: string;
+  customerId?: string;
   customer: OrderCustomer;
   items: CartItem[];
   totalPrice: number;
@@ -81,6 +82,7 @@ export interface Customer {
   rutInfo?: string;
   shippingMethodName?: string;
   paymentMethodId?: string;
+  internalNotes?: string;
   totalOrders: number;
   totalSpent: number;
   lastOrderAt?: string;
