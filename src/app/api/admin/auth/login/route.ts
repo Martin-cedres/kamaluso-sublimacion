@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAllowedAdminEmail } from "@/lib/auth";
 import {
-  ADMIN_SESSION_COOKIE,
-  createAdminSessionToken,
-  getSessionCookieOptions,
+  setAdminSessionCookie,
   verifyAdminPassword,
 } from "@/lib/admin-auth-server";
 
@@ -44,19 +42,12 @@ export async function POST(request: Request) {
       name: email.split("@")[0],
     };
 
-    const token = createAdminSessionToken(user);
     const response = NextResponse.json({
       success: true,
       user,
     });
 
-    response.cookies.set(
-      ADMIN_SESSION_COOKIE,
-      token,
-      getSessionCookieOptions()
-    );
-
-    return response;
+    return setAdminSessionCookie(response, user);
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Error al iniciar sesión";

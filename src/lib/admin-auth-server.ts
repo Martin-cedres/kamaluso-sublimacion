@@ -169,6 +169,18 @@ export function getSessionCookieOptions(maxAge = SESSION_DURATION_SEC) {
   };
 }
 
+/**
+ * Emite o renueva la cookie de sesión firmada (ventana deslizante de 30 días).
+ */
+export function setAdminSessionCookie(
+  response: NextResponse,
+  user: AdminUser
+): NextResponse {
+  const token = createAdminSessionToken(user);
+  response.cookies.set(ADMIN_SESSION_COOKIE, token, getSessionCookieOptions());
+  return response;
+}
+
 export function unauthorizedAdminResponse(): NextResponse {
   return NextResponse.json(
     { error: "No autorizado. Iniciá sesión como administrador." },

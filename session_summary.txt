@@ -2280,3 +2280,9 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 - **Git & Deploy (2026-11-23 20:22):** Commit `7e88102` (`feat(security,data): autenticacion admin con cookie HttpOnly (30d), exportacion CSV y capa Supabase dual`) pusheado a `origin/main` (`Martin-cedres/kamaluso-sublimacion`, 20 archivos), disparando el despliegue automático en Vercel (`https://www.kamaluso.com`).
 
 - [2026-11-23] Grafo bidireccional SEO/GEO: agregado `subOrganization` en `src/lib/schema.ts` apuntando a `https://www.papeleriapersonalizada.uy/#organization` (`Papelería Personalizada`), actualizados `public/llms.txt`, `public/llms-full.txt` (rango minorista real `$650 a $950 UYU` y descripción de submarca) y `src/app/sobre-nosotros/page.tsx`.
+
+
+- [2026-11-24 10:49] Sesión deslizante (sliding session) en autenticación admin:
+  * `src/lib/admin-auth-server.ts`: agregado helper compartido `setAdminSessionCookie` para emitir/renovar la cookie `kamaluso_admin_session` (HMAC-SHA256, `HttpOnly`, 30 días).
+  * `src/app/api/admin/auth/session/route.ts`: al validar una sesión activa en `/admin`, renueva automáticamente el token y la cookie por otros 30 días.
+  * `src/app/api/admin/auth/login/route.ts`: refactorizado para reutilizar `setAdminSessionCookie`.
