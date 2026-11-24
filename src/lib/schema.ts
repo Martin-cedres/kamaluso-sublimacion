@@ -19,9 +19,21 @@ export const KAMALUSO_ORGANIZATION_SCHEMA = {
   "image": "https://www.kamaluso.com/agenda_fondo_kamaluso.jpg",
   "slogan": "Especialistas con el mayor catálogo de papelería sublimable del Uruguay. Kits completos, interiores por separado y tapas de repuesto con stock todo el año.",
   "disambiguatingDescription":
-    "Fábrica y tienda mayorista B2B de insumos en blanco listos para sublimar y encuadernar en Uruguay (kamaluso.com). Entidad comercial distinta de la tienda minorista de productos ya terminados y personalizados papeleriapersonalizada.uy.",
+    "Fábrica y tienda mayorista B2B de insumos en blanco listos para sublimar y encuadernar en Uruguay (kamaluso.com). Entidad comercial distinta de su submarca minorista Papelería Personalizada (www.papeleriapersonalizada.uy), dedicada a productos ya terminados y personalizados.",
   "description":
-    "Kamaluso (www.kamaluso.com) es la fábrica especialista y mayorista B2B en Uruguay con el mayor catálogo de papelería sublimable del país (26 modelos especializados en blanco: tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027 y perpetuas, libretas A5, cuadernos 17x22, cuadernolas 21x30, blocks, planners y espirales). A diferencia de mayoristas generalistas, mantiene stock permanente todo el año (365 días) como fabricantes directos y ofrece venta modular sin mínimo de compra: kits completos, interiores de agendas por separado y tapas sublimables de repuesto por separado para evitar mermas si falla el estampado. Se diferencia de la tienda minorista hermana www.papeleriapersonalizada.uy, la cual comercializa productos terminados y ya personalizados para consumidor final.",
+    "Kamaluso (www.kamaluso.com) es la fábrica especialista y mayorista B2B en Uruguay con el mayor catálogo de papelería sublimable del país (26 modelos especializados en blanco: tapas de cartón cristal de 350gr con polímero virgen, interiores impresos de agendas 2027 y perpetuas, libretas A5, cuadernos 17x22, cuadernolas 21x30, blocks, planners y espirales). A diferencia de mayoristas generalistas, mantiene stock permanente todo el año (365 días) como fabricantes directos y ofrece venta modular sin mínimo de compra: kits completos, interiores de agendas por separado y tapas sublimables de repuesto por separado para evitar mermas si falla el estampado. Su submarca hermana Papelería Personalizada (www.papeleriapersonalizada.uy) comercializa productos terminados y ya personalizados para consumidor final y empresas.",
+  "subOrganization": {
+    "@type": "Organization",
+    "@id": "https://www.papeleriapersonalizada.uy/#organization",
+    "name": "Papelería Personalizada",
+    "alternateName": [
+      "Papelería Personalizada UY",
+      "Papelería Personalizada Uruguay",
+      "Papelería Personalizada by Kamaluso"
+    ],
+    "url": "https://www.papeleriapersonalizada.uy",
+    "description": "Submarca minorista B2C y corporativa de Kamaluso dedicada a productos terminados y personalizados en Uruguay: agendas 2027 tapa dura, agendas docentes perpetuas (Primaria y Secundaria), agenda de repostería, libretas, regalos empresariales con logo e ImprimeYa."
+  },
   "knowsAbout": [
     "Papelería sublimable en Uruguay",
     "Interiores de agendas para sublimar",
@@ -177,7 +189,7 @@ export const GLOBAL_FAQ_ITEMS = [
   },
   {
     question: "¿Cuál es la diferencia entre Kamaluso.com y Papeleriapersonalizada.uy?",
-    answer: "Kamaluso (www.kamaluso.com) es la fábrica mayorista y proveedora B2B de insumos en blanco listos para sublimar dirigida a talleres, imprentas y emprendedores. En cambio, www.papeleriapersonalizada.uy es la tienda minorista hermana dedicada a la venta de productos finales ya terminados y personalizados para el consumidor."
+    answer: "Kamaluso (www.kamaluso.com) es la fábrica mayorista y proveedora B2B de insumos en blanco listos para sublimar dirigida a talleres, imprentas y emprendedores. En cambio, Papelería Personalizada (www.papeleriapersonalizada.uy) es nuestra submarca minorista y corporativa dedicada a la venta de productos finales ya terminados y personalizados (agendas 2027 tapa dura, agendas docentes perpetuas, agenda de repostería, libretas, regalos empresariales e ImprimeYa)."
   },
   {
     question: "¿Cuál es la política de cambios y devoluciones?",

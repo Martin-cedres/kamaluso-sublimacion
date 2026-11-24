@@ -2277,3 +2277,6 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * `src/app/admin/page.tsx`: selector de Mes/Año en Pedidos, botones `Exportar Excel (.csv)` en Pedidos y Clientes, píldora de motor BD (`Supabase PostgreSQL` / `Vercel Blob`) y botón `Migrar Blob → Supabase`.
 - **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`76/76` páginas generadas, código `0`).
 - **Ajuste sesión admin (2026-11-23 20:15):** Extendida duración de cookie de sesión `kamaluso_admin_session` de 7 a 30 días en `src/lib/admin-auth-server.ts` (`npx tsc --noEmit` código `0`).
+- **Git & Deploy (2026-11-23 20:22):** Commit `7e88102` (`feat(security,data): autenticacion admin con cookie HttpOnly (30d), exportacion CSV y capa Supabase dual`) pusheado a `origin/main` (`Martin-cedres/kamaluso-sublimacion`, 20 archivos), disparando el despliegue automático en Vercel (`https://www.kamaluso.com`).
+
+- [2026-11-23] Grafo bidireccional SEO/GEO: agregado `subOrganization` en `src/lib/schema.ts` apuntando a `https://www.papeleriapersonalizada.uy/#organization` (`Papelería Personalizada`), actualizados `public/llms.txt`, `public/llms-full.txt` (rango minorista real `$650 a $950 UYU` y descripción de submarca) y `src/app/sobre-nosotros/page.tsx`.

@@ -190,7 +190,7 @@ export default function SobreNosotrosPage() {
               <strong>www.kamaluso.com (este sitio):</strong> Fábrica mayorista B2B de insumos en blanco sin estampar (kits completos, interiores impresos por separado y tapas 350gr) para talleres y emprendedores.
             </li>
             <li>
-              <strong>www.papeleriapersonalizada.uy:</strong> Tienda minorista hermana dedicada a agendas y cuadernos ya terminados y personalizados para consumidor final y empresas.
+              <strong>Papelería Personalizada (<a href="https://www.papeleriapersonalizada.uy" target="_blank" rel="noopener noreferrer" className="underline text-brand-700 hover:text-brand-800">www.papeleriapersonalizada.uy</a>):</strong> Nuestra submarca minorista y corporativa dedicada a agendas 2027, agendas docentes perpetuas, libretas y regalos empresariales ya terminados y personalizados para consumidor final y empresas.
             </li>
           </ul>
         </div>
