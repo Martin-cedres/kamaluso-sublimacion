@@ -654,6 +654,16 @@ export default function MiCuentaClient() {
                           <strong className="text-slate-800">Pago:</strong>{" "}
                           {order.paymentMethodName || order.paymentMethodId}
                         </p>
+                        {order.discountAmount && order.discountAmount > 0 ? (
+                          <p className="text-emerald-700 font-bold">
+                            Descuento aplicado
+                            {order.discountType === "percent" && order.discountValue
+                              ? ` (${order.discountValue}%)`
+                              : ""}
+                            : -${Number(order.discountAmount).toLocaleString("es-UY")} UYU
+                            {order.discountReason ? ` • ${order.discountReason}` : ""}
+                          </p>
+                        ) : null}
                       </div>
 
                       <div className="flex items-center justify-between sm:justify-end gap-3">

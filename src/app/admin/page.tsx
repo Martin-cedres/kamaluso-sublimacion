@@ -1783,12 +1783,16 @@ export default function AdminDashboardPage() {
                       (acc, i) => acc + i.product.price * i.quantity,
                       0
                     );
+                  const modalDiscountAmount = Math.max(
+                    0,
+                    Number(selectedOrderModal.discountAmount || 0)
+                  );
                   const modalPaymentSurcharge = Math.max(
                     0,
                     Number(
                       (
                         selectedOrderModal.finalTotal -
-                        modalItemsSubtotal -
+                        Math.max(0, modalItemsSubtotal - modalDiscountAmount) -
                         modalShippingCost
                       ).toFixed(2)
                     )
@@ -1805,6 +1809,24 @@ export default function AdminDashboardPage() {
                           ${modalItemsSubtotal.toLocaleString("es-UY")} UYU
                         </span>
                       </div>
+                      {modalDiscountAmount > 0 && (
+                        <div className="flex justify-between text-emerald-700 font-bold">
+                          <span>
+                            Descuento
+                            {selectedOrderModal.discountType === "percent" &&
+                            selectedOrderModal.discountValue
+                              ? ` (${selectedOrderModal.discountValue}%)`
+                              : ""}
+                            {selectedOrderModal.discountReason
+                              ? ` • ${selectedOrderModal.discountReason}`
+                              : ""}
+                            :
+                          </span>
+                          <span className="font-mono font-bold">
+                            -${modalDiscountAmount.toLocaleString("es-UY")} UYU
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-slate-600 font-semibold">
                         <span>
                           Costo de Envío (

@@ -2303,3 +2303,10 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * `src/components/layout/Header.tsx`: enlace directo a `/mi-cuenta` en desktop, barra móvil y menú móvil con indicador de sesión activa.
   * `src/app/checkout/page.tsx` y `src/lib/customers.ts`: precarga automática completa al existir sesión (corrigiendo `local`, `rutInfo`, `observations` y `paymentMethodId`), verificación OTP inline opcional para correos registrados sin sesión, y persistencia completa al confirmar pedido.
 - **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`78/78` páginas generadas, código `0`).
+
+
+[2026-11-26 06:11] Descuentos flexibles en Pedidos Manuales (Admin):
+- `src/types/index.ts`, `src/lib/orders.ts` y `src/lib/server-orders.ts`: agregados campos `discountType` (`none` | `percent` | `fixed`), `discountValue`, `discountAmount` y `discountReason` a `Order`, con persistencia compatible con el esquema actual de Supabase (embebido en `customer._orderDiscount` JSONB y extraído al leer) y Vercel Blob.
+- `src/components/admin/ManualOrderModal.tsx`: selector de descuento (`Sin descuento`, `% Porcentaje` con atajos `5%`, `10%`, `15%`, `20%`, `25%` + valor libre, o `$ Monto fijo` en UYU) y campo opcional de motivo/nota, recalculando automáticamente el total (y recargo MP sobre el subtotal descontado).
+- `src/components/admin/OrderSummaryModal.tsx`, `src/app/admin/page.tsx`, `src/components/customer/MiCuentaClient.tsx` y `src/lib/csv-export.ts`: visualización del descuento aplicado en la Nota A4 de taller, detalle de pedido en Admin, historial en `/mi-cuenta` y columna `Descuento (UYU)` en exportación CSV.
+- **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`78/78` páginas generadas, código `0`).

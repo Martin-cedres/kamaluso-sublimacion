@@ -52,6 +52,10 @@ export interface Order {
   customer: OrderCustomer;
   items: CartItem[];
   totalPrice: number;
+  discountType?: "none" | "percent" | "fixed";
+  discountValue?: number;
+  discountAmount?: number;
+  discountReason?: string;
   finalTotal: number;
   paymentMethodId: string;
   paymentMethodName: string;

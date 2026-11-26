@@ -176,7 +176,16 @@ export async function saveOrder(
     },
     items: orderData.items || [],
     totalPrice: orderData.totalPrice || 0,
-    finalTotal: orderData.finalTotal || orderData.totalPrice || 0,
+    discountType: orderData.discountType || "none",
+    discountValue:
+      typeof orderData.discountValue === "number" ? orderData.discountValue : 0,
+    discountAmount:
+      typeof orderData.discountAmount === "number" ? orderData.discountAmount : 0,
+    discountReason: orderData.discountReason?.trim() || undefined,
+    finalTotal:
+      typeof orderData.finalTotal === "number"
+        ? orderData.finalTotal
+        : orderData.totalPrice || 0,
     paymentMethodId: orderData.paymentMethodId || "brou",
     paymentMethodName: orderData.paymentMethodName || "Transferencia Bancaria BROU",
     shippingMethodName: orderData.shippingMethodName || "Agencia COTMI - Retiro en Agencia",

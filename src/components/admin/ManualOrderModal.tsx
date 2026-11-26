@@ -114,7 +114,10 @@ export default function ManualOrderModal({
   const [customItemQuantity, setCustomItemQuantity] = useState(1);
   const [showCustomItemForm, setShowCustomItemForm] = useState(false);
 
-  // Precios y Condiciones (100% Opcionales)
+  // Precios, Descuento y Condiciones (100% Opcionales)
+  const [discountType, setDiscountType] = useState<"none" | "percent" | "fixed">("none");
+  const [discountValue, setDiscountValue] = useState<number | "">("");
+  const [discountReason, setDiscountReason] = useState("");
   const [customTotalPrice, setCustomTotalPrice] = useState<number | "">("");
   const [paymentMethodId, setPaymentMethodId] = useState("brou");
   const [shippingMethodName, setShippingMethodName] = useState("Retiro en Local (San José de Mayo)");
@@ -176,11 +179,24 @@ export default function ManualOrderModal({
       setShippingMethodName(resolvedShipName);
       setOrderStatus(orderToEdit.status || "pago_confirmado");
 
+      // Restaurar descuento si el pedido tenía uno guardado
+      const loadedDiscountType = orderToEdit.discountType || "none";
+      const loadedDiscountValue =
+        typeof orderToEdit.discountValue === "number" ? orderToEdit.discountValue : 0;
+      const loadedDiscountAmount =
+        typeof orderToEdit.discountAmount === "number" ? orderToEdit.discountAmount : 0;
+      setDiscountType(loadedDiscountType);
+      setDiscountValue(
+        loadedDiscountType !== "none" && loadedDiscountValue > 0 ? loadedDiscountValue : ""
+      );
+      setDiscountReason(orderToEdit.discountReason || "");
+
       // Verificar si el total guardado fue sobreescrito manualmente
       const itemsSub = loadedItems.reduce(
         (sum, item) => sum + item.product.price * item.quantity,
         0
       );
+      const discountedSub = Math.max(0, itemsSub - loadedDiscountAmount);
       const lowShip = resolvedShipName.toLowerCase();
       const shipCost =
         (lowShip.includes("correo") || lowShip.includes("cotmi")) &&
@@ -189,9 +205,9 @@ export default function ManualOrderModal({
           : 0;
       const mpExtra =
         resolvedPayId === "mercado_pago_online"
-          ? parseFloat(((itemsSub + shipCost) * 0.1).toFixed(2))
+          ? parseFloat(((discountedSub + shipCost) * 0.1).toFixed(2))
           : 0;
-      const expectedAutoTotal = itemsSub + shipCost + mpExtra;
+      const expectedAutoTotal = discountedSub + shipCost + mpExtra;
 
       if (
         typeof orderToEdit.finalTotal === "number" &&
@@ -203,6 +219,9 @@ export default function ManualOrderModal({
       }
     } else if (initialCustomer) {
       setItems([]);
+      setDiscountType("none");
+      setDiscountValue("");
+      setDiscountReason("");
       setCustomTotalPrice("");
       setPaymentMethodId("brou");
       setOrderStatus("pago_confirmado");
@@ -218,6 +237,9 @@ export default function ManualOrderModal({
       setCustomerAddress("");
       setCustomerObservations("");
       setItems([]);
+      setDiscountType("none");
+      setDiscountValue("");
+      setDiscountReason("");
       setCustomTotalPrice("");
       setPaymentMethodId("brou");
       setShippingMethodName("Retiro en Local (San José de Mayo)");
@@ -274,10 +296,32 @@ export default function ManualOrderModal({
 
   const isEditing = Boolean(orderToEdit);
 
-  // Calcular subtotal de los ítems agregados
+  // Calcular subtotal de los ítems agregados y descuento
   const computedItemsTotal = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
+  );
+
+  const numericDiscountInput =
+    discountValue === "" ? 0 : Math.max(0, Number(discountValue) || 0);
+
+  const discountAmount =
+    discountType === "none"
+      ? 0
+      : discountType === "percent"
+      ? Math.min(
+          computedItemsTotal,
+          parseFloat(
+            ((computedItemsTotal * Math.min(100, numericDiscountInput)) / 100).toFixed(2)
+          )
+        )
+      : computedItemsTotal > 0
+      ? Math.min(computedItemsTotal, numericDiscountInput)
+      : numericDiscountInput;
+
+  const discountedItemsSubtotal = Math.max(
+    0,
+    parseFloat((computedItemsTotal - discountAmount).toFixed(2))
   );
 
   const lowerShip = shippingMethodName.toLowerCase();
@@ -289,9 +333,12 @@ export default function ManualOrderModal({
 
   const isMp = paymentMethodId === "mercado_pago_online";
   const mpSurcharge = isMp
-    ? parseFloat(((computedItemsTotal + shippingCost) * 0.1).toFixed(2))
+    ? parseFloat(((discountedItemsSubtotal + shippingCost) * 0.1).toFixed(2))
     : 0;
-  const autoCalculatedTotal = computedItemsTotal + shippingCost + mpSurcharge;
+  const autoCalculatedTotal = Math.max(
+    0,
+    parseFloat((discountedItemsSubtotal + shippingCost + mpSurcharge).toFixed(2))
+  );
   const effectiveTotal =
     customTotalPrice !== "" ? Number(customTotalPrice) : autoCalculatedTotal;
 
@@ -403,6 +450,10 @@ export default function ManualOrderModal({
           },
           items,
           totalPrice: computedItemsTotal > 0 ? computedItemsTotal : effectiveTotal,
+          discountType: discountAmount > 0 ? discountType : "none",
+          discountValue: discountAmount > 0 ? numericDiscountInput : 0,
+          discountAmount,
+          discountReason: discountAmount > 0 ? discountReason.trim() : "",
           shippingCost,
           finalTotal: effectiveTotal,
           paymentMethodId,
@@ -899,6 +950,119 @@ export default function ManualOrderModal({
               </div>
             </div>
 
+            {/* Descuento Opcional */}
+            <div className="pt-2 border-t border-slate-200 space-y-2.5">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <label className="text-[11px] font-bold text-slate-700">
+                  Descuento (Opcional)
+                </label>
+                <div className="inline-flex bg-slate-200/80 p-0.5 rounded-xl gap-0.5">
+                  {(
+                    [
+                      { id: "none", label: "Sin descuento" },
+                      { id: "percent", label: "% Porcentaje" },
+                      { id: "fixed", label: "$ Monto fijo" },
+                    ] as const
+                  ).map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        setDiscountType(opt.id);
+                        if (opt.id === "none") {
+                          setDiscountValue("");
+                          setDiscountReason("");
+                        }
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                        discountType === opt.id
+                          ? "bg-white text-emerald-700 shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {discountType !== "none" && (
+                <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-2.5 animate-in fade-in duration-150">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bold text-emerald-900 mb-0.5">
+                        {discountType === "percent"
+                          ? "Porcentaje de descuento (%)"
+                          : "Monto de descuento ($ UYU)"}
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          min="0"
+                          max={discountType === "percent" ? 100 : undefined}
+                          step="any"
+                          placeholder={discountType === "percent" ? "Ej. 10" : "Ej. 250"}
+                          value={discountValue}
+                          onChange={(e) => {
+                            const raw = e.target.value;
+                            if (raw === "") {
+                              setDiscountValue("");
+                              return;
+                            }
+                            const val = Math.max(0, Number(raw));
+                            setDiscountValue(
+                              discountType === "percent" ? Math.min(100, val) : val
+                            );
+                          }}
+                          className="w-full px-3 py-2 pr-10 border border-emerald-300 rounded-xl text-xs font-black text-emerald-800 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-extrabold text-emerald-700">
+                          {discountType === "percent" ? "%" : "UYU"}
+                        </span>
+                      </div>
+
+                      {discountType === "percent" && (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {[5, 10, 15, 20, 25].map((pct) => (
+                            <button
+                              key={pct}
+                              type="button"
+                              onClick={() => setDiscountValue(pct)}
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border transition cursor-pointer ${
+                                Number(discountValue) === pct
+                                  ? "bg-emerald-600 text-white border-emerald-600"
+                                  : "bg-white text-emerald-700 border-emerald-300 hover:bg-emerald-100"
+                              }`}
+                            >
+                              {pct}%
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-emerald-900 mb-0.5">
+                        Motivo / Nota del descuento (Opcional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej. Descuento mayorista / Cliente frecuente"
+                        value={discountReason}
+                        onChange={(e) => setDiscountReason(e.target.value)}
+                        className="w-full px-3 py-2 border border-emerald-300 rounded-xl text-xs font-medium text-slate-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      />
+                      {discountAmount > 0 && (
+                        <p className="text-[11px] font-extrabold text-emerald-700 mt-1.5">
+                          Ahorro aplicado: -${discountAmount.toLocaleString("es-UY")} UYU
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Total y Desglose Detallado */}
             <div className="pt-2 border-t border-slate-200">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
@@ -928,6 +1092,20 @@ export default function ManualOrderModal({
                     <span>Ítems:</span>
                     <span className="font-mono font-bold">${computedItemsTotal.toLocaleString("es-UY")} UYU</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-700 font-semibold">
+                      <span>
+                        Descuento
+                        {discountType === "percent" && numericDiscountInput > 0
+                          ? ` (${numericDiscountInput}%)`
+                          : ""}
+                        :
+                      </span>
+                      <span className="font-mono font-bold">
+                        -${discountAmount.toLocaleString("es-UY")} UYU
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-slate-600">
                     <span>Envío:</span>
                     <span className="font-mono font-bold">
@@ -968,7 +1146,7 @@ export default function ManualOrderModal({
                 <span className="text-xs font-bold text-slate-500">UYU</span>
               </span>
               <span className="text-[11px] text-slate-500 font-medium">
-                (Ítems: ${computedItemsTotal} UYU • Envío: {shippingCost > 0 ? "+$200 UYU" : lowerShip.includes("local") ? "$0 (Taller)" : "$0 (Destino)"}{isMp ? ` • Recargo MP: +$${mpSurcharge} UYU` : ""})
+                (Ítems: ${computedItemsTotal} UYU{discountAmount > 0 ? ` • Desc: -$${discountAmount} UYU` : ""} • Envío: {shippingCost > 0 ? "+$200 UYU" : lowerShip.includes("local") ? "$0 (Taller)" : "$0 (Destino)"}{isMp ? ` • Recargo MP: +$${mpSurcharge} UYU` : ""})
               </span>
             </div>
           </div>

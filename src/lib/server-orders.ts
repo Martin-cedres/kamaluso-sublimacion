@@ -8,11 +8,22 @@ const BLOB_ORDERS_FILENAME = "data/orders.json";
 const DIRECT_BLOB_ORDERS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/orders.json";
 const LOCAL_ORDERS_PATH = path.join(process.cwd(), "data", "orders.json");
 
+interface OrderDiscountMetadata {
+  type?: "none" | "percent" | "fixed";
+  value?: number;
+  amount?: number;
+  reason?: string;
+}
+
+type SupabaseCustomerPayload = Order["customer"] & {
+  _orderDiscount?: OrderDiscountMetadata;
+};
+
 interface SupabaseOrderRow {
   id: string;
   created_at: string;
   customer_id: string | null;
-  customer: Order["customer"];
+  customer: SupabaseCustomerPayload;
   items: Order["items"];
   total_price: number;
   final_total: number;
@@ -32,14 +43,32 @@ interface SupabaseOrderRow {
 }
 
 export function orderToSupabaseRow(order: Order): SupabaseOrderRow {
+  const hasDiscount =
+    (order.discountAmount && order.discountAmount > 0) ||
+    (order.discountType && order.discountType !== "none");
+
+  const customerPayload: SupabaseCustomerPayload = {
+    ...order.customer,
+    ...(hasDiscount
+      ? {
+          _orderDiscount: {
+            type: order.discountType || "none",
+            value: Number(order.discountValue || 0),
+            amount: Number(order.discountAmount || 0),
+            reason: order.discountReason || undefined,
+          },
+        }
+      : {}),
+  };
+
   return {
     id: order.id,
     created_at: order.createdAt || new Date().toISOString(),
     customer_id: order.customerId || null,
-    customer: order.customer,
+    customer: customerPayload,
     items: Array.isArray(order.items) ? order.items : [],
     total_price: Number(order.totalPrice || 0),
-    final_total: Number(order.finalTotal || order.totalPrice || 0),
+    final_total: Number(order.finalTotal ?? order.totalPrice ?? 0),
     payment_method_id: order.paymentMethodId || "brou",
     payment_method_name: order.paymentMethodName || "",
     shipping_method_name: order.shippingMethodName || "",
@@ -65,6 +94,7 @@ export function supabaseRowToOrder(row: SupabaseOrderRow): Order {
     shippingMethodName,
     deliveryType,
   });
+  const discountMeta = row.customer?._orderDiscount;
 
   return {
     id: row.id,
@@ -83,7 +113,11 @@ export function supabaseRowToOrder(row: SupabaseOrderRow): Order {
     },
     items: Array.isArray(row.items) ? row.items : [],
     totalPrice: Number(row.total_price || 0),
-    finalTotal: Number(row.final_total || row.total_price || 0),
+    discountType: discountMeta?.type || "none",
+    discountValue: Number(discountMeta?.value || 0),
+    discountAmount: Number(discountMeta?.amount || 0),
+    discountReason: discountMeta?.reason || undefined,
+    finalTotal: Number(row.final_total ?? row.total_price ?? 0),
     paymentMethodId: row.payment_method_id || "brou",
     paymentMethodName: row.payment_method_name || "Transferencia Bancaria BROU",
     shippingMethodName,
@@ -388,6 +422,21 @@ export async function upsertServerOrder(
         deliveryType: resolvedDeliveryType,
       },
       items: Array.isArray(cleanOrderInput.items) ? cleanOrderInput.items : current.items,
+      discountType: cleanOrderInput.discountType ?? current.discountType ?? "none",
+      discountValue:
+        cleanOrderInput.discountType === "none"
+          ? 0
+          : cleanOrderInput.discountValue ?? current.discountValue ?? 0,
+      discountAmount:
+        cleanOrderInput.discountType === "none"
+          ? 0
+          : cleanOrderInput.discountAmount ?? current.discountAmount ?? 0,
+      discountReason:
+        cleanOrderInput.discountType === "none"
+          ? undefined
+          : cleanOrderInput.discountReason !== undefined
+          ? cleanOrderInput.discountReason.trim() || undefined
+          : current.discountReason,
       mpPaymentId: cleanOrderInput.mpPaymentId || current.mpPaymentId,
       mpPayerEmail: cleanOrderInput.mpPayerEmail || current.mpPayerEmail,
       mpPayerName: cleanOrderInput.mpPayerName || current.mpPayerName,
@@ -425,7 +474,11 @@ export async function upsertServerOrder(
       },
       items: cleanOrderInput.items || [],
       totalPrice: Number(cleanOrderInput.totalPrice || 0),
-      finalTotal: Number(cleanOrderInput.finalTotal || cleanOrderInput.totalPrice || 0),
+      discountType: cleanOrderInput.discountType || "none",
+      discountValue: Number(cleanOrderInput.discountValue || 0),
+      discountAmount: Number(cleanOrderInput.discountAmount || 0),
+      discountReason: cleanOrderInput.discountReason || undefined,
+      finalTotal: Number(cleanOrderInput.finalTotal ?? cleanOrderInput.totalPrice ?? 0),
       paymentMethodId: cleanOrderInput.paymentMethodId || "brou",
       paymentMethodName: cleanOrderInput.paymentMethodName || "Transferencia Bancaria BROU",
       shippingMethodName: cleanOrderInput.shippingMethodName || "DAC - Retiro en Agencia",

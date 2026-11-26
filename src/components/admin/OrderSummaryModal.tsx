@@ -71,9 +71,16 @@ export default function OrderSummaryModal({
   const itemsSubtotal =
     order.totalPrice ||
     order.items.reduce((acc, i) => acc + i.product.price * i.quantity, 0);
+  const discountAmount = Math.max(0, Number(order.discountAmount || 0));
   const paymentSurcharge = Math.max(
     0,
-    Number((order.finalTotal - itemsSubtotal - shippingCost).toFixed(2))
+    Number(
+      (
+        order.finalTotal -
+        Math.max(0, itemsSubtotal - discountAmount) -
+        shippingCost
+      ).toFixed(2)
+    )
   );
   const shipMethodLower = (order.shippingMethodName || "").toLowerCase();
 
@@ -331,6 +338,20 @@ export default function OrderSummaryModal({
                     ${itemsSubtotal.toLocaleString("es-UY")} UYU
                   </span>
                 </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-700 font-bold text-[10px]">
+                    <span>
+                      Descuento
+                      {order.discountType === "percent" && order.discountValue
+                        ? ` (${order.discountValue}%)`
+                        : ""}
+                      :
+                    </span>
+                    <span className="font-mono font-bold">
+                      -${discountAmount.toLocaleString("es-UY")} UYU
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-slate-600 font-semibold text-[10px]">
                   <span>{shippingCost > 0 ? "Envío a Domicilio:" : "Costo de Envío:"}</span>
                   <span className="font-mono font-bold">
