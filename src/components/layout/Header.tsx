@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink, Instagram } from "lucide-react";
+import { ShoppingCart, Menu, X, Search, ArrowRight, ExternalLink, Instagram, User } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { Product } from "@/types";
 
@@ -227,6 +227,38 @@ function HeaderSearchInput() {
 export function Header() {
   const { totalItems, setIsCartOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [customerSession, setCustomerSession] = useState<{
+    email: string;
+    name?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const loadSession = () => {
+      fetch("/api/customer/auth/session", { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (!active) return;
+          if (data?.authenticated && data?.session) {
+            setCustomerSession(data.session);
+          } else {
+            setCustomerSession(null);
+          }
+        })
+        .catch(() => {});
+    };
+
+    loadSession();
+    window.addEventListener("kamaluso-customer-auth-changed", loadSession);
+    return () => {
+      active = false;
+      window.removeEventListener("kamaluso-customer-auth-changed", loadSession);
+    };
+  }, []);
+
+  const firstName = customerSession?.name
+    ? customerSession.name.trim().split(/\s+/)[0]
+    : null;
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
@@ -280,6 +312,18 @@ export function Header() {
 
           {/* Cart & Menu Actions en Móvil */}
           <div className="flex sm:hidden items-center gap-2">
+            <Link
+              href="/mi-cuenta"
+              className="relative bg-slate-100 hover:bg-slate-200 text-slate-700 p-2.5 rounded-xl transition-all flex items-center justify-center"
+              aria-label="Mi Cuenta y Mis Pedidos"
+              title={customerSession ? `Mi Cuenta (${firstName || customerSession.email})` : "Mi Cuenta"}
+            >
+              <User className="w-4 h-4" />
+              {customerSession && (
+                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
+              )}
+            </Link>
+
             <button
               onClick={() => setIsCartOpen(true)}
               className="relative bg-brand-500 hover:bg-brand-600 text-white p-2.5 rounded-xl transition-all shadow flex items-center gap-1.5"
@@ -342,6 +386,20 @@ export function Header() {
             <Instagram className="w-5 h-5" />
           </a>
 
+          <Link
+            href="/mi-cuenta"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:border-brand-300 bg-slate-50 hover:bg-brand-50/50 text-slate-700 hover:text-brand-700 transition-all text-xs font-bold flex-shrink-0"
+            title={customerSession ? `Sesión iniciada: ${customerSession.email}` : "Ingresar a Mi Cuenta y Mis Pedidos"}
+          >
+            <User className="w-4 h-4 text-brand-600" />
+            <span className="max-w-[96px] truncate">
+              {customerSession ? firstName || "Mi Cuenta" : "Mi Cuenta"}
+            </span>
+            {customerSession && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+            )}
+          </Link>
+
           <button
             onClick={() => setIsCartOpen(true)}
             className="relative bg-brand-500 hover:bg-brand-600 active:scale-95 text-white px-4 py-2.5 rounded-2xl transition-all shadow-md flex items-center gap-2 flex-shrink-0"
@@ -395,6 +453,21 @@ export function Header() {
             className="block py-2 hover:text-brand-600 text-sm font-bold text-brand-600 border-b border-slate-50"
           >
             🎁 Plantillas & Descargables
+          </Link>
+          <Link
+            href="/mi-cuenta"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center justify-between py-2 text-brand-700 hover:text-brand-800 text-sm font-extrabold border-b border-slate-50"
+          >
+            <span className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              <span>{customerSession ? `Mi Cuenta (${firstName || "Activa"})` : "Mi Cuenta y Mis Pedidos"}</span>
+            </span>
+            {customerSession && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
+                Activa
+              </span>
+            )}
           </Link>
           <Link
             href="/contacto"

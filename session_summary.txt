@@ -2286,3 +2286,20 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
   * `src/lib/admin-auth-server.ts`: agregado helper compartido `setAdminSessionCookie` para emitir/renovar la cookie `kamaluso_admin_session` (HMAC-SHA256, `HttpOnly`, 30 días).
   * `src/app/api/admin/auth/session/route.ts`: al validar una sesión activa en `/admin`, renueva automáticamente el token y la cookie por otros 30 días.
   * `src/app/api/admin/auth/login/route.ts`: refactorizado para reutilizar `setAdminSessionCookie`.
+
+
+[2026-11-26 01:20] Portal de Clientes (/mi-cuenta), Autenticación OTP (6 dígitos, 180 días deslizantes) y Checkout Seguro:
+- **Autenticación OTP sin contraseña y Sesión Persistente (180 días / 6 meses):**
+  * `src/lib/customer-auth-server.ts` (nuevo): desafío stateless firmado HMAC-SHA256 (`kamaluso_customer_otp`, 15 min, máx 5 intentos, cooldown 45s) y cookie de sesión `kamaluso_customer_session` (`HttpOnly`, `sameSite: lax`, 180 días con renovación automática deslizante).
+  * `src/lib/mailer.ts`: agregada función `sendCustomerOtpEmail` para envío de código de 6 dígitos por Nodemailer/Resend.
+  * `src/app/api/customer/auth/{request-code,verify-code,session,logout}/route.ts` (nuevos): flujo completo de solicitud, verificación, renovación de sesión y cierre de sesión.
+- **Privacidad y API de Cuenta (`/api/customer/me` + `/api/customers`):**
+  * `src/app/api/customers/route.ts`: restringida la consulta pública por `?email=` y `?phone=` para no exponer teléfono/dirección/PII sin sesión autorizada (responde `{ found, requiresAuth, customer: null }` cuando no hay sesión de admin ni del cliente).
+  * `src/app/api/customer/me/route.ts` (nuevo): `GET` devuelve perfil (sin `internalNotes`), historial cronológico unificado (`buildUnifiedCustomersList` + `getOrdersForCustomer`, pedidos web y manuales) y `getTopProductsForCustomer`; `PUT` permite editar datos habituales y preferencias de envío/pago/RUT.
+- **Portal `/mi-cuenta`, Header y Checkout Inteligente:**
+  * `src/lib/checkout-constants.ts` (nuevo): constantes y helpers compartidos (`URUGUAY_DEPARTMENTS`, `CUSTOMER_PAYMENT_METHODS`, `parseRutInfo`, `formatRutInfo`, `stripAgencyPrefix`).
+  * `src/components/customer/CustomerOtpLoginCard.tsx` (nuevo): componente reutilizable de ingreso con código de 6 dígitos.
+  * `src/components/customer/MiCuentaClient.tsx` y `src/app/mi-cuenta/page.tsx` (nuevos): historial de pedidos con estado en vivo, botón **"Repetir pedido"** en 1 clic (validando catálogo y stock actual), pestaña **"Tus Insumos Habituales"** y edición de **"Mis Datos y Envío"**.
+  * `src/components/layout/Header.tsx`: enlace directo a `/mi-cuenta` en desktop, barra móvil y menú móvil con indicador de sesión activa.
+  * `src/app/checkout/page.tsx` y `src/lib/customers.ts`: precarga automática completa al existir sesión (corrigiendo `local`, `rutInfo`, `observations` y `paymentMethodId`), verificación OTP inline opcional para correos registrados sin sesión, y persistencia completa al confirmar pedido.
+- **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`78/78` páginas generadas, código `0`).

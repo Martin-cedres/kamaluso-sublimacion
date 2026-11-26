@@ -3,6 +3,7 @@ import {
   getAdminSessionFromRequest,
   unauthorizedAdminResponse,
 } from "@/lib/admin-auth-server";
+import { getCustomerSessionFromRequest } from "@/lib/customer-auth-server";
 import {
   cleanCustomerPhoneDigits,
   deleteServerCustomer,
@@ -10,12 +11,14 @@ import {
   upsertServerCustomer,
   UpsertCustomerPayload,
 } from "@/lib/server-customers";
+import { getLatestServerOrders } from "@/lib/server-orders";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
     const adminSession = getAdminSessionFromRequest(request);
+    const customerSession = getCustomerSessionFromRequest(request);
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email");
     const phone = searchParams.get("phone");
@@ -34,13 +37,39 @@ export async function GET(request: Request) {
       const found = customers.find(
         (c) => c.email && c.email.trim().toLowerCase() === normalizedEmail
       );
-      if (found) {
+
+      let existsInOrders = false;
+      if (!found) {
+        const orders = await getLatestServerOrders();
+        existsInOrders = orders.some(
+          (o) =>
+            o.customer?.email &&
+            o.customer.email.trim().toLowerCase() === normalizedEmail
+        );
+      }
+
+      if (adminSession) {
         return NextResponse.json({
-          found: true,
-          customer: adminSession ? found : { ...found, internalNotes: undefined },
+          found: Boolean(found || existsInOrders),
+          requiresAuth: false,
+          customer: found || null,
         });
       }
-      return NextResponse.json({ found: false, customer: null });
+
+      if (customerSession && customerSession.email === normalizedEmail) {
+        return NextResponse.json({
+          found: Boolean(found || existsInOrders),
+          requiresAuth: false,
+          customer: found ? { ...found, internalNotes: undefined } : null,
+        });
+      }
+
+      const exists = Boolean(found || existsInOrders);
+      return NextResponse.json({
+        found: exists,
+        requiresAuth: exists,
+        customer: null,
+      });
     }
 
     if (isPhoneLookup && phone) {
@@ -50,14 +79,36 @@ export async function GET(request: Request) {
           const cDigits = cleanCustomerPhoneDigits(c.phone);
           return cDigits.endsWith(targetDigits) || targetDigits.endsWith(cDigits);
         });
+
         if (found) {
+          if (adminSession) {
+            return NextResponse.json({
+              found: true,
+              requiresAuth: false,
+              customer: found,
+            });
+          }
+
+          if (
+            customerSession &&
+            found.email &&
+            found.email.trim().toLowerCase() === customerSession.email
+          ) {
+            return NextResponse.json({
+              found: true,
+              requiresAuth: false,
+              customer: { ...found, internalNotes: undefined },
+            });
+          }
+
           return NextResponse.json({
             found: true,
-            customer: adminSession ? found : { ...found, internalNotes: undefined },
+            requiresAuth: true,
+            customer: null,
           });
         }
       }
-      return NextResponse.json({ found: false, customer: null });
+      return NextResponse.json({ found: false, requiresAuth: false, customer: null });
     }
 
     return NextResponse.json(customers, {

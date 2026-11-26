@@ -339,23 +339,40 @@ export function getTopProductsForCustomer(
 }
 
 /**
- * Consulta un cliente registrado en la base de datos por su email.
+ * Consulta si existe un cliente registrado por su email y devuelve sus datos
+ * solo si la sesión está autorizada.
  */
-export async function lookupCustomerByEmail(email: string): Promise<Customer | null> {
-  if (!email || !email.trim()) return null;
+export async function checkCustomerLookupByEmail(email: string): Promise<{
+  found: boolean;
+  requiresAuth: boolean;
+  customer: Customer | null;
+}> {
+  if (!email || !email.trim()) {
+    return { found: false, requiresAuth: false, customer: null };
+  }
   try {
     const res = await fetch(`/api/customers?email=${encodeURIComponent(email.trim())}`, {
       cache: "no-store",
     });
-    if (!res.ok) return null;
+    if (!res.ok) return { found: false, requiresAuth: false, customer: null };
     const data = await res.json();
-    if (data && data.found && data.customer) {
-      return data.customer as Customer;
-    }
+    return {
+      found: Boolean(data?.found),
+      requiresAuth: Boolean(data?.requiresAuth),
+      customer: (data?.customer as Customer) || null,
+    };
   } catch (err) {
     console.warn("Aviso al consultar cliente por email:", err);
   }
-  return null;
+  return { found: false, requiresAuth: false, customer: null };
+}
+
+/**
+ * Consulta un cliente registrado en la base de datos por su email.
+ */
+export async function lookupCustomerByEmail(email: string): Promise<Customer | null> {
+  const res = await checkCustomerLookupByEmail(email);
+  return res.customer;
 }
 
 /**

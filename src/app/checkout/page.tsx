@@ -28,47 +28,40 @@ import {
   Lock,
 } from "lucide-react";
 import { saveOrder } from "@/lib/orders";
-import { lookupCustomerByEmail, registerOrUpdateCustomer } from "@/lib/customers";
+import {
+  checkCustomerLookupByEmail,
+  registerOrUpdateCustomer,
+  resolveShippingMethodNameFromCustomer,
+} from "@/lib/customers";
+import {
+  CUSTOMER_PAYMENT_METHODS,
+  formatRutInfo,
+  parseRutInfo,
+  stripAgencyPrefix,
+  URUGUAY_DEPARTMENTS,
+} from "@/lib/checkout-constants";
+import { CustomerOtpLoginCard } from "@/components/customer/CustomerOtpLoginCard";
 import { Customer } from "@/types";
 
-const PAYMENT_METHODS = [
-  { id: "brou", name: "Transferencia Bancaria BROU", badge: "Sin recargo" },
-  { id: "prex", name: "Transferencia Prex a Prex", badge: "Sin recargo" },
-  { id: "oca_blue", name: "Depósito OCA Blue", badge: "Sin recargo" },
-  { id: "mi_dinero", name: "Mi Dinero", badge: "Sin recargo" },
-  { id: "abitab", name: "Giro ABITAB", badge: "Sin recargo" },
-  { id: "red_pagos", name: "Giro RED PAGOS", badge: "Sin recargo" },
-  {
-    id: "mercado_pago_online",
-    name: "Tarjeta de Crédito / Débito (Mercado Pago)",
-    badge: "+10% recargo",
-  },
-  { id: "efectivo", name: "Pago en Efectivo en Local", badge: "Solo retiro en taller" },
-];
-
-const URUGUAY_DEPARTMENTS = [
-  "Montevideo",
-  "San José",
-  "Canelones",
-  "Maldonado",
-  "Colonia",
-  "Salto",
-  "Paysandú",
-  "Rivera",
-  "Tacuarembó",
-  "Rocha",
-  "Soriano",
-  "Durazno",
-  "Florida",
-  "Lavalleja",
-  "Artigas",
-  "Cerro Largo",
-  "Treinta y Tres",
-  "Río Negro",
-  "Flores",
-];
+const PAYMENT_METHODS = CUSTOMER_PAYMENT_METHODS;
 
 const LOCAL_STORAGE_KEY = "kamaluso_checkout_customer";
+
+function extractCleanHomeNotes(observations?: string): string {
+  const raw = (observations || "").trim();
+  if (!raw) return "";
+  const parts = raw
+    .split("•")
+    .map((p) => p.trim())
+    .filter(
+      (p) =>
+        p &&
+        !/^rut\s*:/i.test(p) &&
+        !/^(empresa|raz[oó]n\s*social)\s*:/i.test(p)
+    )
+    .map((p) => p.replace(/^notas\s+domicilio\s*:\s*/i, "").trim());
+  return parts.join(" • ");
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -95,14 +88,68 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("brou");
 
   // Estados de proceso y feedback
+  const [authenticatedSession, setAuthenticatedSession] = useState<{
+    email: string;
+    name?: string;
+  } | null>(null);
   const [detectedCustomer, setDetectedCustomer] = useState<Customer | null>(null);
+  const [requiresEmailVerification, setRequiresEmailVerification] = useState(false);
+  const [showInlineOtpCard, setShowInlineOtpCard] = useState(false);
   const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
   const [customerDataLoaded, setCustomerDataLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Cargar datos previos de localStorage
+  const applyCustomerProfile = React.useCallback((c: Customer) => {
+    if (c.email) setCustomerEmail(c.email);
+    if (c.name) setCustomerName(c.name);
+    if (c.phone) setCustomerPhone(c.phone);
+    if (c.department) setCustomerDepartment(c.department);
+    if (c.city) setCustomerCity(c.city);
+
+    const parsedRut = parseRutInfo(c.rutInfo || c.observations);
+    if (parsedRut.hasRut) {
+      setHasRut(true);
+      if (parsedRut.rut) setCustomerRut(parsedRut.rut);
+      if (parsedRut.company) setCustomerCompany(parsedRut.company);
+    }
+
+    const cleanNotes = extractCleanHomeNotes(c.observations);
+    if (cleanNotes) setHomeNotes(cleanNotes);
+
+    const resolvedMethod = resolveShippingMethodNameFromCustomer(c).toLowerCase();
+    const resolvedDelivery: "agencia" | "domicilio" | "local" =
+      c.deliveryType === "local" || resolvedMethod.includes("local")
+        ? "local"
+        : c.deliveryType === "domicilio" || resolvedMethod.includes("domicilio")
+        ? "domicilio"
+        : "agencia";
+
+    setDeliveryMode(resolvedDelivery);
+    if (resolvedDelivery === "agencia" && c.address) {
+      setAgencyBranch(stripAgencyPrefix(c.address));
+    } else if (resolvedDelivery === "domicilio" && c.address) {
+      setHomeAddress(c.address);
+    }
+
+    if (c.shippingCompany === "cotmi" || resolvedMethod.includes("cotmi")) {
+      setShippingAgency("cotmi");
+    } else if (c.shippingCompany === "correo" || resolvedMethod.includes("correo")) {
+      setShippingAgency("correo");
+    } else {
+      setShippingAgency("dac");
+    }
+
+    if (
+      c.paymentMethodId &&
+      PAYMENT_METHODS.some((pm) => pm.id === c.paymentMethodId)
+    ) {
+      setPaymentMethod(c.paymentMethodId);
+    }
+  }, []);
+
+  // Cargar datos previos de localStorage y verificar si ya hay sesión de cliente activa
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -117,6 +164,8 @@ export default function CheckoutPage() {
         if (parsed.shippingAgency) setShippingAgency(parsed.shippingAgency);
         if (parsed.agencyBranch) setAgencyBranch(parsed.agencyBranch);
         if (parsed.homeAddress) setHomeAddress(parsed.homeAddress);
+        if (parsed.homeNotes) setHomeNotes(parsed.homeNotes);
+        if (parsed.paymentMethod) setPaymentMethod(parsed.paymentMethod);
         if (parsed.rut) {
           setHasRut(true);
           setCustomerRut(parsed.rut);
@@ -124,7 +173,24 @@ export default function CheckoutPage() {
         if (parsed.company) setCustomerCompany(parsed.company);
       }
     } catch {}
-  }, []);
+
+    fetch("/api/customer/me", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !data.email) return;
+        setAuthenticatedSession({
+          email: data.email,
+          name: data.customer?.name,
+        });
+        if (data.customer) {
+          applyCustomerProfile(data.customer as Customer);
+          setCustomerDataLoaded(true);
+        } else {
+          setCustomerEmail(data.email);
+        }
+      })
+      .catch(() => {});
+  }, [applyCustomerProfile]);
 
   // Guardar datos en localStorage para evitar pérdida por recarga
   useEffect(() => {
@@ -141,6 +207,8 @@ export default function CheckoutPage() {
           shippingAgency,
           agencyBranch,
           homeAddress,
+          homeNotes,
+          paymentMethod,
           rut: customerRut,
           company: customerCompany,
         })
@@ -156,60 +224,79 @@ export default function CheckoutPage() {
     shippingAgency,
     agencyBranch,
     homeAddress,
+    homeNotes,
+    paymentMethod,
     customerRut,
     customerCompany,
   ]);
 
-  // Autocompletado inteligente por Email desde la base de datos
+  // Detección inteligente por Email desde la base de datos (sin exponer PII sin sesión)
   useEffect(() => {
-    if (!customerEmail.trim()) {
+    const cleanEmail = customerEmail.trim().toLowerCase();
+    if (!cleanEmail) {
       setDetectedCustomer(null);
+      setRequiresEmailVerification(false);
+      setShowInlineOtpCard(false);
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(customerEmail.trim())) return;
+    if (!emailRegex.test(cleanEmail)) return;
+
+    if (authenticatedSession && authenticatedSession.email === cleanEmail) {
+      setRequiresEmailVerification(false);
+      setShowInlineOtpCard(false);
+      return;
+    }
 
     const timer = setTimeout(async () => {
       setIsSearchingCustomer(true);
       try {
-        const found = await lookupCustomerByEmail(customerEmail.trim());
-        if (found && (found.name || found.city || found.address)) {
-          setDetectedCustomer(found);
+        const result = await checkCustomerLookupByEmail(cleanEmail);
+        if (result.customer && (result.customer.name || result.customer.city || result.customer.address)) {
+          setDetectedCustomer(result.customer);
+          setRequiresEmailVerification(false);
+        } else if (result.found && result.requiresAuth) {
+          setDetectedCustomer(null);
+          setRequiresEmailVerification(true);
         } else {
           setDetectedCustomer(null);
+          setRequiresEmailVerification(false);
+          setShowInlineOtpCard(false);
         }
       } catch {
         setDetectedCustomer(null);
+        setRequiresEmailVerification(false);
       } finally {
         setIsSearchingCustomer(false);
       }
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [customerEmail]);
+  }, [customerEmail, authenticatedSession]);
 
   const handleApplyCustomerData = () => {
     if (!detectedCustomer) return;
-    if (detectedCustomer.name) setCustomerName(detectedCustomer.name);
-    if (detectedCustomer.phone) setCustomerPhone(detectedCustomer.phone);
-    if (detectedCustomer.department) setCustomerDepartment(detectedCustomer.department);
-    if (detectedCustomer.city) setCustomerCity(detectedCustomer.city);
-
-    if (detectedCustomer.deliveryType === "agencia") {
-      setDeliveryMode("agencia");
-      if (detectedCustomer.address) setAgencyBranch(detectedCustomer.address);
-    } else {
-      setDeliveryMode("domicilio");
-      if (detectedCustomer.address) setHomeAddress(detectedCustomer.address);
-    }
-
-    if (detectedCustomer.shippingCompany === "cotmi") setShippingAgency("cotmi");
-    else if (detectedCustomer.shippingCompany === "correo") setShippingAgency("correo");
-    else setShippingAgency("dac");
-
+    applyCustomerProfile(detectedCustomer);
     setCustomerDataLoaded(true);
     setDetectedCustomer(null);
     setTimeout(() => setCustomerDataLoaded(false), 4000);
+  };
+
+  const handleOtpVerifiedInCheckout = async (session: { email: string; name?: string }) => {
+    setAuthenticatedSession(session);
+    setRequiresEmailVerification(false);
+    setShowInlineOtpCard(false);
+
+    try {
+      const res = await fetch("/api/customer/me", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.customer) {
+          applyCustomerProfile(data.customer as Customer);
+          setCustomerDataLoaded(true);
+        }
+      }
+    } catch {}
   };
 
   // Regla de cálculo de envío según Agencia y Modalidad
@@ -379,9 +466,18 @@ export default function CheckoutPage() {
         email: customerEmail.trim(),
         department: fullCustomer.department,
         city: fullCustomer.city,
-        address: deliveryMode === "agencia" ? agencyBranch.trim() : homeAddress.trim(),
-        deliveryType: deliveryMode === "local" ? undefined : deliveryMode,
-        shippingCompany: deliveryMode === "local" ? undefined : shippingAgency,
+        address:
+          deliveryMode === "local"
+            ? "Retiro en Local Kamaluso (San José de Mayo)"
+            : deliveryMode === "agencia"
+            ? agencyBranch.trim()
+            : homeAddress.trim(),
+        deliveryType: deliveryMode,
+        shippingCompany: deliveryMode === "local" ? "local" : shippingAgency,
+        shippingMethodName: shippingName,
+        paymentMethodId: paymentMethod,
+        observations: homeNotes.trim() || undefined,
+        rutInfo: hasRut ? formatRutInfo(customerRut, customerCompany) : undefined,
         incrementOrder: true,
         orderAmount: finalTotal,
       });
@@ -611,9 +707,62 @@ export default function CheckoutPage() {
                   )}
 
                   {customerDataLoaded && (
-                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold flex items-center gap-2 mt-2 animate-in fade-in">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                      <span>¡Datos del cliente cargados con éxito!</span>
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold flex items-center justify-between gap-2 mt-2 animate-in fade-in">
+                      <span className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        <span>
+                          {authenticatedSession
+                            ? `Sesión activa (${authenticatedSession.name || authenticatedSession.email}) • Datos cargados automáticamente`
+                            : "¡Datos del cliente cargados con éxito!"}
+                        </span>
+                      </span>
+                      {authenticatedSession && (
+                        <Link
+                          href="/mi-cuenta"
+                          className="text-[11px] font-extrabold text-emerald-700 hover:underline whitespace-nowrap"
+                        >
+                          Mi Cuenta →
+                        </Link>
+                      )}
+                    </div>
+                  )}
+
+                  {requiresEmailVerification && !authenticatedSession && (
+                    <div className="mt-2 space-y-2.5">
+                      <div className="p-3.5 bg-gradient-to-r from-pink-50 via-rose-50 to-pink-50 border-2 border-pink-200 rounded-2xl text-xs space-y-2 shadow-xs">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-black text-pink-950 flex items-center gap-1.5">
+                            <Sparkles className="w-4 h-4 text-pink-600" />
+                            <span>¡Ya tenés compras registradas con este correo!</span>
+                          </span>
+                          <span className="text-[10px] bg-pink-200/80 text-pink-900 font-black px-2 py-0.5 rounded-full uppercase">
+                            Cliente Habitual
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-pink-900 leading-snug">
+                          Por tu seguridad, verificá un código de 6 dígitos para cargar automáticamente tu dirección, agencia, RUT y medio de pago (tu sesión queda guardada 6 meses).
+                        </p>
+                        {!showInlineOtpCard && (
+                          <button
+                            type="button"
+                            onClick={() => setShowInlineOtpCard(true)}
+                            className="w-full py-2 px-3 bg-pink-600 hover:bg-pink-700 text-white font-black rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition cursor-pointer"
+                          >
+                            <span>Verificar código y cargar mis datos</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {showInlineOtpCard && (
+                        <CustomerOtpLoginCard
+                          compact
+                          initialEmail={customerEmail.trim()}
+                          title="Verificá tu correo sin perder tu carrito"
+                          subtitle="Te enviamos un código de 6 dígitos y autocompletamos tus datos al instante."
+                          onAuthenticated={handleOtpVerifiedInCheckout}
+                        />
+                      )}
                     </div>
                   )}
 

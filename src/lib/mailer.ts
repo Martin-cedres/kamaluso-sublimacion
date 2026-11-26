@@ -910,3 +910,100 @@ export async function sendOrderEmails(input: SendOrderEmailsInput) {
     adminRes,
   };
 }
+
+export async function sendCustomerOtpEmail(
+  email: string,
+  code: string,
+  customerName?: string
+): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const transporter = getTransporter();
+
+  if (!transporter && !resend) {
+    if (process.env.NODE_ENV !== "production") {
+      console.info(`[Customer OTP DEV] Código para ${cleanEmail}: ${code}`);
+      return { success: true, skipped: true };
+    }
+    return {
+      success: false,
+      error: "El servicio de correo no está configurado en el servidor.",
+    };
+  }
+
+  const greetingName = customerName?.trim() || "Cliente";
+  const fromAddress = process.env.EMAIL_FROM || `Kamaluso Sublimación <${ADMIN_EMAIL}>`;
+  const subject = `Tu código de acceso Kamaluso: ${code}`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Código de acceso Kamaluso</title>
+    </head>
+    <body style="margin:0;padding:24px 12px;background-color:#fce7f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+      <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:480px;margin:0 auto;background-color:#ffffff;border-radius:20px;overflow:hidden;border:2px solid #fecdd3;box-shadow:0 10px 25px rgba(190,18,60,0.1);">
+        <tr>
+          <td align="center" style="background:linear-gradient(135deg,#9f1239 0%,#be123c 50%,#e11d48 100%);background-color:#be123c;padding:24px 20px;color:#ffffff;">
+            <p style="margin:0 0 4px 0;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#fecdd3;font-weight:800;">Kamaluso Papelería Sublimable</p>
+            <h1 style="margin:0;font-size:22px;font-weight:900;color:#ffffff;">Tu código de acceso</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:26px 22px;color:#0f172a;">
+            <p style="margin:0 0 10px 0;font-size:15px;font-weight:800;">¡Hola, ${greetingName}!</p>
+            <p style="margin:0 0 18px 0;font-size:13px;color:#475569;line-height:1.55;">
+              Ingresá este código de 6 dígitos en la web de Kamaluso para ver tu historial de pedidos, repetir compras anteriores y autocompletar tus datos de envío:
+            </p>
+            <div style="background-color:#fff1f2;border:2px dashed #fda4af;border-radius:16px;padding:18px;text-align:center;margin-bottom:18px;">
+              <span style="font-family:monospace,Courier,monospace;font-size:32px;font-weight:900;letter-spacing:8px;color:#be123c;">${code}</span>
+            </div>
+            <p style="margin:0 0 8px 0;font-size:12px;color:#64748b;line-height:1.5;">
+              ⏳ Este código vence en <strong>15 minutos</strong>. Una vez verificado, tu sesión quedará guardada en tu dispositivo por <strong>6 meses</strong>.
+            </p>
+            <p style="margin:0;font-size:11px;color:#94a3b8;line-height:1.4;">
+              Si no solicitaste este ingreso, podés ignorar este correo de forma segura.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="background-color:#fff1f2;padding:14px;border-top:1px solid #fecdd3;font-size:11px;color:#881337;font-weight:700;">
+            www.kamaluso.com • San José de Mayo, Uruguay
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  try {
+    if (transporter) {
+      await transporter.sendMail({
+        from: fromAddress,
+        to: cleanEmail,
+        replyTo: ADMIN_EMAIL,
+        subject,
+        html,
+      });
+      return { success: true };
+    }
+
+    if (resend) {
+      await resend.emails.send({
+        from: "Kamaluso Sublimación <onboarding@resend.dev>",
+        to: [cleanEmail],
+        replyTo: ADMIN_EMAIL,
+        subject,
+        html,
+      });
+      return { success: true };
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Error enviando código por correo";
+    console.error("[Mailer OTP] Error:", msg);
+    return { success: false, error: msg };
+  }
+
+  return { success: false, error: "No hay proveedor de correo disponible" };
+}
