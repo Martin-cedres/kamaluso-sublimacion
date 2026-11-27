@@ -94,12 +94,92 @@ Consulta el inventario completo y precios en \`https://www.kamaluso.com/api/prod
 `;
 }
 
+const VALID_CATEGORY_SLUGS = new Set([
+  "agendas",
+  "libretas",
+  "blocks-planners",
+  "kits-promos",
+  "especiales",
+  "outlet",
+]);
+
+const VALID_PRODUCT_SLUGS = new Set([
+  "agenda-sublimable-semanal",
+  "semanal-vertical-comun",
+  "kit-x10",
+  "agenda-2-dias-a-la-vista",
+  "agenda-1-dia-a-la-vista",
+  "agenda-perpetua",
+  "semanal-horizontal-flor",
+  "semanal-vertical-flor",
+  "semanal-sh-horizontal",
+  "planner-rombos",
+  "agenda-profesor-perpetua",
+  "lashista-perpetua",
+  "control-de-embarazo",
+  "manicurista-perpetua",
+  "cartulina-sublimable-x10",
+  "pack-2-tapas",
+  "recetario-color",
+  "recetario-negro",
+  "recetario-infantil",
+  "citas-juntos-100",
+  "planner-verde",
+  "libreta-sublimable-tamano-15x21-cm",
+  "cuaderno",
+  "block-sublimable-10x15cm-con-renglones",
+  "block-sublimable-10x15cm-sin-renglones",
+  "cuadernola-21x30-sublimable",
+  "marcador-sublimable-x10",
+  "calendario-sublimable-x-20",
+  // Aliases antiguos que redirigen
+  "recetario-infantil-sublimable1",
+  "cuadernola-21x30",
+  "recetario-ifantil",
+  "semanal-vertival-flor",
+  "copia-de-block-sublimable-10x15cm-con-renglones",
+  "block-10x15cm-con-renglones-sublimable",
+]);
+
+function buildMarkdownNotFoundResponse(message: string): NextResponse {
+  const tokenCount = Math.ceil(message.length / 4);
+  return new NextResponse(message, {
+    status: 404,
+    headers: {
+      "Content-Type": "text/markdown; charset=utf-8",
+      "x-markdown-tokens": String(tokenCount),
+      "Vary": "Accept",
+      "Link": AGENT_LINK_HEADER,
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+}
+
 export function middleware(request: NextRequest) {
   const acceptHeader = request.headers.get("accept") || "";
+  const { pathname } = request.nextUrl;
 
   // Content negotiation para Agentes de IA que solicitan Markdown (Accept: text/markdown)
   if (acceptHeader.includes("text/markdown")) {
-    const md = buildMarkdownResponse(request.nextUrl.pathname);
+    if (pathname.startsWith("/p/")) {
+      const slug = pathname.replace("/p/", "").replace(/\/+$/, "").trim();
+      if (!VALID_PRODUCT_SLUGS.has(slug)) {
+        return buildMarkdownNotFoundResponse(
+          `# 404 — Producto no encontrado\n\nEl producto \`${slug || "(vacío)"}\` no existe en el catálogo de Kamaluso Sublimación.\n\nConsulta los productos disponibles en \`https://www.kamaluso.com/api/products\` o visita \`https://www.kamaluso.com/\`.\n`
+        );
+      }
+    }
+
+    if (pathname.startsWith("/categoria/")) {
+      const cat = pathname.replace("/categoria/", "").replace(/\/+$/, "").trim();
+      if (!VALID_CATEGORY_SLUGS.has(cat)) {
+        return buildMarkdownNotFoundResponse(
+          `# 404 — Categoría no encontrada\n\nLa categoría \`${cat || "(vacía)"}\` no existe en el catálogo de Kamaluso Sublimación.\n\nCategorías válidas: agendas, libretas, blocks-planners, kits-promos, especiales, outlet.\nConsulta \`https://www.kamaluso.com/api/products\` para ver todo el inventario.\n`
+        );
+      }
+    }
+
+    const md = buildMarkdownResponse(pathname);
     const tokenCount = Math.ceil(md.length / 4);
 
     return new NextResponse(md, {

@@ -55,8 +55,8 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/categoria/outlet" className="hover:text-white transition-colors">
-                Outlet de Papelería Sublimable
+              <Link href="/p/pack-2-tapas" className="hover:text-white transition-colors">
+                Tapas Sublimables de Repuesto
               </Link>
             </li>
           </ul>

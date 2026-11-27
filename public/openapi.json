@@ -4,7 +4,7 @@
     "title": "Kamaluso Sublimación API",
     "version": "1.0.0",
     "description": "API REST oficial y servidor Model Context Protocol (MCP) de Kamaluso Papelería Sublimable (San José de Mayo, Uruguay). Consulta de catálogo mayorista de insumos sublimables en blanco (agendas 2027, tapas de cartón 350g, libretas, cuadernos), precios en pesos uruguayos (UYU), inventario y creación de pedidos.",
-    "termsOfService": "https://www.kamaluso.com/terms",
+    "termsOfService": "https://www.kamaluso.com/devoluciones",
     "contact": {
       "name": "Kamaluso Developer & Agent Support",
       "email": "kamalusosanjose@gmail.com",
@@ -271,7 +271,7 @@
         "type": "object",
         "required": ["type", "title", "status", "code", "detail"],
         "properties": {
-          "type": { "type": "string", "format": "uri", "example": "https://www.kamaluso.com/docs/errors/not-found" },
+          "type": { "type": "string", "format": "uri", "example": "https://www.kamaluso.com/developers" },
           "title": { "type": "string", "example": "Resource Not Found" },
           "status": { "type": "integer", "example": 404 },
           "code": { "type": "string", "example": "not_found" },

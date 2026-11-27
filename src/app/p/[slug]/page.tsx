@@ -20,12 +20,17 @@ export async function generateStaticParams() {
 }
 
 function getProductMeasures(product: Product): string {
-  const n = product.name.toLowerCase();
-  const d = product.description.toLowerCase();
-  if (n.includes("21x30") || d.includes("21x30")) return "21x30cm";
-  if (n.includes("10x15") || d.includes("10x15")) return "10x15cm";
-  if (n.includes("17x22") || d.includes("17x22")) return "17x22cm";
-  if (n.includes("cartulina") || d.includes("cartulina")) return "A4";
+  const text = `${product.name} ${product.description || ""}`;
+  if (/21\s*x\s*4/i.test(text)) return "21x4cm";
+  if (/7[.,]5\s*x\s*10[.,]5/i.test(text)) return "7.5x10.5cm";
+  if (/21\s*x\s*30/i.test(text)) return "21x30cm";
+  if (/10\s*x\s*15/i.test(text)) return "10x15cm";
+  if (/17\s*x\s*22/i.test(text)) return "17x22cm";
+  if (/\bcartulina\b/i.test(text) || /\bA4\b/i.test(text)) return "A4";
+  const genericMatch = text.match(/(\d+(?:[.,]\d+)?)\s*x\s*(\d+(?:[.,]\d+)?)\s*cm/i);
+  if (genericMatch) {
+    return `${genericMatch[1].replace(",", ".")}x${genericMatch[2].replace(",", ".")}cm`;
+  }
   return "15x21cm";
 }
 
@@ -58,6 +63,10 @@ function getProductMetaDescription(product: Product): string {
   const displayName = getProductDisplayName(product);
   const isPack2Tapas = product.slug === "pack-2-tapas";
   const isCartulina = product.name.toLowerCase().includes("cartulina");
+  const isMarcador =
+    product.slug.includes("marcador") || product.name.toLowerCase().includes("marcador");
+  const isCalendario =
+    product.slug.includes("calendario") || product.name.toLowerCase().includes("calendario");
 
   let candidates: string[];
   if (isPack2Tapas) {
@@ -69,6 +78,16 @@ function getProductMetaDescription(product: Product): string {
     candidates = [
       `${displayName} (${measure}): cartulinas sublimables A4 350gr (170ºC/120s). $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
       `${displayName} (${measure}): cartulinas sublimables A4 350gr. $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
+    ];
+  } else if (isMarcador) {
+    candidates = [
+      `${displayName} (${measure}): señaladores sublimables en cartulina 350gr (170ºC/120s). $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
+      `${displayName} (${measure}): señaladores sublimables 350gr. $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
+    ];
+  } else if (isCalendario) {
+    candidates = [
+      `${displayName} (${measure}): calendarios sublimables 2027 con imán en cartulina 350gr (170ºC/120s). $${product.price} UYU. Stock todo el año. Envíos.`,
+      `${displayName} (${measure}): calendarios sublimables 2027 con imán 350gr. $${product.price} UYU. Stock todo el año. Envíos a Uruguay.`,
     ];
   } else {
     candidates = [
@@ -171,13 +190,20 @@ export default async function ProductDetailPage({
   const productMeasure = getProductMeasures(product);
   const isPack2Tapas = product.slug === "pack-2-tapas";
   const isCartulina = product.name.toLowerCase().includes("cartulina") || product.slug.includes("cartulina");
-  const is15x21Kit = productMeasure === "15x21cm" && !isPack2Tapas && !isCartulina;
-  const hasInterior = !isPack2Tapas && !isCartulina;
+  const isMarcador = product.slug.includes("marcador") || product.name.toLowerCase().includes("marcador");
+  const isCalendario = product.slug.includes("calendario") || product.name.toLowerCase().includes("calendario");
+  const is15x21Kit =
+    productMeasure === "15x21cm" && !isPack2Tapas && !isCartulina && !isMarcador && !isCalendario;
+  const hasInterior = !isPack2Tapas && !isCartulina && !isMarcador && !isCalendario;
 
   const productMaterial = isCartulina
     ? "Cartulina cristal sublimable A4 de 350gr con polímero virgen"
     : isPack2Tapas
     ? "Cartón cristal sublimable de 350gr con polímero virgen"
+    : isMarcador
+    ? "Cartulina cristal sublimable de 350gr con polímero virgen"
+    : isCalendario
+    ? "Cartulina cristal sublimable de 350gr con polímero virgen, almanaque mensual impreso e imán"
     : "Cartón cristal sublimable de 350gr con polímero virgen y papel obra impreso";
 
   const whatsappInterioresUrl = `https://wa.me/${KAMALUSO_WHATSAPP}?text=${encodeURIComponent(
@@ -448,7 +474,13 @@ export default async function ProductDetailPage({
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-slate-500 block text-[10px] font-bold uppercase">Modalidad de Venta</span>
                 <span className="font-bold text-slate-800">
-                  {isPack2Tapas ? "Pack 2 Tapas Repuesto 350gr" : "Kit, Interior o Tapas sueltas"}
+                  {isPack2Tapas
+                    ? "Pack 2 Tapas Repuesto 350gr"
+                    : isMarcador
+                    ? "Pack x10 Marcadores 350gr"
+                    : isCalendario
+                    ? "Pack x20 Calendarios Imantados 350gr"
+                    : "Kit, Interior o Tapas sueltas"}
                 </span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">

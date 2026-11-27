@@ -5,7 +5,7 @@ export const dynamic = "force-static";
 export async function GET() {
   const metadata = {
     issuer: "https://www.kamaluso.com",
-    authorization_endpoint: "https://www.kamaluso.com/oauth/authorize",
+    authorization_endpoint: "https://www.kamaluso.com/api/agent/register",
     token_endpoint: "https://www.kamaluso.com/api/agent/token",
     registration_endpoint: "https://www.kamaluso.com/api/agent/register",
     jwks_uri: "https://www.kamaluso.com/.well-known/jwks.json",
@@ -23,8 +23,7 @@ export async function GET() {
       "read:resources",
     ],
     agent_auth: {
-      skill:
-        "https://www.kamaluso.com/.well-known/agent-skills/auth-md/SKILL.md",
+      skill: "https://www.kamaluso.com/auth.md",
       register_uri: "https://www.kamaluso.com/api/agent/register",
       identity_types_supported: ["anonymous", "identity_assertion"],
       anonymous: {

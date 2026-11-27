@@ -21,11 +21,15 @@ function escapeCdata(value: string): string {
 }
 
 function detectProductMeasure(text: string): string {
+  if (/21\s*x\s*4/i.test(text)) return "21x4cm";
+  if (/7[.,]5\s*x\s*10[.,]5/i.test(text)) return "7.5x10.5cm";
   if (/21\s*x\s*30/i.test(text)) return "21x30cm";
   if (/10\s*x\s*15/i.test(text)) return "10x15cm";
   if (/17\s*x\s*22/i.test(text)) return "17x22cm";
   if (/\bA4\b/i.test(text)) return "A4";
   if (/15\s*x\s*21/i.test(text) || /\bA5\b/i.test(text)) return "15x21cm";
+  const m = text.match(/(\d+(?:[.,]\d+)?)\s*x\s*(\d+(?:[.,]\d+)?)\s*cm/i);
+  if (m) return `${m[1].replace(",", ".")}x${m[2].replace(",", ".")}cm`;
   return "15x21cm";
 }
 
@@ -33,6 +37,14 @@ function buildSeoProductTitle(product: Product): string {
   const baseName = product.name.trim();
   const lowerName = baseName.toLowerCase();
   const combinedLower = `${baseName} ${product.description || ""}`.toLowerCase();
+
+  if (product.slug === "marcador-sublimable-x10" || lowerName.includes("marcador")) {
+    return "Pack x10 Marcadores Señaladores Sublimables 21x4cm (Cartulina Cristal 350gr) - Kamaluso";
+  }
+
+  if (product.slug === "calendario-sublimable-x-20" || lowerName.includes("calendario")) {
+    return "Pack x20 Calendarios Sublimables 2027 para Heladera 7.5x10.5cm (Cartulina 350gr + Almanaque + Imán) - Kamaluso";
+  }
 
   if (product.slug === "pack-2-tapas" || lowerName.includes("pack 2 tapas")) {
     return "Pack 2 Tapas Sublimables 350gr Repuesto 15x21cm A5 Por Separado - Kamaluso";
@@ -161,7 +173,11 @@ function buildSeoProductDescription(product: Product): string {
 
 function resolveGoogleProductCategory(product: Product): string {
   const slug = product.slug.toLowerCase();
-  if (slug === "cartulina-sublimable-x10" || slug === "pack-2-tapas") {
+  if (
+    slug === "cartulina-sublimable-x10" ||
+    slug === "pack-2-tapas" ||
+    slug === "marcador-sublimable-x10"
+  ) {
     return "505395";
   }
   if (product.category === "libretas" || slug.includes("block")) {
@@ -171,11 +187,28 @@ function resolveGoogleProductCategory(product: Product): string {
 }
 
 function resolveMultipackCount(product: Product): number | null {
-  if (product.slug === "kit-x10" || product.slug === "cartulina-sublimable-x10") {
+  if (
+    product.slug === "kit-x10" ||
+    product.slug === "cartulina-sublimable-x10" ||
+    product.slug === "marcador-sublimable-x10"
+  ) {
     return 10;
+  }
+  if (product.slug === "calendario-sublimable-x-20") {
+    return 20;
   }
   if (product.slug === "pack-2-tapas") {
     return 2;
+  }
+  const slugMatch = product.slug.match(/\bx\s*(\d+)\b/i);
+  if (slugMatch) {
+    const count = Number(slugMatch[1]);
+    if (count >= 2) return count;
+  }
+  const nameMatch = product.name.match(/\bx\s*(\d+)\b/i);
+  if (nameMatch) {
+    const count = Number(nameMatch[1]);
+    if (count >= 2) return count;
   }
   return null;
 }
@@ -214,9 +247,14 @@ export async function GET() {
       const measure = detectProductMeasure(`${product.name} ${product.description || ""}`);
       const multipack = resolveMultipackCount(product);
       const isCoverOrCardstockOnly =
-        product.slug === "pack-2-tapas" || product.slug === "cartulina-sublimable-x10";
+        product.slug === "pack-2-tapas" ||
+        product.slug === "cartulina-sublimable-x10" ||
+        product.slug === "marcador-sublimable-x10";
+      const isCalendario = product.slug === "calendario-sublimable-x-20";
       const materialText = isCoverOrCardstockOnly
         ? "Cartón cristal sublimable 350gr con polímero virgen"
+        : isCalendario
+        ? "Cartón cristal sublimable 350gr con polímero virgen, almanaque impreso 12 meses e imán"
         : "Cartón cristal sublimable 350gr con polímero virgen, papel obra y espiral";
 
       const hasDiscount =

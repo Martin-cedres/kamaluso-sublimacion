@@ -283,5 +283,25 @@
     "source": "/about",
     "destination": "/sobre-nosotros",
     "permanent": true
+  },
+  {
+    "source": "/terms",
+    "destination": "/devoluciones",
+    "permanent": true
+  },
+  {
+    "source": "/docs/errors/not-found",
+    "destination": "/developers",
+    "permanent": true
+  },
+  {
+    "source": "/oauth/authorize",
+    "destination": "/api/agent/register",
+    "permanent": true
+  },
+  {
+    "source": "/.well-known/agent-skills/auth-md/SKILL.md",
+    "destination": "/auth.md",
+    "permanent": true
   }
 ]

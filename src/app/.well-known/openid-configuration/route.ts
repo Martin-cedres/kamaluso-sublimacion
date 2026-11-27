@@ -5,7 +5,7 @@ export const dynamic = "force-static";
 export async function GET() {
   const oidc = {
     issuer: "https://www.kamaluso.com",
-    authorization_endpoint: "https://www.kamaluso.com/oauth/authorize",
+    authorization_endpoint: "https://www.kamaluso.com/api/agent/register",
     token_endpoint: "https://www.kamaluso.com/api/agent/token",
     jwks_uri: "https://www.kamaluso.com/.well-known/jwks.json",
     response_types_supported: ["code", "token", "id_token"],

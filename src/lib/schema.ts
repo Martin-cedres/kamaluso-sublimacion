@@ -1,6 +1,6 @@
 export const KAMALUSO_ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
-  "@type": ["LocalBusiness", "WholesaleStore", "Organization"],
+  "@type": ["LocalBusiness", "Store", "WholesaleStore", "Organization"],
   "@id": "https://www.kamaluso.com/#organization",
   "name": "Kamaluso",
   "legalName": "Kamaluso Papelería Sublimable",

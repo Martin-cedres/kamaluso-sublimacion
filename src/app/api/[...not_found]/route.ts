@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 function problemNotFound(pathname: string) {
   return NextResponse.json(
     {
-      type: "https://www.kamaluso.com/docs/errors/not-found",
+      type: "https://www.kamaluso.com/developers",
       title: "API Endpoint Not Found",
       status: 404,
       code: "not_found",

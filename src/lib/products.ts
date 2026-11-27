@@ -2,7 +2,7 @@ import { Product, Category } from "@/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 import localProductsData from "../../data/products.json";
 
-export const CURRENT_CATALOG_VERSION = 8;
+export const CURRENT_CATALOG_VERSION = 9;
 export const DIRECT_BLOB_PRODUCTS_URL = "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/data/products.json";
 
 export const CATEGORIES: Category[] = [
@@ -32,6 +32,39 @@ export function sanitizeProduct(p: Product): Product {
   if (sanitized.id === "200000056" || sanitized.slug === "copia-de-block-sublimable-10x15cm-con-renglones" || sanitized.slug === "block-10x15cm-con-renglones-sublimable") {
     sanitized.slug = "block-sublimable-10x15cm-con-renglones";
   }
+
+  // Categorías canónicas
+  if (sanitized.id === "1788710173894" || sanitized.slug === "kit-x10") {
+    sanitized.category = "kits-promos";
+  }
+  if (sanitized.id === "1789423787179" || sanitized.slug === "pack-2-tapas") {
+    sanitized.category = "especiales";
+  }
+  if (sanitized.id === "1791502904780" || sanitized.slug === "planner-rombos") {
+    sanitized.category = "blocks-planners";
+  }
+  if (sanitized.id === "1795779077935" || sanitized.slug === "marcador-sublimable-x10") {
+    sanitized.category = "especiales";
+  }
+  if (sanitized.id === "1795778943249" || sanitized.slug === "calendario-sublimable-x-20") {
+    sanitized.category = "especiales";
+  }
+
+  if ((sanitized.description || "").trim().length < 150) {
+    const localMatch = (localProductsData as Product[]).find((lp) => lp.id === sanitized.id);
+    if (
+      localMatch &&
+      localMatch.description &&
+      localMatch.description.trim().length > (sanitized.description || "").trim().length
+    ) {
+      sanitized.description = localMatch.description;
+    }
+  }
+
+  if (sanitized.description && /cartunina/i.test(sanitized.description)) {
+    sanitized.description = sanitized.description.replace(/cartunina/gi, "cartulina");
+  }
+
   return sanitized;
 }
 

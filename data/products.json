@@ -436,5 +436,33 @@
       "/products/cuadernola-21x30-sublimable-0-d756bb.webp",
       "/products/cuadernola-21x30-sublimable-1-cb4eaa.webp"
     ]
+  },
+  {
+    "id": "1795779077935",
+    "name": "Marcador sublimable x10",
+    "slug": "marcador-sublimable-x10",
+    "description": "Pack de 10 señaladores / marcadores de página para libros y agendas en cartulina cristal sublimable de 350gr con polímero virgen de alta transferencia.\n\nTamaño: 21 x 4 cm (pack x10 unidades en blanco listas para estampar).\n\nParámetros de prensa plana: 170ºC–180ºC durante 120 segundos, presión media-alta y enfriado inmediato bajo peso plano (60–120s).",
+    "price": 50,
+    "currency": "UYU",
+    "category": "especiales",
+    "hasPromoKit": false,
+    "inStock": true,
+    "images": [
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/gemini-generated-image-hqxdcjhqxdcjhqxd-bZxSBRbipUpkjcJyVmTxkE0nukMG5Q.webp"
+    ]
+  },
+  {
+    "id": "1795778943249",
+    "name": "Calendario Sublimable x 20",
+    "slug": "calendario-sublimable-x-20",
+    "description": "Pack mayorista de 20 Calendarios 2027 para heladera con base sublimable en blanco.\n\nCada unidad incluye:\n- Base de cartulina cristal sublimable de 350gr con polímero virgen (tamaño 7,5 x 10,5 cm)\n- Taco de calendario impreso 12 meses 2027 (5,5 x 6,5 cm)\n- Imán posterior para heladera\n\nParámetros de prensa plana: 170ºC–180ºC durante 120 segundos, presión media-alta y enfriado bajo peso plano.",
+    "price": 360,
+    "currency": "UYU",
+    "category": "especiales",
+    "hasPromoKit": false,
+    "inStock": true,
+    "images": [
+      "https://ek73dobkmkhaebws.public.blob.vercel-storage.com/gemini-generated-image-y64l2cy64l2cy64l-XveOzYpHAbuva0tw6AnNZnShy2TMEU.webp"
+    ]
   }
 ]
