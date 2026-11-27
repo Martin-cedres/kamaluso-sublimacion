@@ -2310,3 +2310,25 @@ DESPLIEGUE A PRODUCCIÓN: REGLAS Y COSTOS DE ENVÍO (CORREO, COTMI, DAC)
 - `src/components/admin/ManualOrderModal.tsx`: selector de descuento (`Sin descuento`, `% Porcentaje` con atajos `5%`, `10%`, `15%`, `20%`, `25%` + valor libre, o `$ Monto fijo` en UYU) y campo opcional de motivo/nota, recalculando automáticamente el total (y recargo MP sobre el subtotal descontado).
 - `src/components/admin/OrderSummaryModal.tsx`, `src/app/admin/page.tsx`, `src/components/customer/MiCuentaClient.tsx` y `src/lib/csv-export.ts`: visualización del descuento aplicado en la Nota A4 de taller, detalle de pedido en Admin, historial en `/mi-cuenta` y columna `Descuento (UYU)` en exportación CSV.
 - **Verificación técnica:** `npx tsc --noEmit` (código `0`) y `npm run build` (`78/78` páginas generadas, código `0`).
+
+
+[2026-11-27 17:51] Resolución de Errores 404/Soft-404, Sincronización Catálogo (28 productos), Feed Google Shopping y Auditoría Google Business / Merchant Center:
+- **Orquestación Multi-Agente (`Gemini 4 Hydrogen / flash`):**
+  1. **Catálogo, Feed Google Shopping y Schema (`data/products.json`, `src/lib/products.ts`, `src/app/api/feed/google-shopping/route.ts`, `src/app/p/[slug]/page.tsx`, `src/lib/schema.ts`):**
+     - Sincronizado `data/products.json` con los 28 productos activos de producción (sumados `marcador-sublimable-x10` y `calendario-sublimable-x-20` en `especiales`) y corregido typo `"cartunina"` -> `"cartulina"`.
+     - Subido `CURRENT_CATALOG_VERSION = 9` en `src/lib/products.ts` y reforzado `sanitizeProduct()` para forzar categorías canónicas (`kit-x10` -> `kits-promos`, `pack-2-tapas` -> `especiales`, `planner-rombos` -> `blocks-planners`) y preservar descripciones enriquecidas frente a registros cortos en Blob.
+     - Actualizado `src/app/api/feed/google-shopping/route.ts` y `src/app/p/[slug]/page.tsx` para detectar medidas dinámicas (`21x4cm`, `7.5x10.5cm`, etc.), multipacks (`x10`, `x20`), materiales específicos sin espiral/interior en marcadores y calendarios imantados, y categoría `505395` para marcadores.
+     - Añadido `"Store"` a `@type` en `KAMALUSO_ORGANIZATION_SCHEMA` (`src/lib/schema.ts`).
+  2. **Eliminación de 404 / Soft-404 (`src/app/not-found.tsx`, `src/components/layout/Footer.tsx`, `public/openapi.json`, `src/app/api/[...not_found]/route.ts`, `src/app/.well-known/{oauth-authorization-server,openid-configuration}/route.ts`, `data/redirects.json`, `src/middleware.ts`, `src/app/{about,plantillas-sublimacion}/page.tsx`):**
+     - Creada página `src/app/not-found.tsx` personalizada en español con accesos directos a catálogo y categorías.
+     - Retirado enlace a `/categoria/outlet` (vacía/noindex) del `Footer.tsx` y reemplazado por `/p/pack-2-tapas`.
+     - Corregidas las 4 URLs técnicas que devolvían 404 (`/terms`, `/docs/errors/not-found`, `/oauth/authorize`, `/.well-known/agent-skills/auth-md/SKILL.md`) y añadidas redirecciones `308` permanentes en `data/redirects.json`.
+     - Reemplazadas las páginas duplicadas `/about` y `/plantillas-sublimacion` por `permanentRedirect`.
+     - Validación de slugs válidos de producto y categoría en `src/middleware.ts` para devolver `404` real ante peticiones `Accept: text/markdown` inexistentes.
+  3. **Verificación y Despliegue (`commit 51803b1` en `origin/main`):**
+     - `npx tsc --noEmit` (código `0`) y `npm run build` (`78/78` páginas, código `0`).
+     - Verificado en producción (`https://www.kamaluso.com`): `/categoria/kits-promos` (`200 OK` indexable con `Kit x10`), redirects `308`, `404` real en rutas/Markdown inválidos y feed `/google-shopping.xml` actualizado con 28 ítems.
+  4. **Google Business Profile y Google Merchant Center (Auditoría en vivo):**
+     - **Google Business Profile (`Kamaluso`, `Ramón Massini 136`, código `11101228277303194752`):** Google rechazó cambiar la categoría principal a `Tienda de manualidades` por *"cambios significativos en la identidad de tu empresa"*. Se mantuvo `Servicio de impresión digital` como **Categoría principal** y se agregó **`Tienda de manualidades`** como **Categoría adicional**, quedando **aprobada y publicada** al instante.
+     - **Google Merchant Center (`632165118` — `www.kamaluso.com`):** Actualizado el feed `PRODUCTS SOURCE 3` (`10794852377`): **28 productos actualizados**, **2 productos nuevos agregados**, **0 problemas de archivo**.
+     - **Hallazgo de vinculación cruzada entre cuentas:** La ficha `Kamaluso` en Google Business Profile está vinculada actualmente a otro Business Manager (`om-4028187473771763328` / Merchant Center `5687827854`, sin acceso desde `martinfernandocedres@gmail.com`), mientras que la subcuenta `632165118` tiene vinculada en `Stores` a `Inmobiliaria Montaño`, y la alerta *"Corrige los detalles del producto"* en Google Search apunta a la subcuenta `5847234656` (`Inmobiliaria Montaño`, con 24 inmuebles rechazados por envío/moneda).
